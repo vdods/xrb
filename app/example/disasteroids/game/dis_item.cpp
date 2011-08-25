@@ -19,23 +19,22 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
+Item *Item::Create (ItemType item_type, Uint8 upgrade_level)
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     switch (item_type)
     {
+        case IT_WEAPON_TRACTOR:               return new Tractor(upgrade_level);
         case IT_WEAPON_PEA_SHOOTER:           return new PeaShooter(upgrade_level);
         case IT_WEAPON_LASER:                 return new Laser(upgrade_level);
         case IT_WEAPON_FLAME_THROWER:         return new FlameThrower(upgrade_level);
         case IT_WEAPON_GAUSS_GUN:             return new GaussGun(upgrade_level);
         case IT_WEAPON_GRENADE_LAUNCHER:      return new GrenadeLauncher(upgrade_level);
         case IT_WEAPON_MISSILE_LAUNCHER:      return new MissileLauncher(upgrade_level);
-        case IT_WEAPON_TRACTOR:               return new Tractor(upgrade_level);
         case IT_ENEMY_WEAPON_SLOW_BULLET_GUN: return new SlowBulletGun(upgrade_level);
         case IT_ENGINE:                       return new Engine(upgrade_level);
         case IT_ARMOR:                        return new Armor(upgrade_level);
@@ -48,7 +47,7 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
     }
 }
 
-std::string const &Item::MineralSpritePath (Uint8 const mineral_index)
+std::string const &Item::MineralSpritePath (Uint8 mineral_index)
 {
     static std::string const s_mineral_sprite_path[MINERAL_COUNT] =
     {
@@ -62,13 +61,16 @@ std::string const &Item::MineralSpritePath (Uint8 const mineral_index)
     return s_mineral_sprite_path[mineral_index];
 }
 
-Uint32 Item::ItemPrice (
-    ItemType const item_type,
-    Uint8 const upgrade_level,
-    Uint8 const mineral_index)
+Uint32 Item::ItemPrice (ItemType item_type, Uint8 upgrade_level, Uint8 mineral_index)
 {
     static Uint32 const s_item_price[IT_COUNT][UPGRADE_LEVEL_COUNT][MINERAL_COUNT] =
     {
+        { // IT_WEAPON_TRACTOR
+            {  10,   0,   0,   0},
+            {  22,  18,   0,   0},
+            {  47,  59,  47,   0},
+            {  93,  77,  52,  48},
+        },
         { // IT_WEAPON_PEA_SHOOTER
             {   0,   0,   0,   0}, // player always has this
             {   7,   0,   0,   0},
@@ -105,12 +107,6 @@ Uint32 Item::ItemPrice (
             { 153,  91,  68,   0},
             { 163, 136, 120,  81},
         },
-        { // IT_WEAPON_TRACTOR
-            {  10,   0,   0,   0},
-            {  22,  18,   0,   0},
-            {  47,  59,  47,   0},
-            {  93,  77,  52,  48},
-        },
         { // IT_ENGINE
             {   0,   0,   0,   0}, // player always has this
             {  18,  27,   0,   0},
@@ -138,10 +134,13 @@ Uint32 Item::ItemPrice (
     };
 
     ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(Uint8(upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
     ASSERT1(mineral_index < MINERAL_COUNT);
 
-    return s_item_price[item_type][upgrade_level][mineral_index];
+    if (Uint8(upgrade_level+1) == 0)
+        return 0;
+    else
+        return s_item_price[item_type][upgrade_level][mineral_index];
 }
 
 } // end of namespace Dis

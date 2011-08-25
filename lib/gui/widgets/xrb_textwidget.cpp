@@ -270,5 +270,34 @@ void TextWidget::UpdateMinAndMaxSizesFromText ()
         SizeProperties::MAX,
         Bool2(m_is_max_width_fixed_to_text_width, m_is_max_height_fixed_to_text_height));
 }
+/*
+void TextWidget::UpdateMinAndMaxSizesFromText ()
+{
+    if (!RenderFont().IsValid())
+        return;
 
+    ScreenCoordVector2 size(TextRect().Size() + (FrameMargins() + ContentMargins()).TotalMarginSize());
+
+    if (m_is_min_width_fixed_to_text_width)
+    {
+        SetSizeProperty(SizeProperties::MIN, Dim::X, size[Dim::X]);
+        SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, m_is_min_width_fixed_to_text_width);
+    }
+    if (m_is_max_width_fixed_to_text_width)
+    {
+        SetSizeProperty(SizeProperties::MAX, Dim::X, size[Dim::X]);
+        SetSizePropertyEnabled(SizeProperties::MAX, Dim::X, m_is_max_width_fixed_to_text_width);
+    }
+    if (m_is_min_height_fixed_to_text_height)
+    {
+        SetSizeProperty(SizeProperties::MIN, Dim::Y, size[Dim::Y]);
+        SetSizePropertyEnabled(SizeProperties::MIN, Dim::Y, m_is_min_height_fixed_to_text_height);
+    }
+    if (m_is_max_height_fixed_to_text_height)
+    {
+        SetSizeProperty(SizeProperties::MAX, Dim::Y, size[Dim::Y]);
+        SetSizePropertyEnabled(SizeProperties::MAX, Dim::Y, m_is_max_height_fixed_to_text_height);
+    }
+}
+*/
 } // end of namespace Xrb

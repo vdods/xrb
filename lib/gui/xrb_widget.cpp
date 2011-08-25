@@ -1147,8 +1147,7 @@ bool Widget::InternalProcessMouseoverEvent (EventMouseover const *e)
         return false;
 
     // this is the bottom-most widget which should be mouseovered
-    MouseoverOn();
-    return true;
+    return MouseoverOn();
 }
 
 } // end of namespace Xrb

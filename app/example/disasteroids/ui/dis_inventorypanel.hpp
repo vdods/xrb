@@ -17,6 +17,8 @@
 #include "dis_item.hpp"
 #include "xrb_button.hpp"
 #include "xrb_dialog.hpp"
+#include "xrb_parse_datafile_value.hpp"
+#include "xrb_resourcelibrary.hpp"
 
 using namespace Xrb;
 
@@ -38,24 +40,18 @@ class InventoryPanel : public ModalWidget
 {
 public:
 
-    InventoryPanel (
-        ContainerWidget *parent,
-        std::string const &name = "InventoryPanel");
+    InventoryPanel (ContainerWidget *parent, std::string const &name = "InventoryPanel");
     virtual ~InventoryPanel () { }
 
-    inline SignalSender0 const *SenderDeactivate () { return &m_sender_deactivate; }
+    SignalSender0 const *SenderDeactivate () { return &m_sender_deactivate; }
     SignalSender0 const *SenderEndGame ();
     SignalSender0 const *SenderQuitGame ();
 
-    inline void SetInventoryOwnerShip (PlayerShip *const inventory_owner_ship)
+    void SetInventoryOwnerShip (PlayerShip *inventory_owner_ship)
     {
         m_inventory_owner_ship = inventory_owner_ship;
         UpdatePanelState();
     }
-    void SetItemStatus (
-        ItemType item_type,
-        Uint8 upgrade_level,
-        InventoryButton::Status status);
 
     void UpdatePanelState ();
 
@@ -65,13 +61,13 @@ protected:
 
 private:
 
-    void CreateInventoryButtonColumn (ItemType item_type, Layout *parent);
-    void ConnectInventoryButton (InventoryButton *inventory_button);
+    void CreateInventoryButtonAndFriends (ItemType item_type, ContainerWidget *parent);
+    void ConnectInventoryButton (InventoryButton &inventory_button, Label &upgrade_indication_label, ValueLabel<Uint32> &upgrade_level_label);
 
-    void AttemptToBuyItem (ItemType item_type, Uint8 upgrade_level);
+    void AttemptToUpgradeItem (ItemType item_type, Uint8 upgrade_level);
     void EquipItem (ItemType item_type, Uint8 upgrade_level);
     void ShowPrice (ItemType item_type, Uint8 upgrade_level);
-    void HidePrice (ItemType item_type, Uint8 upgrade_level);
+    void HidePrice (ItemType item_type);
 
     void Deactivate ();
     void ActivateControlsDialog ();
@@ -79,8 +75,14 @@ private:
 
     PlayerShip *m_inventory_owner_ship;
 
-    InventoryButton *m_inventory_button[IT_COUNT][UPGRADE_LEVEL_COUNT];
-    // TODO: misc upgrade buttons
+    InventoryButton *m_inventory_button[IT_COUNT];
+    ValueLabel<Uint32> *m_upgrade_level_label[IT_COUNT];
+    Label *m_upgrade_indication_label[IT_COUNT];
+    ValueLabel<Uint32> *m_game_tip_header_label;
+    Label *m_game_tip_text_label;
+    Label *m_game_tip_picture_label;
+    Button *m_game_tip_previous_button;
+    Button *m_game_tip_next_button;
 
     ValueLabel<Uint32> *m_mineral_cost_label[MINERAL_COUNT];
     Label *m_mineral_icon_label[MINERAL_COUNT];
@@ -94,6 +96,8 @@ private:
     ItemType m_currently_shown_price_item_type;
     Uint8 m_currently_shown_price_upgrade_level;
 
+    Resource<Parse::DataFile::Structure> m_game_tip_data;
+
     ControlsPanel *m_controls_panel;
 
     static Color const ms_affordable_mineral_color_mask;
@@ -101,10 +105,10 @@ private:
 
     SignalSender0 m_sender_deactivate;
 
-    SignalReceiver2<ItemType, Uint8> m_receiver_attempt_to_buy_item;
+    SignalReceiver2<ItemType, Uint8> m_receiver_attempt_to_upgrade_item;
     SignalReceiver2<ItemType, Uint8> m_receiver_equip_item;
     SignalReceiver2<ItemType, Uint8> m_receiver_show_price;
-    SignalReceiver2<ItemType, Uint8> m_receiver_hide_price;
+    SignalReceiver1<ItemType> m_receiver_hide_price;
 
     SignalReceiver0 m_internal_receiver_deactivate;
     SignalReceiver0 m_internal_receiver_activate_controls_dialog;

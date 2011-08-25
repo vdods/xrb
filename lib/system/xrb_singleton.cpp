@@ -33,29 +33,29 @@ void Initialize (PalFactory CreatePal, char const *const key_map_name)
     fprintf(stderr, "Singleton::Initialize();\n");
     fprintf(stderr, "    sizeof(bool) = %d\n", Sint32(sizeof(bool)));
 
-    ASSERT1(g_pal == NULL);
-    ASSERT1(g_inputstate == NULL);
-    ASSERT1(g_key_map == NULL);
-    ASSERT1(g_resource_library == NULL);
+    ASSERT0(g_pal == NULL);
+    ASSERT0(g_inputstate == NULL);
+    ASSERT0(g_key_map == NULL);
 
     g_pal = CreatePal();
     g_inputstate = new Xrb::InputState();
     g_key_map = Xrb::KeyMap::Create(key_map_name);
-    g_resource_library = new Xrb::ResourceLibrary();
+    if (g_resource_library == NULL)
+        g_resource_library = new Xrb::ResourceLibrary();
 
     ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
 //     fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
     ASSERT0(g_inputstate != NULL && "failed to create InputState");
     ASSERT0(g_key_map != NULL && "failed to create KeyMap");
-    ASSERT0(g_resource_library != NULL && "failed to created ResourceLibrary");
+    ASSERT0(g_resource_library != NULL && "failed to create ResourceLibrary");
 }
 
 void Shutdown ()
 {
-    ASSERT1(g_pal != NULL);
-    ASSERT1(g_inputstate != NULL);
-    ASSERT1(g_key_map != NULL);
-    ASSERT1(g_resource_library != NULL);
+    ASSERT0(g_pal != NULL);
+    ASSERT0(g_inputstate != NULL);
+    ASSERT0(g_key_map != NULL);
+    ASSERT0(g_resource_library != NULL);
 
     fprintf(stderr, "Singleton::Shutdown();\n");
 
@@ -67,6 +67,13 @@ void Shutdown ()
     DeleteAndNullify(g_resource_library);
     DeleteAndNullify(g_key_map);
     DeleteAndNullify(g_pal);
+}
+
+void InitializeResourceLibrary ()
+{
+    ASSERT0(g_resource_library == NULL);
+    g_resource_library = new Xrb::ResourceLibrary();
+    ASSERT0(g_resource_library != NULL && "failed to create ResourceLibrary");
 }
 
 void InitializeGl ()

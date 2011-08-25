@@ -221,6 +221,7 @@ lib_libxrb_la_SOURCES = \
     lib/math/xrb_transform2.cpp \
     lib/math/xrb_vector.cpp \
     \
+    lib/parse/xrb_parse_datafile.cpp \
     lib/parse/xrb_parse_datafile_parser.cpp \
     lib/parse/xrb_parse_datafile_parser.trison \
     lib/parse/xrb_parse_datafile_scanner.cpp \
@@ -349,6 +350,7 @@ include_HEADERS = \
     lib/math/xrb_transform2.hpp \
     lib/math/xrb_vector.hpp \
     \
+    lib/parse/xrb_parse_datafile.hpp \
     lib/parse/xrb_parse_datafile_parser.hpp \
     lib/parse/xrb_parse_datafile_scanner.hpp \
     lib/parse/xrb_parse_datafile_value.hpp \

@@ -84,6 +84,7 @@ public:
         return m_mineral_inventory[mineral_type];
     }
     Uint32 OptionInventory () const { return m_option_inventory; }
+    Uint8 HighestUpgradeLevelInInventory (ItemType item_type) const;
     bool IsItemEquipped (ItemType item_type, Uint8 upgrade_level) const;
     bool IsItemInInventory (ItemType item_type, Uint8 upgrade_level) const;
     bool IsItemAffordable (ItemType item_type, Uint8 upgrade_level) const;

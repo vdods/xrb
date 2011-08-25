@@ -12,31 +12,31 @@
 
 #include "dis_controlspanel.hpp"
 #include "dis_playership.hpp"
+#include "xrb_cellpaddingwidget.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_layout.hpp"
 #include "xrb_math.hpp"
+#include "xrb_parse_datafile.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_spacerwidget.hpp"
 #include "xrb_valuelabel.hpp"
 #include "xrb_widgetbackground.hpp"
+#include "xrb_widgetstack.hpp"
 
 using namespace Xrb;
 
 extern Dis::Config g_config;
 
-namespace Dis
-{
+namespace Dis {
 
 Color const InventoryPanel::ms_affordable_mineral_color_mask(1.0f, 1.0f, 1.0f, 1.0f);
 Color const InventoryPanel::ms_not_affordable_mineral_color_mask(1.0f, 0.3f, 0.0f, 1.0f);
 
-InventoryPanel::InventoryPanel (
-    ContainerWidget *const parent,
-    std::string const &name)
+InventoryPanel::InventoryPanel (ContainerWidget *parent, std::string const &name)
     :
     ModalWidget(parent, name),
     m_sender_deactivate(this),
-    m_receiver_attempt_to_buy_item(&InventoryPanel::AttemptToBuyItem, this),
+    m_receiver_attempt_to_upgrade_item(&InventoryPanel::AttemptToUpgradeItem, this),
     m_receiver_equip_item(&InventoryPanel::EquipItem, this),
     m_receiver_show_price(&InventoryPanel::ShowPrice, this),
     m_receiver_hide_price(&InventoryPanel::HidePrice, this),
@@ -49,116 +49,120 @@ InventoryPanel::InventoryPanel (
     m_inventory_owner_ship = NULL;
     m_controls_panel = NULL;
 
-    Label *l;
-    Float const grid_label_font_height_ratio = 0.018f;
+    m_game_tip_data = Parse::DataFile::Load("resources/game_tip.data");
+    // TODO: maybe check if the load failed if so, put an error message in the tip data
+
+//     static Float const s_grid_label_font_height_ratio = 0.018f;
 
     // a vertical layout to hold the sublayouts
     Layout *main_layout = new Layout(VERTICAL, this, "main InventoryPanel layout");
     main_layout->SetIsUsingZeroedFrameMargins(false);
     SetMainWidget(main_layout);
 
-    // a horizontal layout to hold the sublayouts for each of
-    // weapons/tractor/engine/shield/armor/power
-    Layout *penultimate_layout = new Layout(HORIZONTAL, main_layout, "penultimate InventoryPanel layout");
+    {
+        Label *label = new Label("INVENTORY", main_layout);
+        label->SetIsHeightFixedToTextHeight(true);
+    }
 
-    // weapons layout
-    Layout *weapons_layout = new Layout(VERTICAL, penultimate_layout, "weapons layout");
-    l = new Label("WEAPON", weapons_layout, "weapon layout label");
-    l->SetFontHeightRatio(grid_label_font_height_ratio);
-    l->SetIsHeightFixedToTextHeight(true);
-    Layout *weapons_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, weapons_layout, "weapons grid-layout");
-    // this doesn't include IT_WEAPON_TRACTOR
-    for (Uint8 item_type = IT_WEAPON_LOWEST; item_type < IT_WEAPON_HIGHEST; ++item_type)
-        CreateInventoryButtonColumn(static_cast<ItemType>(item_type), weapons_grid_layout);
+    {
+        Layout *tractor_and_weapons_layout = new Layout(HORIZONTAL, main_layout, "tractor and weapons layout");
 
-    // tractor layout
-    Layout *tractor_layout = new Layout(VERTICAL, penultimate_layout, "tractor layout");
-    l = new Label("TRACTOR", tractor_layout, "tractor layout label");
-    l->SetFontHeightRatio(grid_label_font_height_ratio);
-    l->SetIsHeightFixedToTextHeight(true);
-    Layout *tractor_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, tractor_layout, "tractor grid-layout");
-    CreateInventoryButtonColumn(IT_WEAPON_TRACTOR, tractor_grid_layout);
+        // weapons
+        ASSERT0(IT_WEAPON_LOWEST == 0);
+        for (Uint32 i = IT_WEAPON_LOWEST; i <= IT_WEAPON_HIGHEST; ++i)
+            CreateInventoryButtonAndFriends(static_cast<ItemType>(i), tractor_and_weapons_layout);
+    }
 
-    // engine layout
-    Layout *engine_layout = new Layout(VERTICAL, penultimate_layout, "engine layout");
-    l = new Label("ENGINE", engine_layout, "engine layout label");
-    l->SetFontHeightRatio(grid_label_font_height_ratio);
-    l->SetIsHeightFixedToTextHeight(true);
-    Layout *engine_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, engine_layout, "engine grid-layout");
-    CreateInventoryButtonColumn(IT_ENGINE, engine_grid_layout);
+    {
+        Layout *other_items_and_game_tip_layout = new Layout(HORIZONTAL, main_layout, "other items and game tip layout");
 
-    // armor layout
-    Layout *armor_layout = new Layout(VERTICAL, penultimate_layout, "armor layout");
-    l = new Label("ARMOR", armor_layout, "armor layout label");
-    l->SetFontHeightRatio(grid_label_font_height_ratio);
-    l->SetIsHeightFixedToTextHeight(true);
-    Layout *armor_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, armor_layout, "armor grid-layout");
-    CreateInventoryButtonColumn(IT_ARMOR, armor_grid_layout);
+        // other items
+        for (Uint32 i = IT_WEAPON_HIGHEST+1; i < IT_COUNT; ++i)
+            CreateInventoryButtonAndFriends(static_cast<ItemType>(i), other_items_and_game_tip_layout);
 
-    // shield layout
-    Layout *shield_layout = new Layout(VERTICAL, penultimate_layout, "shield layout");
-    l = new Label("SHIELD", shield_layout, "shield layout label");
-    l->SetFontHeightRatio(grid_label_font_height_ratio);
-    l->SetIsHeightFixedToTextHeight(true);
-    Layout *shield_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, shield_layout, "shield grid-layout");
-    CreateInventoryButtonColumn(IT_SHIELD, shield_grid_layout);
+        // game tip
+        {
+            Layout *l = new Layout(VERTICAL, other_items_and_game_tip_layout);
+            Layout *header = new Layout(HORIZONTAL, l);
+            m_game_tip_header_label = new ValueLabel<Uint32>(FORMAT("GAME TIP (%u of " << m_game_tip_data->ValueCount() << ')'), Util::TextToUint<Uint32>, header);
+//             m_game_tip_header_label->SetFontHeightRatio(s_grid_label_font_height_ratio);
+            m_game_tip_header_label->SetIsHeightFixedToTextHeight(true);
+            m_game_tip_header_label->SetValue(1); // NOTE: TEMP
+            // TODO: hide-game-tips button
 
-    // power layout
-    Layout *power_layout = new Layout(VERTICAL, penultimate_layout, "power layout");
-    l = new Label("POWER", power_layout, "power layout label");
-    l->SetFontHeightRatio(grid_label_font_height_ratio);
-    l->SetIsHeightFixedToTextHeight(true);
-    Layout *power_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, power_layout, "power grid-layout");
-    CreateInventoryButtonColumn(IT_POWER_GENERATOR, power_grid_layout);
+            Layout *mid = new Layout(HORIZONTAL, l);
+            m_game_tip_text_label = new Label("X", mid);
+//             m_game_tip_text_label->SetFontHeightRatio(s_grid_label_font_height_ratio);
+            m_game_tip_picture_label = new Label(Resource<GlTexture>(), mid);
+
+            Layout *footer = new Layout(HORIZONTAL, l);
+            m_game_tip_previous_button = new Button("PREVIOUS TIP", footer);
+//             m_game_tip_previous_button->SetFontHeightRatio(s_grid_label_font_height_ratio);
+            m_game_tip_previous_button->SetIsHeightFixedToTextHeight(true);
+            m_game_tip_next_button = new Button("NEXT TIP", footer);
+//             m_game_tip_next_button->SetFontHeightRatio(s_grid_label_font_height_ratio);
+            m_game_tip_next_button->SetIsHeightFixedToTextHeight(true);
+        }
+    }
 
     // a horizontal layout for the price display
-    Layout *price_layout = new Layout(HORIZONTAL, main_layout, "InventoryPanel price layout");
-
-    for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
     {
-        m_mineral_cost_label[mineral_index] =
-            new ValueLabel<Uint32>(
-                "%u",
-                Util::TextToUint<Uint32>,
-                price_layout);
-        m_mineral_cost_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
-        m_mineral_cost_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
-        m_mineral_cost_label[mineral_index]->SetValue(0);
-        m_mineral_cost_label[mineral_index]->Disable();
+        Layout *price_layout = new Layout(HORIZONTAL, main_layout, "InventoryPanel price layout");
 
-        m_mineral_icon_label[mineral_index] =
-            new Label(
-                GlTexture::Load(Item::MineralSpritePath(mineral_index)),
-                price_layout);
-        m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->Height());
-        m_mineral_icon_label[mineral_index]->FixHeight(m_mineral_cost_label[mineral_index]->Height());
-        m_mineral_icon_label[mineral_index]->Disable();
+        new SpacerWidget(price_layout);
+
+        Label *l = new Label("UPGRADE COST", price_layout);
+        l->SetIsHeightFixedToTextHeight(true);
+
+        for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
+        {
+            m_mineral_cost_label[mineral_index] =
+                new ValueLabel<Uint32>(
+                    "%u",
+                    Util::TextToUint<Uint32>,
+                    price_layout);
+            m_mineral_cost_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
+            m_mineral_cost_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
+            m_mineral_cost_label[mineral_index]->SetValue(0);
+            m_mineral_cost_label[mineral_index]->Disable();
+
+            m_mineral_icon_label[mineral_index] =
+                new Label(
+                    GlTexture::Load(Item::MineralSpritePath(mineral_index)),
+                    price_layout);
+            m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->Height());
+            m_mineral_icon_label[mineral_index]->FixHeight(m_mineral_cost_label[mineral_index]->Height());
+            m_mineral_icon_label[mineral_index]->Disable();
+        }
+
+        new SpacerWidget(price_layout);
+
+        m_prices_are_shown = false;
     }
-    // a spacer to make things look even
-    new SpacerWidget(price_layout);
-    m_prices_are_shown = false;
 
-    Layout *menu_button_layout = new Layout(HORIZONTAL, main_layout, "menu button layout");
+    {
+        Layout *menu_button_layout = new Layout(HORIZONTAL, main_layout, "menu button layout");
 
-    m_return_button = new Button("RETURN", menu_button_layout, "return button");
-    m_return_button->SetIsHeightFixedToTextHeight(true);
+        m_return_button = new Button("RETURN", menu_button_layout, "return button");
+        m_return_button->SetIsHeightFixedToTextHeight(true);
 
-    SignalHandler::Connect0(
-        m_return_button->SenderReleased(),
-        &m_internal_receiver_deactivate);
+        SignalHandler::Connect0(
+            m_return_button->SenderReleased(),
+            &m_internal_receiver_deactivate);
 
-    m_controls_button = new Button("CONTROLS", menu_button_layout, "controls button");
-    m_controls_button->SetIsHeightFixedToTextHeight(true);
+        m_controls_button = new Button("CONTROLS", menu_button_layout, "controls button");
+        m_controls_button->SetIsHeightFixedToTextHeight(true);
 
-    SignalHandler::Connect0(
-        m_controls_button->SenderReleased(),
-        &m_internal_receiver_activate_controls_dialog);
+        SignalHandler::Connect0(
+            m_controls_button->SenderReleased(),
+            &m_internal_receiver_activate_controls_dialog);
 
-    m_end_button = new Button("END", menu_button_layout, "end button");
-    m_end_button->SetIsHeightFixedToTextHeight(true);
+        m_end_button = new Button("END", menu_button_layout, "end button");
+        m_end_button->SetIsHeightFixedToTextHeight(true);
 
-    m_quit_button = new Button("QUIT", menu_button_layout, "quit button");
-    m_quit_button->SetIsHeightFixedToTextHeight(true);
+        m_quit_button = new Button("QUIT", menu_button_layout, "quit button");
+        m_quit_button->SetIsHeightFixedToTextHeight(true);
+    }
 
     SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 1.0f)));
 }
@@ -175,41 +179,28 @@ SignalSender0 const *InventoryPanel::SenderQuitGame ()
     return m_quit_button->SenderReleased();
 }
 
-void InventoryPanel::SetItemStatus (
-    ItemType const item_type,
-    Uint8 const upgrade_level,
-    InventoryButton::Status const status)
-{
-    ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
-
-    m_inventory_button[item_type][upgrade_level]->SetStatus(status);
-}
-
 void InventoryPanel::UpdatePanelState ()
 {
     if (m_inventory_owner_ship != NULL)
     {
         for (Uint32 item = 0; item < IT_COUNT; ++item)
         {
-            for (Uint32 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
-            {
-                ASSERT1(m_inventory_button[item][level] != NULL);
+            ASSERT1(m_inventory_button[item] != NULL);
 
-                InventoryButton::Status status;
+            Uint8 owned_upgrade_level = m_inventory_owner_ship->HighestUpgradeLevelInInventory(static_cast<ItemType>(item));
+            ASSERT1(Uint8(owned_upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
+            bool is_equipped = false;
+            if (Uint8(owned_upgrade_level+1) > 0) // item is owned
+                is_equipped = m_inventory_owner_ship->IsItemEquipped(static_cast<ItemType>(item), owned_upgrade_level);
+            else // item is not owned
+                owned_upgrade_level = Uint8(-1);
+            bool is_affordable = false;
+            if (Uint8(owned_upgrade_level+1) != UPGRADE_LEVEL_COUNT)
+                is_affordable = m_inventory_owner_ship->IsItemAffordable(static_cast<ItemType>(item), Uint8(owned_upgrade_level+1));
 
-                if (m_inventory_owner_ship->IsItemEquipped(static_cast<ItemType>(item), level))
-                    status = InventoryButton::S_EQUIPPED;
-                else if (m_inventory_owner_ship->IsItemInInventory(static_cast<ItemType>(item), level))
-                    status = InventoryButton::S_OWNED;
-                else if (m_inventory_owner_ship->IsItemAffordable(static_cast<ItemType>(item), level))
-                    status = InventoryButton::S_AFFORDABLE;
-                else
-                    status = InventoryButton::S_NOT_AFFORDABLE;
-
-                m_inventory_button[item][level]->Enable();
-                m_inventory_button[item][level]->SetStatus(status);
-            }
+            m_inventory_button[item]->SetProperties(is_equipped, owned_upgrade_level, is_affordable);
+            m_upgrade_indication_label[item]->SetText(m_inventory_button[item]->UpgradeIndication());
+            m_upgrade_level_label[item]->SetValue(m_inventory_button[item]->UpgradeLevelNumeral());
         }
 
         if (m_prices_are_shown)
@@ -252,20 +243,19 @@ void InventoryPanel::UpdatePanelState ()
     {
         for (Uint32 i = 0; i < IT_COUNT; ++i)
         {
-            for (Uint32 j = UPGRADE_LEVEL_COUNT-1; j < UPGRADE_LEVEL_COUNT; --j)
-            {
-                ASSERT1(m_inventory_button[i][j] != NULL);
-                m_inventory_button[i][j]->Disable();
-                m_inventory_button[i][j]->SetStatus(InventoryButton::S_NOT_AFFORDABLE);
-            }
+            ASSERT1(m_inventory_button[i] != NULL);
+            m_inventory_button[i]->SetProperties(false, Uint8(-1), false);
         }
 
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+        {
+            ASSERT1(m_mineral_cost_label[i] != NULL);
             m_mineral_cost_label[i]->ColorMask() = ms_affordable_mineral_color_mask;
+        }
     }
 }
 
-bool InventoryPanel::ProcessKeyEvent (EventKey const *const e)
+bool InventoryPanel::ProcessKeyEvent (EventKey const *e)
 {
     if (e->IsKeyDownEvent() && e->KeyCode() == Key::ESCAPE)
     {
@@ -276,48 +266,86 @@ bool InventoryPanel::ProcessKeyEvent (EventKey const *const e)
         return false;
 }
 
-void InventoryPanel::CreateInventoryButtonColumn (ItemType item_type, Layout *parent)
-{
-    ASSERT1(parent != NULL);
-    for (Uint8 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
-    {
-        m_inventory_button[item_type][level] =
-            new InventoryButton(
-                static_cast<ItemType>(item_type),
-                level,
-                parent);
-        m_inventory_button[item_type][level]->FixSizeRatios(FloatVector2(0.07f, 0.07f));
-        ConnectInventoryButton(m_inventory_button[item_type][level]);
-    }
-}
-
-void InventoryPanel::ConnectInventoryButton (InventoryButton *const inventory_button)
-{
-    ASSERT1(inventory_button != NULL);
-    SignalHandler::Connect2(
-        inventory_button->SenderAttemptToBuyItem(),
-        &m_receiver_attempt_to_buy_item);
-    SignalHandler::Connect2(
-        inventory_button->SenderEquipItem(),
-        &m_receiver_equip_item);
-    SignalHandler::Connect2(
-        inventory_button->SenderShowPrice(),
-        &m_receiver_show_price);
-    SignalHandler::Connect2(
-        inventory_button->SenderHidePrice(),
-        &m_receiver_hide_price);
-}
-
-void InventoryPanel::AttemptToBuyItem (ItemType const item_type, Uint8 const upgrade_level)
+void InventoryPanel::CreateInventoryButtonAndFriends (ItemType item_type, ContainerWidget *parent)
 {
     ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(parent != NULL);
 
-    if (m_inventory_owner_ship->BuyItem(item_type, upgrade_level))
+    static std::string const s_item_name[IT_COUNT] =
+    {
+        "TRACTOR\nBEAM",                    // IT_WEAPON_TRACTOR = 0,
+        "PLASMA\nCANNON",                   // IT_WEAPON_PEA_SHOOTER,
+        "LASER\nDRILL",                     // IT_WEAPON_LASER,
+        "FLAME\nTHROWER",                   // IT_WEAPON_FLAME_THROWER,
+        "GAUSS\nGUN",                       // IT_WEAPON_GAUSS_GUN,
+        "GRENADE\nLAUNCHER",                // IT_WEAPON_GRENADE_LAUNCHER,
+        "MISSILE\nLAUNCHER",                // IT_WEAPON_MISSILE_LAUNCHER,
+        "ENGINE",                           // IT_ENGINE,
+        "ARMOR",                            // IT_ARMOR,
+        "SHIELD",                           // IT_SHIELD,
+        "POWER",                            // IT_POWER_GENERATOR,
+    };
+    static FloatVector2 const s_inventory_button_size_ratios(0.14f, 0.14f);
+
+    Layout *l = new Layout(VERTICAL, parent);
+    Label *label = new Label(s_item_name[item_type], l);
+    label->SetIsHeightFixedToTextHeight(true);
+
+    WidgetStack *ws = new WidgetStack(l);
+
+    // bottom of the stack
+    m_inventory_button[item_type] = new InventoryButton(item_type, ws);
+    m_inventory_button[item_type]->FixSizeRatios(s_inventory_button_size_ratios);
+    // middle of the stack
+    m_upgrade_indication_label[item_type] = new Label("X", ws);
+    m_upgrade_indication_label[item_type]->SetFontHeightRatio(0.25f * s_inventory_button_size_ratios[Dim::Y]);
+    m_upgrade_indication_label[item_type]->SetAlignment(Alignment2(CENTER, CENTER));
+    m_upgrade_indication_label[item_type]->SetTextColor(Color(0.5f, 0.5f, 0.5f, 0.6f));
+    // top of the stack
+    CellPaddingWidget *cpw = new CellPaddingWidget(ws);
+    cpw->SetAlignment(Alignment2(LEFT, BOTTOM));
+    cpw->SetFrameMarginRatios(0.1f * s_inventory_button_size_ratios);
+    m_upgrade_level_label[item_type] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, cpw);
+//     m_upgrade_level_label[item_type]->FixSizeRatios(0.3f * s_inventory_button_size_ratios);
+    m_upgrade_level_label[item_type]->FixWidth(m_upgrade_level_label[item_type]->Height());
+    m_upgrade_level_label[item_type]->SetBackground(new WidgetBackgroundTextured("resources/radiobutton_black.png"));
+
+    ConnectInventoryButton(*m_inventory_button[item_type], *(m_upgrade_indication_label[item_type]), *(m_upgrade_level_label[item_type]));
+}
+
+void InventoryPanel::ConnectInventoryButton (InventoryButton &inventory_button, Label &upgrade_indication_label, ValueLabel<Uint32> &upgrade_level_label)
+{
+    SignalHandler::Connect2(
+        inventory_button.SenderAttemptToUpgradeItem(),
+        &m_receiver_attempt_to_upgrade_item);
+    SignalHandler::Connect2(
+        inventory_button.SenderEquipItem(),
+        &m_receiver_equip_item);
+    SignalHandler::Connect2(
+        inventory_button.SenderShowPrice(),
+        &m_receiver_show_price);
+    SignalHandler::Connect1(
+        inventory_button.SenderHidePrice(),
+        &m_receiver_hide_price);
+
+    SignalHandler::Connect1(
+        inventory_button.SenderUpgradeIndication(),
+        upgrade_indication_label.ReceiverSetTextV());
+    SignalHandler::Connect1(
+        inventory_button.SenderUpgradeLevelNumeral(),
+        upgrade_level_label.ReceiverSetValue());
+}
+
+void InventoryPanel::AttemptToUpgradeItem (ItemType item_type, Uint8 upgrade_level)
+{
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(Uint8(upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
+
+    if (m_inventory_owner_ship->BuyItem(item_type, Uint8(upgrade_level+1)))
         UpdatePanelState();
 }
 
-void InventoryPanel::EquipItem (ItemType const item_type, Uint8 const upgrade_level)
+void InventoryPanel::EquipItem (ItemType item_type, Uint8 upgrade_level)
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
@@ -326,13 +354,12 @@ void InventoryPanel::EquipItem (ItemType const item_type, Uint8 const upgrade_le
     UpdatePanelState();
 }
 
-void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_level)
+void InventoryPanel::ShowPrice (ItemType item_type, Uint8 upgrade_level)
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(!m_prices_are_shown);
 
-    m_prices_are_shown = true;
     m_currently_shown_price_item_type = item_type;
     m_currently_shown_price_upgrade_level = upgrade_level;
 
@@ -372,13 +399,9 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
     m_prices_are_shown = true;
 }
 
-void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_level)
+void InventoryPanel::HidePrice (ItemType item_type)
 {
     ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
-    ASSERT1(m_prices_are_shown);
-    ASSERT1(m_currently_shown_price_item_type == item_type);
-    ASSERT1(m_currently_shown_price_upgrade_level == upgrade_level);
 
     // clear all the prices and disable the widgets
     for (Uint8 i = 0; i < MINERAL_COUNT; ++i)

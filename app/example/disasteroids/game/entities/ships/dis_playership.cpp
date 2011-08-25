@@ -159,10 +159,24 @@ Float PlayerShip::WeaponStatus () const
            0.0f;
 }
 
+Uint8 PlayerShip::HighestUpgradeLevelInInventory (ItemType item_type) const
+{
+    ASSERT1(item_type < IT_COUNT);
+
+    for (Uint8 i = UPGRADE_LEVEL_COUNT-1; i < UPGRADE_LEVEL_COUNT; --i)
+        if (m_item_inventory[item_type][i] != NULL)
+            return i;
+
+    return Uint8(-1); // indicates item not owned
+}
+
 bool PlayerShip::IsItemEquipped (ItemType item_type, Uint8 upgrade_level) const
 {
     ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(Uint8(upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
+
+    if (Uint8(upgrade_level+1) == 0)
+        return false;
 
     if (item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST)
         return (MainWeapon() != NULL &&
@@ -200,9 +214,12 @@ bool PlayerShip::IsItemEquipped (ItemType item_type, Uint8 upgrade_level) const
 bool PlayerShip::IsItemInInventory (ItemType item_type, Uint8 upgrade_level) const
 {
     ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(Uint8(upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
 
-    return m_item_inventory[item_type][upgrade_level] != NULL;
+    if (Uint8(upgrade_level+1) == 0)
+        return false;
+    else
+        return m_item_inventory[item_type][upgrade_level] != NULL;
 }
 
 bool PlayerShip::IsItemAffordable (ItemType item_type, Uint8 upgrade_level) const

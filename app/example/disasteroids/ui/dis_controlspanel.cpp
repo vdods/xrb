@@ -124,7 +124,10 @@ ControlsPanel::ControlsPanel (ContainerWidget *parent)
             l->SetAlignment(Dim::X, RIGHT);
             m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_controls_layout);
             m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
-            m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
+            m_input_action_button[i]->SetIsMaxWidthFixedToTextWidth(false);
+//             m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
+            m_input_action_button[i]->SetSizeProperty(SizeProperties::MIN, Dim::X, 10*m_input_action_button[i]->GetFont()->PixelHeight());
+            m_input_action_button[i]->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
         }
         // right column
         input_controls_layout = new Layout(ROW, 2, two_columns_layout);
@@ -134,7 +137,10 @@ ControlsPanel::ControlsPanel (ContainerWidget *parent)
             l->SetAlignment(Dim::X, RIGHT);
             m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_controls_layout);
             m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
-            m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
+            m_input_action_button[i]->SetIsMaxWidthFixedToTextWidth(false);
+//             m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
+            m_input_action_button[i]->SetSizeProperty(SizeProperties::MIN, Dim::X, 10*m_input_action_button[i]->GetFont()->PixelHeight());
+            m_input_action_button[i]->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
         }
 
         new SpacerWidget(right_side_layout);

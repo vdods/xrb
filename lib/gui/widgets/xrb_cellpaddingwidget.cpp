@@ -12,18 +12,19 @@
 
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-CellPaddingWidget::CellPaddingWidget (
-    ContainerWidget *const parent,
-    std::string const &name)
+CellPaddingWidget::CellPaddingWidget (ContainerWidget *parent, std::string const &name)
     :
     ContainerWidget(parent, name)
 {
     m_accepts_focus = false;
     m_accepts_mouseover = true;
     m_alignment = Alignment2(CENTER, CENTER);
+
+    // there should be no frame margins for CellPaddingWidget, since it's
+    // more of a utility ContainerWidget.
+    SetFrameMargins(ScreenCoordVector2::ms_zero);
 
     CellPaddingWidget::UpdateRenderBackground();
 
@@ -90,9 +91,7 @@ ScreenCoordVector2 CellPaddingWidget::ContentsMaxSize () const
     return m_contents_size_properties.m_max_size;
 }
 
-void CellPaddingWidget::SetAlignment (
-    Uint32 const index,
-    Alignment const alignment)
+void CellPaddingWidget::SetAlignment (Uint32 index, Alignment alignment)
 {
     ASSERT1(index <= 1);
     ASSERT1(alignment != SPACED);
@@ -103,8 +102,7 @@ void CellPaddingWidget::SetAlignment (
     }
 }
 
-void CellPaddingWidget::SetAlignment (
-    Alignment2 const &alignment)
+void CellPaddingWidget::SetAlignment (Alignment2 const &alignment)
 {
     ASSERT1(alignment[Dim::X] != SPACED);
     ASSERT1(alignment[Dim::Y] != SPACED);
@@ -115,10 +113,7 @@ void CellPaddingWidget::SetAlignment (
     }
 }
 
-void CellPaddingWidget::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    bool const value)
+void CellPaddingWidget::SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value)
 {
     ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
@@ -130,9 +125,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void CellPaddingWidget::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Bool2 const &value)
+void CellPaddingWidget::SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value)
 {
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled = value;
@@ -143,10 +136,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void CellPaddingWidget::SetSizeProperty (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    ScreenCoord const value)
+void CellPaddingWidget::SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value)
 {
     ASSERT1(component <= 1);
     ASSERT1(value >= 0);
@@ -159,9 +149,7 @@ void CellPaddingWidget::SetSizeProperty (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void CellPaddingWidget::SetSizeProperty (
-    SizeProperties::Property const property,
-    ScreenCoordVector2 const &value)
+void CellPaddingWidget::SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value)
 {
     ASSERT1(value[Dim::X] >= 0);
     ASSERT1(value[Dim::Y] >= 0);
@@ -174,8 +162,7 @@ void CellPaddingWidget::SetSizeProperty (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-ScreenCoordVector2 CellPaddingWidget::Resize (
-    ScreenCoordVector2 const &size)
+ScreenCoordVector2 CellPaddingWidget::Resize (ScreenCoordVector2 const &size)
 {
     ContainerWidget::Resize(size);
 
@@ -186,8 +173,8 @@ ScreenCoordVector2 CellPaddingWidget::Resize (
         // only update size stuff if not blocked
         if (ChildResizeBlockerCount() == 0)
         {
-            // attempt to resize the child to the current size
-            child->Resize(size);
+            // attempt to resize the child to the current ContentsRect() size
+            child->Resize(ContentsRect().Size());
             // put the child in its place!
             PositionSingleChildWidget();
         }
@@ -198,7 +185,7 @@ ScreenCoordVector2 CellPaddingWidget::Resize (
     return Size();
 }
 
-void CellPaddingWidget::AttachChild (Widget *const child)
+void CellPaddingWidget::AttachChild (Widget *child)
 {
     // make sure there's not already a child widget, because
     // this widget can have only zero or one.
@@ -222,7 +209,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void CellPaddingWidget::DetachChild (Widget *const child)
+void CellPaddingWidget::DetachChild (Widget *child)
 {
     // make sure there is already a single child widget
     ASSERT0(SingleChildWidget() != NULL);
@@ -245,7 +232,7 @@ void CellPaddingWidget::DetachChild (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
+void CellPaddingWidget::ChildSizePropertiesChanged (Widget *child)
 {
     ASSERT1(child == SingleChildWidget());
     // size a child's size properties have changed, the
@@ -261,6 +248,7 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
 //         // propagate the call up to this widget's parent
 //         ParentChildSizePropertiesUpdate(false);
     }
+    else
         IndicateChildResizeWasBlocked();
 }
 
@@ -270,26 +258,28 @@ void CellPaddingWidget::PositionSingleChildWidget ()
     if (child == NULL)
         return;
 
+    // the contents rect will be used in the size calculations
+    ScreenCoordRect contents_rect(ContentsRect());
     // get the amount of space left over
-    ScreenCoordVector2 extra_space(Size() - child->Size());
+    ScreenCoordVector2 extra_space(contents_rect.Size() - child->Size());
     // calculate the child's offset from the parent, given its alignment
-    ScreenCoordVector2 child_position_offset;
+    ScreenCoordVector2 child_position_offset(contents_rect.BottomLeft() - ScreenRect().BottomLeft());
     for (Uint8 i = 0; i < 2; ++i)
     {
         switch (m_alignment.m[i])
         {
-            case TOP:
+            case BOTTOM:
             case LEFT:
-                child_position_offset.m[i] = 0;
+                child_position_offset.m[i] += 0;
                 break;
 
             case CENTER:
-                child_position_offset.m[i] = extra_space.m[i] / 2;
+                child_position_offset.m[i] += extra_space.m[i] / 2;
                 break;
 
-            case BOTTOM:
+            case TOP:
             case RIGHT:
-                child_position_offset.m[i] = extra_space.m[i];
+                child_position_offset.m[i] += extra_space.m[i];
                 break;
 
             case SPACED:

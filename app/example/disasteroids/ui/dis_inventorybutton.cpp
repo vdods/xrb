@@ -14,160 +14,72 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Float const InventoryButton::ms_unequipped_size_ratio = 0.75f;
 Float const InventoryButton::ms_size_parameter_change_rate = 4.0f;
 
-InventoryButton::InventoryButton (
-    ItemType const item_type,
-    Uint8 const upgrade_level,
-    ContainerWidget *const parent,
-    std::string const &name)
+InventoryButton::InventoryButton (ItemType item_type, ContainerWidget *parent, std::string const &name)
     :
-    Button(ButtonTexture(item_type, upgrade_level), parent, name),
+    Button(ButtonTexture(item_type), parent, name),
     m_item_type(item_type),
-    m_upgrade_level(upgrade_level),
-    m_sender_attempt_to_buy_item(this),
+    m_sender_attempt_to_upgrade_item(this),
     m_sender_equip_item(this),
     m_sender_show_price(this),
-    m_sender_hide_price(this)
+    m_sender_hide_price(this),
+    m_sender_upgrade_indication(this),
+    m_sender_upgrade_level_numeral(this)
 {
-    ASSERT1(m_item_type < IT_COUNT);
-    ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT);
+    SetProperties(false, Uint8(-1), false);
 
     // this is intentionally close to, but above 0.0f
     m_current_size_parameter = 0.01f;
-    SetStatus(S_NOT_AFFORDABLE);
     SetContentMargins(-FrameMargins());
-
     UpdateRenderBackground();
 }
 
-Resource<GlTexture> InventoryButton::ButtonTexture (
-    ItemType const item_type,
-    Uint8 const upgrade_level)
+void InventoryButton::SetProperties (bool is_equipped, Uint8 owned_upgrade_level, bool is_affordable)
 {
-    ASSERT1(item_type < IT_COUNT);
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    // parameter validation
+    ASSERT1(Uint8(owned_upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
+    if (is_equipped) // if item is equipped
+        ASSERT1(Uint8(owned_upgrade_level+1) > 0); // item must be owned
+    if (Uint8(owned_upgrade_level+1) == 0) // if item is not owned
+        ASSERT1(!is_equipped); // item must not be equipped
+    if (Uint8(owned_upgrade_level+1) == UPGRADE_LEVEL_COUNT) // if max upgrade level
+        ASSERT1(!is_affordable); // item must not be upgradeable
+    if (is_affordable) // if item is upgradeable
+        ASSERT1(Uint8(owned_upgrade_level+1) != UPGRADE_LEVEL_COUNT); // must not be max level
 
-    static std::string const s_button_texture_path[IT_COUNT][UPGRADE_LEVEL_COUNT] =
-    {
-        // IT_WEAPON_PEA_SHOOTER
-        {
-            "resources/icon_pea_shooter.png",
-            "resources/icon_pea_shooter.png",
-            "resources/icon_pea_shooter.png",
-            "resources/icon_pea_shooter.png",
-        },
-        // IT_WEAPON_LASER
-        {
-            "resources/icon_laser.png",
-            "resources/icon_laser.png",
-            "resources/icon_laser.png",
-            "resources/icon_laser.png",
-        },
-        // IT_WEAPON_FLAME_THROWER
-        {
-            "resources/icon_flame_thrower.png",
-            "resources/icon_flame_thrower.png",
-            "resources/icon_flame_thrower.png",
-            "resources/icon_flame_thrower.png",
-        },
-        // IT_WEAPON_GAUSS_GUN
-        {
-            "resources/icon_gauss_gun.png",
-            "resources/icon_gauss_gun.png",
-            "resources/icon_gauss_gun.png",
-            "resources/icon_gauss_gun.png",
-        },
-        // IT_WEAPON_GRENADE_LAUNCHER
-        {
-            "resources/icon_grenade_launcher.png",
-            "resources/icon_grenade_launcher.png",
-            "resources/icon_grenade_launcher.png",
-            "resources/icon_grenade_launcher.png",
-        },
-        // IT_WEAPON_MISSILE_LAUNCHER
-        {
-            "resources/icon_missile_launcher.png",
-            "resources/icon_missile_launcher.png",
-            "resources/icon_missile_launcher.png",
-            "resources/icon_missile_launcher.png",
-        },
-        // IT_WEAPON_TRACTOR
-        {
-            "resources/icon_tractor.png",
-            "resources/icon_tractor.png",
-            "resources/icon_tractor.png",
-            "resources/icon_tractor.png",
-        },
-        // IT_ENGINE
-        {
-            "resources/icon_engine.png",
-            "resources/icon_engine.png",
-            "resources/icon_engine.png",
-            "resources/icon_engine.png",
-        },
-        // IT_ARMOR
-        {
-            "resources/icon_armor.png",
-            "resources/icon_armor.png",
-            "resources/icon_armor.png",
-            "resources/icon_armor.png",
-        },
-        // IT_SHIELD
-        {
-            "resources/icon_shield.png",
-            "resources/icon_shield.png",
-            "resources/icon_shield.png",
-            "resources/icon_shield.png",
-        },
-        // IT_POWER_GENERATOR
-        {
-            "resources/icon_power_generator.png",
-            "resources/icon_power_generator.png",
-            "resources/icon_power_generator.png",
-            "resources/icon_power_generator.png",
-        }
-    };
-
-    return GlTexture::Load(s_button_texture_path[item_type][upgrade_level]);
+    bool upgrade_numeral_changed = (m_owned_upgrade_level != owned_upgrade_level);
+    std::string upgrade_indication(UpgradeIndication());
+    Uint32 upgrade_level_numeral = UpgradeLevelNumeral();
+    m_is_equipped = is_equipped;
+    m_owned_upgrade_level = owned_upgrade_level;
+    m_is_affordable = is_affordable;
+    std::string new_upgrade_indication(UpgradeIndication());
+    if (new_upgrade_indication != upgrade_indication)
+        m_sender_upgrade_indication.Signal(upgrade_indication);
+    if (upgrade_numeral_changed)
+        m_sender_upgrade_level_numeral.Signal(upgrade_level_numeral);
+    UpdateRenderParameters();
 }
 
-void InventoryButton::SetStatus (Status const status)
+std::string InventoryButton::UpgradeIndication () const
 {
-    ASSERT1(status < S_COUNT);
-    m_status = status;
-    switch (m_status)
+    std::string upgrade_indication;
+    if (Uint8(m_owned_upgrade_level+1) == 0) // item is not owned
+        upgrade_indication = (m_is_affordable ? "BUY" : "");
+    else
     {
-        case S_NOT_AFFORDABLE:
-            ColorMask() = Color(0.5f, 0.5f, 0.5f, 1.0f);
-            m_target_size_parameter = 0.0f;
-            break;
-
-        case S_AFFORDABLE:
-            ColorMask() = Color(0.75f, 0.75f, 0.75f, 1.0f);
-            m_target_size_parameter = 0.0f;
-            break;
-
-        case S_OWNED:
-            ColorMask() = Color(1.0f, 1.0f, 1.0f, 1.0f);
-            m_target_size_parameter = 1.0f;
-            break;
-
-        case S_EQUIPPED:
-            // the color mask is set in HandleFrame
-            m_target_size_parameter = 1.0f;
-            break;
-
-        default:
-            ASSERT1(false && "Invalid InventoryButton::Status");
-            break;
+        if (Uint8(m_owned_upgrade_level+1) == UPGRADE_LEVEL_COUNT)
+            upgrade_indication = "MAX"; // ignore m_is_affordable in this case
+        else if (m_is_affordable)
+            upgrade_indication = "UPGR";
+        else
+            upgrade_indication = "";
     }
-
-//     SetCurrentSizeParameter(m_current_size_parameter);
+    return upgrade_indication;
 }
 
 void InventoryButton::HandleFrame ()
@@ -175,9 +87,9 @@ void InventoryButton::HandleFrame ()
     Button::HandleFrame();
 
     // if the item is equipped, cause the button to flash
-    if (m_status == S_EQUIPPED)
+    if (m_is_equipped)
     {
-        Float brightness = 0.875f + 0.125f * Math::Sin(360.0f * FrameTime());
+        Float brightness = 0.8f + 0.2f * Math::Sin(360.0f * FrameTime());
         ColorMask() = Color(brightness, brightness, brightness, 1.0f);
     }
 
@@ -186,35 +98,34 @@ void InventoryButton::HandleFrame ()
         Float size_parameter_delta = m_target_size_parameter - m_current_size_parameter;
         SetCurrentSizeParameter(
             m_current_size_parameter +
-            Min(size_parameter_delta,
-                ms_size_parameter_change_rate * FrameDT()));
+            Min(size_parameter_delta, ms_size_parameter_change_rate * FrameDT()));
     }
     else if (m_current_size_parameter > m_target_size_parameter)
     {
         Float size_parameter_delta = m_target_size_parameter - m_current_size_parameter;
         SetCurrentSizeParameter(
             m_current_size_parameter +
-            Max(size_parameter_delta,
-                -ms_size_parameter_change_rate * FrameDT()));
+            Max(size_parameter_delta, -ms_size_parameter_change_rate * FrameDT()));
     }
 }
 
 void InventoryButton::HandleMouseoverOn ()
 {
-    m_sender_show_price.Signal(m_item_type, m_upgrade_level);
+    if (Uint8(m_owned_upgrade_level+1) != UPGRADE_LEVEL_COUNT)
+        m_sender_show_price.Signal(m_item_type, Uint8(m_owned_upgrade_level+1));
 }
 
 void InventoryButton::HandleMouseoverOff ()
 {
-    m_sender_hide_price.Signal(m_item_type, m_upgrade_level);
+    m_sender_hide_price.Signal(m_item_type);
 }
 
 void InventoryButton::HandleReleased ()
 {
-    if (m_status == S_AFFORDABLE)
-        m_sender_attempt_to_buy_item.Signal(m_item_type, m_upgrade_level);
-    else if (m_status == S_OWNED)
-        m_sender_equip_item.Signal(m_item_type, m_upgrade_level);
+    if (m_is_affordable)
+        m_sender_attempt_to_upgrade_item.Signal(m_item_type, m_owned_upgrade_level);
+    else if (Uint8(m_owned_upgrade_level+1) > 0) // item is owned
+        m_sender_equip_item.Signal(m_item_type, m_owned_upgrade_level);
 }
 
 void InventoryButton::UpdateRenderBackground ()
@@ -223,7 +134,28 @@ void InventoryButton::UpdateRenderBackground ()
     SetRenderBackground(NULL);
 }
 
-void InventoryButton::SetCurrentSizeParameter (Float const current_size_parameter)
+void InventoryButton::UpdateRenderParameters ()
+{
+    ASSERT1(Uint8(m_owned_upgrade_level+1) <= UPGRADE_LEVEL_COUNT);
+    if (Uint8(m_owned_upgrade_level+1) == 0) // item is not owned
+    {
+        if (m_is_affordable)
+            ColorMask() = Color(0.8f, 0.8f, 0.8f, 1.0f);
+        else
+            ColorMask() = Color(0.5f, 0.5f, 0.5f, 1.0f);
+        m_target_size_parameter = 0.0f;
+    }
+    else
+    {
+        if (m_is_equipped)
+            { } // do nothing, as the color mask is set in HandleFrame
+        else
+            ColorMask() = Color(1.0f, 1.0f, 1.0f, 1.0f);
+        m_target_size_parameter = 1.0f;
+    }
+}
+
+void InventoryButton::SetCurrentSizeParameter (Float current_size_parameter)
 {
     ASSERT1(current_size_parameter >= 0.0f);
     ASSERT1(current_size_parameter <= 1.0f);
@@ -239,6 +171,26 @@ void InventoryButton::SetCurrentSizeParameter (Float const current_size_paramete
 
         SetContentMargins(ScreenCoordMargins((Size() - current_size.StaticCast<ScreenCoord>()) / 2) - FrameMargins());
     }
+}
+
+Resource<GlTexture> InventoryButton::ButtonTexture (ItemType item_type)
+{
+    ASSERT1(item_type < IT_COUNT);
+    static std::string const s_button_texture_path[IT_COUNT] =
+    {
+        "resources/icon_tractor.png",           // IT_WEAPON_TRACTOR
+        "resources/icon_pea_shooter.png",       // IT_WEAPON_PEA_SHOOTER
+        "resources/icon_laser.png",             // IT_WEAPON_LASER
+        "resources/icon_flame_thrower.png",     // IT_WEAPON_FLAME_THROWER
+        "resources/icon_gauss_gun.png",         // IT_WEAPON_GAUSS_GUN
+        "resources/icon_grenade_launcher.png",  // IT_WEAPON_GRENADE_LAUNCHER
+        "resources/icon_missile_launcher.png",  // IT_WEAPON_MISSILE_LAUNCHER
+        "resources/icon_engine.png",            // IT_ENGINE
+        "resources/icon_armor.png",             // IT_ARMOR
+        "resources/icon_shield.png",            // IT_SHIELD
+        "resources/icon_power_generator.png",   // IT_POWER_GENERATOR
+    };
+    return GlTexture::Load(s_button_texture_path[item_type]);
 }
 
 } // end of namespace Dis

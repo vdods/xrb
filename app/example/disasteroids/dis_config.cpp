@@ -11,7 +11,7 @@
 #include "dis_config.hpp"
 
 #include "xrb_math.hpp"
-#include "xrb_parse_datafile_parser.hpp"
+#include "xrb_parse_datafile.hpp"
 #include "xrb_parse_datafile_value.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_util.hpp"
@@ -152,12 +152,11 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
     if (reset_to_defaults_before_reading)
         ResetToDefaults();
 
-    DataFile::Parser parser;
-    // if the parse didn't work for whatever reason, don't change the values.
-    if (parser.Parse(config_file_path) == DataFile::Parser::RC_SUCCESS)
+    DataFile::Structure const *root = DataFile::ParseDataFileIntoStructure(config_file_path);
+    // if the parse didn't work for whatever reason, don't change the values from the defaults
+    // (this is how we get default values when the config file is nonexistent for example).
+    if (root != NULL)
     {
-        DataFile::Structure const *root = parser.AcceptedStructure();
-
         // read in and set the enumerated values
         for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)
             try { SetBoolean(static_cast<KeyBoolean>(i), root->PathElementBoolean(ms_boolean_key[i].m_data_file_path)); } catch (...) { }

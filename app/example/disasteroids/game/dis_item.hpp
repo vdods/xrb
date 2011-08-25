@@ -39,21 +39,21 @@ public:
     virtual ~Item () { }
 
     static Item *Create (ItemType item_type, Uint8 upgrade_level);
-    
+
     static std::string const &MineralSpritePath (Uint8 mineral_index);
     static Uint32 ItemPrice (
         ItemType item_type,
         Uint8 upgrade_level,
         Uint8 mineral_index);
-    
-    inline Uint8 UpgradeLevel () const { return m_upgrade_level; }
-    inline ItemType GetItemType () const { return m_item_type; }
+
+    Uint8 UpgradeLevel () const { return m_upgrade_level; }
+    ItemType GetItemType () const { return m_item_type; }
 
     virtual bool IsPoweredDevice () const { return false; }
 
     virtual void Equip (Ship *owner_ship) { }
     virtual void Unequip (Ship *owner_ship) { }
-    
+
 private:
 
     Uint8 const m_upgrade_level;

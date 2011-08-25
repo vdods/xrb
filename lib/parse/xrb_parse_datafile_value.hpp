@@ -654,6 +654,7 @@ public:
     { }
     virtual ~Structure ();
 
+    Uint32 ValueCount () const { return m_member_map.size(); }
     Value const *GetValue (std::string const &key) const;
 
     void AddKeyPair (std::string const &key, Value *value);
@@ -688,5 +689,5 @@ private:
 } // end of namespace Parse
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_DATAFILEVALUE_HPP_)
+#endif // !defined(_XRB_PARSE_DATAFILE_VALUE_HPP_)
 

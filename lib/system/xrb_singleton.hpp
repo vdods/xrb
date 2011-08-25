@@ -17,8 +17,7 @@
 // "devices".  e.g. the keyboard/mouse button input, the resource manager.
 // (possibly move the screen into this category).
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Gl;
 class InputState;
@@ -34,8 +33,8 @@ typedef Pal *(*PalFactory)();
   * then be accessed via calls to the respective accessor functions.
   * @brief Controls the singleton objects which can be thought of as devices.
   */
-namespace Singleton
-{
+namespace Singleton {
+
     /// KeyBind singleton -- this handles keyboard input (and mouse buttons too).
     /// @note Not for use anywhere outside of the Singleton namespace.
     extern Xrb::InputState *g_inputstate;
@@ -109,6 +108,16 @@ namespace Singleton
       */
     void Shutdown ();
 
+    /** This is useful if the ResourceLibrary is necessary to load a file
+      * which is used to determine how to initialize the other singletons.
+      *
+      * Initialize() should still be called later to initialize the other singletons.
+      * This function should not be called if Initialize() has already been called.
+      *
+      * @brief Initialize only the ResourceLibrary singleton.
+      */
+    void InitializeResourceLibrary ();
+
     /** This is done automatically by Screen.
       * @brief Initializes the openGL-controlling singleton.
       */
@@ -117,6 +126,7 @@ namespace Singleton
       * @brief Shuts down the openGL-controlling singleton.
       */
     void ShutdownGl ();
+
 } // end of namespace Singleton
 
 } // end of namespace Xrb

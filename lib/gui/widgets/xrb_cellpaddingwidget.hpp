@@ -16,16 +16,13 @@
 #include "xrb_containerwidget.hpp"
 #include "xrb_ntuple.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class CellPaddingWidget : public ContainerWidget
 {
 public:
 
-    CellPaddingWidget (
-        ContainerWidget *const parent,
-        std::string const &name = "CellPaddingWidget");
+    CellPaddingWidget (ContainerWidget *parent, std::string const &name = "CellPaddingWidget");
     virtual ~CellPaddingWidget () { }
 
     inline Alignment2 const &GetAlignment () const { return m_alignment; }
@@ -37,24 +34,14 @@ public:
     virtual Bool2 ContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 ContentsMaxSize () const;
 
-    void SetAlignment (Uint32 const index, Alignment const alignment);
+    void SetAlignment (Uint32 index, Alignment alignment);
     void SetAlignment (Alignment2 const &alignment);
 
-    virtual void SetSizePropertyEnabled (
-        SizeProperties::Property property,
-        Uint32 component,
-        bool value);
-    virtual void SetSizePropertyEnabled (
-        SizeProperties::Property property,
-        Bool2 const &value);
+    virtual void SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value);
+    virtual void SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value);
 
-    virtual void SetSizeProperty (
-        SizeProperties::Property property,
-        Uint32 component,
-        ScreenCoord value);
-    virtual void SetSizeProperty (
-        SizeProperties::Property property,
-        ScreenCoordVector2 const &value);
+    virtual void SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value);
+    virtual void SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value);
 
     virtual void SetMainWidget (Widget *main_widget)
     {
