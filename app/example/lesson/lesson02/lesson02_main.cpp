@@ -144,7 +144,9 @@ int main (int argc, char **argv)
     @code */
     {
         // Create a Layout widget to contain everything within the Screen.
-        Layout *main_layout = new Layout(VERTICAL, screen, "main layout");
+        Layout *main_layout = new Layout(VERTICAL, "main layout");
+        // Attach the main layout to the screen as a child widget.
+        screen->AttachChild(main_layout);
         // Cause @c main_layout to always fill the Screen.
         screen->SetMainWidget(main_layout);
 
@@ -154,9 +156,13 @@ int main (int argc, char **argv)
         (successively added widgets constitute left-to-right rows) or
         column-major (successively added widgets constitute top-to-bottom
         columns). The size of the major dimension must be specified, so
-        the Layout knows when to wrap the rows/columns.
+        the Layout knows when to wrap the rows/columns.  Attaching
+        @c button_signal_demo_layout to @c main_layout is deferred until
+        after adding everything to @c button_signal_demi_layout in order
+        to generally lessen the layout calculation.
         @code */
-        Layout *button_signal_demo_layout = new Layout(ROW, 2, main_layout, "button signal demo layout");
+        Layout *button_signal_demo_layout = new Layout(ROW, 2, "button signal demo layout");
+        
         /* @endcode
         Create four Buttons which will change different properties of the
         Label which will be created below.  Two of the Buttons, when pressed,
@@ -166,39 +172,46 @@ int main (int argc, char **argv)
         Button *disable_label_via_press_button =
             new Button(
                 "Press to disable Label below",
-                button_signal_demo_layout,
                 "disable label via press button");
+        button_signal_demo_layout->AttachChild(disable_label_via_press_button);
+
         Button *enable_label_via_press_button =
             new Button(
                 "Press to enable Label below",
-                button_signal_demo_layout,
                 "enable label via press button");
+        button_signal_demo_layout->AttachChild(enable_label_via_press_button);
+
         Button *disable_label_via_release_button =
             new Button(
                 "Press and release to disable Label below",
-                button_signal_demo_layout,
                 "disable label via release button");
+        button_signal_demo_layout->AttachChild(disable_label_via_release_button);
+
         Button *enable_label_via_release_button =
             new Button(
                 "Press and release to enable Label below",
-                button_signal_demo_layout,
                 "enable label via release button");
+        button_signal_demo_layout->AttachChild(enable_label_via_release_button);
+
+        main_layout->AttachChild(button_signal_demo_layout);
+
         Label *mabel_the_disabled_label =
             new Label(
                 "MY NAME IS MABEL THE LABEL\nIf the text is white, it is enabled.\nIf the text is darkened, it is disabled.",
-                main_layout,
                 "mabel the disabled label");
+        main_layout->AttachChild(mabel_the_disabled_label);
         /* @endcode
         Create a "QUIT" button in the vertical @c main_layout which we will
         later hook up to the Screen's Screen::RequestQuit SignalReceiver.
         We'll also double the font size to make it look "HELLA TUFF."
         @code */
-        Button *quit_button = new Button("Press and release this button to QUIT", main_layout, "quit button");
-        quit_button->SetFontHeight(2 * quit_button->GetFont()->PixelHeight());
+        Button *quit_button = new Button("Press and release this button to QUIT", "quit button");
+        //quit_button->SetFontHeight(2 * quit_button->GetFont()->PixelHeight()); // HIPPO
+        main_layout->AttachChild(quit_button);
         /* @endcode
         Create another grid Layout for another set of demo widgets.
         @code */
-        Layout *text_signal_demo_layout = new Layout(ROW, 2, main_layout, "text signal demo layout");
+        Layout *text_signal_demo_layout = new Layout(ROW, 2, "text signal demo layout");
         /* @endcode
         Create four pairs of widgets -- a Label/LineEdit, and three Label/Label
         pairs.  The LineEdit will be used to enter text, and will emit signals
@@ -209,28 +222,39 @@ int main (int argc, char **argv)
         The signal connections and transformations will be handled after we
         create all our widgets.
         @code */
-        Label *generic_label = new Label("Enter text here:", text_signal_demo_layout);
+        Label *generic_label = new Label("Enter text here:");
         generic_label->SetAlignment(Dim::X, RIGHT);
+        text_signal_demo_layout->AttachChild(generic_label);
 
-        LineEdit *enter_text_line_edit = new LineEdit(40, text_signal_demo_layout, "enter text lineedit");
+        LineEdit *enter_text_line_edit = new LineEdit(40, "enter text lineedit");
+        text_signal_demo_layout->AttachChild(enter_text_line_edit);
 
-        generic_label = new Label("Verbatim text:", text_signal_demo_layout);
+        generic_label = new Label("Verbatim text:");
         generic_label->SetAlignment(Dim::X, RIGHT);
+        text_signal_demo_layout->AttachChild(generic_label);
 
-        Label *verbatim_label = new Label("", text_signal_demo_layout, "verbatim label");
+        Label *verbatim_label = new Label("", "verbatim label");
         verbatim_label->SetAlignment(Dim::X, LEFT);
+        text_signal_demo_layout->AttachChild(verbatim_label);
 
-        generic_label = new Label("Text in lowercase:", text_signal_demo_layout);
+        generic_label = new Label("Text in lowercase:");
         generic_label->SetAlignment(Dim::X, RIGHT);
+        text_signal_demo_layout->AttachChild(generic_label);
 
-        Label *lowercase_label = new Label("", text_signal_demo_layout, "lowercase label");
+        Label *lowercase_label = new Label("", "lowercase label");
         lowercase_label->SetAlignment(Dim::X, LEFT);
+        text_signal_demo_layout->AttachChild(lowercase_label);
 
-        generic_label = new Label("Text in UPPERCASE:", text_signal_demo_layout);
+        generic_label = new Label("Text in UPPERCASE:");
         generic_label->SetAlignment(Dim::X, RIGHT);
+        text_signal_demo_layout->AttachChild(generic_label);
 
-        Label *uppercase_label = new Label("", text_signal_demo_layout, "UPPERCASE label");
+        Label *uppercase_label = new Label("", "UPPERCASE label");
         uppercase_label->SetAlignment(Dim::X, LEFT);
+        text_signal_demo_layout->AttachChild(uppercase_label);
+        
+        // Don't forget to add the subordinate layout to main_layout.
+        main_layout->AttachChild(text_signal_demo_layout);
 
         // Remember that we don't need to worry about the apparently dangling
         // pointers left by all the above calls to new, because when a Widget

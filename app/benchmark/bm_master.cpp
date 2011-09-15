@@ -162,23 +162,36 @@ void Master::Run ()
 
 
 
-        Layout *main_layout = new Layout(VERTICAL, m_screen, "main layout");
+        Layout *main_layout = new Layout(VERTICAL, "main layout");
+        {
 
-        Layout *frame_layout = new Layout(HORIZONTAL, main_layout, "frame layout");
+            Layout *frame_layout = new Layout(HORIZONTAL, "frame layout");
+            {
+                Label *reference_frame_label = new Label(GlTexture::Load("resources/solitary.png"), "reference frame label");
+                reference_frame_label->SetPictureKeepsAspectRatio(true);
+                frame_layout->AttachChild(reference_frame_label);
 
-        Label *reference_frame_label = new Label(GlTexture::Load("resources/solitary_small.png"), frame_layout, "reference frame label");
-        reference_frame_label->SetPictureKeepsAspectRatio(true);
-        /*Engine2::WorldViewWidget *world_view_widget = */new Engine2::WorldViewWidget(frame_layout);
+                Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget();
+                frame_layout->AttachChild(world_view_widget);
+            }
+            main_layout->AttachChild(frame_layout);
 
-        Layout *button_layout = new Layout(HORIZONTAL, main_layout, "button layout");
-
-        Button *control_panel_button = new Button("Control Panel", button_layout, "control panel button");
-        Button *take_screenshot_button = new Button("Take Screenshot", button_layout, "take screenshot button");
-        Button *mode_toggle_button = new Button("Still-frame Mode", button_layout, "mode toggle button");
-
-        control_panel_button->SetIsHeightFixedToTextHeight(true);
-        take_screenshot_button->SetIsHeightFixedToTextHeight(true);
-        mode_toggle_button->SetIsHeightFixedToTextHeight(true);
+            Layout *button_layout = new Layout(HORIZONTAL, "button layout");
+            {
+                Button *control_panel_button = new Button("Control Panel", "control panel button");
+                control_panel_button->SetIsHeightFixedToTextHeight(true);
+                button_layout->AttachChild(control_panel_button);
+                
+                Button *take_screenshot_button = new Button("Take Screenshot", "take screenshot button");
+                take_screenshot_button->SetIsHeightFixedToTextHeight(true);
+                button_layout->AttachChild(take_screenshot_button);
+                
+                Button *mode_toggle_button = new Button("Still-frame Mode", "mode toggle button");
+                mode_toggle_button->SetIsHeightFixedToTextHeight(true);
+                button_layout->AttachChild(mode_toggle_button);
+            }
+            main_layout->AttachChild(button_layout);
+        }
 
 /*
         SignalHandler::Connect0(
@@ -213,6 +226,7 @@ void Master::Run ()
 
 
 
+        m_screen->AttachChild(main_layout);
         m_screen->SetMainWidget(main_layout);
 
 

@@ -18,36 +18,35 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-HighScoreNameEntryDialog::HighScoreNameEntryDialog (
-    Uint32 const points,
-    Uint32 const wave_count,
-    ContainerWidget *const parent)
+HighScoreNameEntryDialog::HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count)
     :
-    Dialog(DT_OK, parent, "HighScoreNameEntryDialog"),
+    Dialog(DT_OK, "HighScoreNameEntryDialog"),
     m_sender_submit_name(this),
     m_internal_receiver_name_submitted(&HighScoreNameEntryDialog::InternalNameSubmitted, this)
 {
-    Layout *main_layout = new Layout(VERTICAL, DialogLayout());
+    Layout *main_layout = new Layout(VERTICAL);
     {
-        new Label("NEW HIGH SCORE", main_layout);
+        main_layout->AttachChild(new Label("NEW HIGH SCORE"));
 
-        Layout *score_layout = new Layout(HORIZONTAL, main_layout);
+        Layout *score_layout = new Layout(HORIZONTAL);
         {
-            new Label(Util::StringPrintf("WAVE %u", wave_count), score_layout);
-
-            new Label(Util::StringPrintf("%u", points), score_layout);
+            score_layout->AttachChild(new Label(Util::StringPrintf("WAVE %u", wave_count)));
+            score_layout->AttachChild(new Label(Util::StringPrintf("%u", points)));
         }
+        main_layout->AttachChild(score_layout);
 
-        Layout *name_entry_layout = new Layout(HORIZONTAL, main_layout);
+        Layout *name_entry_layout = new Layout(HORIZONTAL);
         {
-            new Label("ENTER YOUR NAME", name_entry_layout);
-
-            m_name_edit = new LineEdit(30, name_entry_layout, "name edit");
+            name_entry_layout->AttachChild(new Label("ENTER YOUR NAME"));
+            
+            m_name_edit = new LineEdit(30, "name edit");
+            name_entry_layout->AttachChild(m_name_edit);
         }
+        main_layout->AttachChild(name_entry_layout);
     }
+    DialogLayout()->AttachChild(main_layout);
 
     // set the LineEdit to be in focus
     m_name_edit->Focus();

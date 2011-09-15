@@ -12,14 +12,11 @@
 
 #include "xrb_input_events.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-CheckBox::CheckBox (
-    ContainerWidget *const parent,
-    std::string const &name)
+CheckBox::CheckBox (std::string const &name)
     :
-    Button(Resource<GlTexture>(), parent, name),
+    Button(Resource<GlTexture>(), name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -32,10 +29,9 @@ CheckBox::CheckBox (
 
     FixSize(
         ScreenCoordVector2(
-            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
     SetFrameMargins(WidgetSkinMargins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
-
     CheckBox::UpdateRenderBackground();
     CheckBox::UpdateRenderPicture();
 }
@@ -78,8 +74,7 @@ bool CheckBox::ProcessMouseButtonEvent (EventMouseButton const *const e)
 
 void CheckBox::UpdateRenderBackground ()
 {
-    SetRenderBackground(
-        WidgetSkinWidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
+    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
 }
 
 void CheckBox::UpdateRenderPicture ()
@@ -90,18 +85,16 @@ void CheckBox::UpdateRenderPicture ()
         SetRenderPicture(Resource<GlTexture>());
 }
 
-void CheckBox::HandleChangedWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void CheckBox::HandleChangedWidgetSkin ()
 {
-    if (widget_background_type == WidgetSkin::CHECK_BOX_BACKGROUND)
-        UpdateRenderBackground();
-}
-
-void CheckBox::HandleChangedWidgetSkinTexture (
-    WidgetSkin::TextureType const texture_type)
-{
-    if (texture_type == WidgetSkin::CHECK_BOX_CHECK_TEXTURE)
-        UpdateRenderPicture();
+    Button::HandleChangedWidgetSkin();
+    FixSize(
+        ScreenCoordVector2(
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+    SetFrameMargins(WidgetSkinMargins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
+    UpdateRenderBackground();
+    UpdateRenderPicture();
 }
 
 } // end of namespace Xrb

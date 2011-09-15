@@ -15,55 +15,41 @@
 #include "xrb_lineedit.hpp"
 #include "xrb_widgetbackground.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-FilePanel::FilePanel (
-    std::string const &title_text,
-    Operation const file_operation,
-    ContainerWidget *const parent,
-    std::string const &name)
+FilePanel::FilePanel (std::string const &title_text, Operation file_operation, std::string const &name)
     :
-    ContainerWidget(parent, name),
+    ContainerWidget(name),
     m_sender_submit_path(this),
     m_sender_submit_path_v(this),
-    m_internal_receiver_path_set_by_enter_key(
-        &FilePanel::InternalPathSetByEnterKey, this)
+    m_internal_receiver_path_set_by_enter_key(&FilePanel::InternalPathSetByEnterKey, this)
 {
-    Layout *main_control_layout =
-        new Layout(
-            VERTICAL,
-            this,
-            "main control layout");
+    Layout *main_control_layout = new Layout(VERTICAL, "main control layout");
 
     Label *label;
 
     // the title text label
-    label = m_title_label =
-        new Label(
-            title_text,
-            main_control_layout,
-            "title label");
+    label = m_title_label = new Label(title_text, "title label");
     label->SetIsHeightFixedToTextHeight(true);
+    main_control_layout->AttachChild(label);
 
     // the layout for the dialog's controls
-    Layout *sub_control_layout =
-        new Layout(
-            HORIZONTAL,
-            main_control_layout,
-            "sub control layout");
-    // create a text label to indicate what the lineedit is for
-    m_file_operation = file_operation;
-    label = new Label("Path:", sub_control_layout);
-    label->SetIsWidthFixedToTextWidth(true);
-    // create the line edit to type the path into
-    m_path_edit =
-        new LineEdit(
-            LONGEST_FILESYSTEM_PATH_NAME,
-            sub_control_layout,
-            "path edit");
-    m_path_edit->Focus();
+    Layout *sub_control_layout = new Layout(HORIZONTAL, "sub control layout");
+    {
+        // create a text label to indicate what the lineedit is for
+        m_file_operation = file_operation;
+        label = new Label("Path:");
+        label->SetIsWidthFixedToTextWidth(true);
+        sub_control_layout->AttachChild(label);
+        
+        // create the line edit to type the path into
+        m_path_edit = new LineEdit(LONGEST_FILESYSTEM_PATH_NAME, "path edit");
+        m_path_edit->Focus();
+        sub_control_layout->AttachChild(m_path_edit);
+    }
+    main_control_layout->AttachChild(sub_control_layout);
 
+    this->AttachChild(main_control_layout);
     SetMainWidget(main_control_layout);
 
     // connect the path edit's enter key signal to this file panel's

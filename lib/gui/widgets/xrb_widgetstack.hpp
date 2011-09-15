@@ -15,16 +15,15 @@
 
 #include "xrb_containerwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class WidgetStack : public ContainerWidget
 {
 public:
 
-    WidgetStack (ContainerWidget *const parent, std::string const &name = "WidgetStack")
+    WidgetStack (std::string const &name = "WidgetStack")
         :
-        ContainerWidget(parent, name)
+        ContainerWidget(name)
     {
         DirtyContentsSizeProperties();
     }
@@ -35,21 +34,11 @@ public:
     virtual Bool2 ContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 ContentsMaxSize () const;
 
-    virtual void SetSizePropertyEnabled (
-        SizeProperties::Property property,
-        Uint32 component,
-        bool value);
-    virtual void SetSizePropertyEnabled (
-        SizeProperties::Property property,
-        Bool2 const &value);
+    virtual void SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value);
+    virtual void SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value);
 
-    virtual void SetSizeProperty (
-        SizeProperties::Property property,
-        Uint32 component,
-        ScreenCoord value);
-    virtual void SetSizeProperty (
-        SizeProperties::Property property,
-        ScreenCoordVector2 const &value);
+    virtual void SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value);
+    virtual void SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value);
 
     virtual void SetMainWidget (Widget *main_widget)
     {

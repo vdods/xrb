@@ -17,8 +17,7 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
+namespace Xrb {
 
 class ProgressBar : public Widget
 {
@@ -34,32 +33,16 @@ public:
         GO_COUNT
     };
 
-    ProgressBar (
-        GrowOrientation grow_orientation,
-        ContainerWidget *parent,
-        std::string const &name = "ProgressBar");
+    ProgressBar (GrowOrientation grow_orientation, std::string const &name = "ProgressBar");
     virtual ~ProgressBar ();
 
-    inline Float Progress () const
-    {
-        return m_progress;
-    }
-    inline Color const &GetColor () const
-    {
-        return m_color;
-    }
+    Float Progress () const { return m_progress; }
+    Color const &GetColor () const { return m_color; }
 
-    inline void SetProgress (Float const progress)
-    {
-        ASSERT1(progress >= 0.0f && progress <= 1.0f);
-        m_progress = progress;
-    }
-    inline void SetColor (Color const &color)
-    {
-        m_color = color;
-    }
+    void SetProgress (Float const progress) { ASSERT1(progress >= 0.0f && progress <= 1.0f); m_progress = progress; }
+    void SetColor (Color const &color) { m_color = color; }
 
-    inline SignalReceiver1<Float> const *ReceiverSetProgress () { return &m_receiver_set_progress; }
+    SignalReceiver1<Float> const *ReceiverSetProgress () { return &m_receiver_set_progress; }
     
     virtual void Draw (RenderContext const &render_context) const;
     

@@ -19,9 +19,8 @@
 #include "xrb_input_events.hpp"
 #include "xrb_key.hpp"
 
-namespace Xrb
-{
-
+namespace Xrb {
+    
 template <typename T, T sentinel> class RadioButtonGroup;
 
 template <typename T, T sentinel>
@@ -29,33 +28,24 @@ class RadioButton : public Button
 {
 public:
 
-    RadioButton (
-        T id,
-        RadioButtonGroup<T, sentinel> *group,
-        ContainerWidget *parent,
-        std::string const &name = "RadioButton");
-    RadioButton (
-        Resource<GlTexture> const &picture,
-        T id,
-        RadioButtonGroup<T, sentinel> *group,
-        ContainerWidget *parent,
-        std::string const &name = "RadioButton");
+    RadioButton (T id, RadioButtonGroup<T, sentinel> *group, std::string const &name = "RadioButton");
+    RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, std::string const &name = "RadioButton");
     virtual ~RadioButton ();
 
-    inline bool IsChecked () const { return m_is_checked; }
-    inline T ID () const { return m_id; }
+    bool IsChecked () const { return m_is_checked; }
+    T ID () const { return m_id; }
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors
-    inline SignalSender1<bool> const *SenderCheckedStateChanged () { return &m_sender_checked_state_changed; }
-    inline SignalSender0 const *SenderChecked () { return &m_sender_checked; }
-    inline SignalSender0 const *SenderUnchecked () { return &m_sender_unchecked; }
+    SignalSender1<bool> const *SenderCheckedStateChanged () { return &m_sender_checked_state_changed; }
+    SignalSender0 const *SenderChecked () { return &m_sender_checked; }
+    SignalSender0 const *SenderUnchecked () { return &m_sender_unchecked; }
     // end SignalSender accessors
     //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // SignalReceiver accessors
-    inline SignalReceiver0 const *ReceiverCheck () { return &m_receiver_check; }
+    SignalReceiver0 const *ReceiverCheck () { return &m_receiver_check; }
     // end SignalReceiver accessors
     //////////////////////////////////////////////////////////////////////////
 
@@ -69,8 +59,7 @@ protected:
     virtual void UpdateRenderPicture ();
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type);
-    virtual void HandleChangedWidgetSkinTexture (WidgetSkin::TextureType texture_type);
+    virtual void HandleChangedWidgetSkin ();
 
 private:
 
@@ -116,25 +105,19 @@ public:
     ~RadioButtonGroup ();
 
     // returns a pointer to the currently checked button
-    inline RadioButton<T, sentinel> *CheckedButton () const
-    {
-        return m_checked_button;
-    }
+    RadioButton<T, sentinel> *CheckedButton () const { return m_checked_button; }
     // returns the ID of the currently checked button
-    inline T ID () const
-    {
-        return m_id;
-    }
+    T ID () const { return m_id; }
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors
-    inline SignalSender1<T> const *SenderIDChanged () { return &m_sender_id_changed; }
+    SignalSender1<T> const *SenderIDChanged () { return &m_sender_id_changed; }
     // end SignalSender accessors
     //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // SignalReceiver accessors
-    inline SignalReceiver1<T> const *ReceiverSetID () { return &m_receiver_set_id; }
+    SignalReceiver1<T> const *ReceiverSetID () { return &m_receiver_set_id; }
     // end SignalReceiver accessors
     //////////////////////////////////////////////////////////////////////////
 
@@ -174,13 +157,9 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename T, T sentinel>
-RadioButton<T, sentinel>::RadioButton (
-    T id,
-    RadioButtonGroup<T, sentinel> *group,
-    ContainerWidget *parent,
-    std::string const &name)
+RadioButton<T, sentinel>::RadioButton (T id, RadioButtonGroup<T, sentinel> *group, std::string const &name)
     :
-    Button(Resource<GlTexture>(), parent, name),
+    Button(Resource<GlTexture>(), name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -190,14 +169,9 @@ RadioButton<T, sentinel>::RadioButton (
 }
 
 template <typename T, T sentinel>
-RadioButton<T, sentinel>::RadioButton (
-    Resource<GlTexture> const &picture,
-    T id,
-    RadioButtonGroup<T, sentinel> *group,
-    ContainerWidget *parent,
-    std::string const &name)
+RadioButton<T, sentinel>::RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, std::string const &name)
     :
-    Button(picture, parent, name),
+    Button(picture, name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -268,17 +242,16 @@ void RadioButton<T, sentinel>::UpdateRenderPicture ()
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::HandleChangedWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type)
+void RadioButton<T, sentinel>::HandleChangedWidgetSkin ()
 {
-    if (widget_background_type == WidgetSkin::RADIO_BUTTON_BACKGROUND)
-        UpdateRenderBackground();
-}
-
-template <typename T, T sentinel>
-void RadioButton<T, sentinel>::HandleChangedWidgetSkinTexture (WidgetSkin::TextureType texture_type)
-{
-    if (texture_type == WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE)
-        UpdateRenderPicture();
+    Button::HandleChangedWidgetSkin();
+    FixSize(
+        ScreenCoordVector2(
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+    SetFrameMargins(WidgetSkinMargins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
+    UpdateRenderBackground();
+    UpdateRenderPicture();
 }
 
 template <typename T, T sentinel>
@@ -318,19 +291,17 @@ void RadioButton<T, sentinel>::Initialize (T id, RadioButtonGroup<T, sentinel> *
     ASSERT1(group != NULL);
 
     m_is_checked = false;
-    RadioButton<T, sentinel>::UpdateRenderBackground();
-    RadioButton<T, sentinel>::UpdateRenderPicture();
-
     m_id = id;
     m_group = group;
-
     m_group->AddButton(this);
 
     FixSize(
         ScreenCoordVector2(
-            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
     SetFrameMargins(WidgetSkinMargins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
+    RadioButton<T, sentinel>::UpdateRenderBackground();
+    RadioButton<T, sentinel>::UpdateRenderPicture();
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -205,6 +205,7 @@ BUGS:
   this may require adding support for RGB textures.
 
 TODO:
+- turn /** */ style doxygen comments into /// (except in e.g. lesson##)
 - it looks like m_background in Widget probably goes undeleted (unless controlled by
   WidgetSkinHandler).  generally redo this type of thing (widget skins) to use Resource
   so that deletion is no longer an explicit worry.

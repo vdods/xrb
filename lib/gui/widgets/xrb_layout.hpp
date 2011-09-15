@@ -16,56 +16,26 @@
 #include "xrb_containerwidget.hpp"
 #include "xrb_enums.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Layout : public ContainerWidget
 {
 public:
 
-    Layout (
-        LineDirection major_direction,
-        Uint32 major_count,
-        ContainerWidget *parent,
-        std::string const &name = "Layout");
-    Layout (
-        Orientation orientation,
-        ContainerWidget *parent,
-        std::string const &name = "Layout");
+    Layout (LineDirection major_direction, Uint32 major_count, std::string const &name = "Layout");
+    Layout (Orientation orientation, std::string const &name = "Layout");
     virtual ~Layout ();
 
-    inline LineDirection MajorDirection () const
-    {
-        return m_major_direction;
-    }
-    inline LineDirection MinorDirection () const
-    {
-        return (m_major_direction == ROW) ? COLUMN : ROW;
-    }
-    inline Uint32 MajorCount () const
-    {
-        return m_major_count;
-    }
-    Uint32 MinorCount () const
-    {
-        return (m_child_vector.size() + m_major_count - 1) / m_major_count;
-    }
+    LineDirection MajorDirection () const { return m_major_direction; }
+    LineDirection MinorDirection () const { return (m_major_direction == ROW) ? COLUMN : ROW; }
+    Uint32 MajorCount () const { return m_major_count; }
+    Uint32 MinorCount () const { return (m_child_vector.size() + m_major_count - 1) / m_major_count; }
 
-    inline bool IsUsingZeroedFrameMargins () const
-    {
-        return m_is_using_zeroed_frame_margins;
-    }
-    inline bool IsUsingZeroedLayoutSpacingMargins () const
-    {
-        return m_is_using_zeroed_layout_spacing_margins;
-    }
+    bool IsUsingZeroedFrameMargins () const { return m_is_using_zeroed_frame_margins; }
+    bool IsUsingZeroedLayoutSpacingMargins () const { return m_is_using_zeroed_layout_spacing_margins; }
 
-    Widget *GridChild (
-        Uint32 major_index,
-        Uint32 minor_index) const;
-    Widget *GridChildByColumnAndRow (
-        Uint32 column_index,
-        Uint32 row_index) const;
+    Widget *GridChild (Uint32 major_index, Uint32 minor_index) const;
+    Widget *GridChildByColumnAndRow (Uint32 column_index, Uint32 row_index) const;
 
     ScreenCoordVector2 const &TotalSpacing () const;
 
@@ -93,27 +63,14 @@ public:
     void SetMajorDirection (LineDirection major_direction);
     void SetMajorCount (Uint32 major_count);
 
-    void SetIsUsingZeroedFrameMargins (
-        bool const is_using_zeroed_frame_margins);
-    void SetIsUsingZeroedLayoutSpacingMargins (
-        bool const is_using_zeroed_layout_spacing_margins);
+    void SetIsUsingZeroedFrameMargins (bool is_using_zeroed_frame_margins);
+    void SetIsUsingZeroedLayoutSpacingMargins (bool is_using_zeroed_layout_spacing_margins);
 
-    virtual void SetSizePropertyEnabled (
-        SizeProperties::Property property,
-        Uint32 component,
-        bool value);
-    virtual void SetSizePropertyEnabled (
-        SizeProperties::Property property,
-        Bool2 const &value);
-
-    virtual void SetSizeProperty (
-        SizeProperties::Property property,
-        Uint32 component,
-        ScreenCoord value);
-    virtual void SetSizeProperty (
-        SizeProperties::Property property,
-        ScreenCoordVector2 const &value);
-
+    virtual void SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value);
+    virtual void SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value);
+    virtual void SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value);
+    virtual void SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value);
+    
     virtual void SetMainWidget (Widget *main_widget)
     {
         // disallowed
@@ -131,13 +88,13 @@ public:
 
 protected:
 
-    ScreenCoordMargins const &CalculateLayoutFrameMargins () const
+    ScreenCoordMargins CalculateLayoutFrameMargins () const
     {
         return IsUsingZeroedFrameMargins() ?
                ScreenCoordMargins::ms_zero :
                WidgetSkinMargins(WidgetSkin::LAYOUT_FRAME_MARGINS);
     }
-    ScreenCoordMargins const &CalculateLayoutSpacingMargins () const
+    ScreenCoordMargins CalculateLayoutSpacingMargins () const
     {
         return IsUsingZeroedLayoutSpacingMargins() ?
                ScreenCoordMargins::ms_zero :
@@ -145,17 +102,14 @@ protected:
     }
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinMargins (
-        WidgetSkin::MarginsType margins_type);
+    virtual void HandleChangedWidgetSkin ();
 
     // NOT part of WidgetSkinHandler
     virtual void HandleChangedLayoutFrameMargins ();
     virtual void HandleChangedLayoutSpacingMargins ();
 
     virtual void ChildSizePropertiesChanged (Widget *child);
-    virtual void ChildStackPriorityChanged (
-        Widget *child,
-        StackPriority previous_stack_priority);
+    virtual void ChildStackPriorityChanged (Widget *child, StackPriority previous_stack_priority);
 
 private:
 
@@ -206,9 +160,7 @@ private:
     void DeleteColumnSizePropertyArrays () const;
     void DeleteRowSizePropertyArrays () const;
 
-    void Initialize (
-        LineDirection major_direction,
-        Uint32 major_count);
+    void Initialize (LineDirection major_direction, Uint32 major_count);
 
     // indicates if this grid is row-major or column-major
     LineDirection m_major_direction;

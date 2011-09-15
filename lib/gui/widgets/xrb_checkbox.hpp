@@ -15,15 +15,13 @@
 
 #include "xrb_button.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-class CheckBox : public Button {
+class CheckBox : public Button
+{
 public:
 
-    CheckBox (
-        ContainerWidget *const parent,
-        std::string const &name = "CheckBox");
+    CheckBox (std::string const &name = "CheckBox");
     virtual ~CheckBox () { }
 
     inline bool IsChecked () const { return m_is_checked; }
@@ -61,10 +59,7 @@ protected:
     virtual void HandleIsCheckedChanged () { }
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
-    virtual void HandleChangedWidgetSkinTexture (
-        WidgetSkin::TextureType texture_type);
+    virtual void HandleChangedWidgetSkin ();
 
 private:
 
@@ -86,7 +81,7 @@ private:
     SignalReceiver0 m_receiver_toggle_is_checked;
     // end SignalReceivers
     //////////////////////////////////////////////////////////////////////////
-};
+}; // end of class CheckBox
 
 } // end of namespace Xrb
 

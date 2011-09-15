@@ -31,9 +31,7 @@ class WorldViewWidget : public Widget
 {
 public:
 
-    WorldViewWidget (
-        ContainerWidget *parent,
-        std::string const &name = "Engine2::WorldViewWidget");
+    WorldViewWidget (std::string const &name = "Engine2::WorldViewWidget");
     virtual ~WorldViewWidget ();
 
     WorldView *GetWorldView () { return m_world_view; }

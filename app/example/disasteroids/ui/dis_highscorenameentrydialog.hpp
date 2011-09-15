@@ -18,26 +18,18 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class HighScoreNameEntryDialog : public Dialog
 {
 public:
 
-    HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count, ContainerWidget *parent);
+    HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count);
     virtual ~HighScoreNameEntryDialog () { }
 
-    inline SignalSender1<std::string const &> const *SenderSubmitName ()
-    {
-        return &m_sender_submit_name;
-    }
+    SignalSender1<std::string const &> const *SenderSubmitName () { return &m_sender_submit_name; }
 
-    inline std::string const &Name () const
-    {
-        ASSERT1(m_name_edit != NULL);
-        return m_name_edit->Text();
-    }
+    std::string const &Name () const { ASSERT1(m_name_edit != NULL); return m_name_edit->Text(); }
 
 protected:
 

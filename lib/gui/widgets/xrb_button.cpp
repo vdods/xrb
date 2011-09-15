@@ -12,15 +12,11 @@
 
 #include "xrb_input_events.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-Button::Button (
-    std::string const &text,
-    ContainerWidget *const parent,
-    std::string const &name)
+Button::Button (std::string const &text, std::string const &name)
     :
-    Label(text, parent, name),
+    Label(text, name),
     m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
@@ -33,12 +29,9 @@ Button::Button (
     Initialize();
 }
 
-Button::Button (
-    Resource<GlTexture> const &picture,
-    ContainerWidget *const parent,
-    std::string const &name)
+Button::Button (Resource<GlTexture> const &picture, std::string const &name)
     :
-    Label(picture, parent, name),
+    Label(picture, name),
     m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
@@ -50,7 +43,7 @@ Button::Button (
     Initialize();
 }
 
-void Button::SetIsEnabled (bool const is_enabled)
+void Button::SetIsEnabled (bool is_enabled)
 {
     Widget::SetIsEnabled(is_enabled);
     if (!IsEnabled())
@@ -58,7 +51,7 @@ void Button::SetIsEnabled (bool const is_enabled)
     UpdateRenderBackground();
 }
 
-bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool Button::ProcessMouseButtonEvent (EventMouseButton const *e)
 {
     if (e->ButtonCode() == Key::LEFTMOUSE)
     {
@@ -124,23 +117,18 @@ void Button::UpdateRenderBackground ()
 {
     // state priority: disabled, pressed, mouseover, default
     if (!IsEnabled())
-        SetRenderBackground(
-            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
+        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
     else if (IsPressed())
-        SetRenderBackground(
-            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
+        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
     else if (IsMouseover() && AcceptsMouseover())
-        SetRenderBackground(
-            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
+        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
     else
-        SetRenderBackground(
-            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
+        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
 }
 
-void Button::HandleChangedWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void Button::HandleChangedWidgetSkin ()
 {
-    // don't bother checking what background changed, just update the shit.
+    Label::HandleChangedWidgetSkin();
     UpdateRenderBackground();
 }
 
@@ -149,8 +137,6 @@ void Button::Initialize ()
     m_accepts_focus = true;
     m_accepts_mouseover = true;
     m_is_pressed = false;
-
-    Button::UpdateRenderBackground();
 }
 
 } // end of namespace Xrb

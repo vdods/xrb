@@ -118,7 +118,7 @@ GlTexture *GlTexture::Create (Texture const &texture, Uint32 flags)
     return Singleton::Gl().CreateGlTexture(texture, flags);
 }
 
-ScreenCoordVector2 GlTexture::TextureCoordinateBottomLeft () const // HIPPO TEMP
+ScreenCoordVector2 GlTexture::TextureCoordinateBottomLeft () const
 {
     return ScreenCoordVector2(m_texture_coordinate_array[0], m_texture_coordinate_array[1]);
 }

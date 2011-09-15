@@ -14,16 +14,15 @@
 #include "xrb_input_events.hpp"
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 // ///////////////////////////////////////////////////////////////////////////
 // constructor and destructor
 // ///////////////////////////////////////////////////////////////////////////
 
-ContainerWidget::ContainerWidget (ContainerWidget *const parent, std::string const &name)
+ContainerWidget::ContainerWidget (std::string const &name)
     :
-    Widget(parent, name)
+    Widget(name)
 {
 //     fprintf(stderr, "ContainerWidget::ContainerWidget(%s);\n", name.c_str());
 
@@ -77,10 +76,10 @@ ScreenCoordVector2 ContainerWidget::AdjustedSize (ScreenCoordVector2 const &size
 // ///////////////////////////////////////////////////////////////////////////
 
 void ContainerWidget::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    bool const value,
-    bool const defer_parent_update)
+    SizeProperties::Property property,
+    Uint32 component,
+    bool value,
+    bool defer_parent_update)
 {
     // update the preferred size properties
     ASSERT1(component <= 1);
@@ -129,9 +128,9 @@ void ContainerWidget::SetSizePropertyEnabled (
 }
 
 void ContainerWidget::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
+    SizeProperties::Property property,
     Bool2 const &value,
-    bool const defer_parent_update)
+    bool defer_parent_update)
 {
     // update the preferred size properties
     if (property == SizeProperties::MIN)
@@ -178,10 +177,10 @@ void ContainerWidget::SetSizePropertyEnabled (
 }
 
 void ContainerWidget::SetSizeProperty (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    ScreenCoord const value,
-    bool const defer_parent_update)
+    SizeProperties::Property property,
+    Uint32 component,
+    ScreenCoord value,
+    bool defer_parent_update)
 {
     // update the preferred size properties
     ASSERT1(component <= 1);
@@ -232,9 +231,9 @@ void ContainerWidget::SetSizeProperty (
 }
 
 void ContainerWidget::SetSizeProperty (
-    SizeProperties::Property const property,
+    SizeProperties::Property property,
     ScreenCoordVector2 const &value,
-    bool const defer_parent_update)
+    bool defer_parent_update)
 {
     // update the preferred size properties
     ASSERT1(value[Dim::X] >= 0);
@@ -282,7 +281,7 @@ void ContainerWidget::SetSizeProperty (
     }
 }
 
-void ContainerWidget::SetMainWidget (Widget *const main_widget)
+void ContainerWidget::SetMainWidget (Widget *main_widget)
 {
     m_main_widget = main_widget;
     if (m_main_widget != NULL)
@@ -304,7 +303,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // call the superclass' Draw method
     Widget::Draw(render_context);
 
-    Float const disabled_widget_alpha_mask = 0.5f;
+    static Float const s_disabled_widget_alpha_mask = 0.5f;
     // create a render context for the child widgets
     RenderContext child_render_context(render_context);
     // call Draw on all the child widgets with the appropriate clipping
@@ -336,9 +335,9 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 // if the child widget is disabled (but this widget is enabled),
                 // apply a transparent color mask as a visual indicator
                 if (!child->IsEnabled() && IsEnabled())
-                    child_render_context.ApplyAlphaMaskToColorMask(disabled_widget_alpha_mask);
+                    child_render_context.ApplyAlphaMaskToColorMask(s_disabled_widget_alpha_mask);
                 // set up the GL clip rect for the child
-                TopLevelParent()->SetViewport(child_render_context.ClipRect());
+                RootWidgetAsScreen().SetViewport(child_render_context.ClipRect());
                 // do the actual draw call
                 child->Draw(child_render_context);
             }
@@ -348,7 +347,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // if there are modal widgets, draw them
     if (!m_modal_widget_stack.empty())
     {
-        ASSERT1(IsTopLevelParent());
+        ASSERT1(IsRootWidget());
 
         // draw all the modal widgets, from the bottom of the stack, up.
         for (WidgetList::const_iterator it = m_modal_widget_stack.begin(),
@@ -379,7 +378,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
 
                 ASSERT1(modal_widget->IsEnabled());
                 // set up the clip rect for the child
-                TopLevelParent()->SetViewport(child_render_context.ClipRect());
+                RootWidgetAsScreen().SetViewport(child_render_context.ClipRect());
                 // do the actual draw call
                 modal_widget->Draw(child_render_context);
             }
@@ -389,7 +388,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // restore the GL clip rect for this widget (this may be unnecessary,
     // because any widget that has child widgets shouldn't really be drawing
     // anything explicitly -- all its drawing will be handled by Widget).
-    TopLevelParent()->SetViewport(render_context.ClipRect());
+    RootWidgetAsScreen().SetViewport(render_context.ClipRect());
 }
 
 void ContainerWidget::MoveBy (ScreenCoordVector2 const &delta)
@@ -438,10 +437,22 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
     return m_screen_rect.Size();
 }
 
-void ContainerWidget::AttachChild (Widget *const child)
+void ContainerWidget::AttachChild (Widget *child)
 {
     ASSERT1(child != NULL);
     ASSERT1(child->m_parent == NULL);
+
+    // because AttachChild is no longer called during construction, it is
+    // possible to accidentally call a ContainerWidget's AttachChild on itself
+    // (or on an ancestor of a ContainerWidget).  This causes a cycle in
+    // what should be the DAG of Widget ancestry.  so check for that.
+    ContainerWidget *ancestor = this;
+    while (ancestor != NULL)
+    {
+        ASSERT1(child != ancestor && "you AttachChild'ed a widget to itself (possibly indirectly) -- you're a bad programmer.");
+        ancestor = ancestor->m_parent;
+    }
+    
     // add the child at the end of the section of the list of child widgets
     // which have the same stack priority.  first find the appropriate place
     // to put the child
@@ -461,20 +472,23 @@ void ContainerWidget::AttachChild (Widget *const child)
     m_child_vector.insert(it, child);
     // set its parent
     child->m_parent = this;
+    // set the owner event queue
+    child->SetOwnerEventQueue(OwnerEventQueue());
     // attempt to make the child inherit this widget's WidgetSkin,
-    // without forcing the inheritance
-    child->m_widget_skin = m_widget_skin;
-    // sanity check -- Screen should be the top-level parent widget
-    ASSERT1(dynamic_cast<Screen *>(TopLevelParent()) != NULL);
+    child->SetWidgetSkin(m_widget_skin);
+    // allow the child to cope with having a new parent.
+    child->HandleAttachedToParent();
 }
 
-void ContainerWidget::DetachChild (Widget *const child)
+void ContainerWidget::DetachChild (Widget *child)
 {
     ASSERT1(child != NULL);
     ASSERT1(child->Parent() == this);
     // check that its actually a child
     WidgetVector::iterator it = FindChildWidget(child);
     ASSERT1(it != m_child_vector.end() && *it == child && "not a child of this widget");
+    // allow the child to come to terms with its parent's imminent disappearance.
+    child->HandleAboutToDetachFromParent();
     // make sure to unfocus it
     child->Unfocus();
     // make sure mouseover-off it
@@ -488,7 +502,7 @@ void ContainerWidget::DetachChild (Widget *const child)
     child->m_parent = NULL;
 }
 
-void ContainerWidget::MoveChildDown (Widget *const child)
+void ContainerWidget::MoveChildDown (Widget *child)
 {
     // check that its actually a child
     WidgetVector::iterator it = FindChildWidget(child);
@@ -510,7 +524,7 @@ void ContainerWidget::MoveChildDown (Widget *const child)
     }
 }
 
-void ContainerWidget::MoveChildUp (Widget *const child)
+void ContainerWidget::MoveChildUp (Widget *child)
 {
     // check that its actually a child
     WidgetVector::iterator it = FindChildWidget(child);
@@ -530,7 +544,7 @@ void ContainerWidget::MoveChildUp (Widget *const child)
     }
 }
 
-void ContainerWidget::MoveChildToBottom (Widget *const child)
+void ContainerWidget::MoveChildToBottom (Widget *child)
 {
     // check that its actually a child
     WidgetVector::iterator it_begin = m_child_vector.begin();
@@ -559,7 +573,7 @@ void ContainerWidget::MoveChildToBottom (Widget *const child)
     }
 }
 
-void ContainerWidget::MoveChildToTop (Widget *const child)
+void ContainerWidget::MoveChildToTop (Widget *child)
 {
     // check that its actually a child
     WidgetVector::iterator it = FindChildWidget(child);
@@ -596,8 +610,9 @@ void ContainerWidget::DeleteAllChildren ()
     {
         Widget *child = m_child_vector.back();
         ASSERT1(child != NULL);
-        // this will detach the child from the parent and remove its
-        // element from m_child_vector -- hence the backwards traversal.
+        // detach the child before deleting.  this is critical, because the
+        // child will call virtual methods in its detach handling.
+        DetachChild(child);
         Delete(child);
     }
 
@@ -614,7 +629,7 @@ Uint32 ContainerWidget::WidgetSkinHandlerChildCount () const
     return m_child_vector.size();
 }
 
-WidgetSkinHandler *ContainerWidget::WidgetSkinHandlerChild (Uint32 const index)
+WidgetSkinHandler *ContainerWidget::WidgetSkinHandlerChild (Uint32 index)
 {
     ASSERT1(index < m_child_vector.size());
     Widget *child = m_child_vector[index];
@@ -660,23 +675,23 @@ void ContainerWidget::HandleFrame ()
     }
 }
 
-bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *const e)
+bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e)
 {
     ASSERT1(e->ChildToDelete() != this && "a widget must not delete itself");
     e->DeleteChildWidget();
     return true;
 }
 
-void ContainerWidget::AddModalWidget (Widget *const modal_widget)
+void ContainerWidget::AddModalWidget (Widget *modal_widget)
 {
     ASSERT1(modal_widget != NULL);
     ASSERT1(modal_widget->IsModal());
     ASSERT1(modal_widget->IsEnabled());
-    ASSERT1(!modal_widget->IsTopLevelParent());
+    ASSERT1(!modal_widget->IsRootWidget());
 
     // if this is a top level widget, then add the modal widget to the
     // modal widget stack.  otherwise, pass it up to the parent
-    if (IsTopLevelParent())
+    if (IsRootWidget())
     {
         // turn off mouseover on this top level widget and all subordinate
         // widgets that have mouseover focus
@@ -693,7 +708,7 @@ void ContainerWidget::AddModalWidget (Widget *const modal_widget)
     }
 }
 
-void ContainerWidget::RemoveModalWidget (Widget *const modal_widget)
+void ContainerWidget::RemoveModalWidget (Widget *modal_widget)
 {
     ASSERT1(modal_widget != NULL);
     ASSERT1(modal_widget->IsModal());
@@ -701,7 +716,7 @@ void ContainerWidget::RemoveModalWidget (Widget *const modal_widget)
 
     // if this is a top level widget, then remove the modal widget from the
     // modal widget stack.  otherwise, pass it up to the parent
-    if (IsTopLevelParent())
+    if (IsRootWidget())
     {
         modal_widget->Unfocus();
         WidgetList::iterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
@@ -776,7 +791,7 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
     ParentChildSizePropertiesUpdate(false);
 }
 
-void ContainerWidget::ChildSizePropertiesChanged (Widget *const child)
+void ContainerWidget::ChildSizePropertiesChanged (Widget *child)
 {
     ASSERT1(child != NULL);
     ASSERT1(child->Parent() == this);
@@ -795,9 +810,7 @@ void ContainerWidget::ChildSizePropertiesChanged (Widget *const child)
     }
 }
 
-void ContainerWidget::ChildStackPriorityChanged (
-    Widget *const child,
-    StackPriority const previous_stack_priority)
+void ContainerWidget::ChildStackPriorityChanged (Widget *child, StackPriority previous_stack_priority)
 {
     ASSERT1(child != NULL);
     ASSERT1(child->Parent() == this);
@@ -867,7 +880,7 @@ void ContainerWidget::ChildStackPriorityChanged (
 // private functions
 // ///////////////////////////////////////////////////////////////////////////
 
-ContainerWidget::WidgetVector::iterator ContainerWidget::FindChildWidget (Widget const *const child)
+ContainerWidget::WidgetVector::iterator ContainerWidget::FindChildWidget (Widget const *child)
 {
     WidgetVector::iterator it;
     WidgetVector::iterator it_end;
@@ -882,7 +895,7 @@ ContainerWidget::WidgetVector::iterator ContainerWidget::FindChildWidget (Widget
     return it;
 }
 
-bool ContainerWidget::InternalProcessKeyEvent (EventKey const *const e)
+bool ContainerWidget::InternalProcessKeyEvent (EventKey const *e)
 {
     ASSERT1(e != NULL);
 
@@ -904,7 +917,7 @@ bool ContainerWidget::InternalProcessKeyEvent (EventKey const *const e)
     }
 }
 
-bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
+bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *e)
 {
     ASSERT1(e != NULL);
 
@@ -928,7 +941,7 @@ bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
     }
 }
 
-bool ContainerWidget::InternalProcessPinchEvent (EventPinch const *const e)
+bool ContainerWidget::InternalProcessPinchEvent (EventPinch const *e)
 {
     ASSERT1(e != NULL);
 
@@ -953,7 +966,7 @@ bool ContainerWidget::InternalProcessPinchEvent (EventPinch const *const e)
     }
 }
 
-bool ContainerWidget::InternalProcessRotateEvent (EventRotate const *const e)
+bool ContainerWidget::InternalProcessRotateEvent (EventRotate const *e)
 {
     ASSERT1(e != NULL);
 
@@ -978,7 +991,7 @@ bool ContainerWidget::InternalProcessRotateEvent (EventRotate const *const e)
     }
 }
 
-bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
+bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *e)
 {
     ASSERT1(e != NULL);
 
@@ -1000,7 +1013,7 @@ bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
     return false;
 }
 
-bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
+bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *e)
 {
     // hidden widgets can't be focused
     if (IsHidden())
@@ -1058,7 +1071,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
     }
 }
 
-bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const e)
+bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *e)
 {
     // hidden widgets can't be moused over
     if (IsHidden())
@@ -1083,7 +1096,7 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const
     return Widget::InternalProcessMouseoverEvent(e);
 }
 
-bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
+bool ContainerWidget::SendMouseEventToChild (EventMouse const *e)
 {
     // attempt to send the mouse event to the widget that is below
     // the mouse cursor, traversing the child vector from top to

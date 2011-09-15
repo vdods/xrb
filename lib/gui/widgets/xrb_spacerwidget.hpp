@@ -15,8 +15,7 @@
 
 #include "xrb_widget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 /** This lovely little widget does absolutely nothing.  It is here just so
   * layouts can be set up with gaps in certain slots, where necessary.
@@ -28,7 +27,7 @@ public:
 
     /** @brief Constructs a SpacerWidget, attaching it to parent.
       */
-    SpacerWidget (ContainerWidget *parent);
+    SpacerWidget ();
     /** @brief Boring destructor.  Does nothing.
       */
     virtual ~SpacerWidget () { }

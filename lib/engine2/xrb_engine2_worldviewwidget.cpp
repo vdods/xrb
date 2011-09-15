@@ -16,14 +16,10 @@
 namespace Xrb {
 namespace Engine2 {
 
-WorldViewWidget::WorldViewWidget (
-    ContainerWidget *const parent,
-    std::string const &name)
+WorldViewWidget::WorldViewWidget (std::string const &name)
     :
-    Widget(parent, name)
+    Widget(name)
 {
-    ASSERT1(parent != NULL);
-
     m_transform = FloatSimpleTransform2::ms_identity;
     m_is_transform_scaling_based_upon_widget_radius = false;
 
@@ -48,7 +44,7 @@ WorldViewWidget::~WorldViewWidget ()
     Delete(m_world_view);
 }
 
-void WorldViewWidget::SetWorldView (WorldView *const world_view)
+void WorldViewWidget::SetWorldView (WorldView *world_view)
 {
     // if the given world view is already attached, do nothing.
     if (m_world_view == world_view)
@@ -64,7 +60,7 @@ void WorldViewWidget::SetWorldView (WorldView *const world_view)
     SetIsTransformScalingBasedUponWidgetRadius(m_world_view->IsTransformScalingBasedUponWidgetRadius());
 }
 
-void WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
+void WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool is_transform_scaling_based_upon_widget_radius)
 {
     if (m_is_transform_scaling_based_upon_widget_radius != is_transform_scaling_based_upon_widget_radius)
     {

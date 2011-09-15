@@ -16,33 +16,29 @@
 #include "xrb_characterfilter.hpp"
 #include "xrb_textwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class LineEdit : public TextWidget
 {
 public:
 
-    LineEdit (
-        Uint32 character_limit,
-        ContainerWidget *parent,
-        std::string const &name = "LineEdit");
+    LineEdit (Uint32 character_limit, std::string const &name = "LineEdit");
     virtual ~LineEdit () { }
 
-    inline Alignment GetAlignment () const { return m_alignment; }
-    inline Uint32 CharacterLimit () const { return m_character_limit; }
-    inline CharacterFilter &GetCharacterFilter () { return m_character_filter; }
-    inline bool IsReadOnly () const { return m_is_read_only; }
+    Alignment GetAlignment () const { return m_alignment; }
+    Uint32 CharacterLimit () const { return m_character_limit; }
+    CharacterFilter &GetCharacterFilter () { return m_character_filter; }
+    bool IsReadOnly () const { return m_is_read_only; }
 
     virtual void SetText (std::string const &text);
     void SetAlignment (Alignment alignment);
-    inline void SetCharacterFilter (CharacterFilter const &character_filter) { m_character_filter = character_filter; }
-    inline void SetIsReadOnly (bool is_read_only) { m_is_read_only = is_read_only; }
+    void SetCharacterFilter (CharacterFilter const &character_filter) { m_character_filter = character_filter; }
+    void SetIsReadOnly (bool is_read_only) { m_is_read_only = is_read_only; }
 
-    inline SignalSender1<std::string const &> const *SenderTextUpdated () { return &m_sender_text_updated; }
-    inline SignalSender1<std::string> const *SenderTextUpdatedV () { return &m_sender_text_updated_v; }
-    inline SignalSender1<std::string const &> const *SenderTextSetByEnterKey () { return &m_sender_text_set_by_enter_key; }
-    inline SignalSender1<std::string> const *SenderTextSetByEnterKeyV () { return &m_sender_text_set_by_enter_key_v; }
+    SignalSender1<std::string const &> const *SenderTextUpdated () { return &m_sender_text_updated; }
+    SignalSender1<std::string> const *SenderTextUpdatedV () { return &m_sender_text_updated_v; }
+    SignalSender1<std::string const &> const *SenderTextSetByEnterKey () { return &m_sender_text_set_by_enter_key; }
+    SignalSender1<std::string> const *SenderTextSetByEnterKeyV () { return &m_sender_text_set_by_enter_key_v; }
 
     virtual void Draw (RenderContext const &render_context) const;
 
@@ -53,8 +49,7 @@ protected:
     virtual void UpdateRenderBackground ();
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
+    virtual void HandleChangedWidgetSkin ();
 
     // process one computation frame
     virtual void HandleFrame ();

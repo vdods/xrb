@@ -15,8 +15,7 @@
 
 #include "xrb_containerwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Label;
 class LineEdit;
@@ -31,18 +30,14 @@ public:
         OP_SAVE
     }; // end of enum Operation
 
-    FilePanel (
-        std::string const &title_text,
-        Operation file_operation,
-        ContainerWidget *parent,
-        std::string const &name = "FilePanel");
+    FilePanel (std::string const &title_text, Operation file_operation, std::string const &name = "FilePanel");
     virtual ~FilePanel () { }
 
-    inline Operation FileOperation () const { return m_file_operation; }
+    Operation FileOperation () const { return m_file_operation; }
     std::string const &Path () const;
 
-    inline SignalSender1<std::string const &> const *SenderSubmitPath () { return &m_sender_submit_path; }
-    inline SignalSender1<std::string> const *SenderSubmitPathV () { return &m_sender_submit_path_v; }
+    SignalSender1<std::string const &> const *SenderSubmitPath () { return &m_sender_submit_path; }
+    SignalSender1<std::string> const *SenderSubmitPathV () { return &m_sender_submit_path_v; }
 
 protected:
 

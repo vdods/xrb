@@ -15,8 +15,7 @@
 
 #include "xrb_containerwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class EventQueue;
 
@@ -36,19 +35,13 @@ public:
     // the dimensions of the Screen with respect to the Widget system.
     // angle indicates counterclockwise rotation of the rendered Screen, and
     // must be a multiple of 90 (and it can be negative)
-    static Screen *Create (
-        ScreenCoord width,
-        ScreenCoord height,
-        Uint32 bit_depth,
-        bool fullscreen,
-        Sint32 angle = 0);
+    static Screen *Create (ScreenCoord width, ScreenCoord height, Uint32 bit_depth, bool fullscreen, Sint32 angle = 0);
 
     SignalSender0 const *SenderQuitRequested () { return &m_sender_quit_requested; }
 
     SignalReceiver0 const *ReceiverRequestQuit () { return &m_receiver_request_quit; }
 
     bool IsQuitRequested () const { return m_is_quit_requested; }
-    ScreenCoord SizeRatioBasis () const { return Min(Width(), Height()); }
     // returns the dimensions of the physical video device
     ScreenCoordVector2 const &DeviceSize () const { return m_device_size; }
 

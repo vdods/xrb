@@ -15,21 +15,14 @@
 
 #include "xrb_label.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Button : public Label
 {
 public:
 
-    Button (
-        std::string const &text,
-        ContainerWidget *const parent,
-        std::string const &name = "Button");
-    Button (
-        Resource<GlTexture> const &picture,
-        ContainerWidget *const parent,
-        std::string const &name = "Button");
+    Button (std::string const &text, std::string const &name = "Button");
+    Button (Resource<GlTexture> const &picture, std::string const &name = "Button");
     virtual ~Button () { }
 
     bool IsPressed () const { return m_is_pressed; }
@@ -61,8 +54,7 @@ protected:
     virtual void UpdateRenderBackground ();
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
+    virtual void HandleChangedWidgetSkin ();
 
 private:
 

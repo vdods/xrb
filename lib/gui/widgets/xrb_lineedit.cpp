@@ -15,15 +15,11 @@
 #include "xrb_screen.hpp"
 #include "xrb_utf8.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-LineEdit::LineEdit (
-    Uint32 const character_limit,
-    ContainerWidget *const parent,
-    std::string const &name)
+LineEdit::LineEdit (Uint32 character_limit, std::string const &name)
     :
-    TextWidget("", parent, name),
+    TextWidget("", name),
     m_sender_text_updated(this),
     m_sender_text_updated_v(this),
     m_sender_text_set_by_enter_key(this),
@@ -67,7 +63,7 @@ void LineEdit::SetText (std::string const &text)
     }
 }
 
-void LineEdit::SetAlignment (Alignment const alignment)
+void LineEdit::SetAlignment (Alignment alignment)
 {
     ASSERT1(alignment == LEFT || alignment == CENTER || alignment == RIGHT);
     m_alignment = alignment;
@@ -94,7 +90,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
             // calculate the color mask
             string_render_context.ApplyColorMask(RenderTextColor());
             // set up the GL clip rect
-            TopLevelParent()->SetViewport(string_render_context.ClipRect());
+            RootWidgetAsScreen().SetViewport(string_render_context.ClipRect());
             // draw the text
             RenderFont()->DrawString(
                 string_render_context,
@@ -134,15 +130,13 @@ void LineEdit::SetRenderFont (Resource<Font> const &render_font)
 
 void LineEdit::UpdateRenderBackground ()
 {
-    SetRenderBackground(
-        WidgetSkinWidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
+    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
 }
 
-void LineEdit::HandleChangedWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void LineEdit::HandleChangedWidgetSkin ()
 {
-    if (widget_background_type == WidgetSkin::LINE_EDIT_BACKGROUND)
-        UpdateRenderBackground();
+    TextWidget::HandleChangedWidgetSkin();
+    UpdateRenderBackground();
 }
 
 void LineEdit::HandleFrame ()
@@ -155,7 +149,7 @@ void LineEdit::HandleFrame ()
     }
 }
 
-bool LineEdit::ProcessKeyEvent (EventKey const *const e)
+bool LineEdit::ProcessKeyEvent (EventKey const *e)
 {
     // read only LineEdits don't allow input
     if (IsReadOnly())
@@ -236,7 +230,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
     return true;
 }
 
-bool LineEdit::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool LineEdit::ProcessMouseButtonEvent (EventMouseButton const *e)
 {
     return e->IsMouseButtonDownEvent() && !IsReadOnly();
 }
@@ -427,7 +421,7 @@ void LineEdit::TypeCharacter (char const c)
     }
 }
 
-bool LineEdit::ShiftText (Uint32 const position, Sint32 const offset)
+bool LineEdit::ShiftText (Uint32 position, Sint32 offset)
 {
     ASSERT1(offset != 0);
     ASSERT1(position <= m_text.length());

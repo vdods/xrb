@@ -15,8 +15,7 @@
 #include "xrb_rendercontext.hpp"
 #include "xrb_utf8.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 FontCoordVector2 ScreenToFontCoordVector2 (ScreenCoordVector2 const &v)
 {
@@ -79,7 +78,7 @@ Font *Font::Create (ResourceLoadParameters const &p)
     return Singleton::Pal().LoadFont(load_parameters.Path().c_str(), load_parameters.PixelHeight());
 }
 
-ScreenCoordRect Font::StringRect (char const *const string) const
+ScreenCoordRect Font::StringRect (char const *string) const
 {
     ASSERT1(string != NULL);
 
@@ -147,7 +146,7 @@ ScreenCoordRect Font::StringRect (LineFormatVector const &line_format_vector) co
 void Font::DrawString (
     RenderContext const &render_context,
     ScreenCoordVector2 const &initial_pen_position,
-    char const *const string) const
+    char const *string) const
 {
     // this is for any pre-rendering setup DrawGlyph needs to do
     DrawGlyphSetup(render_context);
@@ -158,8 +157,8 @@ void Font::DrawString (
 }
 
 void Font::GenerateLineFormatVector (
-    char const *const source_string,
-    LineFormatVector *const dest_line_format_vector) const
+    char const *source_string,
+    LineFormatVector *dest_line_format_vector) const
 {
     ASSERT1(source_string != NULL);
     ASSERT1(dest_line_format_vector != NULL);
@@ -219,7 +218,7 @@ void Font::GenerateLineFormatVector (
 void Font::DrawLineFormattedText (
     RenderContext const &render_context,
     ScreenCoordRect const &draw_rect,
-    char const *const source_string,
+    char const *source_string,
     LineFormatVector const &line_format_vector,
     Alignment2 const &alignment) const
 {
@@ -329,10 +328,10 @@ void Font::DrawLineFormattedText (
 void Font::DrawStringPrivate (
     RenderContext const &render_context,
     ScreenCoordVector2 const &initial_pen_position,
-    char const *const string,
-    char const *const string_terminator,
+    char const *string,
+    char const *string_terminator,
     Uint32 remaining_glyph_count,
-    ScreenCoord const remaining_space) const
+    ScreenCoord remaining_space) const
 {
     ASSERT1(string != NULL);
 
@@ -363,7 +362,7 @@ void Font::DrawStringPrivate (
 }
 
 void Font::TrackBoundingBox (
-    FontCoordVector2 *const pen_position_span_26_6,
+    FontCoordVector2 *pen_position_span_26_6,
     FontCoordVector2 const &pen_position_26_6) const
 {
     ASSERT1(pen_position_span_26_6 != NULL);

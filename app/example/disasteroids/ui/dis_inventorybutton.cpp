@@ -19,9 +19,9 @@ namespace Dis {
 Float const InventoryButton::ms_unequipped_size_ratio = 0.75f;
 Float const InventoryButton::ms_size_parameter_change_rate = 4.0f;
 
-InventoryButton::InventoryButton (ItemType item_type, ContainerWidget *parent, std::string const &name)
+InventoryButton::InventoryButton (ItemType item_type, std::string const &name)
     :
-    Button(ButtonTexture(item_type), parent, name),
+    Button(ButtonTexture(item_type), name),
     m_item_type(item_type),
     m_sender_attempt_to_upgrade_item(this),
     m_sender_equip_item(this),
@@ -35,7 +35,6 @@ InventoryButton::InventoryButton (ItemType item_type, ContainerWidget *parent, s
     // this is intentionally close to, but above 0.0f
     m_current_size_parameter = 0.01f;
     SetContentMargins(-FrameMargins());
-    UpdateRenderBackground();
 }
 
 void InventoryButton::SetProperties (bool is_equipped, Uint8 owned_upgrade_level, bool is_affordable)

@@ -19,23 +19,17 @@
 #include "xrb_resourcelibrary.hpp"
 #include "xrb_screencoord.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Screen;
 class WidgetBackground;
 
-/** See @ref section_widget_skinning "Widget Skinning" for more details.
-  * @brief Stores widget skin properties for use in consistent and convenient
-  *        GUI skinning.
-  */
+/// See @ref section_widget_skinning "Widget Skinning" for more details.
+/// @brief (soon-to-be) Resource-geared container class for widget skinning data.
 class WidgetSkin
 {
 public:
 
-    /** @brief Enumerates all the different specific backgrounds a WidgetSkin
-      *        stores.
-      */
     enum WidgetBackgroundType
     {
         MODAL_WIDGET_BACKGROUND = 0,
@@ -53,9 +47,6 @@ public:
         WIDGET_BACKGROUND_TYPE_COUNT
     }; // end of enum WidgetSkin::WidgetBackgroundType
 
-    /** @brief Enumerates all the different specific fonts a WidgetSkin
-      *        stores.
-      */
     enum FontType
     {
         DEFAULT_FONT = 0,
@@ -63,9 +54,6 @@ public:
         FONT_TYPE_COUNT
     }; // end of enum WidgetSkin::FontType
 
-    /** @brief Enumerates all the different specific textures a WidgetSkin
-      *        stores.
-      */
     enum TextureType
     {
         CHECK_BOX_CHECK_TEXTURE = 0,
@@ -74,9 +62,6 @@ public:
         TEXTURE_TYPE_COUNT
     }; // end of enum WidgetSkin::TextureType
 
-    /** @brief Enumerates all the different specific margin types a WidgetSkin
-      *        stores.
-      */
     enum MarginsType
     {
         DEFAULT_FRAME_MARGINS = 0,
@@ -94,7 +79,7 @@ public:
       * and the constructor should be made protected.
       * @brief Constructs a WidgetSkin with a bunch of default values for now.
       */
-    WidgetSkin (Screen const *screen);
+    WidgetSkin ();
     /** Deletes all the widget backgrounds.  The resourced properties will
       * go out of scope and be automatically deleted here.
       * @brief Destructor.
@@ -106,70 +91,46 @@ public:
       */
     void ReleaseAllResources ();
 
-    /** The contents of this object are cloned as well.
-      * @brief Creates a newly instanced clone of this WidgetSkin object.
-      */
-    WidgetSkin *CreateClone () const;
-
-    /** @brief Converts a screen coordinate size into a size-ratio-basis
-      *        ratio, using the Screen object associated with this WidgetSkin.
-      * @param screen_coord The screen coordinate to convert.
-      */
-    Float RatioFromScreenCoord (ScreenCoord screen_coord) const;
-    /** @brief Converts a size-ratio-basis ratio into a screen coordinate
-      *        size, using the Screen object associated with this WidgetSkin.
-      * @param ratio The ratio to convert.
-      */
-    ScreenCoord ScreenCoordFromRatio (Float ratio) const;
-    /** @brief Converts a vector of screen coordinate sizes into a vector of
-      *        size-ratio-basis ratios, using the Screen object associated
-      *        with this WidgetSkin.
-      * @param screen_coords The screen coordinate vector to convert.
-      */
-    FloatMargins RatiosFromScreenCoords (ScreenCoordMargins const &screen_coords) const;
-    /** @brief Converts a vector of size-ratio-basis ratios into a vector of
-      *        screen coordinate sizes, using the Screen object associated
-      *        with this WidgetSkin.
-      * @param ratios The ratio vector to convert.
-      */
-    ScreenCoordMargins ScreenCoordsFromRatios (FloatMargins const &ratios) const;
+    /// This is the way to derive font [pixel] heights from height ratios.
+    static ScreenCoord FontPixelHeight (Float font_height_ratio, ScreenCoord size_ratio_basis);
+    /// This is the way to derive height ratios from font [pixel] heights.
+    static Float FontHeightRatio (ScreenCoord font_pixel_height, ScreenCoord size_ratio_basis);
 
     /** @brief Returns a pointer to the const WidgetBackground object of the
       *        requested type.
       * @param widget_background_type The specific type of background to return.
       */
-    inline WidgetBackground const *GetWidgetBackground (
-        WidgetBackgroundType const widget_background_type) const
+    WidgetBackground const *GetWidgetBackground (WidgetBackgroundType widget_background_type) const
     {
         ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
         return m_widget_background[widget_background_type];
     }
-    /** @brief Returns the const resourced Font object of the requested type.
-      * @param font_type The specific type of font to return.
-      */
-    inline Resource<Font> const &GetFont (FontType const font_type) const
+    /// Returns the font path for the given font type.
+    std::string const &FontPath (FontType font_type) const
     {
         ASSERT1(font_type < FONT_TYPE_COUNT);
-        return m_font_specification[font_type].m_font;
+        return m_font_specification[font_type].m_path;
     }
-    /** @brief Returns the const resourced GlTexture object of the requested
-      *        type.
+    /// Returns the font height ratio for the given font type.
+    Float FontHeightRatio (FontType font_type) const
+    {
+        ASSERT1(font_type < FONT_TYPE_COUNT);
+        return m_font_specification[font_type].m_height_ratio;
+    }
+    /// Loads the requested font type based on the given size_ratio_basis.
+    Resource<Font> LoadFont (FontType font_type, ScreenCoord size_ratio_basis) const;
+    /** @brief Returns the const resourced GlTexture object of the requested type.
       * @param texture_type The specific type of texture to return.
       */
-    inline Resource<GlTexture> const &GetTexture (TextureType const texture_type) const
+    Resource<GlTexture> const &GetTexture (TextureType texture_type) const
     {
         ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
         return m_texture[texture_type];
     }
-    /** @brief Returns a screen coordinate vector containing the requested
-      *        margins type.
+    /** @brief Returns a screen coordinate vector containing the requested margins type.
       * @param margins_type The specific type of margins to return.
       */
-    inline ScreenCoordMargins const &Margins (MarginsType const margins_type) const
-    {
-        ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-        return m_margins_specification[margins_type].m_margins;
-    }
+    ScreenCoordMargins Margins (MarginsType margins_type, ScreenCoord size_ratio_basis) const;
 
     /** The background being replaced is deleted, if it exists.
       * @brief Sets the given type of widget background.
@@ -177,94 +138,41 @@ public:
       * @param widget_background A pointer to the WidgetBackground to use.
       */
     void SetWidgetBackground (WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background);
-    /** @brief Sets the given type of font.
-      * @param font_type The font type to be set.
-      * @param font The resourced Font object to use.
-      */
-    void SetFont (FontType font_type, Resource<Font> const &font);
-    /** Uses the font pixel height from the previous font.
-      * @brief Sets the given type of font using the given font face.
+    /** @brief Sets the given type of font using the given font face.
       * @param font_type The font type to change.
-      * @param font_face_path The path to the font face to use.
+      * @param font_path The path to the font face to use.
       */
-    void SetFontFacePath (FontType font_type, std::string const &font_face_path);
-    /** Does not change the given type's existing font face.
-      * @brief Sets the screen size-ratio-basis height ratio of the
-      *        specified font type.
+    void SetFontPath (FontType font_type, std::string const &font_path);
+    /** @brief Sets the screen size-ratio-basis height ratio of the specified font type.
       * @param font_type The font type to be changed.
       * @param font_height_ratio The height ratio to set.
       */
     void SetFontHeightRatio (FontType font_type, Float font_height_ratio);
-    /** Does not change the given type's existing font face.
-      * @brief Sets the pixel height of the specified font type.
-      * @param font_type The font type to be changed.
-      * @param font_height The pixel height to be set.
-      */
-    void SetFontHeight (FontType font_type, ScreenCoord font_height);
     /** @brief Sets the given type of texture.
       * @param texture_type The texture type to be set.
       * @param texture The resourced GlTexture object to use.
       */
     void SetTexture (TextureType texture_type, Resource<GlTexture> const &texture);
-    /** @brief Sets the given type of texture.
-      * @param texture_type The texture type to be set.
-      * @param texture The path of the texture to use.
-      */
-    void SetTexturePath (TextureType texture_type, std::string const &texture_path);
-    /** @brief Sets the screen size-ratio-basis margin ratios of the
-      *        specified type.
+    /** @brief Sets the screen size-ratio-basis margins ratios of the specified type.
       * @param margins_type The type of margins to change.
-      * @param margin_ratios The margin ratios to be set.
+      * @param margins_ratios The margin ratios to be set.
       */
-    void SetMarginRatios (MarginsType margins_type, FloatMargins const &margin_ratios);
-    /** @brief Sets the pixel-based margins of the specified type.
-      * @param margins_type The type of margins to change.
-      * @param margin The margin sizes to be set.
-      */
-    void SetMargins (MarginsType margins_type, ScreenCoordMargins const &margins);
-
-    // TODO: some function that updates stuff when the screen res changes
-
-protected:
-
-    /** This should be deprecated once Create is made.
-      * @brief This is used by CreateClone().
-      */
-    inline WidgetSkin () { }
+    void SetMarginsRatios (MarginsType margins_type, FloatMargins const &margins_ratios);
 
 private:
 
-    void UpdateFontHeight (FontType font_type);
-    void UpdateMargins (MarginsType margins_type);
-
     struct FontSpecification
     {
-        Resource<Font> m_font;
-        Float m_font_height_ratio;
-        ScreenCoord m_font_height;
+        std::string m_path;
+        Float m_height_ratio;
 
-        inline FontSpecification ()
-        {
-            m_font_height_ratio = 0.0f;
-            m_font_height = 0;
-        }
+        FontSpecification () : m_height_ratio(0.0f) { }
     }; // end of struct WidgetSkin::FontSpecification
-
-    struct MarginsSpecification
-    {
-        FloatMargins m_margin_ratios;
-        ScreenCoordMargins m_margins;
-
-        MarginsSpecification () { } // default constructors zero the margins
-    }; // end of struct WidgetSkin::MarginsSpecification
-
-    // the screen which this WidgetSkin is adapting size ratios to
-    Screen const *m_screen;
 
     WidgetBackground const *m_widget_background[WIDGET_BACKGROUND_TYPE_COUNT];
     FontSpecification m_font_specification[FONT_TYPE_COUNT];
     Resource<GlTexture> m_texture[TEXTURE_TYPE_COUNT];
-    MarginsSpecification m_margins_specification[MARGINS_TYPE_COUNT];
+    FloatMargins m_margins_ratios[MARGINS_TYPE_COUNT];
 }; // end of class WidgetSkin
 
 } // end of namespace Xrb

@@ -27,72 +27,89 @@ using namespace Xrb;
 
 extern Dis::Config g_config;
 
-namespace Dis
-{
+namespace Dis {
 
-TitleScreenWidget::TitleScreenWidget (
-    bool const immediately_show_high_scores,
-    bool const show_best_points_high_scores_first,
-    ContainerWidget *const parent)
+TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool show_best_points_high_scores_first)
     :
-    ContainerWidget(parent, "TitleScreenWidget"),
+    ContainerWidget("TitleScreenWidget"),
     m_state_machine(this),
     m_immediately_show_high_scores(immediately_show_high_scores),
     m_show_best_points_high_scores_first(show_best_points_high_scores_first),
     m_internal_receiver_activate_controls_dialog(&TitleScreenWidget::ActivateControlsDialog, this),
     m_internal_receiver_controls_dialog_returned(&TitleScreenWidget::ControlsDialogReturned, this)
 {
-    Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
+    Layout *main_layout = new Layout(VERTICAL, "main title screen layout");
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
+    {
+        CellPaddingWidget *logo_padding_widget = new CellPaddingWidget("logo padding widget");
+//         logo_padding_widget->FixHeightRatio(0.20f); // HIPPO
+        {
+            m_logo_label = new Label("DISASTEROIDS", "logo label");
+//             m_logo_label->SetFontHeightRatio(0.10f); // HIPPO
+            logo_padding_widget->AttachChild(m_logo_label);
+        }
+        main_layout->AttachChild(logo_padding_widget);
 
-    CellPaddingWidget *logo_padding_widget =
-        new CellPaddingWidget(main_layout, "logo padding widget");
-    logo_padding_widget->FixHeightRatio(0.20f);
+        WidgetStack *center_panel_widget_stack = new WidgetStack("center panel widget stack");
+        {
+            m_game_widget_dummy = new Label("game demo widget", "game widget dummy");
+//             m_game_widget_dummy->SetFontHeightRatio(0.10f); // HIPPO
+            m_game_widget_dummy->SetBackground(new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f)));
+            center_panel_widget_stack->AttachChild(m_game_widget_dummy);
 
-    m_logo_label = new Label("DISASTEROIDS", logo_padding_widget, "logo label");
-    m_logo_label->SetFontHeightRatio(0.10f);
+            CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget("high scores padding widget");
+            {
+                m_high_scores_widget = new HighScoresWidget();
+                m_high_scores_widget->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                high_scores_padding_widget->AttachChild(m_high_scores_widget);
+                m_high_scores_widget->Hide();
+            }
+            center_panel_widget_stack->AttachChild(high_scores_padding_widget);
+        }
+        main_layout->AttachChild(center_panel_widget_stack);
 
-    WidgetStack *center_panel_widget_stack = new WidgetStack(main_layout, "center panel widget stack");
+        Layout *stuff_layout = new Layout(VERTICAL, "stuff layout");
+        stuff_layout->FixHeightRatio(0.20f);
+        stuff_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
+        {
+            CellPaddingWidget *controls_padding_widget = new CellPaddingWidget("controls padding widget");
+            {
+                Layout *controls_layout = new Layout(HORIZONTAL, "controls layout");
+                {
+                    m_start_button = new Button("START", "start button");
+                    m_start_button->SetIsHeightFixedToTextHeight(true);
+                    controls_layout->AttachChild(m_start_button);
 
-    m_game_widget_dummy = new Label("game demo widget", center_panel_widget_stack, "game widget dummy");
-    m_game_widget_dummy->SetFontHeightRatio(0.10f);
-    m_game_widget_dummy->SetBackground(new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f)));
+                    m_controls_button = new Button("CONTROLS", "controls button");
+                    m_controls_button->SetIsHeightFixedToTextHeight(true);
+                    controls_layout->AttachChild(m_controls_button);
 
-    CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget(center_panel_widget_stack, "high scores padding widget");
+                    m_quit_button = new Button("QUIT", "quit button");
+                    m_quit_button->SetIsHeightFixedToTextHeight(true);
+                    controls_layout->AttachChild(m_quit_button);
+                }
+                controls_padding_widget->AttachChild(controls_layout);
+            }
+            stuff_layout->AttachChild(controls_padding_widget);
+            
+            Layout *footnotes_layout = new Layout(HORIZONTAL, "footnotes_layout layout");
+            footnotes_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
+            {
+                Label *credits_label = new Label("By Victor Dods", "credits label");
+                credits_label->SetIsHeightFixedToTextHeight(true);
+                credits_label->SetAlignment(Dim::X, LEFT);
+                footnotes_layout->AttachChild(credits_label);
 
-    m_high_scores_widget = new HighScoresWidget(high_scores_padding_widget);
-    m_high_scores_widget->Hide();
-    m_high_scores_widget->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
-
-    Layout *stuff_layout = new Layout(VERTICAL, main_layout, "stuff layout");
-    stuff_layout->FixHeightRatio(0.20f);
-    stuff_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
-
-    CellPaddingWidget *controls_padding_widget =
-        new CellPaddingWidget(stuff_layout, "controls padding widget");
-
-    Layout *controls_layout = new Layout(HORIZONTAL, controls_padding_widget, "controls layout");
-
-    m_start_button = new Button("START", controls_layout, "start button");
-    m_start_button->SetIsHeightFixedToTextHeight(true);
-
-    m_controls_button = new Button("CONTROLS", controls_layout, "controls button");
-    m_controls_button->SetIsHeightFixedToTextHeight(true);
-
-    m_quit_button = new Button("QUIT", controls_layout, "quit button");
-    m_quit_button->SetIsHeightFixedToTextHeight(true);
-
-    Layout *footnotes_layout = new Layout(HORIZONTAL, stuff_layout, "footnotes_layout layout");
-    footnotes_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
-
-    Label *credits_label = new Label("By Victor Dods", footnotes_layout, "credits label");
-    credits_label->SetIsHeightFixedToTextHeight(true);
-    credits_label->SetAlignment(Dim::X, LEFT);
-
-    Label *library_label = new Label("Part of the XuqRijBuh Game Engine", footnotes_layout, "library label");
-    library_label->SetIsHeightFixedToTextHeight(true);
-    library_label->SetAlignment(Dim::X, RIGHT);
-
+                Label *library_label = new Label("Part of the XuqRijBuh Game Engine", "library label");
+                library_label->SetIsHeightFixedToTextHeight(true);
+                library_label->SetAlignment(Dim::X, RIGHT);
+                footnotes_layout->AttachChild(library_label);
+            }
+            stuff_layout->AttachChild(footnotes_layout);
+        }
+        main_layout->AttachChild(stuff_layout);
+    }
+    this->AttachChild(main_layout);
     SetMainWidget(main_layout);
 
     SignalHandler::Connect0(
@@ -140,15 +157,19 @@ bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput co
 void TitleScreenWidget::ActivateControlsDialog ()
 {
     ASSERT1(m_controls_panel == NULL);
-
     // create the dialog and add a new ControlsPanel to it
-    Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "controls dialog");
-    m_controls_panel = new ControlsPanel(controls_dialog->DialogLayout());
-    // initialize the ControlsPanel with the Config values
-    m_controls_panel->ReadValuesFromConfig(g_config);
-    // make the dialog full-screen
-    ASSERT1(TopLevelParent() != NULL);
-    controls_dialog->MoveToAndResize(TopLevelParent()->ScreenRect());
+    Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, "controls dialog");
+    {
+        m_controls_panel = new ControlsPanel();
+        // initialize the ControlsPanel with the Config values
+        m_controls_panel->ReadValuesFromConfig(g_config);
+        // attach it to the dialog
+        controls_dialog->DialogLayout()->AttachChild(m_controls_panel);
+        // make the dialog full-screen
+        controls_dialog->MoveToAndResize(RootWidget().ScreenRect());
+    }
+    this->AttachChild(controls_dialog);
+
     // connect up the dialog OK button to ControlsDialogReturnedOK
     SignalHandler::Connect1(
         controls_dialog->SenderDialogReturned(),

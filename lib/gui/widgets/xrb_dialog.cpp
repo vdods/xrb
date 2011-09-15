@@ -15,35 +15,31 @@
 #include "xrb_layout.hpp"
 #include "xrb_spacerwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-Dialog::Dialog (
-    DialogType const dialog_type,
-    ContainerWidget *const parent,
-    std::string const &name)
+Dialog::Dialog (DialogType dialog_type, std::string const &name)
     :
-    ModalWidget(parent, name),
+    ModalWidget(name),
     m_sender_dialog_returned(this),
     m_sender_dialog_returned_ok(this),
     m_sender_dialog_returned_cancel(this),
     m_internal_receiver_ok_button_activated(&Dialog::OKButtonActivated, this),
     m_internal_receiver_cancel_button_activated(&Dialog::CancelButtonActivated, this)
 {
-    ASSERT1(parent != NULL && "The top-level widget must be a Screen, not a Dialog");
-
     Dialog::UpdateRenderBackground();
 
     // the main layout which contains the button layout and to which the user
     // can add more controls
-    m_dialog_layout = new Layout(VERTICAL, this, "dialog layout");
+    m_dialog_layout = new Layout(VERTICAL, "dialog layout");
     m_dialog_layout->SetIsUsingZeroedFrameMargins(false);
+    this->AttachChild(m_dialog_layout);
 
     // the horizontal layout for the OK and cancel, etc. buttons
-    m_button_layout = new Layout(HORIZONTAL, m_dialog_layout, "button layout");
+    m_button_layout = new Layout(HORIZONTAL, "button layout");
     m_button_layout->SetIsUsingZeroedFrameMargins(false);
     // make the buttons stay at the bottom of the dialog box
     m_button_layout->SetStackPriority(SP_STAY_ON_TOP);
+    m_dialog_layout->AttachChild(m_button_layout);
 
     // add the OK, cancel, etc. buttons
     Uint32 added_button_count = 0;
@@ -52,9 +48,10 @@ Dialog::Dialog (
     m_cancel_button = 0;
     if (HasOKButton())
     {
-        new SpacerWidget(m_button_layout);
-        m_ok_button = new Button("OK", m_button_layout, "OK button");
+        m_button_layout->AttachChild(new SpacerWidget());
+        m_ok_button = new Button("OK", "OK button");
         m_ok_button->SetIsHeightFixedToTextHeight(true);
+        m_button_layout->AttachChild(m_ok_button);
         ++added_button_count;
 
         SignalHandler::Connect0(
@@ -63,22 +60,23 @@ Dialog::Dialog (
     }
     if (HasCancelButton())
     {
-        new SpacerWidget(m_button_layout);
-        m_cancel_button = new Button("Cancel", m_button_layout, "Cancel button");
+        m_button_layout->AttachChild(new SpacerWidget());
+        m_cancel_button = new Button("Cancel", "Cancel button");
         m_cancel_button->SetIsHeightFixedToTextHeight(true);
+        m_button_layout->AttachChild(m_cancel_button);
         ++added_button_count;
 
         SignalHandler::Connect0(
             m_cancel_button->SenderReleased(),
             &m_internal_receiver_cancel_button_activated);
     }
-    new SpacerWidget(m_button_layout);
+    m_button_layout->AttachChild(new SpacerWidget());
     ASSERT1(added_button_count > 0 && "No buttons were added to the Dialog");
 
     SetMainWidget(m_dialog_layout);
 }
 
-bool Dialog::HasButton (ButtonID const button_id) const
+bool Dialog::HasButton (ButtonID button_id) const
 {
     switch (button_id) {
         case ID_OK:
@@ -93,7 +91,7 @@ bool Dialog::HasButton (ButtonID const button_id) const
     }
 }
 
-bool Dialog::ProcessKeyEvent (EventKey const *const e)
+bool Dialog::ProcessKeyEvent (EventKey const *e)
 {
     if (e->IsKeyDownEvent())
     {

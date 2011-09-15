@@ -17,14 +17,13 @@
 #include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 // ///////////////////////////////////////////////////////////////////////////
 // constructor and destructor
 // ///////////////////////////////////////////////////////////////////////////
 
-Widget::Widget (ContainerWidget *const parent, std::string const &name)
+Widget::Widget (std::string const &name)
     :
     WidgetSkinHandler(),
     FrameHandler(),
@@ -55,16 +54,6 @@ Widget::Widget (ContainerWidget *const parent, std::string const &name)
     m_frame_margins = ScreenCoordVector2::ms_zero;
     m_content_margins = ScreenCoordVector2::ms_zero;
     m_parent = NULL;
-
-    // add this to the given parent
-    if (parent != NULL)
-    {
-        SetOwnerEventQueue(parent->OwnerEventQueue());
-        // m_parent will be set in this function call.
-        parent->AttachChild(this);
-        // this Widget has a WidgetSkin now, so do the proper initialization
-        InitializeFromWidgetSkinProperties();
-    }
 }
 
 Widget::~Widget ()
@@ -76,13 +65,6 @@ Widget::~Widget ()
     SetIsModal(false);
     // make sure that mouseover is off
     MouseoverOff();
-
-    // detach this widget from its parent (if it has one), so that
-    // "just deleting" a widget is acceptable.  detaching the widget
-    // will clean up pointers that may otherwise be left dangling.
-    if (m_parent != NULL)
-        DetachFromParent();
-    ASSERT1(m_parent == NULL);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -91,32 +73,51 @@ Widget::~Widget ()
 
 ContainerWidget const *Widget::EffectiveParent () const
 {
-    return IsModal() ?
-           DStaticCast<ContainerWidget const *>(TopLevelParent()) :
-           m_parent;
+    return IsModal() ? DStaticCast<ContainerWidget const *>(&RootWidget()) : m_parent;
 }
 
 ContainerWidget *Widget::EffectiveParent ()
 {
-    return IsModal() ?
-           DStaticCast<ContainerWidget *>(TopLevelParent()) :
-           m_parent;
+    return IsModal() ? DStaticCast<ContainerWidget *>(&RootWidget()) : m_parent;
 }
 
-Screen const *Widget::TopLevelParent () const
+Widget const &Widget::RootWidget () const
 {
-    if (m_parent != NULL)
-        return m_parent->TopLevelParent();
-    else
-        return DStaticCast<Screen const *>(this);
+    Widget const *root = this;
+    ASSERT1(root != NULL);
+    // this will terminate if there are no cycles, a condition which is not explicitly checked for.
+    while (root->m_parent != NULL)
+        root = root->m_parent;
+    return *root;
 }
 
-Screen *Widget::TopLevelParent ()
+Widget &Widget::RootWidget ()
 {
-    if (m_parent != NULL)
-        return m_parent->TopLevelParent();
-    else
-        return DStaticCast<Screen *>(this);
+    Widget *root = this;
+    ASSERT1(root != NULL);
+    // this will terminate if there are no cycles, a condition which is not explicitly checked for.
+    while (root->m_parent != NULL)
+        root = root->m_parent;
+    return *root;
+}
+
+bool Widget::RootWidgetIsScreen () const
+{
+    Widget const &root = RootWidget();
+    return dynamic_cast<Screen const *>(&root) != NULL;
+}
+
+Screen const &Widget::RootWidgetAsScreen () const
+{
+    ASSERT1(RootWidgetIsScreen() && "can only call this on a Widget which is ultimately connected to a Screen");
+    Widget const &root = RootWidget();
+    return dynamic_cast<Screen const &>(root);
+}
+
+Screen &Widget::RootWidgetAsScreen ()
+{
+    Widget &root = RootWidget();
+    return dynamic_cast<Screen &>(root);
 }
 
 bool Widget::IsFocused () const
@@ -155,11 +156,7 @@ ScreenCoordRect Widget::ContentsRect () const
 // modifiers
 // ///////////////////////////////////////////////////////////////////////////
 
-void Widget::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    bool const value,
-    bool const defer_parent_update)
+void Widget::SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value, bool defer_parent_update)
 {
     ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
@@ -186,10 +183,7 @@ void Widget::SetSizePropertyEnabled (
     }
 }
 
-void Widget::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Bool2 const &value,
-    bool const defer_parent_update)
+void Widget::SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value, bool defer_parent_update)
 {
     if (property == SizeProperties::MIN)
     {
@@ -215,11 +209,7 @@ void Widget::SetSizePropertyEnabled (
     }
 }
 
-void Widget::SetSizeProperty (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    ScreenCoord const value,
-    bool const defer_parent_update)
+void Widget::SetSizeProperty (SizeProperties::Property const property, Uint32 component, ScreenCoord value, bool defer_parent_update)
 {
     ASSERT1(component <= 1);
     ASSERT1(value >= 0);
@@ -247,10 +237,7 @@ void Widget::SetSizeProperty (
     }
 }
 
-void Widget::SetSizeProperty (
-    SizeProperties::Property const property,
-    ScreenCoordVector2 const &value,
-    bool const defer_parent_update)
+void Widget::SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value, bool defer_parent_update)
 {
     ASSERT1(value[Dim::X] >= 0);
     ASSERT1(value[Dim::Y] >= 0);
@@ -278,34 +265,25 @@ void Widget::SetSizeProperty (
     }
 }
 
-void Widget::SetSizePropertyRatio (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    Float const ratio,
-    bool const defer_parent_update)
+void Widget::SetSizePropertyRatio (SizeProperties::Property property, Uint32 component, Float ratio, bool defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
-    ScreenCoord calculated_value =
-        static_cast<ScreenCoord>(size_ratio_basis * ratio);
+    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoord calculated_value = ScreenCoord(size_ratio_basis * ratio);
     SetSizeProperty(property, component, calculated_value, defer_parent_update);
 }
 
-void Widget::SetSizePropertyRatios (
-    SizeProperties::Property const property,
-    FloatVector2 const &ratios,
-    bool const defer_parent_update)
+void Widget::SetSizePropertyRatios (SizeProperties::Property property, FloatVector2 const &ratios, bool defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
-    ScreenCoordVector2 calculated_value =
-        (static_cast<Float>(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
+    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoordVector2 calculated_value = (Float(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
     SetSizeProperty(property, calculated_value, defer_parent_update);
 }
 
-void Widget::SetIsModal (bool const is_modal)
+void Widget::SetIsModal (bool is_modal)
 {
     if (is_modal)
     {
-        ASSERT0(!IsTopLevelParent() && "You can't make the top level widget modal!");
+        ASSERT0(!IsRootWidget() && "You can't make the root widget modal!");
         ASSERT0(IsEnabled() && "You can't make a disabled widget modal!");
     }
 
@@ -320,21 +298,21 @@ void Widget::SetIsModal (bool const is_modal)
         if (m_is_modal)
         {
             ASSERT1(!IsMouseover());
-            // remove this widget from the modal stack of the top level parent
-            TopLevelParent()->RemoveModalWidget(this);
+            // remove this widget from the modal stack of the root widget
+            RootWidgetAsScreen().RemoveModalWidget(this);
             m_is_modal = false;
         }
         else
         {
             m_is_modal = true;
-            TopLevelParent()->AddModalWidget(this);
+            RootWidgetAsScreen().AddModalWidget(this);
         }
 
         ParentChildSizePropertiesUpdate(false);
     }
 }
 
-void Widget::SetStackPriority (StackPriority const stack_priority)
+void Widget::SetStackPriority (StackPriority stack_priority)
 {
     if (m_stack_priority != stack_priority)
     {
@@ -345,7 +323,7 @@ void Widget::SetStackPriority (StackPriority const stack_priority)
     }
 }
 
-void Widget::SetBackground (WidgetBackground *const background)
+void Widget::SetBackground (WidgetBackground *background)
 {
     Delete(m_background);
     m_background = background;
@@ -363,8 +341,8 @@ void Widget::SetFrameMargins (ScreenCoordMargins const &frame_margins)
 
 void Widget::SetFrameMarginRatios (FloatMargins const &frame_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
-    ScreenCoordMargins calculated_frame_margins((frame_margin_ratios * static_cast<Float>(size_ratio_basis)).StaticCast<ScreenCoord>());
+    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoordMargins calculated_frame_margins((frame_margin_ratios * Float(size_ratio_basis)).StaticCast<ScreenCoord>());
     SetFrameMargins(calculated_frame_margins);
 }
 
@@ -386,8 +364,8 @@ void Widget::SetContentMargins (ScreenCoordMargins const &content_margins)
 
 void Widget::SetContentMarginRatios (FloatMargins const &content_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
-    ScreenCoordMargins calculated_content_margins((content_margin_ratios * static_cast<Float>(size_ratio_basis)).StaticCast<ScreenCoord>());
+    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoordMargins calculated_content_margins((content_margin_ratios * Float(size_ratio_basis)).StaticCast<ScreenCoord>());
     SetContentMargins(calculated_content_margins);
 }
 
@@ -420,7 +398,7 @@ void Widget::UnfixSize ()
     SetSizePropertyEnabled(SizeProperties::MAX, Bool2(false, false));
 }
 
-void Widget::FixWidth (ScreenCoord const width)
+void Widget::FixWidth (ScreenCoord width)
 {
     // TODO: make into atomic operation
     SetSizeProperty(SizeProperties::MIN, Dim::X, width);
@@ -429,7 +407,7 @@ void Widget::FixWidth (ScreenCoord const width)
     SetSizePropertyEnabled(SizeProperties::MAX, Dim::X, true);
 }
 
-void Widget::FixWidthRatio (Float const width_ratio)
+void Widget::FixWidthRatio (Float width_ratio)
 {
     // TODO: make into atomic operation
     SetSizePropertyRatio(SizeProperties::MIN, Dim::X, width_ratio);
@@ -445,7 +423,7 @@ void Widget::UnfixWidth ()
     SetSizePropertyEnabled(SizeProperties::MAX, Dim::X, false);
 }
 
-void Widget::FixHeight (ScreenCoord const height)
+void Widget::FixHeight (ScreenCoord height)
 {
     // TODO: make into atomic operation
     SetSizeProperty(SizeProperties::MIN, Dim::Y, height);
@@ -454,7 +432,7 @@ void Widget::FixHeight (ScreenCoord const height)
     SetSizePropertyEnabled(SizeProperties::MAX, Dim::Y, true);
 }
 
-void Widget::FixHeightRatio (Float const height_ratio)
+void Widget::FixHeightRatio (Float height_ratio)
 {
     // TODO: make into atomic operation
     SetSizePropertyRatio(SizeProperties::MIN, Dim::Y, height_ratio);
@@ -507,9 +485,7 @@ ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
 
 ScreenCoordVector2 Widget::ResizeByRatios (FloatVector2 const &ratios)
 {
-    return Resize(
-        (static_cast<Float>(TopLevelParent()->SizeRatioBasis()) *
-         ratios).StaticCast<ScreenCoord>());
+    return Resize((Float(RootWidget().SizeRatioBasis()) * ratios).StaticCast<ScreenCoord>());
 }
 
 ScreenCoordVector2 Widget::MoveToAndResize (ScreenCoordRect const &screen_rect)
@@ -518,9 +494,9 @@ ScreenCoordVector2 Widget::MoveToAndResize (ScreenCoordRect const &screen_rect)
     return Resize(screen_rect.Size());
 }
 
-void Widget::CenterOnWidget (Widget const *const widget)
+void Widget::CenterOnWidget (Widget const &widget)
 {
-    MoveTo(widget->Position() + (widget->Size() - Size()) / 2);
+    MoveTo(widget.Position() + (widget.Size() - Size()) / 2);
 }
 
 bool Widget::Focus ()
@@ -533,7 +509,7 @@ bool Widget::Focus ()
         return true;
 
     // if this is not a top level widget, proceed normally
-    if (!IsTopLevelParent())
+    if (!IsRootWidget())
     {
         // find the first ancestor of this widget that is focused
         ContainerWidget *first_focused_ancestor = EffectiveParent();
@@ -630,12 +606,12 @@ void Widget::DetachFromParent ()
     m_parent->DetachChild(this);
 }
 
-void Widget::SetIsEnabled (bool const is_enabled)
+void Widget::SetIsEnabled (bool is_enabled)
 {
     if (!is_enabled)
     {
         ASSERT0(!IsModal() && "You can't disable a modal widget!");
-        ASSERT0(!IsTopLevelParent() && "You can't disable a top level widget!");
+        ASSERT0(!IsRootWidget() && "You can't disable a root widget!");
     }
 
     if (m_is_enabled != is_enabled)
@@ -676,7 +652,7 @@ void Widget::ToggleIsHidden ()
         ParentChildSizePropertiesUpdate(false);
 }
 
-void Widget::SetIsHidden (bool const is_hidden)
+void Widget::SetIsHidden (bool is_hidden)
 {
     if (m_is_hidden != is_hidden)
         ToggleIsHidden();
@@ -686,19 +662,20 @@ void Widget::SetIsHidden (bool const is_hidden)
 // protected functions
 // ///////////////////////////////////////////////////////////////////////////
 
-WidgetSkinHandler *Widget::WidgetSkinHandlerParent ()
+void Widget::HandleChangedWidgetSkin ()
 {
-    return static_cast<WidgetSkinHandler *>(m_parent);
-}
-
-void Widget::InitializeFromWidgetSkinProperties ()
-{
+    WidgetSkinHandler::HandleChangedWidgetSkin();
     UpdateRenderBackground();
     SetFrameMargins(WidgetSkinMargins(WidgetSkin::DEFAULT_FRAME_MARGINS));
     SetContentMargins(WidgetSkinMargins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
 }
 
-bool Widget::HandleEvent (Event const *const e)
+WidgetSkinHandler *Widget::WidgetSkinHandlerParent ()
+{
+    return static_cast<WidgetSkinHandler *>(m_parent);
+}
+
+bool Widget::HandleEvent (Event const *e)
 {
     ASSERT1(e != NULL);
 
@@ -760,7 +737,7 @@ bool Widget::HandleEvent (Event const *const e)
     }
 }
 
-bool Widget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *const e)
+bool Widget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e)
 {
     ASSERT0(false && "this should never be called");
     return false;
@@ -776,13 +753,13 @@ void Widget::UpdateRenderBackground ()
     SetRenderBackground(Background());
 }
 
-void Widget::ParentChildSizePropertiesUpdate (bool const defer_parent_update)
+void Widget::ParentChildSizePropertiesUpdate (bool defer_parent_update)
 {
     if (!defer_parent_update && m_parent != NULL/* && !IsHidden() && !IsModal()*/) // TODO: enable and test this
         m_parent->ChildSizePropertiesChanged(this);
 }
 
-bool Widget::AdjustFromMinSize (ScreenCoordRect *const screen_rect) const
+bool Widget::AdjustFromMinSize (ScreenCoordRect *screen_rect) const
 {
     // to keep track of if we need to call Resize()
     bool adjusted = false;
@@ -800,7 +777,7 @@ bool Widget::AdjustFromMinSize (ScreenCoordRect *const screen_rect) const
     return adjusted;
 }
 
-bool Widget::AdjustFromMaxSize (ScreenCoordRect *const screen_rect) const
+bool Widget::AdjustFromMaxSize (ScreenCoordRect *screen_rect) const
 {
     // to keep track of if we need to call Resize()
     bool adjusted = false;
@@ -844,7 +821,7 @@ void Widget::MaxSizeUpdated ()
     m_size_properties.m_min_size = temp.Size();
 }
 
-void Widget::SizeRangeAdjustment (ScreenCoordRect *const rect) const
+void Widget::SizeRangeAdjustment (ScreenCoordRect *rect) const
 {
     // make sure the size is non-negative
     if (rect->Size()[Dim::X] < 0)
@@ -949,7 +926,7 @@ bool Widget::MouseoverOn ()
 
 void Widget::MouseoverOff ()
 {
-    if (IsTopLevelParent())
+    if (IsRootWidget())
     {
         MouseoverOffWidgetLine();
         return;

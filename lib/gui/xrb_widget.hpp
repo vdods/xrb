@@ -34,8 +34,7 @@
   *        system of XuqRijBuh -- Widget.
   */
 
-namespace Xrb
-{
+namespace Xrb {
 
 class ContainerWidget;
 class EventCustom;
@@ -113,14 +112,11 @@ public:
 
     /** @brief Constructs a Widget.  The widget will be attached to the given
       *        parent widget during construction.
-      * @param parent The parent ContainerWidget to attach to during
-      *               construction. This must not be NULL, except in the case
-      *               of a @c Screen (the top-level widget).
       * @param name A textual label applied to the specific widget being
       *             constructed.  As for now, this is only used in a debug-
       *             related capacity.
       */
-    Widget (ContainerWidget *parent, std::string const &name = "Widget");
+    Widget (std::string const &name = "Widget");
     /** Ensures the widget is set to not modal, ensures mouseover is off,
       * deletes all children, and clears the modal widget stack.
       * @brief Destructor.  Deletes all children.
@@ -172,34 +168,39 @@ public:
     ContainerWidget *Parent () { return m_parent; }
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
-      * is the top-level parent (see @c Screen), which does some special
+      * is the root widget (see @c Screen), which does some special
       * handling of drawing and events for their proper operation.
       * @brief Returns a pointer to the effective parent (const) of this
-      *        widget -- if this is a modal widget, the top-level parent is
+      *        widget -- if this is a modal widget, the root widget is
       *        returned, otherwise its direct parent.
       */
     ContainerWidget const *EffectiveParent () const;
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
-      * is the top-level parent (see @c Screen), which does some special
+      * is the root widget (see @c Screen), which does some special
       * handling of drawing and events for their proper operation.
       * @brief Returns a pointer to the effective parent (non-const) of this
-      *        widget -- if this is a modal widget, the top-level parent is
+      *        widget -- if this is a modal widget, the root widget is
       *        returned, otherwise its direct parent.
       */
     ContainerWidget *EffectiveParent ();
-    /** @brief Returns a pointer to the top-level parent (const) of this
-      *        widget hierarchy (a @c Screen).
-      */
-    Screen const *TopLevelParent () const;
-    /** @brief Returns a pointer to the top-level parent (non-const) of this
-      *        widget hierarchy (a @c Screen).
-      */
-    Screen *TopLevelParent ();
-    /** @brief Returns true iff this is a top-level widget (i.e. it has
-      *        no parent).
-      */
-    bool IsTopLevelParent () const { return m_parent == NULL; }
+    
+    /// Returns true iff this Widget has no parent.
+    bool IsRootWidget () const { return m_parent == NULL; }
+    /// Returns a pointer to the highest ancestor Widget, which is 'this' if this Widget has no parent.
+    Widget const &RootWidget () const;
+    /// Returns a pointer to the highest ancestor Widget, which is 'this' if this Widget has no parent.
+    Widget &RootWidget ();
+
+    /// Returns true iff this Widget's root widget is a Screen.
+    bool RootWidgetIsScreen () const;
+    /// Does a dynamic_cast on the result of RootWidget -- so in particular, if the root widget
+    /// is not actually a Screen, it will throw a bad_cast exception.
+    Screen const &RootWidgetAsScreen () const;
+    /// Does a dynamic_cast on the result of RootWidget -- so in particular, if the root widget
+    /// is not actually a Screen, it will throw a bad_cast exception.
+    Screen &RootWidgetAsScreen ();
+    
     /** @brief Returns true iff this widget is focused.  If this is a
       *        top-level widget, then it has focus by default.
       */
@@ -273,6 +274,8 @@ public:
     /** @brief Returns the height of this widget.
       */
     ScreenCoord Height () const { return m_screen_rect.Height(); }
+    /// Used for font pixel height calculations.  Gives the "useful" size of this Widget.
+    ScreenCoord SizeRatioBasis () const { return Min(Width(), Height()); }
     /** @brief Returns the boolean vector containing the
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
@@ -598,7 +601,7 @@ public:
     ScreenCoordVector2 MoveToAndResize (ScreenCoordRect const &screen_rect);
     /** @brief Centers this widget on the center of the given widget.
       */
-    void CenterOnWidget (Widget const *widget);
+    void CenterOnWidget (Widget const &widget);
     /** Widgets that are not direct ancestors of this widget will be defocused
       * before any focusing happens.
       * @brief Focuses this widget with respect to its parent widget.
@@ -660,6 +663,10 @@ public:
 
 protected:
 
+    virtual void HandleChangedWidgetSkin ();
+
+    virtual ScreenCoord WidgetSkinHandlerSizeRatioBasis () const { return RootWidget().SizeRatioBasis(); }
+    
     /** @brief This implementation was required by @c WidgetSkinHandler.
       * @see WidgetSkinHandler::WidgetSkinHandlerChildCount
       */
@@ -681,10 +688,6 @@ protected:
     /** @brief Sets the background to use in @a Widget::Draw.
       */
     void SetRenderBackground (WidgetBackground const *render_background) { m_render_background = render_background; }
-
-    /** @brief Called only by Widget and Screen after they get a WidgetSkin.
-      */
-    void InitializeFromWidgetSkinProperties ();
 
     /** Calls FrameHandler::ProcessFrame on all child widgets.
       *
@@ -761,6 +764,20 @@ protected:
       */
     virtual bool ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e);
 
+    /** Subclasses should override this when they need to do something when
+      * @c ContainerWidget::AttachChild is called on this.  This method will
+      * be called after the child is attached (so in particular, Parent() is
+      * not NULL).
+      * @brief Handler that is called when this widget is attached to a parent.
+      */
+    virtual void HandleAttachedToParent () { }
+    /** Subclasses should override this when they need to do something when
+      * @c ContainerWidget::DetachChild is called on this.  This method will
+      * be called before the child is detached (so in particular, Parent() is
+      * not NULL).
+      * @brief Handler that is called when this widget is detached from a parent.
+      */
+    virtual void HandleAboutToDetachFromParent () { }
     /** Subclasses should override this when they need to do something when
       * the widget gains focus.
       * @brief Handler that is called when this widget becomes focused.

@@ -20,8 +20,7 @@
 #include "xrb_pal.hpp"
 #include "xrb_texture.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 Screen::~Screen ()
 {
@@ -41,12 +40,7 @@ Screen::~Screen ()
     Singleton::Pal().ShutdownVideo();
 }
 
-Screen *Screen::Create (
-    ScreenCoord width,
-    ScreenCoord height,
-    Uint32 bit_depth,
-    bool fullscreen,
-    Sint32 angle)
+Screen *Screen::Create (ScreenCoord width, ScreenCoord height, Uint32 bit_depth, bool fullscreen, Sint32 angle)
 {
     // maybe change these to actual code-checks and error handling
     ASSERT1(width > 0);
@@ -74,9 +68,8 @@ Screen *Screen::Create (
     retval->MoveTo(ScreenCoordVector2::ms_zero);
     retval->ContainerWidget::Resize(retval->m_original_screen_size);
     retval->FixSize(retval->m_original_screen_size);
-    retval->m_widget_skin = new WidgetSkin(retval);
+    retval->SetWidgetSkin(new WidgetSkin());
     retval->m_delete_widget_skin = true;
-    retval->InitializeFromWidgetSkinProperties();
     retval->SetBackground(NULL);
 
     return retval;
@@ -223,7 +216,7 @@ void Screen::Draw (Float real_time) const
 
 Screen::Screen (Sint32 angle)
     :
-    ContainerWidget(NULL, "Screen"),
+    ContainerWidget("Screen"),
     m_angle(angle),
     m_sender_quit_requested(this),
     m_receiver_request_quit(&Screen::RequestQuit, this)
@@ -247,7 +240,7 @@ void Screen::HandleFrame ()
     // nothing needs to be done for now
 }
 
-bool Screen::HandleEvent (Event const *const e)
+bool Screen::HandleEvent (Event const *e)
 {
     ASSERT1(e != NULL);
 
@@ -274,7 +267,7 @@ bool Screen::HandleEvent (Event const *const e)
             Singleton::Gl().DumpAtlases("atlas"); // TODO: real atlas filename
     }
 
-    // special handling for the top-level parent widget (Screen)
+    // special handling for the root widget (Screen)
     {
         if (e->IsMouseEvent())
         {

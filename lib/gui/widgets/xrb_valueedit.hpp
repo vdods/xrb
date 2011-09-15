@@ -19,8 +19,7 @@
 #include "xrb_util.hpp"
 #include "xrb_validator.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 template <typename ValueType> struct Validator;
 
@@ -31,70 +30,24 @@ public:
 
     typedef ValueType (*TextToValueFunctionType)(char const *);
 
-/*    ValueEdit (
-        std::string const &printf_format,
-        typename ValueEdit<ValueType>::TextToValueFunctionType text_to_value_function,
-        ContainerWidget *parent,
-        std::string const &name = "ValueEdit");*/
-    ValueEdit (
-        std::string const &printf_format,
-        TextToValueFunctionType text_to_value_function,
-        ContainerWidget *const parent,
-        std::string const &name = "ValueEdit")
-        :
-        LineEdit(20, parent, name),
-        m_sender_value_updated(this),
-        m_sender_value_set_by_enter_key(this),
-        m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
-    {
-        // set up the printf format string
-        SetPrintfFormat(printf_format);
-
-        // default is to not have any validation.
-        m_validator = NULL;
-        m_text_to_value_function = text_to_value_function;
-    }
+    ValueEdit (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name = "ValueEdit");
     virtual ~ValueEdit () { }
 
-    inline ValueType Value () const
-    {
-        return m_value;
-    }
-    inline Validator<ValueType> const *GetValidator () const
-    {
-        return m_validator;
-    }
-    inline std::string const &PrintfFormat () const
-    {
-        return m_printf_format;
-    }
-    inline TextToValueFunctionType TextToValueFunction () const
-    {
-        return m_text_to_value_function;
-    }
+    ValueType Value () const { return m_value; }
+    Validator<ValueType> const *GetValidator () const { return m_validator; }
+    std::string const &PrintfFormat () const { return m_printf_format; }
+    TextToValueFunctionType TextToValueFunction () const { return m_text_to_value_function; }
 
     virtual void SetText (std::string const &text);
     void SetValue (ValueType value);
     void SetValidator (Validator<ValueType> const *validator);
-    inline void SetPrintfFormat (std::string const &printf_format)
-    {
-        m_printf_format = printf_format;
-    }
+    void SetPrintfFormat (std::string const &printf_format) { m_printf_format = printf_format; }
     void SetTextToValueFunction (TextToValueFunctionType text_to_value_function);
 
-    inline SignalSender1<ValueType> const *SenderValueUpdated ()
-    {
-        return &m_sender_value_updated;
-    }
-    inline SignalSender1<ValueType> const *SenderValueSetByEnterKey ()
-    {
-        return &m_sender_value_set_by_enter_key;
-    }
+    SignalSender1<ValueType> const *SenderValueUpdated () { return &m_sender_value_updated; }
+    SignalSender1<ValueType> const *SenderValueSetByEnterKey () { return &m_sender_value_set_by_enter_key; }
 
-    inline SignalReceiver1<ValueType> const *ReceiverSetValue ()
-    {
-        return &m_receiver_set_value;
-    }
+    SignalReceiver1<ValueType> const *ReceiverSetValue () { return &m_receiver_set_value; }
 
 protected:
 
@@ -131,25 +84,21 @@ private:
     SignalReceiver1<ValueType> m_receiver_set_value;
 }; // end of class ValueEdit
 
-// template <typename ValueType>
-// ValueEdit<ValueType>::ValueEdit (
-//     std::string const &printf_format,
-//     TextToValueFunctionType text_to_value_function,
-//     ContainerWidget *const parent,
-//     std::string const &name)
-//     :
-//     LineEdit(20, parent, name),
-//     m_sender_value_updated(this),
-//     m_sender_value_set_by_enter_key(this),
-//     m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
-// {
-//     // set up the printf format string
-//     SetPrintfFormat(printf_format);
-// 
-//     // default is to not have any validation.
-//     m_validator = NULL;
-//     m_text_to_value_function = text_to_value_function;
-// }
+template <typename ValueType>
+ValueEdit<ValueType>::ValueEdit (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name)
+    :
+    LineEdit(20, name),
+    m_sender_value_updated(this),
+    m_sender_value_set_by_enter_key(this),
+    m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
+{
+    // set up the printf format string
+    SetPrintfFormat(printf_format);
+
+    // default is to not have any validation.
+    m_validator = NULL;
+    m_text_to_value_function = text_to_value_function;
+}
 
 template <typename ValueType>
 void ValueEdit<ValueType>::SetText (std::string const &text)
@@ -158,7 +107,7 @@ void ValueEdit<ValueType>::SetText (std::string const &text)
 }
 
 template <typename ValueType>
-void ValueEdit<ValueType>::SetValue (ValueType const value)
+void ValueEdit<ValueType>::SetValue (ValueType value)
 {
     m_value = m_validator != NULL ?
               m_validator->Validate(value) :
@@ -168,23 +117,21 @@ void ValueEdit<ValueType>::SetValue (ValueType const value)
 }
 
 template <typename ValueType>
-void ValueEdit<ValueType>::SetValidator (
-    Validator<ValueType> const *const validator)
+void ValueEdit<ValueType>::SetValidator (Validator<ValueType> const *validator)
 {
     m_validator = validator;
     SetValue(m_value);
 }
 
 template <typename ValueType>
-void ValueEdit<ValueType>::SetTextToValueFunction (
-    TextToValueFunctionType text_to_value_function)
+void ValueEdit<ValueType>::SetTextToValueFunction (TextToValueFunctionType text_to_value_function)
 {
     m_text_to_value_function = text_to_value_function;
     SetText(Text());
 }
 
 template <typename ValueType>
-bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *const e)
+bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *e)
 {
     if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
     {

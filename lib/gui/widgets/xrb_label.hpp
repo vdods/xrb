@@ -16,8 +16,7 @@
 #include "xrb_ntuple.hpp"
 #include "xrb_textwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 typedef NTuple<Alignment, 2> Alignment2;
 
@@ -35,18 +34,12 @@ public:
       * horizontally and vertically.
       * @brief Constructs a text label.
       */
-    Label (
-        std::string const &text,
-        ContainerWidget *const parent,
-        std::string const &name = "Label");
+    Label (std::string const &text, std::string const &name = "Label");
     /** The picture texture is stretched to fill the area inside the
       * frame margins, adding the content margins.
       * @brief Constructs a picture label.
       */
-    Label (
-        Resource<GlTexture> const &picture,
-        ContainerWidget *const parent,
-        std::string const &name = "Label");
+    Label (Resource<GlTexture> const &picture, std::string const &name = "Label");
     /** @brief Destructor.
       */
     virtual ~Label () { }
@@ -61,23 +54,23 @@ public:
       * @c CENTER , @c BOTTOM , or @c SPACED .
       * @brief Returns the alignment vector.
       */
-    inline Alignment2 const &GetAlignment () const { return m_alignment; }
+    Alignment2 const &GetAlignment () const { return m_alignment; }
     /** @brief Returns true iff word-wrapping is enabled.
       */
-    inline bool WordWrap () const { return m_word_wrap; }
+    bool WordWrap () const { return m_word_wrap; }
     /** @brief Returns true if this is a picture label, false for text label.
       */
-    inline bool IsPictureLabel () const { return m_is_picture_label; }
+    bool IsPictureLabel () const { return m_is_picture_label; }
     /** If this is a text label, the returned resource will be invalid.
       * @brief Returns the resourced GlTexture picture for this label.
       */
-    inline Resource<GlTexture> const &Picture () const { return m_picture; }
+    Resource<GlTexture> const &Picture () const { return m_picture; }
     /** Applies only when this is a picture label.  When the picture doesn't
       * fill up the entire content area, it will be centered appropriately.
       * @brief Iff true, indicates that the picture will be resized just small
       *        enough to preserve its aspect ratio.
       */
-    inline bool PictureKeepsAspectRatio () const { return m_picture_keeps_aspect_ratio; }
+    bool PictureKeepsAspectRatio () const { return m_picture_keeps_aspect_ratio; }
 
     // ///////////////////////////////////////////////////////////////////////
     // public modifiers
@@ -89,7 +82,7 @@ public:
     virtual void SetWordWrap (bool word_wrap);
     virtual void SetPicture (std::string const &picture_name);
     virtual void SetPicture (Resource<GlTexture> const &picture);
-    inline void SetPictureKeepsAspectRatio (bool picture_keeps_aspect_ratio) { m_picture_keeps_aspect_ratio = picture_keeps_aspect_ratio; }
+    void SetPictureKeepsAspectRatio (bool picture_keeps_aspect_ratio) { m_picture_keeps_aspect_ratio = picture_keeps_aspect_ratio; }
 
     virtual void Draw (RenderContext const &render_context) const;
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);
@@ -99,7 +92,7 @@ protected:
     void DrawText (RenderContext const &render_context) const;
     void DrawPicture (RenderContext const &render_context) const;
 
-    inline Resource<GlTexture> const &RenderPicture () const { return m_render_picture; }
+    Resource<GlTexture> const &RenderPicture () const { return m_render_picture; }
 
     virtual void SetRenderFont (Resource<Font> const &render_font);
     void SetRenderPicture (Resource<GlTexture> const &render_picture);
@@ -113,7 +106,7 @@ protected:
     virtual ScreenCoordRect TextRect () const;
     virtual void UpdateMinAndMaxSizesFromText ();
 
-    inline void DirtyTextFormatting () { m_text_formatting_update_required = true; }
+    void DirtyTextFormatting () { m_text_formatting_update_required = true; }
 
 private:
 

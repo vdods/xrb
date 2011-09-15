@@ -315,7 +315,7 @@ Engine2::World *CreateAndPopulateWorld ()
     for (Uint32 i = 0; i < s_object_count; ++i)
     {
         // Create the sprite using the texture with given path
-        Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/interloper2_small.png");
+        Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/interloper_2.png");
         // Place the sprite randomly on the 1000x1000 ObjectLayer.  The
         // ObjectLayer is centered on the origin, so the valid range of
         // coordinates are [-500,500] for both X and Y.
@@ -370,7 +370,8 @@ int main (int argc, char **argv)
         Engine2::World *world = CreateAndPopulateWorld();
         // Create the WorldViewWidget as a child of screen.  This is what will
         // contain an instance of WorldView and will cause it to be rendered.
-        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget(screen);
+        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget();
+        screen->AttachChild(world_view_widget);
         screen->SetMainWidget(world_view_widget);
         // Create an instance of our AwesomeWorldView, using the newly created
         // WorldViewWidget as its "parent".  Set the zoom factor so something

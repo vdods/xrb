@@ -12,8 +12,7 @@
 
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 Bool2 WidgetStack::ContentsMinSizeEnabled () const
 {
@@ -39,10 +38,7 @@ ScreenCoordVector2 WidgetStack::ContentsMaxSize () const
     return m_contents_size_properties.m_max_size;
 }
 
-void WidgetStack::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    bool const value)
+void WidgetStack::SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value)
 {
     ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
@@ -54,9 +50,7 @@ void WidgetStack::SetSizePropertyEnabled (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void WidgetStack::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Bool2 const &value)
+void WidgetStack::SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value)
 {
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled = value;
@@ -67,10 +61,7 @@ void WidgetStack::SetSizePropertyEnabled (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void WidgetStack::SetSizeProperty (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    ScreenCoord const value)
+void WidgetStack::SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value)
 {
     ASSERT1(component <= 1);
     ASSERT1(value >= 0);
@@ -83,9 +74,7 @@ void WidgetStack::SetSizeProperty (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void WidgetStack::SetSizeProperty (
-    SizeProperties::Property const property,
-    ScreenCoordVector2 const &value)
+void WidgetStack::SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value)
 {
     ASSERT1(value[Dim::X] >= 0);
     ASSERT1(value[Dim::Y] >= 0);
@@ -113,7 +102,7 @@ ScreenCoordVector2 WidgetStack::Resize (ScreenCoordVector2 const &size)
     return Size();
 }
 
-void WidgetStack::AttachChild (Widget *const child)
+void WidgetStack::AttachChild (Widget *child)
 {
     // call the superclass to actually attach the child
     ContainerWidget::AttachChild(child);
@@ -134,7 +123,7 @@ void WidgetStack::AttachChild (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void WidgetStack::DetachChild (Widget *const child)
+void WidgetStack::DetachChild (Widget *child)
 {
     // call the superclass to actually detach the child
     ContainerWidget::DetachChild(child);
@@ -155,7 +144,7 @@ void WidgetStack::DetachChild (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
+void WidgetStack::ChildSizePropertiesChanged (Widget *child)
 {
     // size a child's size properties have changed, the
     // contents size properties need to be recalculated.

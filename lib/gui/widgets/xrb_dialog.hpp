@@ -15,8 +15,7 @@
 
 #include "xrb_modalwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Layout;
 class Button;
@@ -65,10 +64,7 @@ public:
       * @param parent The parent of this widget (see Widget::Widget).
       * @param name The name of this widget (see Widget::Widget).
       */
-    Dialog (
-        DialogType const dialog_type,
-        ContainerWidget *const parent,
-        std::string const &name = "Dialog");
+    Dialog (DialogType const dialog_type, std::string const &name = "Dialog");
     /** Doesn't do anything special.  The child widgets are deleted
       * by Widget's destructor.
       * @brief Destructor.
@@ -79,44 +75,30 @@ public:
       * parent widget, not the dialog itself.
       * @brief Returns the Layout for the dialog's controls.
       */
-    inline Layout *DialogLayout () const { return m_dialog_layout; }
+    Layout *DialogLayout () const { return m_dialog_layout; }
     /** @brief Returns true iff the specified button exists in this dialog.
       * @param button_id The button type to check for existence.
       */
-    bool HasButton (ButtonID const button_id) const;
+    bool HasButton (ButtonID button_id) const;
     /** @brief Explicitly checks for an OK button.
       */
-    inline bool HasOKButton () const
-    {
-        return (m_dialog_type & BUTTON_OK) != 0;
-    }
+    bool HasOKButton () const { return (m_dialog_type & BUTTON_OK) != 0; }
     /** @brief Explicitly checks for a Cancel button.
       */
-    inline bool HasCancelButton () const
-    {
-        return (m_dialog_type & BUTTON_CANCEL) != 0;
-    }
+    bool HasCancelButton () const { return (m_dialog_type & BUTTON_CANCEL) != 0; }
 
     /** @brief Accessor for the SignalSender which signals the ID of a button
       *        when a button has been pressed.
       */
-    inline SignalSender1<ButtonID> const *SenderDialogReturned () { return &m_sender_dialog_returned; }
+    SignalSender1<ButtonID> const *SenderDialogReturned () { return &m_sender_dialog_returned; }
     /** @brief Accessor for the SignalSender which signals that the OK
       *        button has been pressed.
       */
-    inline SignalSender0 const *SenderDialogReturnedOK ()
-    {
-        ASSERT1(HasOKButton());
-        return &m_sender_dialog_returned_ok;
-    }
+    SignalSender0 const *SenderDialogReturnedOK () { ASSERT1(HasOKButton()); return &m_sender_dialog_returned_ok; }
     /** @brief Accessor for the SignalSender which signals that the Cancel
       *        button has been pressed.
       */
-    inline SignalSender0 const *SenderDialogReturnedCancel ()
-    {
-        ASSERT1(HasCancelButton());
-        return &m_sender_dialog_returned_cancel;
-    }
+    SignalSender0 const *SenderDialogReturnedCancel () { ASSERT1(HasCancelButton()); return &m_sender_dialog_returned_cancel; }
 
 protected:
 

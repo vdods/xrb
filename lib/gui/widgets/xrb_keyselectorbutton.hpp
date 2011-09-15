@@ -17,20 +17,15 @@
 #include "xrb_dialog.hpp"
 #include "xrb_key.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class KeySelectorButton : public Button
 {
 public:
 
-    KeySelectorButton (
-        std::string const &input_action_name,
-        Key::Code key_code,
-        ContainerWidget *parent,
-        std::string const &name = "KeySelectorButton");
+    KeySelectorButton (std::string const &input_action_name, Key::Code key_code, std::string const &name = "KeySelectorButton");
 
-    inline Key::Code KeyCode () const { return m_key_code; }
+    Key::Code KeyCode () const { return m_key_code; }
     void SetKeyCode (Key::Code key_code);
 
 protected:
@@ -45,10 +40,7 @@ private:
     {
     public:
 
-        KeySelectorDialog (
-            std::string const &message,
-            ContainerWidget *parent,
-            std::string const &name = "KeySelectorDialog");
+        KeySelectorDialog (std::string const &message, std::string const &name = "KeySelectorDialog");
 
         inline Key::Code KeyCode () const { return m_key_code; }
 

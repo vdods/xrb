@@ -22,11 +22,12 @@ namespace Xrb {
 class Label;
 class Layout;
 class ProgressBar;
-class SpacerWidget;
 template <typename T> class ValueLabel;
 
 namespace Engine2 {
-    class WorldViewWidget;
+    
+class WorldViewWidget;
+
 } // end of namespace Engine2
 
 } // end of namespace Xrb
@@ -42,7 +43,7 @@ class GameWidget : public WidgetStack
 {
 public:
 
-    GameWidget (World *world, ContainerWidget *parent);
+    GameWidget (World *world);
     virtual ~GameWidget () { }
 
     SignalSender0 const *SenderQuitGame ();
@@ -101,8 +102,6 @@ private:
 
     ValueLabel<Uint32> *m_score_label;
     ProgressBar *m_stoke_o_meter;
-
-    SpacerWidget *m_view_spacer_widget;
 
     Layout *m_ship_status_layout;
 

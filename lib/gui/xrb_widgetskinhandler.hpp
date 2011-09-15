@@ -17,8 +17,7 @@
 
 #include "xrb_widgetskin.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Widget;
 
@@ -49,155 +48,80 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief Returns a pointer to the const WidgetSkin managed by this.
-      */
-    WidgetSkin const *GetWidgetSkin () const
-    {
-        return m_widget_skin;
-    }
-    /** @brief Frontend for @ref Xrb::WidgetSkin::GetWidgetBackground .
-      * @param widget_background_type The background type to retrieve.
-      */
-    WidgetBackground const *WidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType const widget_background_type) const
-    {
-        return m_widget_skin->GetWidgetBackground(widget_background_type);
-    }
-    /** @brief Frontend for @ref Xrb::WidgetSkin::GetFont .
-      * @param font_type The font type to retrieve.
-      */
-    Resource<Font> const &WidgetSkinFont (WidgetSkin::FontType const font_type) const
-    {
-        return m_widget_skin->GetFont(font_type);
-    }
-    /** @brief Frontend for @ref Xrb::WidgetSkin::GetTexture .
-      * @param texture_type The texture type to retrieve.
-      */
-    Resource<GlTexture> const &WidgetSkinTexture (WidgetSkin::TextureType const texture_type) const
-    {
-        return m_widget_skin->GetTexture(texture_type);
-    }
-    /** @brief Frontend for @ref Xrb::WidgetSkin::Margins .
-      * @param margins_type The margins type to retrieve.
-      */
-    ScreenCoordMargins const &WidgetSkinMargins (WidgetSkin::MarginsType const margins_type) const
-    {
-        return m_widget_skin->Margins(margins_type);
-    }
+    /// Returns a pointer to the const WidgetSkin managed by this.
+    WidgetSkin const *GetWidgetSkin () const { return m_widget_skin; }
+    /// Frontend for @ref Xrb::WidgetSkin::GetWidgetBackground .
+    WidgetBackground const *WidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type) const;
+    /// Frontend for @ref Xrb::WidgetSkin::FontPath .
+    std::string const &WidgetSkinFontPath (WidgetSkin::FontType font_type) const;
+    /// Frontend for @ref Xrb::WidgetSkin::FontHeightRatio .
+    Float WidgetSkinFontHeightRatio (WidgetSkin::FontType font_type) const;
+    /// Frontend for @ref Xrb::WidgetSkin::LoadFont .
+    Resource<Font> WidgetSkinLoadFont (WidgetSkin::FontType font_type) const;
+    /// Frontend for @ref Xrb::WidgetSkin::GetTexture .
+    Resource<GlTexture> WidgetSkinTexture (WidgetSkin::TextureType texture_type) const;
+    /// Frontend for @ref Xrb::WidgetSkin::Margins .
+    ScreenCoordMargins WidgetSkinMargins (WidgetSkin::MarginsType margins_type) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // modifiers
     // ///////////////////////////////////////////////////////////////////////
 
+    void SetWidgetSkin (WidgetSkin *widget_skin);
+    
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetWidgetBackground .
       */
-    void SetWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type,
-        WidgetBackground const *widget_background);
+//     void SetWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetFont .
       */
-    void SetWidgetSkinFont (
-        WidgetSkin::FontType font_type,
-        Resource<Font> const &font);
+//     void SetWidgetSkinFont (WidgetSkin::FontType font_type, Resource<Font> const &font);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontFacePath .
       */
-    void SetWidgetSkinFontFacePath (
-        WidgetSkin::FontType font_type,
-        std::string const &font_face_path);
+//     void SetWidgetSkinFontFacePath (WidgetSkin::FontType font_type, std::string const &font_face_path);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontHeightRatio .
       */
-    void SetWidgetSkinFontHeightRatio (
-        WidgetSkin::FontType font_type,
-        Float font_height_ratio);
+//     void SetWidgetSkinFontHeightRatio (WidgetSkin::FontType font_type, Float font_height_ratio);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontHeight .
       */
-    void SetWidgetSkinFontHeight (
-        WidgetSkin::FontType font_type,
-        ScreenCoord font_height);
+//     void SetWidgetSkinFontHeight (WidgetSkin::FontType font_type, ScreenCoord font_height);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetTexture .
       */
-    void SetWidgetSkinTexture (
-        WidgetSkin::TextureType texture_type,
-        Resource<GlTexture> const &texture);
+//     void SetWidgetSkinTexture (WidgetSkin::TextureType texture_type, Resource<GlTexture> const &texture);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetTexturePath .
       */
-    void SetWidgetSkinTexturePath (
-        WidgetSkin::TextureType texture_type,
-        std::string const &texture_path);
+//     void SetWidgetSkinTexturePath (WidgetSkin::TextureType texture_type, std::string const &texture_path);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetMarginRatios .
       */
-    void SetWidgetSkinMarginRatios (
-        WidgetSkin::MarginsType margin_type,
-        FloatMargins const &margin_ratios);
+//     void SetWidgetSkinMarginRatios (WidgetSkin::MarginsType margin_type, FloatMargins const &margin_ratios);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetMargins .
       */
-    void SetWidgetSkinMargins (
-        WidgetSkin::MarginsType margin_type,
-        ScreenCoordMargins const &margins);
+//     void SetWidgetSkinMargins (WidgetSkin::MarginsType margin_type, ScreenCoordMargins const &margins);
 
 protected:
 
+    /// This is called any time m_widget_skin changes.
+    virtual void HandleChangedWidgetSkin () { }
+    
     // ///////////////////////////////////////////////////////////////////////
     // abstract functions
     // ///////////////////////////////////////////////////////////////////////
 
-    /** This method must be implemented by baseclasses (Widget).
-      * @brief Returns the number of child WidgetSkinHandler objects this
-      *        object owns.
-      */
+    /// Should return the size ratio basis for use in Font loading and Margins determination.
+    virtual ScreenCoord WidgetSkinHandlerSizeRatioBasis () const = 0;
+    /// Should return the number of child WidgetSkinHandler objects this object owns.
     virtual Uint32 WidgetSkinHandlerChildCount () const = 0;
-    /** This method must be implemented by baseclasses (Widget).
-      * @brief Returns the indexed child WidgetSkinHandler.
-      * @param index The index of the child to return.
-      */
+    /// Should return the specified indexed child WidgetSkinHandler.
     virtual WidgetSkinHandler *WidgetSkinHandlerChild (Uint32 index) = 0;
-    /** This method must be implemented by baseclasses (Widget).
-      * @brief Returns the parent WidgetSkinHandler of this object.
-      */
+    /// Returns the parent WidgetSkinHandler of this object.
     virtual WidgetSkinHandler *WidgetSkinHandlerParent () = 0;
 
-    // ///////////////////////////////////////////////////////////////////////
-    // WidgetSkin property change handlers
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** This method may be overridden by subclasses when it is necessary
-      * to know when a widget background has been changed, for example,
-      * to update the render background for a Button.
-      * @brief Called when a widget background is changed.
-      */
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type) { }
-    /** This method may be overridden by subclasses when it is necessary
-      * to know when a font has been changed, for example, to update the
-      * render font for a Label.
-      * @brief Called when a font is changed.
-      */
-    virtual void HandleChangedWidgetSkinFont (
-        WidgetSkin::FontType font_type) { }
-    /** This method may be overridden by subclasses when it is necessary
-      * to know when a texture has been changed, for example, to update the
-      * render picture for a CheckBox.
-      * @brief Called when a texture is changed.
-      */
-    virtual void HandleChangedWidgetSkinTexture (
-        WidgetSkin::TextureType texture_type) { }
-    /** This method may be overridden by subclasses when it is necessary
-      * to know when a margins vector has been changed, for example,
-      * to update the properties of a Layout.
-      * @brief Called when a margins vector is changed.
-      */
-    virtual void HandleChangedWidgetSkinMargins (
-        WidgetSkin::MarginsType margins_type) { }
-
-    /** @brief Used (e.g. by Screen) to unload everything (e.g. before
-      *        the Gl singleton dies)
-      */
+    /// Used (e.g. by Screen) to unload everything (e.g. before the Gl singleton dies)
     void ReleaseAllWidgetSkinResources ();
 
     /** This object will only be deleted iff m_delete_widget_skin is true.
       * @brief A pointer to the contained WidgetSkin object.
       */
     WidgetSkin *m_widget_skin;
-
     /** The default value is false.  Widget/Screen sets this according to
       * wether or not it is a top-level widget.
       * @brief Indicates if m_widget_skin should be deleted upon destruction.
@@ -205,28 +129,16 @@ protected:
     bool m_delete_widget_skin;
 
 private:
-
-    // ///////////////////////////////////////////////////////////////////////
-    // this function is used to generalize the redundant code in
-    // all the SetBlahBlah functions
-    // ///////////////////////////////////////////////////////////////////////
-
+/*
+    // this function is used to generalize the redundant code in all the SetBlahBlah functions
     template <typename PropertyType, typename DataType>
-    void SetProperty (
-        PropertyType const property,
-        DataType const data,
-        void (WidgetSkin::*SetWidgetSkinProperty)(PropertyType, DataType),
-        void (WidgetSkinHandler::*PropagateChangedPropertyFunction)(PropertyType))
+    void SetProperty (PropertyType property, DataType data, void (WidgetSkin::*SetWidgetSkinProperty)(PropertyType, DataType))
     {
         // make sure we go up to the top level parent before setting
         // the property and propagating the changes.
         if (WidgetSkinHandlerParent() != NULL)
         {
-            WidgetSkinHandlerParent()->SetProperty<PropertyType, DataType>(
-                property,
-                data,
-                SetWidgetSkinProperty,
-                PropagateChangedPropertyFunction);
+            WidgetSkinHandlerParent()->SetProperty<PropertyType, DataType>(property, data, SetWidgetSkinProperty);
         }
         else
         {
@@ -234,36 +146,10 @@ private:
             // set the property on the widget skin
             (m_widget_skin->*SetWidgetSkinProperty)(property, data);
             // send property change notification down the widget hierarchy.
-            (this->*PropagateChangedPropertyFunction)(property);
+            HandleChangedWidgetSkin();
         }
     }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // these functions propagate property changes to child widgets
-    // ///////////////////////////////////////////////////////////////////////
-
-    template <typename PropertyType>
-    void PropagateChangedProperty (
-        PropertyType const property,
-        void (WidgetSkinHandler::*HandleChangedProperty)(PropertyType))
-    {
-        // call HandleChangedProperty on this WidgetSkinHandler
-        (this->*HandleChangedProperty)(property);
-        // call PropagateProperty on all child WidgetSkinHandlers
-        for (Uint32 i = 0; i < WidgetSkinHandlerChildCount(); ++i)
-        {
-            WidgetSkinHandler *child = WidgetSkinHandlerChild(i);
-            ASSERT1(child != NULL);
-            child->PropagateChangedProperty<PropertyType>(
-                property,
-                HandleChangedProperty);
-        }
-    }
-
-    void PropagateChangedWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type);
-    void PropagateChangedFont (WidgetSkin::FontType font_type);
-    void PropagateChangedTexture (WidgetSkin::TextureType texture_type);
-    void PropagateChangedMargins (WidgetSkin::MarginsType margins_type);
+    */
 }; // end of class WidgetSkinHandler
 
 } // end of namespace Xrb

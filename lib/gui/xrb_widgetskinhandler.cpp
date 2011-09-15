@@ -10,8 +10,9 @@
 
 #include "xrb_widgetskinhandler.hpp"
 
-namespace Xrb
-{
+#include "xrb_emptystring.hpp"
+
+namespace Xrb {
 
 WidgetSkinHandler::WidgetSkinHandler ()
 {
@@ -27,10 +28,79 @@ WidgetSkinHandler::~WidgetSkinHandler ()
         m_widget_skin = NULL;
 }
 
+WidgetBackground const *WidgetSkinHandler::WidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type) const
+{
+    if (m_widget_skin == NULL)
+        return NULL;
+    else
+        return m_widget_skin->GetWidgetBackground(widget_background_type);
+}
+
+std::string const &WidgetSkinHandler::WidgetSkinFontPath (WidgetSkin::FontType font_type) const
+{
+    if (m_widget_skin == NULL)
+        return g_empty_string;
+    else
+        return m_widget_skin->FontPath(font_type);
+}
+
+Float WidgetSkinHandler::WidgetSkinFontHeightRatio (WidgetSkin::FontType font_type) const
+{
+    if (m_widget_skin == NULL)
+        return 0.03f; // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
+    else
+        return m_widget_skin->FontHeightRatio(font_type);
+}
+
+Resource<Font> WidgetSkinHandler::WidgetSkinLoadFont (WidgetSkin::FontType font_type) const
+{
+    if (m_widget_skin == NULL)
+        return Font::Load(
+            "resources/FreeSansBoldCustom.ttf",
+            WidgetSkin::FontPixelHeight(
+                WidgetSkinFontHeightRatio(font_type), // will return the default font height ratio
+                WidgetSkinHandlerSizeRatioBasis()));
+    else
+        return m_widget_skin->LoadFont(font_type, WidgetSkinHandlerSizeRatioBasis());
+}
+
+Resource<GlTexture> WidgetSkinHandler::WidgetSkinTexture (WidgetSkin::TextureType texture_type) const
+{
+    if (m_widget_skin == NULL)
+        return Resource<GlTexture>();
+    else
+        return m_widget_skin->GetTexture(texture_type);
+}
+
+ScreenCoordMargins WidgetSkinHandler::WidgetSkinMargins (WidgetSkin::MarginsType margins_type) const
+{
+    if (m_widget_skin == NULL)
+        return ScreenCoordMargins::ms_zero;
+    else
+        return m_widget_skin->Margins(margins_type, WidgetSkinHandlerSizeRatioBasis());
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // WidgetSkin frontend modifiers
 // ///////////////////////////////////////////////////////////////////////////
 
+void WidgetSkinHandler::SetWidgetSkin (WidgetSkin *widget_skin)
+{
+    if (m_delete_widget_skin)
+        Delete(m_widget_skin);
+    m_widget_skin = widget_skin;
+    
+    for (Uint32 i = 0, count = WidgetSkinHandlerChildCount(); i < count; ++i)
+    {
+        WidgetSkinHandler *child = WidgetSkinHandlerChild(i);
+        ASSERT1(child != NULL);
+        child->SetWidgetSkin(widget_skin);
+        child->m_delete_widget_skin = false;
+    }
+    
+    HandleChangedWidgetSkin();
+}
+/*
 void WidgetSkinHandler::SetWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background)
 {
     SetProperty<
@@ -38,8 +108,7 @@ void WidgetSkinHandler::SetWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgro
         WidgetBackground const *>(
             widget_background_type,
             widget_background,
-            &WidgetSkin::SetWidgetBackground,
-            &WidgetSkinHandler::PropagateChangedWidgetBackground);
+            &WidgetSkin::SetWidgetBackground);
 }
 
 void WidgetSkinHandler::SetWidgetSkinFont (WidgetSkin::FontType font_type, Resource<Font> const &font)
@@ -49,8 +118,7 @@ void WidgetSkinHandler::SetWidgetSkinFont (WidgetSkin::FontType font_type, Resou
         Resource<Font> const &>(
             font_type,
             font,
-            &WidgetSkin::SetFont,
-            &WidgetSkinHandler::PropagateChangedFont);
+            &WidgetSkin::SetFont);
 }
 
 void WidgetSkinHandler::SetWidgetSkinFontFacePath (WidgetSkin::FontType font_type, std::string const &font_face_path)
@@ -60,8 +128,7 @@ void WidgetSkinHandler::SetWidgetSkinFontFacePath (WidgetSkin::FontType font_typ
         std::string const &>(
             font_type,
             font_face_path,
-            &WidgetSkin::SetFontFacePath,
-            &WidgetSkinHandler::PropagateChangedFont);
+            &WidgetSkin::SetFontFacePath);
 }
 
 void WidgetSkinHandler::SetWidgetSkinFontHeightRatio (WidgetSkin::FontType font_type, Float font_height_ratio)
@@ -71,8 +138,7 @@ void WidgetSkinHandler::SetWidgetSkinFontHeightRatio (WidgetSkin::FontType font_
         Float>(
             font_type,
             font_height_ratio,
-            &WidgetSkin::SetFontHeightRatio,
-            &WidgetSkinHandler::PropagateChangedFont);
+            &WidgetSkin::SetFontHeightRatio);
 }
 
 void WidgetSkinHandler::SetWidgetSkinFontHeight (WidgetSkin::FontType font_type, ScreenCoord font_height)
@@ -82,8 +148,7 @@ void WidgetSkinHandler::SetWidgetSkinFontHeight (WidgetSkin::FontType font_type,
         ScreenCoord>(
             font_type,
             font_height,
-            &WidgetSkin::SetFontHeight,
-            &WidgetSkinHandler::PropagateChangedFont);
+            &WidgetSkin::SetFontHeight);
 }
 
 void WidgetSkinHandler::SetWidgetSkinTexture (WidgetSkin::TextureType texture_type, Resource<GlTexture> const &texture)
@@ -93,8 +158,7 @@ void WidgetSkinHandler::SetWidgetSkinTexture (WidgetSkin::TextureType texture_ty
         Resource<GlTexture> const &>(
             texture_type,
             texture,
-            &WidgetSkin::SetTexture,
-            &WidgetSkinHandler::PropagateChangedTexture);
+            &WidgetSkin::SetTexture);
 }
 
 void WidgetSkinHandler::SetWidgetSkinTexturePath (WidgetSkin::TextureType texture_type, std::string const &texture_path)
@@ -104,8 +168,7 @@ void WidgetSkinHandler::SetWidgetSkinTexturePath (WidgetSkin::TextureType textur
         std::string const &>(
             texture_type,
             texture_path,
-            &WidgetSkin::SetTexturePath,
-            &WidgetSkinHandler::PropagateChangedTexture);
+            &WidgetSkin::SetTexturePath);
 }
 
 void WidgetSkinHandler::SetWidgetSkinMarginRatios (WidgetSkin::MarginsType margin_type, FloatMargins const &margin_ratios)
@@ -115,8 +178,7 @@ void WidgetSkinHandler::SetWidgetSkinMarginRatios (WidgetSkin::MarginsType margi
         FloatMargins const &>(
             margin_type,
             margin_ratios,
-            &WidgetSkin::SetMarginRatios,
-            &WidgetSkinHandler::PropagateChangedMargins);
+            &WidgetSkin::SetMarginRatios);
 }
 
 void WidgetSkinHandler::SetWidgetSkinMargins (WidgetSkin::MarginsType margin_type, ScreenCoordMargins const &margins)
@@ -126,48 +188,15 @@ void WidgetSkinHandler::SetWidgetSkinMargins (WidgetSkin::MarginsType margin_typ
         ScreenCoordMargins const &>(
             margin_type,
             margins,
-            &WidgetSkin::SetMargins,
-            &WidgetSkinHandler::PropagateChangedMargins);
+            &WidgetSkin::SetMargins);
 }
-
+*/
 // ///////////////////////////////////////////////////////////////////////////
 
 void WidgetSkinHandler::ReleaseAllWidgetSkinResources ()
 {
     ASSERT1(m_widget_skin != NULL);
     m_widget_skin->ReleaseAllResources();
-}
-
-// ///////////////////////////////////////////////////////////////////////////
-// these functions propagate property changes to child widgets
-// ///////////////////////////////////////////////////////////////////////////
-
-void WidgetSkinHandler::PropagateChangedWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type)
-{
-    PropagateChangedProperty<WidgetSkin::WidgetBackgroundType>(
-        widget_background_type,
-        &WidgetSkinHandler::HandleChangedWidgetSkinWidgetBackground);
-}
-
-void WidgetSkinHandler::PropagateChangedFont (WidgetSkin::FontType font_type)
-{
-    PropagateChangedProperty<WidgetSkin::FontType>(
-        font_type,
-        &WidgetSkinHandler::HandleChangedWidgetSkinFont);
-}
-
-void WidgetSkinHandler::PropagateChangedTexture (WidgetSkin::TextureType texture_type)
-{
-    PropagateChangedProperty<WidgetSkin::TextureType>(
-        texture_type,
-        &WidgetSkinHandler::HandleChangedWidgetSkinTexture);
-}
-
-void WidgetSkinHandler::PropagateChangedMargins (WidgetSkin::MarginsType margins_type)
-{
-    PropagateChangedProperty<WidgetSkin::MarginsType>(
-        margins_type,
-        &WidgetSkinHandler::HandleChangedWidgetSkinMargins);
 }
 
 } // end of namespace Xrb

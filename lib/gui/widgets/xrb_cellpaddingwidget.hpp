@@ -22,7 +22,7 @@ class CellPaddingWidget : public ContainerWidget
 {
 public:
 
-    CellPaddingWidget (ContainerWidget *parent, std::string const &name = "CellPaddingWidget");
+    CellPaddingWidget (std::string const &name = "CellPaddingWidget");
     virtual ~CellPaddingWidget () { }
 
     inline Alignment2 const &GetAlignment () const { return m_alignment; }

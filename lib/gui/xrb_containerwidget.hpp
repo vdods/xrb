@@ -18,8 +18,7 @@
 
 #include "xrb_widget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 // NOTE: subclasses should not set m_accepts_mouseover to true
 class ContainerWidget : public Widget
@@ -61,14 +60,11 @@ public:
 
     /** @brief Constructs a ContainerWidget.  The widget will be attached to the given
       *        parent widget during construction.
-      * @param parent The parent widget to attach to during construction.
-      *               This must not be NULL, except in the case of a
-      *               @c Screen (the top-level widget).
       * @param name A textual label applied to the specific widget being
       *             constructed.  As for now, this is only used in a debug-
       *             related capacity.
       */
-    ContainerWidget (ContainerWidget *parent, std::string const &name = "ContainerWidget");
+    ContainerWidget (std::string const &name = "ContainerWidget");
     /** Ensures the widget is set to not modal, ensures mouseover is off,
       * deletes all children, and clears the modal widget stack.
       * @brief Destructor.  Deletes all children.
@@ -82,18 +78,18 @@ public:
     /** @brief Returns a pointer to the focused child widget, or NULL if
       *        no child widget is currently focused.
       */
-    inline Widget *Focus () const { return m_focus; }
+    Widget *Focus () const { return m_focus; }
     /** @brief Returns the currently mouseover-focused child widget,
       *        or NULL if none.
       */
-    inline Widget *MouseoverFocus () const { return m_mouseover_focus; }
+    Widget *MouseoverFocus () const { return m_mouseover_focus; }
     /** @brief Returns true iff the focused child widget has mouse grab on.
       */
-    inline bool FocusHasMouseGrab () const { return m_focus_has_mouse_grab; }
+    bool FocusHasMouseGrab () const { return m_focus_has_mouse_grab; }
     /** @brief Returns the "main widget" child, or NULL if there is
       *        none currently.
       */
-    inline Widget *GetMainWidget () const { return m_main_widget; }
+    Widget *GetMainWidget () const { return m_main_widget; }
     /** @brief Returns the boolean vector containing the
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
@@ -342,10 +338,10 @@ protected:
     virtual Bool2 ContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 ContentsMaxSize () const;
 
-    inline Uint32 ChildResizeBlockerCount () const { return m_child_resize_blocker_count; }
-    inline bool ChildResizeWasBlocked () const { return m_child_resize_was_blocked; }
+    Uint32 ChildResizeBlockerCount () const { return m_child_resize_blocker_count; }
+    bool ChildResizeWasBlocked () const { return m_child_resize_was_blocked; }
 
-    inline void IndicateChildResizeWasBlocked () { m_child_resize_was_blocked = true; }
+    void IndicateChildResizeWasBlocked () { m_child_resize_was_blocked = true; }
 
     /** Calls FrameHandler::ProcessFrame on all child widgets.
       *

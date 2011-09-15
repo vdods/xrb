@@ -14,9 +14,9 @@
 
 namespace Xrb {
 
-CellPaddingWidget::CellPaddingWidget (ContainerWidget *parent, std::string const &name)
+CellPaddingWidget::CellPaddingWidget (std::string const &name)
     :
-    ContainerWidget(parent, name)
+    ContainerWidget(name)
 {
     m_accepts_focus = false;
     m_accepts_mouseover = true;

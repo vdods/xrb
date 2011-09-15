@@ -16,15 +16,11 @@
 #include "xrb_render.hpp"
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-Label::Label (
-    std::string const &text,
-    ContainerWidget *const parent,
-    std::string const &name)
+Label::Label (std::string const &text, std::string const &name)
     :
-    TextWidget(text, parent, name)
+    TextWidget(text, name)
 {
     DirtyTextFormatting();
     m_line_format_vector_source = NULL;
@@ -36,19 +32,16 @@ Label::Label (
     ASSERT1(!m_render_picture.IsValid());
 }
 
-Label::Label (
-    Resource<GlTexture> const &picture,
-    ContainerWidget *const parent,
-    std::string const &name)
+Label::Label (Resource<GlTexture> const &picture, std::string const &name)
     :
-    TextWidget("", parent, name),
+    TextWidget("", name),
     m_picture(picture)
 {
     // this must be done before clearing the font
     m_is_picture_label = true;
     // clear the font (because the presence or absence of a font
     // is what dictates if this is a text or picture label).
-    SetFont(Resource<Font>());
+    ReleaseFont();
     m_picture_keeps_aspect_ratio = false;
     Label::UpdateRenderPicture();
 }
@@ -70,7 +63,7 @@ void Label::SetAlignment (Alignment2 const &alignment)
     m_alignment = alignment;
 }
 
-void Label::SetAlignment (Uint32 const component, Alignment const alignment)
+void Label::SetAlignment (Uint32 component, Alignment alignment)
 {
     if (m_is_picture_label)
         return;
@@ -79,7 +72,7 @@ void Label::SetAlignment (Uint32 const component, Alignment const alignment)
     m_alignment[component] = alignment;
 }
 
-void Label::SetWordWrap (bool const word_wrap)
+void Label::SetWordWrap (bool word_wrap)
 {
     if (m_is_picture_label)
         return;
@@ -175,7 +168,7 @@ void Label::DrawText (RenderContext const &render_context) const
         // calculate the color mask
         string_render_context.ApplyColorMask(RenderTextColor());
         // set up the GL clip rect
-        TopLevelParent()->SetViewport(string_render_context.ClipRect());
+        RootWidgetAsScreen().SetViewport(string_render_context.ClipRect());
         // draw the text
         ASSERT1(m_line_format_vector_source != NULL);
         RenderFont()->DrawLineFormattedText(

@@ -19,8 +19,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class HighScoresWidget : public ContainerWidget
 {
@@ -34,7 +33,7 @@ public:
         M_COUNT
     }; // end of enum HighScoresWidget::Mode
 
-    HighScoresWidget (ContainerWidget *parent);
+    HighScoresWidget ();
 
     void Update (HighScores const &high_scores, Mode mode);
 

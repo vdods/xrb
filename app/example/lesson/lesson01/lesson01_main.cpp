@@ -139,18 +139,26 @@ int main (int argc, char **argv)
     {
         /* @endcode
         We will now create a Layout widget as a child of our Screen (which,
-        not coincidentally, is itself a Widget subclass).  this Layout will be
+        not coincidentally, is itself a Widget subclass).  This Layout will be
         the parent to the widgets we place inside.  The first parameter is the
-        orientation of the Layout (a vertical column of widgets). The second
-        parameter is the Widget to assign as its parent -- in this case, the
-        Screen itself.  The third parameter, which is present in almost all
-        Widget subclasses after the parent widget parameter, is the "name" of
-        the widget.  This parameter is optional, but its use is recommended.
-        It isn't used directly by the engine, but is invaluable in debugging
-        GUI problems -- the ability to identify which widget you're dealing
-        with in a mostly meaningless call stack within some event loop.
+        orientation of the Layout (a vertical column of widgets).  The second
+        parameter, which is present in almost all Widget subclasses as the last
+        parameter, is the "name" of the widget.  This parameter is optional,
+        but its use is recommended.  It isn't used directly by the engine, but
+        is valuable in debugging GUI problems -- the ability to identify which
+        widget you're dealing with in a mostly meaningless call stack within
+        some event loop.
+
+        After a widget is created, it must be attached to a parent widget
+        (unless it is Screen, which is by definition the top-level Widget).
+        The reason the child doesn't attach itself to its parent during
+        construction (as was used in the past -- modeled on the Qt GUI toolkit
+        design) is because there are certain key virtual method calls that
+        need to be made during child attachment.  This can't be done during
+        construction in C++.
         @code */
-        Layout *main_layout = new Layout(VERTICAL, screen, "main layout");
+        Layout *main_layout = new Layout(VERTICAL, "main layout");
+        screen->AttachChild(main_layout);
         /* @endcode
         This call causes main_layout to fill out the entire space of screen.
         SetMainWidget is a Widget method, so can be used on any parent widget
@@ -163,23 +171,25 @@ int main (int argc, char **argv)
         Now to create some directly useful widgets.
 
         A Label is a simple, non-interactive widget which draws text or a
-        picture (we'll get to picture labels later).  the default
+        picture (we'll get to picture labels later).  The default
         justification for a Label's contents is centered both horizontally
         and vertically, but this, among other properties, can be changed.
         @code */
-        new Label("I LIKE ZOMBIES.", main_layout, "awesome zombie text label");
+        main_layout->AttachChild(new Label("I LIKE ZOMBIES.", "awesome zombie text label"));
         /* @endcode
         A Button can be clicked upon to signal some other piece of code to do
         something.  This button isn't connected to anything, but we'll get to
         that later.
         @code */
-        new Button("This button does nothing", main_layout, "do-nothing button");
+        main_layout->AttachChild(new Button("This button does nothing", "do-nothing button"));
 
         /* @endcode
         Layouts, just like any Widget subclass, can be contained within other
         Layouts.  This layout will be used to place a text Label and a LineEdit
         side-by-side.  The code block is only being used to indicate creation
-        of the layout and its child widgets.
+        of the layout and its child widgets.  Generally it is a good idea to
+        wait until the Layout is filled with its child widgets before adding it
+        to a parent widget.
 
         A LineEdit is a text-entry box.  The first parameter in its
         constructor indicates the maximum number of characters that can be
@@ -188,13 +198,15 @@ int main (int argc, char **argv)
         color, and so forth.
         @code */
         {
-            Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "label and line-edit layout");
+            Layout *sub_layout = new Layout(HORIZONTAL, "label and line-edit layout");
 
             // Create a text Label to indicate what to do with the following LineEdit.
-            new Label("You can enter up to 30 characters in this LineEdit ->", sub_layout, "indicator label");
+            sub_layout->AttachChild(new Label("You can enter up to 30 characters in this LineEdit ->", "indicator label"));
             // Create the LineEdit after the Label, and it will be placed next
             // in the horizontal layout.
-            new LineEdit(30, sub_layout, "30-char line edit");
+            sub_layout->AttachChild(new LineEdit(30, "30-char line edit"));
+
+            main_layout->AttachChild(sub_layout);
         }
 
         /* @endcode
@@ -205,7 +217,7 @@ int main (int argc, char **argv)
         as each contains useful information.
         @code */
         {
-            Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "note label layout");
+            Layout *sub_layout = new Layout(HORIZONTAL, "note label layout");
 
             // Another text Label.  It notes that holding down a key will not cause
             // the character to repeat.  Doing this will be discussed later.  This
@@ -224,22 +236,22 @@ int main (int argc, char **argv)
                     "three Labels can be resized horizontally because\n"
                     "they each have word wrapping enabled, so the text\n"
                     "formatting is dictated by the width of the Label.",
-                    sub_layout,
                     "left-aligned note label");
             // All text will be aligned with the left edge of the Label.  By default,
             // a Label's alignment is CENTER.
             note_label->SetAlignment(Dim::X, LEFT);
+            sub_layout->AttachChild(note_label);
 
             // Add another label, this time, with centered alignment.
             note_label =
                 new Label(
                     "This Label widget is using word wrapping with center alignment.  "
                     "The width of the Label dictates where the words will be wrapped.",
-                    sub_layout,
                     "center-aligned note label with word wrapping");
             // This call does exactly what it looks like it does.
             note_label->SetWordWrap(true);
             // The default alignment is already CENTER, so we don't need to do anything.
+            sub_layout->AttachChild(note_label);
 
             // Add another label, this time, with right alignment.
             note_label =
@@ -247,13 +259,13 @@ int main (int argc, char **argv)
                     "This Label widget is using word wrapping with right alignment. "
                     "Any Label (not just word wrapped Labels) can use the alignment "
                     "property, including aspect-ratio-preserving picture Labels.",
-                    sub_layout,
                     "right-aligned note label with word wrapping");
             // This call does exactly what it looks like it does.
             note_label->SetWordWrap(true);
             // All text will be aligned with the right edge of the Label.
             note_label->SetAlignment(Dim::X, RIGHT);
-
+            sub_layout->AttachChild(note_label);
+            
             // Add another label, this time, with right alignment.
             note_label =
                 new Label(
@@ -264,12 +276,14 @@ int main (int argc, char **argv)
                     "characters seems to sometimes screw up the font's kerning (the "
                     "space between specific glyph pairs to make the text look more "
                     "natural).",
-                    sub_layout,
                     "spaced note label with word wrapping");
             // This call does exactly what it looks like it does.
             note_label->SetWordWrap(true);
             // see note_label's text for a description.
             note_label->SetAlignment(Dim::X, SPACED);
+            sub_layout->AttachChild(note_label);
+
+            main_layout->AttachChild(sub_layout);
         }
 
         /* @endcode

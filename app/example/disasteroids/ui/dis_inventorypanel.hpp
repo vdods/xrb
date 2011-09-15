@@ -40,7 +40,7 @@ class InventoryPanel : public ModalWidget
 {
 public:
 
-    InventoryPanel (ContainerWidget *parent, std::string const &name = "InventoryPanel");
+    InventoryPanel (std::string const &name = "InventoryPanel");
     virtual ~InventoryPanel () { }
 
     SignalSender0 const *SenderDeactivate () { return &m_sender_deactivate; }

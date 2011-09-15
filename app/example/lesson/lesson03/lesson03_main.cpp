@@ -176,7 +176,7 @@ class HeatButton : public Widget
 public:
 
     /* @endcode
-    Here's our lovely constructor with its awesome parameters which we just
+    Here's our lovely constructor with its awesome parameter which we just
     pass directly to the superclass constructor.  We will initialize the
     temperature and ambient temperature values to a nice dumb default of zero.
     Note how we set <tt>m_accepts_mouseover</tt> to <tt>true</tt> here.
@@ -188,9 +188,9 @@ public:
     to the widget(s) behind it, including its parent widget, which may be
     desirable if you're writing custom HUD widgets for a game.
     @code */
-    HeatButton (ContainerWidget *parent, std::string const &name = "HeatButton")
+    HeatButton (std::string const &name = "HeatButton")
         :
-        Widget(parent, name)
+        Widget(name)
     {
         m_temperature = 0.0f;
         m_ambient_temperature = 0.0f;
@@ -199,12 +199,9 @@ public:
     }
 
     // Accessor for temperature -- used in HeatSimulation::HandleFrame.
-    inline Float Temperature () const { return m_temperature; }
+    Float Temperature () const { return m_temperature; }
     // Modifier for ambient temperature -- also used in HeatSimulation::HandleFrame.
-    inline void SetAmbientTemperature (Float ambient_temperature)
-    {
-        m_ambient_temperature = ambient_temperature;
-    }
+    void SetAmbientTemperature (Float ambient_temperature) { m_ambient_temperature = ambient_temperature; }
 
     /* @endcode
     Here is the override of Widget::Draw.  This method is predictably used
@@ -301,8 +298,7 @@ public:
 
     /* @endcode
     The constructor for <tt>HeatSimulation</tt> is similar to that of <tt>HeatButton</tt>
-    -- it accepts the parent widget and a widget name as parameters, and passes
-    them directly to the superclass constructor.
+    -- it passes its constructor parameters directly to the superclass constructor.
 
     Notice the constructors for the member variables
     <tt>m_desired_framerate_validator</tt> and
@@ -318,8 +314,8 @@ public:
     templatized for your convenience.
 
     In the game loop, the calculations to determine the value to pass to
-    Singleton::Pal().Sleep involves dividing by <tt>g_desired_framerate</tt>, and therefore we must
-    avoid setting <tt>g_desired_framerate</tt> to zero.
+    Singleton::Pal().Sleep involves dividing by <tt>g_desired_framerate</tt>,
+    and therefore we must avoid setting <tt>g_desired_framerate</tt> to zero.
     <tt>m_desired_framerate_validator</tt> is an instance of
     GreaterOrEqualValidator<Uint32> -- we will limit the desired framerate to
     be greater or equal to 1 (the parameter passed into the constructor for
@@ -335,9 +331,9 @@ public:
     not want it or its children accepting mouseover and blocking the game view
     widget from accepting mouseover.
     @code */
-    HeatSimulation (ContainerWidget *parent, std::string const &name = "HeatSimulation")
+    HeatSimulation (std::string const &name = "HeatSimulation")
         :
-        ContainerWidget(parent, "HeatSimulation"),
+        ContainerWidget("HeatSimulation"),
         /* @endcode
         The single argument to this validator's constructor is the lower
         bound for GreaterOrEqualValidator<Uint32>.  Anything greator or equal
@@ -371,11 +367,12 @@ public:
         m_internal_receiver_set_desired_framerate(&HeatSimulation::SetDesiredFramerate, this),
         m_internal_receiver_set_temperature_retention_rate(&HeatSimulation::SetTemperatureRetentionRate, this)
     {
-        Layout *main_layout = new Layout(VERTICAL, this);
+        Layout *main_layout = new Layout(VERTICAL);
         main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
+        this->AttachChild(main_layout);
         SetMainWidget(main_layout);
 
-        Layout *grid_layout = new Layout(ROW, GRID_WIDTH, main_layout, "grid layout");
+        Layout *grid_layout = new Layout(ROW, GRID_WIDTH, "grid layout");
         /* @endcode
         This next variable declaration is a little mechanism to speed up
         creation of complex (many-widget) GUI containers.  The
@@ -401,12 +398,20 @@ public:
         // to each grid cell in the 2 dimensional array, m_button_grid for
         // use in temperature calculations.
         for (Uint32 y = 0; y < GRID_HEIGHT; ++y)
+        {
             for (Uint32 x = 0; x < GRID_WIDTH; ++x)
-                m_button_grid[y][x] = new HeatButton(grid_layout);
+            {
+                m_button_grid[y][x] = new HeatButton();
+                grid_layout->AttachChild(m_button_grid[y][x]);
+            }
+        }
+
+        // Don't forget to attach grid_layout, after we add all of its children.
+        main_layout->AttachChild(grid_layout);
 
         // Create a layout for the controls below the grid and enable
         // the frame margins (which are zeroed-out by default).
-        Layout *sub_layout = new Layout(HORIZONTAL, main_layout);
+        Layout *sub_layout = new Layout(HORIZONTAL);
         sub_layout->SetIsUsingZeroedFrameMargins(false);
 
         // ValueLabel<T> is a templatized subclass of Label which contains a
@@ -414,17 +419,19 @@ public:
         // and corresponding SignalSenders and SignalReceivers.  It is very
         // flexible, due to its value-to-text-printf-format and
         // text-to-value-function constructor parameters.
-        new Label("Actual Framerate:", sub_layout);
-        m_actual_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, sub_layout);
+        sub_layout->AttachChild(new Label("Actual Framerate:"));
+        m_actual_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>);
         m_actual_framerate_label->SetAlignment(Dim::X, LEFT);
+        sub_layout->AttachChild(m_actual_framerate_label);
 
         // ValueEdit<T> is a templatized subclass of LineEdit, analogous to
         // ValueLabel<T>.  You can type into it and it will attempt to use
         // the specified text-to-value-function to convert it to a value.
         // A validator may also be specified to enforce valid input values.
-        new Label("Desired Framerate:", sub_layout);
+        sub_layout->AttachChild(new Label("Desired Framerate:"));
         ValueEdit<Uint32> *desired_framerate_edit =
-            new ValueEdit<Uint32>("%u", Util::TextToUint<Uint32>, sub_layout);
+            new ValueEdit<Uint32>("%u", Util::TextToUint<Uint32>);
+        sub_layout->AttachChild(desired_framerate_edit);
         desired_framerate_edit->SetValidator(&m_desired_framerate_validator);
         desired_framerate_edit->SetValue(static_cast<Uint32>(Math::Round(g_desired_framerate)));
         // We'll connect this one to this HeatSimulation's SetDesiredFramerate
@@ -435,15 +442,19 @@ public:
 
         // Similarly create a ValueEdit for the temperature retention rate
         // and connect it up.
-        new Label("Temperature Retention Rate:", sub_layout);
+        sub_layout->AttachChild(new Label("Temperature Retention Rate:"));
         ValueEdit<Float> *temperature_retention_rate_edit =
-            new ValueEdit<Float>("%g", Util::TextToFloat, sub_layout);
+            new ValueEdit<Float>("%g", Util::TextToFloat);
+        sub_layout->AttachChild(temperature_retention_rate_edit);
         temperature_retention_rate_edit->SetValue(g_temperature_retention_rate);
         temperature_retention_rate_edit->SetValidator(&m_temperature_retention_range_validator);
         SignalHandler::Connect1(
             temperature_retention_rate_edit->SenderValueUpdated(),
             &m_internal_receiver_set_temperature_retention_rate);
 
+        // Attach sub_layout to its parent.
+        main_layout->AttachChild(sub_layout);
+            
         // Ensure DISTRIBUTION_FUNCTION_WIDTH and DISTRIBUTION_FUNCTION_HEIGHT
         // are odd, so that there is an exact center in the array.
         ASSERT0(Math::IsOdd<Uint32>(DISTRIBUTION_FUNCTION_WIDTH));
@@ -592,8 +603,9 @@ int main (int argc, char **argv)
     // video mode has been set, and the engine is ready to go.  Here is where
     // the application-specific code begins.
     {
-        // this is the only child of Screen
-        HeatSimulation *main_widget = new HeatSimulation(screen);
+        // This is the only child of Screen
+        HeatSimulation *main_widget = new HeatSimulation();
+        screen->AttachChild(main_widget);
         screen->SetMainWidget(main_widget);
 
         // These values will be used below in the framerate control code.

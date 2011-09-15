@@ -269,7 +269,7 @@ public:
         AwesomeEntity *planet;
 
         // Create a large, heavy planet.
-        sprite = Engine2::Sprite::Create("resources/demi3_small.png");
+        sprite = Engine2::Sprite::Create("resources/demi_3.png");
         planet = new AwesomeEntity();
         sprite->SetEntity(planet);
         planet->SetTranslation(FloatVector2::ms_zero);
@@ -281,7 +281,7 @@ public:
         static Uint32 const s_moon_count = 50;
         for (Uint32 i = 0; i < s_moon_count; ++i)
         {
-            sprite = Engine2::Sprite::Create("resources/shade3_small.png");
+            sprite = Engine2::Sprite::Create("resources/shade_3.png");
             AwesomeEntity *moon = new AwesomeEntity();
             sprite->SetEntity(moon);
             sprite->SetZDepth(-0.1f);
@@ -540,7 +540,8 @@ int main (int argc, char **argv)
         AwesomeWorld *world = new AwesomeWorld();
         // Create the WorldViewWidget as a child of screen.  This is what will
         // contain an instance of WorldView and will cause it to be rendered.
-        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget(screen);
+        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget();
+        screen->AttachChild(world_view_widget);
         screen->SetMainWidget(world_view_widget);
         // Create an instance of our AwesomeWorldView, using the newly created
         // WorldViewWidget as its "parent".  Set the zoom factor so something

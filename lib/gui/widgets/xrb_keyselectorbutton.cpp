@@ -16,16 +16,11 @@
 #include "xrb_layout.hpp"
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-KeySelectorButton::KeySelectorButton (
-    std::string const &input_action_name,
-    Key::Code const key_code,
-    ContainerWidget *const parent,
-    std::string const &name)
+KeySelectorButton::KeySelectorButton (std::string const &input_action_name, Key::Code key_code, std::string const &name)
     :
-    Button(Singleton::InputState().KeyName(key_code), parent, name),
+    Button(Singleton::InputState().KeyName(key_code), name),
     m_input_action_name(input_action_name),
     m_internal_receiver_dialog_returned(&KeySelectorButton::DialogReturned, this)
 {
@@ -45,11 +40,10 @@ void KeySelectorButton::SetKeyCode (Key::Code const key_code)
 void KeySelectorButton::HandleReleased ()
 {
     ASSERT1(m_key_selector_dialog == NULL);
-    m_key_selector_dialog =
-        new KeySelectorDialog(
-            "Press new key/button for \"" + m_input_action_name + "\"",
-            TopLevelParent());
-    m_key_selector_dialog->CenterOnWidget(TopLevelParent());
+    m_key_selector_dialog = new KeySelectorDialog("Press new key/button for \"" + m_input_action_name + "\"");
+    m_key_selector_dialog->CenterOnWidget(RootWidget());
+    RootWidgetAsScreen().AttachChild(m_key_selector_dialog);
+    
     SignalHandler::Connect1(
         m_key_selector_dialog->SenderDialogReturned(),
         &m_internal_receiver_dialog_returned);
@@ -67,12 +61,9 @@ void KeySelectorButton::DialogReturned (Dialog::ButtonID const button_id)
 // KeySelectorButton::KeySelectorDialog
 // ///////////////////////////////////////////////////////////////////////////
 
-KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
-    std::string const &message,
-    ContainerWidget *const parent,
-    std::string const &name)
+KeySelectorButton::KeySelectorDialog::KeySelectorDialog (std::string const &message, std::string const &name)
     :
-    Dialog(DT_CANCEL, parent, name)
+    Dialog(DT_CANCEL, name)
 {
     // this is so clicking on the CANCEL button eats the mouse event and
     // ProcessMouseButtonEvent is not called
@@ -83,8 +74,10 @@ KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
 
     m_key_code = Key::INVALID;
 
-    Label *l = new Label(message, DialogLayout());
+    Label *l;
+    l = new Label(message);
     l->SetIsHeightFixedToTextHeight(true);
+    DialogLayout()->AttachChild(l);
 }
 
 bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *const e)

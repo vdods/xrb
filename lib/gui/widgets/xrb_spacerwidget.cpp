@@ -10,12 +10,11 @@
 
 #include "xrb_spacerwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-SpacerWidget::SpacerWidget (ContainerWidget *const parent)
+SpacerWidget::SpacerWidget ()
     :
-    Widget(parent, "SpacerWidget")
+    Widget("SpacerWidget")
 {
     SetBackground(NULL);
 }

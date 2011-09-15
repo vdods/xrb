@@ -15,20 +15,14 @@
 
 #include "xrb_radiobutton.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 template <typename T, T sentinel>
 class ToolbarButton : public RadioButton<T, sentinel>
 {
 public:
 
-    ToolbarButton (
-        Resource<GlTexture> const &picture,
-        T id,
-        RadioButtonGroup<T, sentinel> *group,
-        ContainerWidget *parent,
-        std::string const &name = "ToolbarButton");
+    ToolbarButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, std::string const &name = "ToolbarButton");
     virtual ~ToolbarButton () { }
 
 protected:
@@ -40,8 +34,7 @@ protected:
     virtual void UpdateRenderPicture ();
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
+    virtual void HandleChangedWidgetSkin ();
 }; // end of class ToolbarButton
 
 // NOTE: the seemingly redundant "this->" is necessary because the C++
@@ -49,12 +42,7 @@ protected:
 // see http://gcc.gnu.org/onlinedocs/gcc/Name-lookup.html for more info.
 
 template <typename T, T sentinel>
-ToolbarButton<T, sentinel>::ToolbarButton (
-    Resource<GlTexture> const &picture,
-    T const id,
-    RadioButtonGroup<T, sentinel> *const group,
-    ContainerWidget *const parent,
-    std::string const &name)
+ToolbarButton<T, sentinel>::ToolbarButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, std::string const &name)
     :
     RadioButton<T, sentinel>(picture, id, group, parent, name)
 {
@@ -84,25 +72,15 @@ void ToolbarButton<T, sentinel>::UpdateRenderBackground ()
 {
     // state priority: disabled, pressed, mouseover, checked, default
     if (!this->IsEnabled())
-        SetRenderBackground(
-            this->WidgetSkinWidgetBackground(
-                WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
+        SetRenderBackground(this->WidgetSkinWidgetBackground(WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
     else if (this->IsPressed())
-        SetRenderBackground(
-            this->WidgetSkinWidgetBackground(
-                WidgetSkin::TOOLBAR_BUTTON_PRESSED_BACKGROUND));
+        SetRenderBackground(this->WidgetSkinWidgetBackground(WidgetSkin::TOOLBAR_BUTTON_PRESSED_BACKGROUND));
     else if (this->IsMouseover() && this->AcceptsMouseover())
-        SetRenderBackground(
-            this->WidgetSkinWidgetBackground(
-                WidgetSkin::TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND));
+        SetRenderBackground(this->WidgetSkinWidgetBackground(WidgetSkin::TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND));
     else if (this->IsChecked())
-        SetRenderBackground(
-            this->WidgetSkinWidgetBackground(
-                WidgetSkin::TOOLBAR_BUTTON_CHECKED_BACKGROUND));
+        SetRenderBackground(this->WidgetSkinWidgetBackground(WidgetSkin::TOOLBAR_BUTTON_CHECKED_BACKGROUND));
     else
-        SetRenderBackground(
-            this->WidgetSkinWidgetBackground(
-                WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
+        SetRenderBackground(this->WidgetSkinWidgetBackground(WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
 }
 
 template <typename T, T sentinel>
@@ -112,10 +90,9 @@ void ToolbarButton<T, sentinel>::UpdateRenderPicture ()
 }
 
 template <typename T, T sentinel>
-void ToolbarButton<T, sentinel>::HandleChangedWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void ToolbarButton<T, sentinel>::HandleChangedWidgetSkin ()
 {
-    // don't worry about the type, just update the background regardless.
+    RadioButton<T, sentinel>::HandleChangedWidgetSkin();
     UpdateRenderBackground();
 }
 

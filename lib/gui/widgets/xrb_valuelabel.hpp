@@ -16,8 +16,7 @@
 #include "xrb_label.hpp"
 #include "xrb_util.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 template <typename ValueType>
 class ValueLabel : public Label
@@ -26,38 +25,19 @@ public:
 
     typedef ValueType (*TextToValueFunctionType)(char const *);
 
-    ValueLabel (
-        std::string const &printf_format,
-        TextToValueFunctionType text_to_value_function,
-        ContainerWidget *parent,
-        std::string const &name = "ValueLabel");
+    ValueLabel (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name = "ValueLabel");
     virtual ~ValueLabel () { }
 
-    inline ValueType Value () const
-    {
-        return m_value;
-    }
-    inline std::string const &PrintfFormat () const
-    {
-        return m_printf_format;
-    }
-    inline TextToValueFunctionType TextToValueFunction () const
-    {
-        return m_text_to_value_function;
-    }
+    ValueType Value () const { return m_value; }
+    std::string const &PrintfFormat () const { return m_printf_format; }
+    TextToValueFunctionType TextToValueFunction () const { return m_text_to_value_function; }
 
     virtual void SetText (std::string const &text);
     void SetValue (ValueType value);
-    inline void SetPrintfFormat (std::string const &printf_format)
-    {
-        m_printf_format = printf_format;
-    }
+    void SetPrintfFormat (std::string const &printf_format) { m_printf_format = printf_format; }
     void SetTextToValueFunction (TextToValueFunctionType text_to_value_function);
 
-    inline SignalReceiver1<ValueType> const *ReceiverSetValue ()
-    {
-        return &m_receiver_set_value;
-    }
+    SignalReceiver1<ValueType> const *ReceiverSetValue () { return &m_receiver_set_value; }
 
 protected:
 
@@ -77,13 +57,9 @@ private:
 }; // end of class ValueLabel
 
 template <typename ValueType>
-ValueLabel<ValueType>::ValueLabel (
-    std::string const &printf_format,
-    TextToValueFunctionType text_to_value_function,
-    ContainerWidget *const parent,
-    std::string const &name)
+ValueLabel<ValueType>::ValueLabel (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name)
     :
-    Label("", parent, name),
+    Label("", name),
     m_receiver_set_value(&ValueLabel<ValueType>::SetValue, this)
 {
     // set up the printf format string
@@ -108,8 +84,7 @@ void ValueLabel<ValueType>::SetValue (ValueType const value)
 }
 
 template <typename ValueType>
-void ValueLabel<ValueType>::SetTextToValueFunction (
-    TextToValueFunctionType text_to_value_function)
+void ValueLabel<ValueType>::SetTextToValueFunction (TextToValueFunctionType text_to_value_function)
 {
     m_text_to_value_function = text_to_value_function;
     SetText(Text());

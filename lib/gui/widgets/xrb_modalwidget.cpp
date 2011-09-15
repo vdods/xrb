@@ -12,37 +12,31 @@
 
 #include "xrb_gui_events.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-ModalWidget::ModalWidget (
-    ContainerWidget *const parent,
-    std::string const &name)
+ModalWidget::ModalWidget (std::string const &name)
     :
-    ContainerWidget(parent, name)
+    ContainerWidget(name)
 {
-    // make this widget modal
-    SetIsModal(true);
+    ASSERT1(!IsModal()); // will become modal after it is attached to the parent.
 }
 
 void ModalWidget::Shutdown ()
 {
     // tell the parent to delete this widget
     ASSERT1(Parent() != NULL);
-    EventDeleteChildWidget *delete_child_widget_event =
-        new EventDeleteChildWidget(this, Parent()->MostRecentFrameTime());
+    EventDeleteChildWidget *delete_child_widget_event = new EventDeleteChildWidget(this, Parent()->MostRecentFrameTime());
     Parent()->EnqueueEvent(delete_child_widget_event);
 
-    // make this widget un-modal
-    SetIsModal(false);
+//     // make this widget un-modal // HIPPO
+//     SetIsModal(false);
     // block future events
     SetIsBlockingEvents(true);
 }
 
 void ModalWidget::UpdateRenderBackground ()
 {
-    SetRenderBackground(
-        WidgetSkinWidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
+    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
 }
 
 void ModalWidget::HandleChangedModalWidgetBackground ()
@@ -50,11 +44,20 @@ void ModalWidget::HandleChangedModalWidgetBackground ()
     UpdateRenderBackground();
 }
 
-void ModalWidget::HandleChangedWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void ModalWidget::HandleChangedWidgetSkin ()
 {
-    if (widget_background_type == WidgetSkin::MODAL_WIDGET_BACKGROUND)
-        HandleChangedModalWidgetBackground();
+    ContainerWidget::HandleChangedWidgetSkin();
+    HandleChangedModalWidgetBackground();
+}
+
+void ModalWidget::HandleAttachedToParent ()
+{
+    SetIsModal(true);
+}
+
+void ModalWidget::HandleAboutToDetachFromParent ()
+{
+    SetIsModal(false);
 }
 
 } // end of namespace Xrb

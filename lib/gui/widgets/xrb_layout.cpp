@@ -12,26 +12,18 @@
 
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-Layout::Layout (
-    LineDirection const major_direction,
-    Uint32 const major_count,
-    ContainerWidget *const parent,
-    std::string const &name)
+Layout::Layout (LineDirection major_direction, Uint32 major_count, std::string const &name)
     :
-    ContainerWidget(parent, name)
+    ContainerWidget(name)
 {
     Initialize(major_direction, major_count);
 }
 
-Layout::Layout (
-    Orientation const orientation,
-    ContainerWidget *const parent,
-    std::string const &name)
+Layout::Layout (Orientation orientation, std::string const &name)
     :
-    ContainerWidget(parent, name)
+    ContainerWidget(name)
 {
     LineDirection major_direction;
     Uint32 major_count = 1;
@@ -46,9 +38,7 @@ Layout::~Layout ()
     DeleteRowSizePropertyArrays();
 }
 
-Widget *Layout::GridChild (
-    Uint32 const major_index,
-    Uint32 const minor_index) const
+Widget *Layout::GridChild (Uint32 major_index, Uint32 minor_index) const
 {
     ASSERT1(major_index < MinorCount());
     ASSERT1(minor_index < MajorCount());
@@ -59,9 +49,7 @@ Widget *Layout::GridChild (
         return 0;
 }
 
-Widget *Layout::GridChildByColumnAndRow (
-    Uint32 const column_index,
-    Uint32 const row_index) const
+Widget *Layout::GridChildByColumnAndRow (Uint32 column_index, Uint32 row_index) const
 {
     ASSERT1(column_index < ColumnCount());
     ASSERT1(row_index < RowCount());
@@ -86,35 +74,35 @@ Uint32 Layout::ColumnCount () const
     return m_column_count;
 }
 
-Bool2 const &Layout::ColumnMinSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::ColumnMinSizeEnabled (Uint32 index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_min_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::ColumnMinSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::ColumnMinSize (Uint32 index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_min_size;
 }
 
-Bool2 const &Layout::ColumnMaxSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::ColumnMaxSizeEnabled (Uint32 index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_max_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::ColumnMaxSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::ColumnMaxSize (Uint32 index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_max_size;
 }
 
-ScreenCoord Layout::ColumnWidth (Uint32 const index) const
+ScreenCoord Layout::ColumnWidth (Uint32 index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
@@ -133,35 +121,35 @@ Uint32 Layout::RowCount () const
     return m_row_count;
 }
 
-Bool2 const &Layout::RowMinSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::RowMinSizeEnabled (Uint32 index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_min_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::RowMinSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::RowMinSize (Uint32 index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_min_size;
 }
 
-Bool2 const &Layout::RowMaxSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::RowMaxSizeEnabled (Uint32 index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_max_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::RowMaxSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::RowMaxSize (Uint32 index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_max_size;
 }
 
-ScreenCoord Layout::RowHeight (Uint32 const index) const
+ScreenCoord Layout::RowHeight (Uint32 index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
@@ -198,7 +186,7 @@ ScreenCoordVector2 Layout::ContentsMaxSize () const
     return m_contents_size_properties.m_max_size;
 }
 
-void Layout::SetMajorDirection (LineDirection const major_direction)
+void Layout::SetMajorDirection (LineDirection major_direction)
 {
     if (m_major_direction != major_direction)
     {
@@ -210,7 +198,7 @@ void Layout::SetMajorDirection (LineDirection const major_direction)
     }
 }
 
-void Layout::SetMajorCount (Uint32 const major_count)
+void Layout::SetMajorCount (Uint32 major_count)
 {
     ASSERT1(major_count > 0);
 
@@ -224,8 +212,7 @@ void Layout::SetMajorCount (Uint32 const major_count)
     }
 }
 
-void Layout::SetIsUsingZeroedFrameMargins (
-    bool const is_using_zeroed_frame_margins)
+void Layout::SetIsUsingZeroedFrameMargins (bool is_using_zeroed_frame_margins)
 {
     if (m_is_using_zeroed_frame_margins != is_using_zeroed_frame_margins)
     {
@@ -234,8 +221,7 @@ void Layout::SetIsUsingZeroedFrameMargins (
     }
 }
 
-void Layout::SetIsUsingZeroedLayoutSpacingMargins (
-    bool const is_using_zeroed_layout_spacing_margins)
+void Layout::SetIsUsingZeroedLayoutSpacingMargins (bool is_using_zeroed_layout_spacing_margins)
 {
     if (m_is_using_zeroed_layout_spacing_margins !=
         is_using_zeroed_layout_spacing_margins)
@@ -246,10 +232,7 @@ void Layout::SetIsUsingZeroedLayoutSpacingMargins (
     }
 }
 
-void Layout::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    bool const value)
+void Layout::SetSizePropertyEnabled (SizeProperties::Property property, Uint32 component, bool value)
 {
     ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
@@ -262,9 +245,7 @@ void Layout::SetSizePropertyEnabled (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void Layout::SetSizePropertyEnabled (
-    SizeProperties::Property const property,
-    Bool2 const &value)
+void Layout::SetSizePropertyEnabled (SizeProperties::Property property, Bool2 const &value)
 {
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled = value;
@@ -276,10 +257,7 @@ void Layout::SetSizePropertyEnabled (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void Layout::SetSizeProperty (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    ScreenCoord const value)
+void Layout::SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value)
 {
     ASSERT1(component <= 1);
     ASSERT1(value >= 0);
@@ -293,9 +271,7 @@ void Layout::SetSizeProperty (
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void Layout::SetSizeProperty (
-    SizeProperties::Property const property,
-    ScreenCoordVector2 const &value)
+void Layout::SetSizeProperty (SizeProperties::Property property, ScreenCoordVector2 const &value)
 {
     ASSERT1(value[Dim::X] >= 0);
     ASSERT1(value[Dim::Y] >= 0);
@@ -326,7 +302,7 @@ ScreenCoordVector2 Layout::Resize (ScreenCoordVector2 const &size)
     return Size();
 }
 
-void Layout::AttachChild (Widget *const child)
+void Layout::AttachChild (Widget *child)
 {
     // call the superclass to actually attach the child
     ContainerWidget::AttachChild(child);
@@ -349,7 +325,7 @@ void Layout::AttachChild (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::DetachChild (Widget *const child)
+void Layout::DetachChild (Widget *child)
 {
     // call the superclass to actually detach the child
     ContainerWidget::DetachChild(child);
@@ -372,7 +348,7 @@ void Layout::DetachChild (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::MoveChildDown (Widget *const child)
+void Layout::MoveChildDown (Widget *child)
 {
     // call the superclass to actually move the child in the vector
     ContainerWidget::MoveChildDown(child);
@@ -396,7 +372,7 @@ void Layout::MoveChildDown (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::MoveChildUp (Widget *const child)
+void Layout::MoveChildUp (Widget *child)
 {
     // call the superclass to actually move the child in the vector
     ContainerWidget::MoveChildUp(child);
@@ -420,7 +396,7 @@ void Layout::MoveChildUp (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::MoveChildToBottom (Widget *const child)
+void Layout::MoveChildToBottom (Widget *child)
 {
     // call the superclass to actually move the child in the vector
     ContainerWidget::MoveChildToBottom(child);
@@ -444,7 +420,7 @@ void Layout::MoveChildToBottom (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::MoveChildToTop (Widget *const child)
+void Layout::MoveChildToTop (Widget *child)
 {
     // call the superclass to actually move the child in the vector
     ContainerWidget::MoveChildToTop(child);
@@ -468,13 +444,13 @@ void Layout::MoveChildToTop (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::HandleChangedWidgetSkinMargins (
-    WidgetSkin::MarginsType const margins_type)
+void Layout::HandleChangedWidgetSkin ()
 {
-    if (margins_type == WidgetSkin::LAYOUT_FRAME_MARGINS)
-        HandleChangedLayoutFrameMargins();
-    else if (margins_type == WidgetSkin::LAYOUT_SPACING_MARGINS)
-        HandleChangedLayoutSpacingMargins();
+    ContainerWidget::HandleChangedWidgetSkin();
+    // the frame margins are not explicitly stored -- see CalculateLayoutFrameMargins
+    // the spacing margins are not explicitly stored -- see CalculateLayoutSpacingMargins
+    HandleChangedLayoutFrameMargins();
+    HandleChangedLayoutSpacingMargins();
 }
 
 void Layout::HandleChangedLayoutFrameMargins ()
@@ -507,7 +483,7 @@ void Layout::HandleChangedLayoutSpacingMargins ()
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::ChildSizePropertiesChanged (Widget *const child)
+void Layout::ChildSizePropertiesChanged (Widget *child)
 {
     // the child's size properties changed, so the column and row size
     // properties aren't valid anymore, and must be recalculated
@@ -528,9 +504,7 @@ void Layout::ChildSizePropertiesChanged (Widget *const child)
         IndicateChildResizeWasBlocked();
 }
 
-void Layout::ChildStackPriorityChanged (
-    Widget *const child,
-    StackPriority const previous_stack_priority)
+void Layout::ChildStackPriorityChanged (Widget *child, StackPriority previous_stack_priority)
 {
     ContainerWidget::ChildStackPriorityChanged(child, previous_stack_priority);
 
@@ -554,9 +528,9 @@ void Layout::ChildStackPriorityChanged (
 }
 
 int Layout::SizePropertiesSortingFunction (
-    SizeProperties const *const properties_a,
-    SizeProperties const *const properties_b,
-    Uint32 const index)
+    SizeProperties const *properties_a,
+    SizeProperties const *properties_b,
+    Uint32 index)
 {
     ASSERT1(index <= 1);
     ASSERT1(properties_a != NULL);
@@ -715,7 +689,7 @@ void Layout::DelegateHeightsToRows ()
 
         // update the remaining height left
         total_height_left -= m_row_height[row_index];
-        ASSERT1(total_height_left >= 0);
+//         ASSERT1(total_height_left >= 0); // HIPPO
     }
 
     DeleteArray(row_order);
@@ -785,10 +759,10 @@ void Layout::ConstrainPreferredSizeProperties ()
 }
 
 void Layout::CalculateLineSizeProperties (
-    LineDirection const line_direction,
-    Uint32 const line_index,
-    SizeProperties *const size_properties,
-    bool *const line_is_hidden) const
+    LineDirection line_direction,
+    Uint32 line_index,
+    SizeProperties *size_properties,
+    bool *line_is_hidden) const
 {
     if (line_direction == MajorDirection())
         ASSERT1(line_index < MinorCount());
@@ -1210,9 +1184,7 @@ void Layout::DeleteRowSizePropertyArrays () const
     }
 }
 
-void Layout::Initialize (
-    LineDirection const major_direction,
-    Uint32 const major_count)
+void Layout::Initialize (LineDirection major_direction, Uint32 major_count)
 {
     // doesn't independently accept focus
     m_accepts_focus = false;

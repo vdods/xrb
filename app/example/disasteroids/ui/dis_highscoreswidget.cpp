@@ -16,47 +16,50 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-HighScoresWidget::HighScoresWidget (ContainerWidget *const parent)
+HighScoresWidget::HighScoresWidget ()
     :
-    ContainerWidget(parent, "HighScoresWidget")
+    ContainerWidget("HighScoresWidget")
 {
-    Layout *main_layout = new Layout(VERTICAL, this, "main HighScoresWidget layout");
+    Layout *main_layout = new Layout(VERTICAL, "main HighScoresWidget layout");
     main_layout->SetIsUsingZeroedFrameMargins(false);
-
-    m_title_label = new Label("x", main_layout);
-    m_title_label->SetIsSizeFixedToTextSize(true);
-    m_title_label->SetFontHeightRatio(0.025f);
-
-    Layout *scores_layout = new Layout(ROW, 4, main_layout, "HighScoresWidget grid layout");
-
-    for (Uint32 row = 0; row < HighScores::MAX_HIGH_SCORES; ++row)
     {
-        Label *position_label = new Label(Util::StringPrintf("#%u", row+1), scores_layout);
-        position_label->SetFontHeightRatio(0.025f);
-        position_label->SetAlignment(Dim::X, RIGHT);
+        m_title_label = new Label("x");
+        m_title_label->SetIsSizeFixedToTextSize(true);
+//         m_title_label->SetFontHeightRatio(0.025f); // HIPPO
+        main_layout->AttachChild(m_title_label);
 
-        m_name_label[row] = new Label("x", scores_layout);
-        m_name_label[row]->SetFontHeightRatio(0.025f);
+        Layout *scores_layout = new Layout(ROW, 4, "HighScoresWidget grid layout");
+        for (Uint32 row = 0; row < HighScores::MAX_HIGH_SCORES; ++row)
+        {
+            Label *position_label = new Label(Util::StringPrintf("#%u", row+1));
+//             position_label->SetFontHeightRatio(0.025f); // HIPPO
+            position_label->SetAlignment(Dim::X, RIGHT);
+            scores_layout->AttachChild(position_label);
 
-        m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint<Uint32>, scores_layout);
-        m_wave_count_label[row]->SetFontHeightRatio(0.025f);
-        m_wave_count_label[row]->SetAlignment(Dim::X, RIGHT);
+            m_name_label[row] = new Label("x");
+//             m_name_label[row]->SetFontHeightRatio(0.025f); // HIPPO
+            scores_layout->AttachChild(m_name_label[row]);
 
-        m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, scores_layout);
-        m_points_label[row]->SetValue(0);
-        m_points_label[row]->SetFontHeightRatio(0.025f);
-        m_points_label[row]->SetAlignment(Dim::X, RIGHT);
+            m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint<Uint32>);
+//             m_wave_count_label[row]->SetFontHeightRatio(0.025f); // HIPPO
+            m_wave_count_label[row]->SetAlignment(Dim::X, RIGHT);
+            scores_layout->AttachChild(m_wave_count_label[row]);
+
+            m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>);
+            m_points_label[row]->SetValue(0);
+//             m_points_label[row]->SetFontHeightRatio(0.025f); // HIPPO
+            m_points_label[row]->SetAlignment(Dim::X, RIGHT);
+            scores_layout->AttachChild(m_points_label[row]);
+        }
+        main_layout->AttachChild(scores_layout);
     }
-
+    this->AttachChild(main_layout);
     SetMainWidget(main_layout);
 }
 
-void HighScoresWidget::Update (
-    HighScores const &high_scores,
-    HighScoresWidget::Mode const mode)
+void HighScoresWidget::Update (HighScores const &high_scores, HighScoresWidget::Mode mode)
 {
     m_title_label->SetText((mode == M_BEST_POINTS) ? "HIGHEST SCORE" : "HIGHEST WAVE");
 

@@ -42,9 +42,9 @@ Float NormalizeStoke (Float stoke)
     return (stoke - 1.0f) / (PlayerShip::ms_max_stoke - 1.0f);
 }
 
-GameWidget::GameWidget (World *world, ContainerWidget *parent)
+GameWidget::GameWidget (World *world)
     :
-    WidgetStack(parent, "disasteroids game widget"),
+    WidgetStack("disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),
     m_internal_receiver_set_wave_count(&GameWidget::SetWaveCount, this),
     m_internal_receiver_show_controls(&GameWidget::ShowControls, this),
@@ -56,7 +56,9 @@ GameWidget::GameWidget (World *world, ContainerWidget *parent)
     ASSERT1(world != NULL);
 
     // the world view goes under the HUD in the game widget stack
-    m_world_view_widget = new Engine2::WorldViewWidget(this);
+    m_world_view_widget = new Engine2::WorldViewWidget();
+    this->AttachChild(m_world_view_widget);
+    
     m_world_view = new WorldView(m_world_view_widget);
     world->AttachWorldView(m_world_view);
 
@@ -77,8 +79,10 @@ GameWidget::GameWidget (World *world, ContainerWidget *parent)
 
     m_saved_game_timescale = -1.0f;
     // create the inventory panel and hide it.
-    m_inventory_panel = new InventoryPanel(this);
+    m_inventory_panel = new InventoryPanel();
+    this->AttachChild(m_inventory_panel);
     m_inventory_panel->Hide();
+    
     // connect the inventory panel deactivate signal
     SignalHandler::Connect0(
         m_inventory_panel->SenderDeactivate(),
@@ -89,241 +93,228 @@ GameWidget::GameWidget (World *world, ContainerWidget *parent)
         m_world_view->ReceiverEndGame());
 
     // create the layout for the HUD
-    Layout *main_layout = new Layout(VERTICAL, this, "main GameWidget layout");
+    Layout *main_layout = new Layout(VERTICAL, "main GameWidget layout");
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
-
-    // framerate (and other stuff later) layout
     {
-        m_debug_info_layout = new Layout(HORIZONTAL, main_layout, "debugging info layout");
-        m_debug_info_layout->SetIsUsingZeroedFrameMargins(false);
-        m_debug_info_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+        // framerate (and other stuff later) layout
+        {
+            m_debug_info_layout = new Layout(HORIZONTAL, "debugging info layout");
+            m_debug_info_layout->SetIsUsingZeroedFrameMargins(false);
+            m_debug_info_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
 
-        m_world_frame_time_label =
-            new ValueLabel<Uint32>(
-                "%u ms (world)",
-                Util::TextToUint<Uint32>,
-                m_debug_info_layout,
-                "world frame time label");
-        m_world_frame_time_label->SetIsHeightFixedToTextHeight(true);
-        m_world_frame_time_label->SetAlignment(Dim::X, RIGHT);
+            m_world_frame_time_label =
+                new ValueLabel<Uint32>(
+                    "%u ms (world)",
+                    Util::TextToUint<Uint32>,
+                    "world frame time label");
+            m_world_frame_time_label->SetIsHeightFixedToTextHeight(true);
+            m_world_frame_time_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_world_frame_time_label);
 
-        m_gui_frame_time_label =
-            new ValueLabel<Uint32>(
-                "%u ms (gui process)",
-                Util::TextToUint<Uint32>,
-                m_debug_info_layout,
-                "gui frame time label");
-        m_gui_frame_time_label->SetIsHeightFixedToTextHeight(true);
-        m_gui_frame_time_label->SetAlignment(Dim::X, RIGHT);
+            m_gui_frame_time_label =
+                new ValueLabel<Uint32>(
+                    "%u ms (gui process)",
+                    Util::TextToUint<Uint32>,
+                    "gui frame time label");
+            m_gui_frame_time_label->SetIsHeightFixedToTextHeight(true);
+            m_gui_frame_time_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_gui_frame_time_label);
 
-        m_render_frame_time_label =
-            new ValueLabel<Uint32>(
-                "%u ms (render)",
-                Util::TextToUint<Uint32>,
-                m_debug_info_layout,
-                "render frame time label");
-        m_render_frame_time_label->SetIsHeightFixedToTextHeight(true);
-        m_render_frame_time_label->SetAlignment(Dim::X, RIGHT);
+            m_render_frame_time_label =
+                new ValueLabel<Uint32>(
+                    "%u ms (render)",
+                    Util::TextToUint<Uint32>,
+                    "render frame time label");
+            m_render_frame_time_label->SetIsHeightFixedToTextHeight(true);
+            m_render_frame_time_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_render_frame_time_label);
 
-        m_entity_count_label =
-            new ValueLabel<Uint32>(
-                "%u entities",
-                Util::TextToUint<Uint32>,
-                m_debug_info_layout,
-                "entity count label");
-        m_entity_count_label->SetIsHeightFixedToTextHeight(true);
-        m_entity_count_label->SetAlignment(Dim::X, RIGHT);
+            m_entity_count_label =
+                new ValueLabel<Uint32>(
+                    "%u entities",
+                    Util::TextToUint<Uint32>,
+                    "entity count label");
+            m_entity_count_label->SetIsHeightFixedToTextHeight(true);
+            m_entity_count_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_entity_count_label);
 
-        m_bind_texture_call_count_label =
-            new ValueLabel<Uint32>(
-                "%u bind texture calls",
-                Util::TextToUint<Uint32>,
-                m_debug_info_layout,
-                "bind texture call count label");
-        m_bind_texture_call_count_label->SetIsHeightFixedToTextHeight(true);
-        m_bind_texture_call_count_label->SetAlignment(Dim::X, RIGHT);
-        m_bind_texture_call_count_label->Hide(); // for now
+            m_bind_texture_call_count_label =
+                new ValueLabel<Uint32>(
+                    "%u bind texture calls",
+                    Util::TextToUint<Uint32>,
+                    "bind texture call count label");
+            m_bind_texture_call_count_label->SetIsHeightFixedToTextHeight(true);
+            m_bind_texture_call_count_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_bind_texture_call_count_label);
+            m_bind_texture_call_count_label->Hide(); // for now
 
-        m_bind_texture_call_hit_percent_label =
-            new ValueLabel<Uint32>(
-                "%u%% bind texture hit",
-                Util::TextToUint<Uint32>,
-                m_debug_info_layout,
-                "bind texture call hit percent label");
-        m_bind_texture_call_hit_percent_label->SetIsHeightFixedToTextHeight(true);
-        m_bind_texture_call_hit_percent_label->SetAlignment(Dim::X, RIGHT);
-//         m_bind_texture_call_hit_percent_label->Hide(); // for now
+            m_bind_texture_call_hit_percent_label =
+                new ValueLabel<Uint32>(
+                    "%u%% bind texture hit",
+                    Util::TextToUint<Uint32>,
+                    "bind texture call hit percent label");
+            m_bind_texture_call_hit_percent_label->SetIsHeightFixedToTextHeight(true);
+            m_bind_texture_call_hit_percent_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_bind_texture_call_hit_percent_label);
+    //         m_bind_texture_call_hit_percent_label->Hide(); // for now
 
-        m_framerate_label =
-            new ValueLabel<Float>(
-                "%.1f fps",
-                Util::TextToFloat,
-                m_debug_info_layout,
-                "framerate label");
-        m_framerate_label->SetIsHeightFixedToTextHeight(true);
-        m_framerate_label->SetAlignment(Dim::X, RIGHT);
+            m_framerate_label =
+                new ValueLabel<Float>(
+                    "%.1f fps",
+                    Util::TextToFloat,
+                    "framerate label");
+            m_framerate_label->SetIsHeightFixedToTextHeight(true);
+            m_framerate_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_framerate_label);
 
-        // start hidden
-        m_debug_info_layout->Hide();
-        // connect the debug info enabled signal
-        SignalHandler::Connect1(
-            m_world_view->SenderIsGameLoopInfoEnabledChanged(),
-            &Transformation::BooleanNegation,
-            m_debug_info_layout->ReceiverSetIsHidden());
-    }
+            // start hidden
+            main_layout->AttachChild(m_debug_info_layout);
+            m_debug_info_layout->Hide();
+            
+            // connect the debug info enabled signal
+            SignalHandler::Connect1(
+                m_world_view->SenderIsGameLoopInfoEnabledChanged(),
+                &Transformation::BooleanNegation,
+                m_debug_info_layout->ReceiverSetIsHidden());
+        }
 
-    // time, mineral inventory, score layout and stoke-o-meter
-    {
-        m_stats_and_inventory_layout = new Layout(HORIZONTAL, main_layout, "time-alive and score layout");
-        m_stats_and_inventory_layout->SetIsUsingZeroedFrameMargins(false);
-        m_stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+        // time, mineral inventory, score layout and stoke-o-meter
+        m_stats_and_inventory_layout = new Layout(HORIZONTAL, "time-alive and score layout");
+        {
+            m_stats_and_inventory_layout->SetIsUsingZeroedFrameMargins(false);
+            m_stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+            // NOTE: here is where m_stats_and_inventory_layout->Hide() was called before
+
+            m_wave_count_label =
+                new ValueLabel<Uint32>(
+                    "WAVE %u",
+                    Util::TextToUint<Uint32>,
+                    "wave count label");
+            m_wave_count_label->SetIsHeightFixedToTextHeight(true);
+            m_wave_count_label->SetAlignment(Dim::X, LEFT);
+//             m_wave_count_label->SetFontHeightRatio(0.05f); // HIPPO
+            m_stats_and_inventory_layout->AttachChild(m_wave_count_label);
+
+            m_wave_count = 0;
+
+            UpdateWaveCountLabel();
+
+    /*
+            // extra lives label and icon
+            {
+                m_lives_remaining_label =
+                    new ValueLabel<Uint32>(
+                        "%u",
+                        Util::TextToUint<Uint32>,
+                        m_stats_and_inventory_layout);
+                m_lives_remaining_label->SetIsHeightFixedToTextHeight(true);
+                m_lives_remaining_label->SetAlignment(Dim::X, RIGHT);
+
+                Label *lives_remaining_icon_label =
+                    new Label(
+                        GlTexture::Load("resources/solitary_small.png"),
+                        m_stats_and_inventory_layout);
+                lives_remaining_icon_label->FixWidth(m_lives_remaining_label->Height());
+                lives_remaining_icon_label->FixHeight(m_lives_remaining_label->Height());
+            }
+    */
+
+            for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
+            {
+                m_mineral_inventory_label[mineral_index] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>);
+                m_mineral_inventory_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
+                m_mineral_inventory_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
+                m_stats_and_inventory_layout->AttachChild(m_mineral_inventory_label[mineral_index]);
+
+                Label *mineral_icon_label = new Label(GlTexture::Load(Item::MineralSpritePath(mineral_index)));
+                mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->Height());
+                mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->Height());
+                m_stats_and_inventory_layout->AttachChild(mineral_icon_label);
+            }
+
+            // a spacer to make things look even
+            m_stats_and_inventory_layout->AttachChild(new SpacerWidget());
+
+            {
+                m_option_inventory_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>);
+                m_option_inventory_label->SetIsHeightFixedToTextHeight(true);
+                m_option_inventory_label->SetAlignment(Dim::X, RIGHT);
+                m_stats_and_inventory_layout->AttachChild(m_option_inventory_label);
+
+                Label *option_icon_label = new Label(GlTexture::Load("resources/radiobutton_blue.png"));
+                option_icon_label->FixWidth(m_option_inventory_label->Height() * 7 / 5);
+                option_icon_label->FixHeight(m_option_inventory_label->Height() * 7 / 5);
+                m_stats_and_inventory_layout->AttachChild(option_icon_label);
+            }
+
+            // a spacer to make things look even
+            m_stats_and_inventory_layout->AttachChild(new SpacerWidget());
+
+            // a widget stack for the score label and stoke-o-meter
+            WidgetStack *widget_stack = new WidgetStack("score label and stoke-o-meter widget stack");
+            {
+                m_stoke_o_meter = new ProgressBar(ProgressBar::GO_LEFT, "stoke-o-meter");
+                m_stoke_o_meter->SetColor(Color(1.0f, 1.0f, 1.0f, 0.3f));
+                widget_stack->AttachChild(m_stoke_o_meter);
+
+                m_score_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, "score label");
+                m_score_label->SetIsHeightFixedToTextHeight(true);
+                m_score_label->SetAlignment(Dim::X, RIGHT);
+//                 m_score_label->SetFontHeightRatio(0.05f); // HIPPO
+                widget_stack->AttachChild(m_score_label);
+            }
+            m_stats_and_inventory_layout->AttachChild(widget_stack);
+        }
+        main_layout->AttachChild(m_stats_and_inventory_layout);
         // start with this layout hidden, because the WorldView will show it later
         m_stats_and_inventory_layout->Hide();
 
-        m_wave_count_label =
-            new ValueLabel<Uint32>(
-                "WAVE %u",
-                Util::TextToUint<Uint32>,
-                m_stats_and_inventory_layout,
-                "wave count label");
-        m_wave_count_label->SetIsHeightFixedToTextHeight(true);
-        m_wave_count_label->SetAlignment(Dim::X, LEFT);
-        m_wave_count_label->SetFontHeightRatio(0.05f);
+        // spacer widget (for the vertical space in the HUD between
+        // the upper and lower status bars)
+        main_layout->AttachChild(new SpacerWidget());
 
-        m_wave_count = 0;
-
-        UpdateWaveCountLabel();
-
-/*
-        // extra lives label and icon
-        {
-            m_lives_remaining_label =
-                new ValueLabel<Uint32>(
-                    "%u",
-                    Util::TextToUint<Uint32>,
-                    m_stats_and_inventory_layout);
-            m_lives_remaining_label->SetIsHeightFixedToTextHeight(true);
-            m_lives_remaining_label->SetAlignment(Dim::X, RIGHT);
-
-            Label *lives_remaining_icon_label =
-                new Label(
-                    GlTexture::Load("resources/solitary_small.png"),
-                    m_stats_and_inventory_layout);
-            lives_remaining_icon_label->FixWidth(m_lives_remaining_label->Height());
-            lives_remaining_icon_label->FixHeight(m_lives_remaining_label->Height());
-        }
-*/
-
-        for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
-        {
-            m_mineral_inventory_label[mineral_index] =
-                new ValueLabel<Uint32>(
-                    "%u",
-                    Util::TextToUint<Uint32>,
-                    m_stats_and_inventory_layout);
-            m_mineral_inventory_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
-            m_mineral_inventory_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
-
-            Label *mineral_icon_label =
-                new Label(
-                    GlTexture::Load(Item::MineralSpritePath(mineral_index)),
-                    m_stats_and_inventory_layout);
-            mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->Height());
-            mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->Height());
-        }
-
-        // a spacer to make things look even
-        new SpacerWidget(m_stats_and_inventory_layout);
-
-        {
-            m_option_inventory_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, m_stats_and_inventory_layout);
-            m_option_inventory_label->SetIsHeightFixedToTextHeight(true);
-            m_option_inventory_label->SetAlignment(Dim::X, RIGHT);
-
-            Label *option_icon_label =
-                new Label(
-                    GlTexture::Load("resources/radiobutton_blue.png"),
-                    m_stats_and_inventory_layout);
-            option_icon_label->FixWidth(m_option_inventory_label->Height() * 7 / 5);
-            option_icon_label->FixHeight(m_option_inventory_label->Height() * 7 / 5);
-        }
-
-        // a spacer to make things look even
-        new SpacerWidget(m_stats_and_inventory_layout);
-
-        // a widget stack for the score label and stoke-o-meter
-        WidgetStack *widget_stack =
-            new WidgetStack(
-                m_stats_and_inventory_layout,
-                "score label and stoke-o-meter widget stack");
-
-        m_stoke_o_meter = new ProgressBar(ProgressBar::GO_LEFT, widget_stack, "stoke-o-meter");
-        m_stoke_o_meter->SetColor(Color(1.0f, 1.0f, 1.0f, 0.3f));
-
-        m_score_label =
-            new ValueLabel<Uint32>(
-                "%u",
-                Util::TextToUint<Uint32>,
-                widget_stack,
-                "score label");
-        m_score_label->SetIsHeightFixedToTextHeight(true);
-        m_score_label->SetAlignment(Dim::X, RIGHT);
-        m_score_label->SetFontHeightRatio(0.05f);
-    }
-
-    // spacer widget (for the vertical space in the HUD between
-    // the upper and lower status bars)
-    m_view_spacer_widget = new SpacerWidget(main_layout);
-
-    // armor/shield, power and weapon status layout
-    {
-        m_ship_status_layout = new Layout(HORIZONTAL, main_layout, "ship status layout");
+        // armor/shield, power and weapon status layout
+        m_ship_status_layout = new Layout(HORIZONTAL, "ship status layout");
         m_ship_status_layout->SetIsUsingZeroedFrameMargins(false);
+        {
+            // contains the armor and shield status bars, and keeps the
+            // shield status bar on top of the armor status bar
+            WidgetStack *armor_and_shield_stack = new WidgetStack();
+            {
+                m_armor_status = new ProgressBar(ProgressBar::GO_RIGHT, "armor status");
+                m_armor_status->FixHeight(m_score_label->Height()/2);
+                m_armor_status->SetColor(Color(0.5f, 1.0f, 0.5f, 0.5f));
+                armor_and_shield_stack->AttachChild(m_armor_status);
+
+                m_shield_status = new ProgressBar(ProgressBar::GO_RIGHT, "shield status");
+                m_shield_status->FixHeight(m_score_label->Height()/2);
+                m_shield_status->SetColor(Color(0.5f, 0.5f, 1.0f, 0.5f));
+                armor_and_shield_stack->AttachChild(m_shield_status);
+            }
+            m_ship_status_layout->AttachChild(armor_and_shield_stack);
+
+            m_power_status = new ProgressBar(ProgressBar::GO_RIGHT, "power status");
+            m_power_status->FixHeight(m_score_label->Height()/2);
+            m_power_status->SetColor(Color(1.0f, 1.0f, 0.5f, 0.5f));
+            m_ship_status_layout->AttachChild(m_power_status);
+
+            m_weapon_status = new ProgressBar(ProgressBar::GO_RIGHT, "weapon status");
+            m_weapon_status->FixHeight(m_score_label->Height()/2);
+            m_weapon_status->SetColor(Color(1.0f, 0.5f, 0.5f, 0.5f));
+            m_ship_status_layout->AttachChild(m_weapon_status);
+        }
+        main_layout->AttachChild(m_ship_status_layout);
         // start with this layout hidden, because the WorldView will show it later
         m_ship_status_layout->Hide();
-
-        // contains the armor and shield status bars, and keeps the
-        // shield status bar on top of the armor status bar
-        WidgetStack *armor_and_shield_stack = new WidgetStack(m_ship_status_layout);
-
-        m_armor_status =
-            new ProgressBar(
-                ProgressBar::GO_RIGHT,
-                armor_and_shield_stack,
-                "armor status");
-        m_armor_status->FixHeight(m_score_label->Height()/2);
-        m_armor_status->SetColor(Color(0.5f, 1.0f, 0.5f, 0.5f));
-
-        m_shield_status =
-            new ProgressBar(
-                ProgressBar::GO_RIGHT,
-                armor_and_shield_stack,
-                "shield status");
-        m_shield_status->FixHeight(m_score_label->Height()/2);
-        m_shield_status->SetColor(Color(0.5f, 0.5f, 1.0f, 0.5f));
-
-        m_power_status =
-            new ProgressBar(
-                ProgressBar::GO_RIGHT,
-                m_ship_status_layout,
-                "power status");
-        m_power_status->FixHeight(m_score_label->Height()/2);
-        m_power_status->SetColor(Color(1.0f, 1.0f, 0.5f, 0.5f));
-
-        m_weapon_status =
-            new ProgressBar(
-                ProgressBar::GO_RIGHT,
-                m_ship_status_layout,
-                "weapon status");
-        m_weapon_status->FixHeight(m_score_label->Height()/2);
-        m_weapon_status->SetColor(Color(1.0f, 0.5f, 0.5f, 0.5f));
     }
+    this->AttachChild(main_layout);
 
     // create the game over label and hide it
     {
-        m_game_over_label = new Label("GAME OVER", this, "game over label");
-        m_game_over_label->SetFontHeightRatio(0.10f);
-        m_game_over_label->CenterOnWidget(this);
+        m_game_over_label = new Label("GAME OVER", "game over label");
+//         m_game_over_label->SetFontHeightRatio(0.10f); // HIPPO
+        m_game_over_label->CenterOnWidget(*this);
+        this->AttachChild(m_game_over_label);
         m_game_over_label->Hide();
     }
 
@@ -526,7 +517,7 @@ void GameWidget::ActivateInventoryPanel ()
     // show the inventory panel and resize appropriately
     m_inventory_panel->Show();
     m_inventory_panel->ResizeByRatios(FloatVector2(0.8f, 0.8f));
-    m_inventory_panel->CenterOnWidget(TopLevelParent());
+    m_inventory_panel->CenterOnWidget(RootWidget());
     m_inventory_panel->Focus();
 }
 

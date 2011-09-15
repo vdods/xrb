@@ -16,18 +16,13 @@
 #include "xrb_dialog.hpp"
 #include "xrb_filepanel.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class FileDialog : public Dialog
 {
 public:
 
-    FileDialog (
-        std::string const &title_text,
-        FilePanel::Operation file_operation,
-        ContainerWidget *parent,
-        std::string const &name = "FileDialog");
+    FileDialog (std::string const &title_text, FilePanel::Operation file_operation, std::string const &name = "FileDialog");
     virtual ~FileDialog () { }
 
     inline FilePanel::Operation FileOperation () const { return m_file_panel->FileOperation(); }

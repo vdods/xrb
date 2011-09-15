@@ -34,7 +34,7 @@ class ControlsPanel : public ContainerWidget
 {
 public:
 
-    ControlsPanel (ContainerWidget *parent);
+    ControlsPanel ();
     virtual ~ControlsPanel () { }
 
     ScreenCoordVector2 Resolution () const;

@@ -15,8 +15,7 @@
 
 #include "xrb_containerwidget.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 /** This baseclass isn't strictly necessary to use modal widgets -- it just
   * provides a bit of functionality to make things more convenient.
@@ -36,37 +35,27 @@ class ModalWidget : public ContainerWidget
 {
 public:
 
-    /** @brief Constructs a modal widget in the same manner as a Widget.
-      */
-    ModalWidget (
-        ContainerWidget *parent,
-        std::string const &name = "ModalWidget");
-    /** @brief Boring destructor.
-      */
+    /// Constructs a modal widget in the same manner as a Widget.
+    ModalWidget (std::string const &name = "ModalWidget");
     virtual ~ModalWidget () { }
 
-    /** The widget makes itself not modal, and blocks all events.
-      * @brief Schedules this widget for deletion.
-      */
+    /// The widget makes itself not modal, and blocks all events.
+    /// @brief Schedules this widget for deletion.
     void Shutdown ();
 
 protected:
 
-    /** @brief Sets the render background to the WidgetSkin's
-      *        ModalWidget background.
-      */
+    /// Sets the render background to the WidgetSkin's ModalWidget background.
     virtual void UpdateRenderBackground ();
-    /** Simply calls UpdateRenderBackground.
-      * @brief Called by ModalWidget when specifically the ModalWidget
-      *        background changes.
-      */
+    /// Called by ModalWidget when the ModalWidget background changes.
     virtual void HandleChangedModalWidgetBackground ();
-    /** If the changed background type is MODAL_WIDGET_BACKGROUND,
-      * HandleChangedModalWidgetBackground is called.
-      * @brief Used to catch when the modal widget background is changed.
-      */
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
+    /// Used to catch when the modal widget background is changed.
+    virtual void HandleChangedWidgetSkin ();
+
+    /// Used to set the IsModal flag which does certain other initialization.
+    virtual void HandleAttachedToParent ();
+    /// Used to set the IsModal flag which does certain other shutdown.
+    virtual void HandleAboutToDetachFromParent ();
 }; // end of class ModalWidget
 
 } // end of namespace Xrb
