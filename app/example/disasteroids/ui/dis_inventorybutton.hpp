@@ -36,7 +36,7 @@ class InventoryButton : public Button
 {
 public:
 
-    InventoryButton (ItemType item_type, std::string const &name = "InventoryButton");
+    InventoryButton (ItemType item_type, WidgetContext &context, std::string const &name = "InventoryButton");
     virtual ~InventoryButton () { }
 
     bool IsEquipped () const { return m_is_equipped; }

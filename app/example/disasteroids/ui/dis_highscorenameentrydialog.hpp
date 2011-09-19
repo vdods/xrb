@@ -24,7 +24,7 @@ class HighScoreNameEntryDialog : public Dialog
 {
 public:
 
-    HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count);
+    HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count, WidgetContext &context);
     virtual ~HighScoreNameEntryDialog () { }
 
     SignalSender1<std::string const &> const *SenderSubmitName () { return &m_sender_submit_name; }

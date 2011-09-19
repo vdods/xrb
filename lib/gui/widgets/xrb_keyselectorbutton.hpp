@@ -23,7 +23,7 @@ class KeySelectorButton : public Button
 {
 public:
 
-    KeySelectorButton (std::string const &input_action_name, Key::Code key_code, std::string const &name = "KeySelectorButton");
+    KeySelectorButton (std::string const &input_action_name, Key::Code key_code, WidgetContext &context, std::string const &name = "KeySelectorButton");
 
     Key::Code KeyCode () const { return m_key_code; }
     void SetKeyCode (Key::Code key_code);
@@ -40,11 +40,14 @@ private:
     {
     public:
 
-        KeySelectorDialog (std::string const &message, std::string const &name = "KeySelectorDialog");
+        KeySelectorDialog (std::string const &message, WidgetContext &context, std::string const &name = "KeySelectorDialog");
 
-        inline Key::Code KeyCode () const { return m_key_code; }
+        Key::Code KeyCode () const { return m_key_code; }
 
     protected:
+
+        // overridden so we can grab the mouse at the earliest possible moment.
+        virtual void HandleActivate ();
 
         virtual bool ProcessKeyEvent (EventKey const *e);
         virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);

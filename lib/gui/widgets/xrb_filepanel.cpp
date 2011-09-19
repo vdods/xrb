@@ -17,33 +17,33 @@
 
 namespace Xrb {
 
-FilePanel::FilePanel (std::string const &title_text, Operation file_operation, std::string const &name)
+FilePanel::FilePanel (std::string const &title_text, Operation file_operation, WidgetContext &context, std::string const &name)
     :
-    ContainerWidget(name),
+    ContainerWidget(context, name),
     m_sender_submit_path(this),
     m_sender_submit_path_v(this),
     m_internal_receiver_path_set_by_enter_key(&FilePanel::InternalPathSetByEnterKey, this)
 {
-    Layout *main_control_layout = new Layout(VERTICAL, "main control layout");
+    Layout *main_control_layout = new Layout(VERTICAL, Context(), "main control layout");
 
     Label *label;
 
     // the title text label
-    label = m_title_label = new Label(title_text, "title label");
+    label = m_title_label = new Label(title_text, Context(), "title label");
     label->SetIsHeightFixedToTextHeight(true);
     main_control_layout->AttachChild(label);
 
     // the layout for the dialog's controls
-    Layout *sub_control_layout = new Layout(HORIZONTAL, "sub control layout");
+    Layout *sub_control_layout = new Layout(HORIZONTAL, Context(), "sub control layout");
     {
         // create a text label to indicate what the lineedit is for
         m_file_operation = file_operation;
-        label = new Label("Path:");
+        label = new Label("Path:", Context());
         label->SetIsWidthFixedToTextWidth(true);
         sub_control_layout->AttachChild(label);
         
         // create the line edit to type the path into
-        m_path_edit = new LineEdit(LONGEST_FILESYSTEM_PATH_NAME, "path edit");
+        m_path_edit = new LineEdit(LONGEST_FILESYSTEM_PATH_NAME, Context(), "path edit");
         m_path_edit->Focus();
         sub_control_layout->AttachChild(m_path_edit);
     }
@@ -57,8 +57,6 @@ FilePanel::FilePanel (std::string const &title_text, Operation file_operation, s
     SignalHandler::Connect1(
         m_path_edit->SenderTextSetByEnterKey(),
         &m_internal_receiver_path_set_by_enter_key);
-
-    FilePanel::UpdateRenderBackground();
 }
 
 std::string const &FilePanel::Path () const
@@ -69,6 +67,7 @@ std::string const &FilePanel::Path () const
 
 void FilePanel::UpdateRenderBackground ()
 {
+    ContainerWidget::UpdateRenderBackground();
     SetRenderBackground(NULL);
 }
 

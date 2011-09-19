@@ -57,15 +57,16 @@ well enough, it was probably already explained in
 // This header MUST be included in every source/header file.
 #include "xrb.hpp"
 
-#include "xrb_button.hpp"     // For use of the Button widget class.
-#include "xrb_event.hpp"      // For use of the Event classes.
-#include "xrb_eventqueue.hpp" // For use of the EventQueue class.
-#include "xrb_inputstate.hpp" // For use of the InputState class (via Singleton::).
-#include "xrb_label.hpp"      // For use of the Label widget class.
-#include "xrb_layout.hpp"     // For use of the Layout widget class.
-#include "xrb_lineedit.hpp"   // For use of the LineEdit widget class.
-#include "xrb_screen.hpp"     // For use of the necessary Screen widget class.
-#include "xrb_sdlpal.hpp"     // For use of the SDLPal platform abstraction layer.
+#include "xrb_button.hpp"        // For use of the Button widget class.
+#include "xrb_event.hpp"         // For use of the Event classes.
+#include "xrb_eventqueue.hpp"    // For use of the EventQueue class.
+#include "xrb_inputstate.hpp"    // For use of the InputState class (via Singleton::).
+#include "xrb_label.hpp"         // For use of the Label widget class.
+#include "xrb_layout.hpp"        // For use of the Layout widget class.
+#include "xrb_lineedit.hpp"      // For use of the LineEdit widget class.
+#include "xrb_screen.hpp"        // For use of the necessary Screen widget class.
+#include "xrb_sdlpal.hpp"        // For use of the SDLPal platform abstraction layer.
+#include "xrb_widgetcontext.hpp" // For use of the WidgetContext class.
 
 // Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;
@@ -111,7 +112,6 @@ int main (int argc, char **argv)
         // return with an error value.
         return 2;
     }
-
     /* @endcode
     At this point, the singletons and the Pal have been initialized, the video
     mode has been set, and the engine is ready to go.  Here is where the
@@ -121,6 +121,29 @@ int main (int argc, char **argv)
     of a Widget subclass.  Therefore, we need to instantiate some widgets
     before anything interesting can happen.
 
+    The Screen class defines the "root" widget, which you can think of
+    as corresponding to the physical screen device (though in the future there
+    will be Screens which render to textures, which can then be used to implement
+    game-based computer terminals for example.  To each Screen belongs a
+    WidgetContext, which stores "global" context data, and which each Widget
+    requires during construction.  Each Widget therefore belongs to exactly
+    one Screen, and (for now) can't be moved between Screens.
+
+    A WidgetSkin specifies the look of the various widgets we will use to create
+    our GUI interface.  WidgetSkin properties include fonts and font sizes, margin
+    sizes, various textures and backgrounds.  Each WidgetContext has exactly one
+    WidgetSkin, which applies to all Widgets associated to that context.
+    Specifying a WidgetSkin is optional, but if none is specified, very austere
+    default skin properties will be used.
+
+    Create a WidgetSkin, populate it with default values, and set the WidgetSkin
+    property of the WidgetContext associated to the Screen.  The WidgetContext
+    takes ownership of the WidgetSkin, so we don't need to worry about deleting it.
+    @code */
+    WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    screen->Context().SetWidgetSkin(widget_skin);
+    /* @endcode
     There are custom subclasses of Widget (such as Label, LineEdit, Button,
     Layout, etc) to perform various functions.  Widgets are organized in a
     hierarchy (i.e. parent/child relationship) which also dictates the spatial
@@ -142,12 +165,13 @@ int main (int argc, char **argv)
         not coincidentally, is itself a Widget subclass).  This Layout will be
         the parent to the widgets we place inside.  The first parameter is the
         orientation of the Layout (a vertical column of widgets).  The second
-        parameter, which is present in almost all Widget subclasses as the last
-        parameter, is the "name" of the widget.  This parameter is optional,
-        but its use is recommended.  It isn't used directly by the engine, but
-        is valuable in debugging GUI problems -- the ability to identify which
-        widget you're dealing with in a mostly meaningless call stack within
-        some event loop.
+        parameter is the aforementioned WidgetContext, which comes from the
+        Screen instance.  The third parameter, which is present in almost all
+        Widget subclasses as the last parameter, is the "name" of the widget.
+        This parameter is optional, but its use is recommended.  It isn't used
+        directly by the engine, but is valuable in debugging GUI problems --
+        the ability to identify which widget you're dealing with in a mostly
+        meaningless call stack within some event loop.
 
         After a widget is created, it must be attached to a parent widget
         (unless it is Screen, which is by definition the top-level Widget).
@@ -157,7 +181,7 @@ int main (int argc, char **argv)
         need to be made during child attachment.  This can't be done during
         construction in C++.
         @code */
-        Layout *main_layout = new Layout(VERTICAL, "main layout");
+        Layout *main_layout = new Layout(VERTICAL, screen->Context(), "main layout");
         screen->AttachChild(main_layout);
         /* @endcode
         This call causes main_layout to fill out the entire space of screen.
@@ -175,13 +199,13 @@ int main (int argc, char **argv)
         justification for a Label's contents is centered both horizontally
         and vertically, but this, among other properties, can be changed.
         @code */
-        main_layout->AttachChild(new Label("I LIKE ZOMBIES.", "awesome zombie text label"));
+        main_layout->AttachChild(new Label("I LIKE ZOMBIES.", screen->Context(), "awesome zombie text label"));
         /* @endcode
         A Button can be clicked upon to signal some other piece of code to do
         something.  This button isn't connected to anything, but we'll get to
         that later.
         @code */
-        main_layout->AttachChild(new Button("This button does nothing", "do-nothing button"));
+        main_layout->AttachChild(new Button("This button does nothing", screen->Context(), "do-nothing button"));
 
         /* @endcode
         Layouts, just like any Widget subclass, can be contained within other
@@ -198,13 +222,13 @@ int main (int argc, char **argv)
         color, and so forth.
         @code */
         {
-            Layout *sub_layout = new Layout(HORIZONTAL, "label and line-edit layout");
+            Layout *sub_layout = new Layout(HORIZONTAL, screen->Context(), "label and line-edit layout");
 
             // Create a text Label to indicate what to do with the following LineEdit.
-            sub_layout->AttachChild(new Label("You can enter up to 30 characters in this LineEdit ->", "indicator label"));
+            sub_layout->AttachChild(new Label("You can enter up to 30 characters in this LineEdit ->", screen->Context(), "indicator label"));
             // Create the LineEdit after the Label, and it will be placed next
             // in the horizontal layout.
-            sub_layout->AttachChild(new LineEdit(30, "30-char line edit"));
+            sub_layout->AttachChild(new LineEdit(30, screen->Context(), "30-char line edit"));
 
             main_layout->AttachChild(sub_layout);
         }
@@ -217,7 +241,7 @@ int main (int argc, char **argv)
         as each contains useful information.
         @code */
         {
-            Layout *sub_layout = new Layout(HORIZONTAL, "note label layout");
+            Layout *sub_layout = new Layout(HORIZONTAL, screen->Context(), "note label layout");
 
             // Another text Label.  It notes that holding down a key will not cause
             // the character to repeat.  Doing this will be discussed later.  This
@@ -236,6 +260,7 @@ int main (int argc, char **argv)
                     "three Labels can be resized horizontally because\n"
                     "they each have word wrapping enabled, so the text\n"
                     "formatting is dictated by the width of the Label.",
+                    screen->Context(),
                     "left-aligned note label");
             // All text will be aligned with the left edge of the Label.  By default,
             // a Label's alignment is CENTER.
@@ -247,6 +272,7 @@ int main (int argc, char **argv)
                 new Label(
                     "This Label widget is using word wrapping with center alignment.  "
                     "The width of the Label dictates where the words will be wrapped.",
+                    screen->Context(),
                     "center-aligned note label with word wrapping");
             // This call does exactly what it looks like it does.
             note_label->SetWordWrap(true);
@@ -259,6 +285,7 @@ int main (int argc, char **argv)
                     "This Label widget is using word wrapping with right alignment. "
                     "Any Label (not just word wrapped Labels) can use the alignment "
                     "property, including aspect-ratio-preserving picture Labels.",
+                    screen->Context(),
                     "right-aligned note label with word wrapping");
             // This call does exactly what it looks like it does.
             note_label->SetWordWrap(true);
@@ -276,6 +303,7 @@ int main (int argc, char **argv)
                     "characters seems to sometimes screw up the font's kerning (the "
                     "space between specific glyph pairs to make the text look more "
                     "natural).",
+                    screen->Context(),
                     "spaced note label with word wrapping");
             // This call does exactly what it looks like it does.
             note_label->SetWordWrap(true);

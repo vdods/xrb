@@ -22,7 +22,7 @@ class LineEdit : public TextWidget
 {
 public:
 
-    LineEdit (Uint32 character_limit, std::string const &name = "LineEdit");
+    LineEdit (Uint32 character_limit, WidgetContext &context, std::string const &name = "LineEdit");
     virtual ~LineEdit () { }
 
     Alignment GetAlignment () const { return m_alignment; }
@@ -46,10 +46,8 @@ protected:
 
     virtual void SetRenderFont (Resource<Font> const &render_font);
 
-    virtual void UpdateRenderBackground ();
-
-    // WidgetSkinHandler overrides
     virtual void HandleChangedWidgetSkin ();
+    virtual void UpdateRenderBackground ();
 
     // process one computation frame
     virtual void HandleFrame ();

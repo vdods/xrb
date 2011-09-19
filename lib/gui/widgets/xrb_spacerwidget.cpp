@@ -12,9 +12,9 @@
 
 namespace Xrb {
 
-SpacerWidget::SpacerWidget ()
+SpacerWidget::SpacerWidget (WidgetContext &context)
     :
-    Widget("SpacerWidget")
+    Widget(context, "SpacerWidget")
 {
     SetBackground(NULL);
 }

@@ -173,8 +173,9 @@ well enough, it was probably already explained in
 #include "xrb_math.hpp"                    // For use of the functions in the Math namespace.
 #include "xrb_screen.hpp"                  // For use of the necessary Screen widget class.
 #include "xrb_sdlpal.hpp"                  // For use of the SDLPal platform abstraction layer.
+#include "xrb_widgetcontext.hpp"           // For use of the WidgetContext class.
 
-using namespace Xrb;                     // To avoid having to use Xrb:: everywhere.
+using namespace Xrb;                       // To avoid having to use Xrb:: everywhere.
 
 /* @endcode
 Our customized WorldView class will implement view zooming, rotation and
@@ -359,6 +360,11 @@ int main (int argc, char **argv)
         CleanUp();
         return 2;
     }
+    // Create and use a default-valued WidgetSkin.  The WidgetContext takes
+    // ownership of the WidgetSkin, so we don't need to worry about deleting it.
+    WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    screen->Context().SetWidgetSkin(widget_skin);
 
     // Here is where the application-specific code begins.
     {
@@ -370,7 +376,7 @@ int main (int argc, char **argv)
         Engine2::World *world = CreateAndPopulateWorld();
         // Create the WorldViewWidget as a child of screen.  This is what will
         // contain an instance of WorldView and will cause it to be rendered.
-        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget();
+        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget(screen->Context());
         screen->AttachChild(world_view_widget);
         screen->SetMainWidget(world_view_widget);
         // Create an instance of our AwesomeWorldView, using the newly created
@@ -434,7 +440,10 @@ int main (int argc, char **argv)
         deletion of the attached WorldView which will in turn automatically
         detach itself from World.  Having no attached WorldViews is a necessary
         precondition for the destruction of World.
+
+        Note that it is critical to detach a widget before deleting it!
         @code */
+        world_view_widget->DetachFromParent();
         Delete(world_view_widget);
         Delete(world);
     }

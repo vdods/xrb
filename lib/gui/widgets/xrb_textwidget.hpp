@@ -26,7 +26,7 @@ public:
 
     /** @brief Constructs a text label using the specified text.
       */
-    TextWidget (std::string const &text, std::string const &name = "TextWidget");
+    TextWidget (std::string const &text, WidgetContext &context, std::string const &name = "TextWidget");
     virtual ~TextWidget () { }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -93,6 +93,7 @@ public:
     void SetIsMaxSizeFixedToTextSize (bool is_max_size_fixed_to_text_size);
     void SetIsSizeFixedToTextSize (bool is_size_fixed_to_text_size);
 
+    virtual void PreDraw ();
     virtual void Draw (RenderContext const &render_context) const = 0;
 
 protected:
@@ -100,21 +101,43 @@ protected:
     /// Should only be used by Label.
     void ReleaseFont () { m_font.Release(); }
 
-    Color const &RenderTextColor () const { return m_render_text_color; }
-    Resource<Font> const &RenderFont () const { return m_render_font; }
+    Color const &RenderTextColor () const { ASSERT1(!RenderTextColorNeedsUpdate()); return m_render_text_color; }
+    Color const &RenderTextColor ()
+    {
+        if (RenderTextColorNeedsUpdate())
+            UpdateRenderTextColor();
+        ASSERT1(!RenderTextColorNeedsUpdate());
+        return m_render_text_color;
+        
+    }
+    Resource<Font> const &RenderFont () const { ASSERT1(!RenderFontNeedsUpdate()); return m_render_font; }
+    Resource<Font> const &RenderFont ()
+    {
+        if (RenderFontNeedsUpdate())
+            UpdateRenderFont();
+        ASSERT1(!RenderFontNeedsUpdate());
+        return m_render_font;
+    }
 
     void SetRenderTextColor (Color const &render_text_color) { m_render_text_color = render_text_color; }
     virtual void SetRenderFont (Resource<Font> const &render_font);
 
-    // NOT part of WidgetSkinHandler
+    virtual void HandleChangedWidgetSkin ();
+    // subclasses should override this to specify how to set the render text color.
+    virtual void UpdateRenderTextColor ();
+    // Returns true iff the "render text color needs update" flag is set.  @see SetRenderTextColorNeedsUpdate.
+    bool RenderTextColorNeedsUpdate () const { return m_render_text_color_needs_update; }
+    // indicates that UpdateRenderTextColor should be called before Draw.
+    void SetRenderTextColorNeedsUpdate (bool f = true) { m_render_text_color_needs_update = f; }
+    // subclasses should override this to specify how to set the render font.
+    virtual void UpdateRenderFont ();
+    // Returns true iff the "render font needs update" flag is set.  @see SetRenderFontNeedsUpdate.
+    bool RenderFontNeedsUpdate () const { return m_render_font_needs_update; }
+    // indicates that UpdateRenderFont should be called before Draw.
+    void SetRenderFontNeedsUpdate (bool f = true) { m_render_font_needs_update = f; }
+
     virtual void HandleChangedFrameMargins ();
     virtual void HandleChangedContentMargins ();
-
-    virtual void UpdateRenderTextColor ();
-    virtual void UpdateRenderFont ();
-
-    // YES part of WidgetSkinHandler
-    virtual void HandleChangedWidgetSkin ();
 
     // if you need to specify a custom text bounding box accessor,
     // do it with an override of this.
@@ -145,8 +168,12 @@ private:
     
     // the font which will be used for text drawing calculations
     Resource<Font> m_render_font;
+    // indicates that UpdateRenderFont should be called before Draw.
+    bool m_render_font_needs_update;
     // color to render the text in
     Color m_render_text_color;
+    // indicates that UpdateRenderTextColor should be called before Draw.
+    bool m_render_text_color_needs_update;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers

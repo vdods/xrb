@@ -133,6 +133,7 @@ well enough, it was probably already explained in
 #include "xrb_valueedit.hpp"            // For use of the ValueEdit<T> template class.
 #include "xrb_valuelabel.hpp"           // For use of the ValueLabel<T> template class.
 #include "xrb_widget.hpp"               // For use of the Widget class.
+#include "xrb_widgetcontext.hpp"        // For use of the WidgetContext class.
 
 using namespace Xrb;                    // To avoid having to use Xrb:: everywhere.
 
@@ -188,9 +189,9 @@ public:
     to the widget(s) behind it, including its parent widget, which may be
     desirable if you're writing custom HUD widgets for a game.
     @code */
-    HeatButton (std::string const &name = "HeatButton")
+    HeatButton (WidgetContext &context, std::string const &name = "HeatButton")
         :
-        Widget(name)
+        Widget(context, name)
     {
         m_temperature = 0.0f;
         m_ambient_temperature = 0.0f;
@@ -331,9 +332,9 @@ public:
     not want it or its children accepting mouseover and blocking the game view
     widget from accepting mouseover.
     @code */
-    HeatSimulation (std::string const &name = "HeatSimulation")
+    HeatSimulation (WidgetContext &context, std::string const &name = "HeatSimulation")
         :
-        ContainerWidget("HeatSimulation"),
+        ContainerWidget(context, "HeatSimulation"),
         /* @endcode
         The single argument to this validator's constructor is the lower
         bound for GreaterOrEqualValidator<Uint32>.  Anything greator or equal
@@ -367,12 +368,12 @@ public:
         m_internal_receiver_set_desired_framerate(&HeatSimulation::SetDesiredFramerate, this),
         m_internal_receiver_set_temperature_retention_rate(&HeatSimulation::SetTemperatureRetentionRate, this)
     {
-        Layout *main_layout = new Layout(VERTICAL);
+        Layout *main_layout = new Layout(VERTICAL, Context());
         main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
         this->AttachChild(main_layout);
         SetMainWidget(main_layout);
 
-        Layout *grid_layout = new Layout(ROW, GRID_WIDTH, "grid layout");
+        Layout *grid_layout = new Layout(ROW, GRID_WIDTH, Context(), "grid layout");
         /* @endcode
         This next variable declaration is a little mechanism to speed up
         creation of complex (many-widget) GUI containers.  The
@@ -401,7 +402,7 @@ public:
         {
             for (Uint32 x = 0; x < GRID_WIDTH; ++x)
             {
-                m_button_grid[y][x] = new HeatButton();
+                m_button_grid[y][x] = new HeatButton(context);
                 grid_layout->AttachChild(m_button_grid[y][x]);
             }
         }
@@ -411,7 +412,7 @@ public:
 
         // Create a layout for the controls below the grid and enable
         // the frame margins (which are zeroed-out by default).
-        Layout *sub_layout = new Layout(HORIZONTAL);
+        Layout *sub_layout = new Layout(HORIZONTAL, Context());
         sub_layout->SetIsUsingZeroedFrameMargins(false);
 
         // ValueLabel<T> is a templatized subclass of Label which contains a
@@ -419,8 +420,8 @@ public:
         // and corresponding SignalSenders and SignalReceivers.  It is very
         // flexible, due to its value-to-text-printf-format and
         // text-to-value-function constructor parameters.
-        sub_layout->AttachChild(new Label("Actual Framerate:"));
-        m_actual_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>);
+        sub_layout->AttachChild(new Label("Actual Framerate:", Context()));
+        m_actual_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, Context());
         m_actual_framerate_label->SetAlignment(Dim::X, LEFT);
         sub_layout->AttachChild(m_actual_framerate_label);
 
@@ -428,9 +429,9 @@ public:
         // ValueLabel<T>.  You can type into it and it will attempt to use
         // the specified text-to-value-function to convert it to a value.
         // A validator may also be specified to enforce valid input values.
-        sub_layout->AttachChild(new Label("Desired Framerate:"));
+        sub_layout->AttachChild(new Label("Desired Framerate:", Context()));
         ValueEdit<Uint32> *desired_framerate_edit =
-            new ValueEdit<Uint32>("%u", Util::TextToUint<Uint32>);
+            new ValueEdit<Uint32>("%u", Util::TextToUint<Uint32>, Context());
         sub_layout->AttachChild(desired_framerate_edit);
         desired_framerate_edit->SetValidator(&m_desired_framerate_validator);
         desired_framerate_edit->SetValue(static_cast<Uint32>(Math::Round(g_desired_framerate)));
@@ -442,9 +443,9 @@ public:
 
         // Similarly create a ValueEdit for the temperature retention rate
         // and connect it up.
-        sub_layout->AttachChild(new Label("Temperature Retention Rate:"));
+        sub_layout->AttachChild(new Label("Temperature Retention Rate:", Context()));
         ValueEdit<Float> *temperature_retention_rate_edit =
-            new ValueEdit<Float>("%g", Util::TextToFloat);
+            new ValueEdit<Float>("%g", Util::TextToFloat, Context());
         sub_layout->AttachChild(temperature_retention_rate_edit);
         temperature_retention_rate_edit->SetValue(g_temperature_retention_rate);
         temperature_retention_rate_edit->SetValidator(&m_temperature_retention_range_validator);
@@ -598,13 +599,18 @@ int main (int argc, char **argv)
         CleanUp();
         return 2;
     }
+    // Create and use a default-valued WidgetSkin.  The WidgetContext takes
+    // ownership of the WidgetSkin, so we don't need to worry about deleting it.
+    WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    screen->Context().SetWidgetSkin(widget_skin);
 
     // At this point, the singletons and the Pal have been initialized, the
     // video mode has been set, and the engine is ready to go.  Here is where
     // the application-specific code begins.
     {
         // This is the only child of Screen
-        HeatSimulation *main_widget = new HeatSimulation();
+        HeatSimulation *main_widget = new HeatSimulation(screen->Context());
         screen->AttachChild(main_widget);
         screen->SetMainWidget(main_widget);
 

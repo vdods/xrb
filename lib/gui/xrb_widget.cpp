@@ -16,6 +16,7 @@
 #include "xrb_key.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
@@ -23,12 +24,12 @@ namespace Xrb {
 // constructor and destructor
 // ///////////////////////////////////////////////////////////////////////////
 
-Widget::Widget (std::string const &name)
+Widget::Widget (WidgetContext &context, std::string const &name)
     :
-    WidgetSkinHandler(),
     FrameHandler(),
-    EventHandler(NULL),
+    EventHandler(&context.GetEventQueue()),
     SignalHandler(),
+    m_context(context),
     m_receiver_set_is_enabled(&Widget::SetIsEnabled, this),
     m_receiver_enable(&Widget::Enable, this),
     m_receiver_disable(&Widget::Disable, this),
@@ -37,6 +38,8 @@ Widget::Widget (std::string const &name)
     m_receiver_show(&Widget::Show, this)
 {
 //     fprintf(stderr, "Widget::Widget(%s);\n", name.c_str());
+
+    ASSERT1(context.GetScreen().OwnerEventQueue() != NULL);
 
     m_accepts_focus = false;
     m_accepts_mouseover = true;
@@ -47,95 +50,72 @@ Widget::Widget (std::string const &name)
     m_last_mouse_position = ScreenCoordVector2::ms_zero; // arbitrary
     m_color_bias = Color::ms_identity_color_bias;
     m_color_mask = Color::ms_identity_color_mask;
-    m_is_modal = false;
+    m_remove_from_widget_context_upon_destruction = true;
     m_stack_priority = SP_NEUTRAL;
     m_background = NULL;
     m_render_background = NULL;
+    m_render_background_needs_update = true;
     m_frame_margins = ScreenCoordVector2::ms_zero;
     m_content_margins = ScreenCoordVector2::ms_zero;
     m_parent = NULL;
+
+    m_context.AddWidget(*this);
+
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_FRAME_MARGINS));
+    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
 }
 
 Widget::~Widget ()
 {
 //     fprintf(stderr, "Widget::~Widget(%s);\n", m_name.c_str());
+    ASSERT0(m_parent == NULL && "you must DetachFromParent before deleting this widget");
 
-    // if this is a modal widget, make sure it gets taken off the
-    // top-level widget's modal widget stack
-    SetIsModal(false);
-    // make sure that mouseover is off
-    MouseoverOff();
+    DeleteAndNullify(m_background);
+    
+    // this if-condition is used to avoid the following method call after
+    // Screen's destructor (which destroys this context).
+    if (m_remove_from_widget_context_upon_destruction)
+        m_context.RemoveWidget(*this);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // accessors
 // ///////////////////////////////////////////////////////////////////////////
 
-ContainerWidget const *Widget::EffectiveParent () const
-{
-    return IsModal() ? DStaticCast<ContainerWidget const *>(&RootWidget()) : m_parent;
-}
-
-ContainerWidget *Widget::EffectiveParent ()
-{
-    return IsModal() ? DStaticCast<ContainerWidget *>(&RootWidget()) : m_parent;
-}
-
-Widget const &Widget::RootWidget () const
+bool Widget::IsActive () const
 {
     Widget const *root = this;
-    ASSERT1(root != NULL);
-    // this will terminate if there are no cycles, a condition which is not explicitly checked for.
+    ASSERT1(root != NULL); // just in case
+    // this will terminate if there are no cycles, a condition which is checked for in ContainerWidget::AttachChild().
     while (root->m_parent != NULL)
         root = root->m_parent;
-    return *root;
-}
-
-Widget &Widget::RootWidget ()
-{
-    Widget *root = this;
-    ASSERT1(root != NULL);
-    // this will terminate if there are no cycles, a condition which is not explicitly checked for.
-    while (root->m_parent != NULL)
-        root = root->m_parent;
-    return *root;
-}
-
-bool Widget::RootWidgetIsScreen () const
-{
-    Widget const &root = RootWidget();
-    return dynamic_cast<Screen const *>(&root) != NULL;
-}
-
-Screen const &Widget::RootWidgetAsScreen () const
-{
-    ASSERT1(RootWidgetIsScreen() && "can only call this on a Widget which is ultimately connected to a Screen");
-    Widget const &root = RootWidget();
-    return dynamic_cast<Screen const &>(root);
-}
-
-Screen &Widget::RootWidgetAsScreen ()
-{
-    Widget &root = RootWidget();
-    return dynamic_cast<Screen &>(root);
+    return root->IsScreen();
 }
 
 bool Widget::IsFocused () const
 {
-    ContainerWidget const *parent = EffectiveParent();
-    return parent == NULL || parent->m_focus == this;
+    return this == &Context().GetScreen() // the screen is always focused
+           ||
+           (m_parent != NULL && m_parent->m_focus == this);
 }
 
 bool Widget::IsMouseover () const
 {
-    ContainerWidget const *parent = EffectiveParent();
-    return parent == NULL || parent->m_mouseover_focus == this;
+    return this == &Context().GetScreen() // the screen always has mouseover (TODO: check for mouse leaving window)
+           ||
+           (m_parent != NULL && m_parent->m_mouseover_focus == this);
 }
 
 bool Widget::IsMouseGrabbed () const
 {
-    ContainerWidget const *parent = EffectiveParent();
-    return parent == NULL || (parent->m_focus == this && parent->m_focus_has_mouse_grab);
+    return this == &Context().GetScreen() // the screen always has the mouse grabbed
+           ||
+           (m_parent != NULL && m_parent->m_focus == this && m_parent->m_focus_has_mouse_grab);
+}
+
+bool Widget::IsModal () const
+{
+    return Context().GetScreen().IsAttachedAsModalChildWidget(*this);
 }
 
 ScreenCoordVector2 Widget::AdjustedSize (ScreenCoordVector2 const &size) const
@@ -267,49 +247,16 @@ void Widget::SetSizeProperty (SizeProperties::Property property, ScreenCoordVect
 
 void Widget::SetSizePropertyRatio (SizeProperties::Property property, Uint32 component, Float ratio, bool defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoord size_ratio_basis = Context().SizeRatioBasis();
     ScreenCoord calculated_value = ScreenCoord(size_ratio_basis * ratio);
     SetSizeProperty(property, component, calculated_value, defer_parent_update);
 }
 
 void Widget::SetSizePropertyRatios (SizeProperties::Property property, FloatVector2 const &ratios, bool defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoord size_ratio_basis = Context().SizeRatioBasis();
     ScreenCoordVector2 calculated_value = (Float(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
     SetSizeProperty(property, calculated_value, defer_parent_update);
-}
-
-void Widget::SetIsModal (bool is_modal)
-{
-    if (is_modal)
-    {
-        ASSERT0(!IsRootWidget() && "You can't make the root widget modal!");
-        ASSERT0(IsEnabled() && "You can't make a disabled widget modal!");
-    }
-
-    // only do stuff if the value is changing
-    if (m_is_modal != is_modal)
-    {
-        // make sure to remove mouseover when the modal state changes
-        MouseoverOff();
-
-        // make sure that m_is_modal is still true during the call to
-        // RemoveModalWidget, or before the call to AddModalWidget
-        if (m_is_modal)
-        {
-            ASSERT1(!IsMouseover());
-            // remove this widget from the modal stack of the root widget
-            RootWidgetAsScreen().RemoveModalWidget(this);
-            m_is_modal = false;
-        }
-        else
-        {
-            m_is_modal = true;
-            RootWidgetAsScreen().AddModalWidget(this);
-        }
-
-        ParentChildSizePropertiesUpdate(false);
-    }
 }
 
 void Widget::SetStackPriority (StackPriority stack_priority)
@@ -327,7 +274,7 @@ void Widget::SetBackground (WidgetBackground *background)
 {
     Delete(m_background);
     m_background = background;
-    HandleChangedBackground();
+    SetRenderBackgroundNeedsUpdate();
 }
 
 void Widget::SetFrameMargins (ScreenCoordMargins const &frame_margins)
@@ -341,7 +288,7 @@ void Widget::SetFrameMargins (ScreenCoordMargins const &frame_margins)
 
 void Widget::SetFrameMarginRatios (FloatMargins const &frame_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoord size_ratio_basis = Context().SizeRatioBasis();
     ScreenCoordMargins calculated_frame_margins((frame_margin_ratios * Float(size_ratio_basis)).StaticCast<ScreenCoord>());
     SetFrameMargins(calculated_frame_margins);
 }
@@ -364,7 +311,7 @@ void Widget::SetContentMargins (ScreenCoordMargins const &content_margins)
 
 void Widget::SetContentMarginRatios (FloatMargins const &content_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = RootWidget().SizeRatioBasis();
+    ScreenCoord size_ratio_basis = Context().SizeRatioBasis();
     ScreenCoordMargins calculated_content_margins((content_margin_ratios * Float(size_ratio_basis)).StaticCast<ScreenCoord>());
     SetContentMargins(calculated_content_margins);
 }
@@ -448,11 +395,23 @@ void Widget::UnfixHeight ()
     SetSizePropertyEnabled(SizeProperties::MAX, Dim::Y, false);
 }
 
+void Widget::PreDraw ()
+{
+    if (RenderBackgroundNeedsUpdate())
+        UpdateRenderBackground();
+    ASSERT1(!RenderBackgroundNeedsUpdate());
+}
+
 void Widget::Draw (RenderContext const &render_context) const
 {
-    // if the background exists, draw it
-    if (RenderBackground())
+    ASSERT1(!RenderBackgroundNeedsUpdate());
+    if (RenderBackground() != NULL) // NULL indicates no background
         RenderBackground()->Draw(render_context, ScreenRect(), FrameMargins());
+}
+
+void Widget::PostDraw ()
+{
+    // nothing to do (so far)
 }
 
 void Widget::MoveTo (ScreenCoordVector2 const &position)
@@ -485,7 +444,7 @@ ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
 
 ScreenCoordVector2 Widget::ResizeByRatios (FloatVector2 const &ratios)
 {
-    return Resize((Float(RootWidget().SizeRatioBasis()) * ratios).StaticCast<ScreenCoord>());
+    return Resize((Float(Context().SizeRatioBasis()) * ratios).StaticCast<ScreenCoord>());
 }
 
 ScreenCoordVector2 Widget::MoveToAndResize (ScreenCoordRect const &screen_rect)
@@ -501,108 +460,113 @@ void Widget::CenterOnWidget (Widget const &widget)
 
 bool Widget::Focus ()
 {
-    // you may not focus a hidden widget.
-    ASSERT1(!IsHidden());
+    ASSERT1(IsActive() && "can't focus an inactive widget");
+    ASSERT1(!IsHidden() && "can't focus a hidden widget");
 
     // if already focused, then we don't need to do anything
     if (IsFocused())
         return true;
 
-    // if this is not a top level widget, proceed normally
-    if (!IsRootWidget())
-    {
-        // find the first ancestor of this widget that is focused
-        ContainerWidget *first_focused_ancestor = EffectiveParent();
-        while (first_focused_ancestor->EffectiveParent() != NULL &&
-               !first_focused_ancestor->IsFocused())
-        {
-            first_focused_ancestor = first_focused_ancestor->EffectiveParent();
-        }
+    // there's no point in focusing if there's no parent (Screen already has focus anyway).
+    if (m_parent == NULL)
+        return true;
 
-        // unfocus all widgets from the focused child of the first focused
-        // ancestor down
-        ASSERT1(first_focused_ancestor != NULL);
-        if (first_focused_ancestor->m_focus != NULL)
-            first_focused_ancestor->m_focus->UnfocusWidgetLine();
+    // find the first ancestor of this widget that is focused
+    ContainerWidget *first_focused_ancestor = m_parent;
+    while (first_focused_ancestor->m_parent != NULL &&
+           !first_focused_ancestor->IsFocused())
+    {
+        first_focused_ancestor = first_focused_ancestor->m_parent;
     }
+
+    // unfocus all widgets from the focused child of the first focused
+    // ancestor down
+    ASSERT1(first_focused_ancestor != NULL);
+    if (first_focused_ancestor->m_focus != NULL)
+        first_focused_ancestor->m_focus->UnfocusWidgetLine();
 
     // focus all widgets from this widget on up to the first focused ancestor
     FocusWidgetLine();
     // make sure the parent's m_focus actually points to this widget
-    ASSERT1(EffectiveParent() == NULL || EffectiveParent()->m_focus == this);
+    ASSERT1(m_parent == NULL || m_parent->m_focus == this);
     // focus was taken, return true
     return true;
 }
 
 void Widget::Unfocus ()
 {
+    // if not active, there's nothing to do.
+    if (!IsActive())
+    {
+        ASSERT1(!IsFocused());
+        return;
+    }
+    
     // if not focused, then we don't need to do anything
     if (!IsFocused())
         return;
 
+    // there's no point in unfocusing if there's no parent (Screen can't be unfocused anyway).
+    if (m_parent == NULL)
+        return;
+    
     // unfocus this widget and all its children (from bottom up)
     UnfocusWidgetLine();
 }
 
 void Widget::GrabMouse ()
 {
-    ContainerWidget *parent = EffectiveParent();
+    ASSERT1(IsActive() && "can't GrabMouse on an inactive widget");
 
     // if this widget already has the mouse grabbed, don't do anything
     if (IsMouseGrabbed())
-    {
-        ASSERT1(parent == NULL || parent->m_focus_has_mouse_grab);
         return;
-    }
+
+    // there's no point in mouse-grabbing if there's no parent (Screen already has mouse-grab anyway)
+    if (m_parent == NULL)
+        return;
 
     // gotta make sure that this widget has focus
     DEBUG1_CODE(bool was_focused =)
     Focus();
     ASSERT1(was_focused);
-    ASSERT1(parent == NULL || parent->m_focus == this);
+    ASSERT1(IsFocused());
 
     // set the mouse grab on this and up through the parent widgets
-    if (parent != NULL)
-    {
-        // recurse to the parent widget
-        parent->GrabMouse();
-        // set this widget to mouse grabbing
-        parent->m_focus_has_mouse_grab = true;
-        // make sure the parent's m_focus actually points to this widget
-        ASSERT1(parent->m_focus == this);
-        // call the mouse grab handler and emit the mouse grab on signals
-        HandleMouseGrabOn();
-    }
+    m_parent->GrabMouse();
+    // set this widget to mouse grabbing
+    m_parent->m_focus_has_mouse_grab = true;
+    // make sure the parent's m_focus actually points to this widget
+    ASSERT1(m_parent->m_focus == this);
+    // call the mouse grab handler and emit the mouse grab on signals
+    HandleMouseGrabOn();
 }
 
 void Widget::UnGrabMouse ()
 {
-    ContainerWidget *parent = EffectiveParent();
-
     // if this widget already doesn't have the mouse grabbed, don't do anything
     if (!IsMouseGrabbed())
-    {
-        ASSERT1(parent == NULL || !parent->m_focus_has_mouse_grab);
         return;
-    }
 
+    // there's no point in un-mouse-grabbing if there's no parent (Screen can't un-mouse-grab anyway)
+    if (m_parent == NULL)
+        return;
+    
     // unset the mouse grab on this and up through the parent widgets
-    if (parent != NULL)
-    {
-        // set this widget to not mouse grabbing
-        parent->m_focus_has_mouse_grab = false;
-        // call the mouse grab handler and emit the mouse grab on signals
-        HandleMouseGrabOff();
-        // recurse to the parent widget
-        parent->UnGrabMouse();
-    }
+    m_parent->m_focus_has_mouse_grab = false;
+    // call the mouse grab handler and emit the mouse grab on signals
+    HandleMouseGrabOff();
+    // recurse to the parent widget
+    m_parent->UnGrabMouse();
 }
 
 void Widget::DetachFromParent ()
 {
-    // i put an assert in here to make sure no one behaves badly and tries
-    // to detach a top-level widget
-    ASSERT1(m_parent != NULL);
+    if (m_parent == NULL)
+    {
+        ASSERT1(false && "you can't detach a root widget");
+        return;
+    }
     m_parent->DetachChild(this);
 }
 
@@ -610,8 +574,8 @@ void Widget::SetIsEnabled (bool is_enabled)
 {
     if (!is_enabled)
     {
-        ASSERT0(!IsModal() && "You can't disable a modal widget!");
-        ASSERT0(!IsRootWidget() && "You can't disable a root widget!");
+        ASSERT0(!IsModal() && "You can't disable a modal widget");
+        ASSERT0(this != &Context().GetScreen() && "You can't disable the Screen");
     }
 
     if (m_is_enabled != is_enabled)
@@ -636,7 +600,7 @@ void Widget::SetIsEnabled (bool is_enabled)
 
 void Widget::ToggleIsHidden ()
 {
-    ASSERT0(m_parent != NULL && "You can't show or hide a top-level widget!");
+//     ASSERT0(m_parent != NULL && "You can't show or hide a top-level widget!");
 
     // if the widget is being hidden, then it should be
     // unfocused and mouseover-off'ed
@@ -659,20 +623,19 @@ void Widget::SetIsHidden (bool is_hidden)
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// protected functions
+// protected methods
 // ///////////////////////////////////////////////////////////////////////////
+
+bool Widget::IsScreen () const
+{
+    return this == &Context().GetScreen();
+}
 
 void Widget::HandleChangedWidgetSkin ()
 {
-    WidgetSkinHandler::HandleChangedWidgetSkin();
-    UpdateRenderBackground();
-    SetFrameMargins(WidgetSkinMargins(WidgetSkin::DEFAULT_FRAME_MARGINS));
-    SetContentMargins(WidgetSkinMargins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
-}
-
-WidgetSkinHandler *Widget::WidgetSkinHandlerParent ()
-{
-    return static_cast<WidgetSkinHandler *>(m_parent);
+    SetRenderBackgroundNeedsUpdate();
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_FRAME_MARGINS));
+    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
 }
 
 bool Widget::HandleEvent (Event const *e)
@@ -719,8 +682,8 @@ bool Widget::HandleEvent (Event const *e)
         case Event::MOUSEOVER:
             return InternalProcessMouseoverEvent(DStaticCast<EventMouseover const *>(e));
 
-        case Event::DELETE_CHILD_WIDGET:
-            return ProcessDeleteChildWidgetEvent(DStaticCast<EventDeleteChildWidget const *>(e));
+        case Event::DETACH_AND_DELETE_CHILD_WIDGET:
+            return ProcessDetachAndDeleteChildWidgetEvent(DStaticCast<EventDetachAndDeleteChildWidget const *>(e));
 
         case Event::QUIT:
             return false;
@@ -737,19 +700,35 @@ bool Widget::HandleEvent (Event const *e)
     }
 }
 
-bool Widget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e)
+bool Widget::ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e)
 {
     ASSERT0(false && "this should never be called");
     return false;
 }
 
-void Widget::HandleChangedBackground ()
+void Widget::HandleAttachedToParent ()
 {
-    UpdateRenderBackground();
+    // the widget was necessarily inactive before being attached to its parent.
+    // NOTE: this is not the only place a widget becomes active (if it has a parent
+    // and the parent becomes active, then it also becomes active.  see
+    // ContainerWidget::AttachChild).
+    if (IsActive())
+        HandleActivate();
+}
+
+void Widget::HandleAboutToDetachFromParent ()
+{
+    // the widget will necessarily become inactive after being detached from its parent.
+    // NOTE: this is not the only place a widget becomes inactive (if it has a parent
+    // and the parent becomes inactive, then it also becomes inactive.  see
+    // ContainerWidget::DetachChild.
+    if (IsActive())
+        HandleDeactivate();
 }
 
 void Widget::UpdateRenderBackground ()
 {
+    m_render_background_needs_update = false;
     SetRenderBackground(Background());
 }
 
@@ -840,16 +819,14 @@ void Widget::FocusWidgetLine ()
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_focus == NULL);
 
-    ContainerWidget *parent = EffectiveParent();
-
     // make sure to focus parent widgets first, so that the focusing
     // happens from top down
-    if (parent != NULL && !parent->IsFocused())
-        parent->FocusWidgetLine();
+    if (m_parent != NULL && !m_parent->IsFocused())
+        m_parent->FocusWidgetLine();
 
     // make this widget focused
-    if (parent != NULL)
-        parent->m_focus = this;
+    if (m_parent != NULL)
+        m_parent->m_focus = this;
 
     // call the focus handler and emit the focus signals
     HandleFocus();
@@ -866,10 +843,9 @@ void Widget::UnfocusWidgetLine ()
     if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
         this_container_widget->m_focus->UnfocusWidgetLine();
 
-    ContainerWidget *parent = EffectiveParent();
     // set the focus state
-    if (parent != NULL)
-        parent->m_focus = NULL;
+    if (m_parent != NULL)
+        m_parent->m_focus = NULL;
 
     // call the unfocus handler and emit the focus signals
     HandleUnfocus();
@@ -877,6 +853,10 @@ void Widget::UnfocusWidgetLine ()
 
 bool Widget::MouseoverOn ()
 {
+    // an inactive widget can't accept mouseover-focus yet.
+    if (!IsActive())
+        return false;
+    
     // if this widget doesn't even accept mouseover-focus, then return
     if (!m_accepts_mouseover)
         return false;
@@ -896,21 +876,15 @@ bool Widget::MouseoverOn ()
         return true;
     }
 
-    ContainerWidget *parent = EffectiveParent();
-
     // if this is not a top level widget, proceed normally
-    if (parent != NULL)
+    if (m_parent != NULL)
     {
         // find the first ancestor of this widget that is mouseover-focused
-        ContainerWidget *first_mouseover_ancestor = parent;
-        while (first_mouseover_ancestor->EffectiveParent() != NULL &&
-               !first_mouseover_ancestor->IsMouseover())
-        {
-            first_mouseover_ancestor = first_mouseover_ancestor->EffectiveParent();
-        }
+        ContainerWidget *first_mouseover_ancestor = m_parent;
+        while (first_mouseover_ancestor->m_parent != NULL && !first_mouseover_ancestor->IsMouseover())
+            first_mouseover_ancestor = first_mouseover_ancestor->m_parent;
 
-        // unfocus all widgets from the mouseover-focused child of the first
-        // mouseover-focused ancestor down
+        // unfocus all widgets from the mouseover-focused child of the first mouseover-focused ancestor down
         ASSERT1(first_mouseover_ancestor != NULL);
         if (first_mouseover_ancestor->m_mouseover_focus != NULL)
             first_mouseover_ancestor->m_mouseover_focus->MouseoverOffWidgetLine();
@@ -926,23 +900,17 @@ bool Widget::MouseoverOn ()
 
 void Widget::MouseoverOff ()
 {
-    if (IsRootWidget())
+    if (IsScreen())
     {
         MouseoverOffWidgetLine();
         return;
     }
 
     if (!m_accepts_mouseover)
-    {
         ASSERT1(!IsMouseover());
-        return;
-    }
 
     if (IsHidden())
-    {
         ASSERT1(!IsMouseover());
-        return;
-    }
 
     if (IsMouseover())
         MouseoverOffWidgetLine();
@@ -954,16 +922,14 @@ void Widget::MouseoverOnWidgetLine ()
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_mouseover_focus == NULL);
 
-    ContainerWidget *parent = EffectiveParent();
-
     // make sure to mouseover-focus parent widgets first, so that
     // the mouseover-focusing happens from top down
-    if (parent != NULL && !parent->IsMouseover())
-        parent->MouseoverOnWidgetLine();
+    if (m_parent != NULL && !m_parent->IsMouseover())
+        m_parent->MouseoverOnWidgetLine();
 
     // make this widget mouseover-focus state
-    if (parent != NULL)
-        parent->m_mouseover_focus = this;
+    if (m_parent != NULL)
+        m_parent->m_mouseover_focus = this;
 
     // call the mouseover-unfocus handler and emit the mouseover-focus signals
     HandleMouseoverOn();
@@ -980,9 +946,8 @@ void Widget::MouseoverOffWidgetLine ()
         this_container_widget->m_mouseover_focus->MouseoverOffWidgetLine();
 
     // set the mouseover-focus state
-    ContainerWidget *parent = EffectiveParent();
-    if (parent != NULL)
-        parent->m_mouseover_focus = NULL;
+    if (m_parent != NULL)
+        m_parent->m_mouseover_focus = NULL;
 
     // call the mouseover-unfocus handler and emit the mouseover-focus signals
     HandleMouseoverOff();

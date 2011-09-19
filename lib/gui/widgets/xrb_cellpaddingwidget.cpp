@@ -14,9 +14,9 @@
 
 namespace Xrb {
 
-CellPaddingWidget::CellPaddingWidget (std::string const &name)
+CellPaddingWidget::CellPaddingWidget (WidgetContext &context, std::string const &name)
     :
-    ContainerWidget(name)
+    ContainerWidget(context, name)
 {
     m_accepts_focus = false;
     m_accepts_mouseover = true;
@@ -25,8 +25,6 @@ CellPaddingWidget::CellPaddingWidget (std::string const &name)
     // there should be no frame margins for CellPaddingWidget, since it's
     // more of a utility ContainerWidget.
     SetFrameMargins(ScreenCoordVector2::ms_zero);
-
-    CellPaddingWidget::UpdateRenderBackground();
 
     DirtyContentsSizeProperties();
 }

@@ -25,7 +25,7 @@ class Screen;
 class WidgetBackground;
 
 /// See @ref section_widget_skinning "Widget Skinning" for more details.
-/// @brief (soon-to-be) Resource-geared container class for widget skinning data.
+/// @brief Container class for widget skinning data.
 class WidgetSkin
 {
 public:
@@ -86,9 +86,9 @@ public:
       */
     ~WidgetSkin ();
 
-    /** @brief Used by whatever owns the WidgetSkin (e.g. Screen) to
-      *        unload everything (e.g. before the Gl singleton dies)
-      */
+    /// Populates this WidgetSkin with sensible default values.
+    void PopulateUsingDefaults ();
+    /// Used by whatever owns the WidgetSkin (e.g. Screen) to unload everything (e.g. before the Gl singleton dies)
     void ReleaseAllResources ();
 
     /// This is the way to derive font [pixel] heights from height ratios.
@@ -96,10 +96,7 @@ public:
     /// This is the way to derive height ratios from font [pixel] heights.
     static Float FontHeightRatio (ScreenCoord font_pixel_height, ScreenCoord size_ratio_basis);
 
-    /** @brief Returns a pointer to the const WidgetBackground object of the
-      *        requested type.
-      * @param widget_background_type The specific type of background to return.
-      */
+    /// Returns a pointer to the const WidgetBackground object of the requested type.
     WidgetBackground const *GetWidgetBackground (WidgetBackgroundType widget_background_type) const
     {
         ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
@@ -117,46 +114,30 @@ public:
         ASSERT1(font_type < FONT_TYPE_COUNT);
         return m_font_specification[font_type].m_height_ratio;
     }
-    /// Loads the requested font type based on the given size_ratio_basis.
-    Resource<Font> LoadFont (FontType font_type, ScreenCoord size_ratio_basis) const;
-    /** @brief Returns the const resourced GlTexture object of the requested type.
-      * @param texture_type The specific type of texture to return.
-      */
+    /// Returns the const resourced GlTexture object of the requested type.
     Resource<GlTexture> const &GetTexture (TextureType texture_type) const
     {
         ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
         return m_texture[texture_type];
     }
-    /** @brief Returns a screen coordinate vector containing the requested margins type.
-      * @param margins_type The specific type of margins to return.
-      */
-    ScreenCoordMargins Margins (MarginsType margins_type, ScreenCoord size_ratio_basis) const;
+    /// Returns a screen coordinate vector containing the requested margins type.
+    FloatMargins MarginsRatios (MarginsType margins_type) const
+    {
+        ASSERT1(margins_type < MARGINS_TYPE_COUNT);
+        return m_margins_ratios[margins_type];
+    }
 
-    /** The background being replaced is deleted, if it exists.
-      * @brief Sets the given type of widget background.
-      * @param widget_background_type The background type to be set.
-      * @param widget_background A pointer to the WidgetBackground to use.
-      */
+    /// Sets the given type of widget background.  Specifying NULL will cause the WidgetBackground
+    /// to be entirely transparent.  This WidgetSkin takes ownership of the given pointer.  The
+    /// background being replaced is deleted, if it exists.
     void SetWidgetBackground (WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background);
-    /** @brief Sets the given type of font using the given font face.
-      * @param font_type The font type to change.
-      * @param font_path The path to the font face to use.
-      */
+    /// Sets the given type of font using the given font face.
     void SetFontPath (FontType font_type, std::string const &font_path);
-    /** @brief Sets the screen size-ratio-basis height ratio of the specified font type.
-      * @param font_type The font type to be changed.
-      * @param font_height_ratio The height ratio to set.
-      */
+    /// Sets the screen size-ratio-basis height ratio of the specified font type.
     void SetFontHeightRatio (FontType font_type, Float font_height_ratio);
-    /** @brief Sets the given type of texture.
-      * @param texture_type The texture type to be set.
-      * @param texture The resourced GlTexture object to use.
-      */
+    /// Sets the given type of texture.
     void SetTexture (TextureType texture_type, Resource<GlTexture> const &texture);
-    /** @brief Sets the screen size-ratio-basis margins ratios of the specified type.
-      * @param margins_type The type of margins to change.
-      * @param margins_ratios The margin ratios to be set.
-      */
+    /// Sets the screen size-ratio-basis margins ratios of the specified type.
     void SetMarginsRatios (MarginsType margins_type, FloatMargins const &margins_ratios);
 
 private:

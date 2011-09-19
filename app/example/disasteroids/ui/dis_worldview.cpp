@@ -703,7 +703,7 @@ void WorldView::ProcessFade (Float const frame_dt)
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&WorldView::x)
 
-bool WorldView::StatePreIntro (StateMachineInput const input)
+bool WorldView::StatePreIntro (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StatePreIntro")
     switch (input)
@@ -719,7 +719,7 @@ bool WorldView::StatePreIntro (StateMachineInput const input)
     return false;
 }
 
-bool WorldView::StateIntro (StateMachineInput const input)
+bool WorldView::StateIntro (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateIntro")
     switch (input)
@@ -756,7 +756,7 @@ bool WorldView::StateIntro (StateMachineInput const input)
     return false;
 }
 
-bool WorldView::StateNormalGameplay (StateMachineInput const input)
+bool WorldView::StateNormalGameplay (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateNormalGameplay")
     switch (input)
@@ -778,7 +778,7 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
     return false;
 }
 
-bool WorldView::StateDeathRattle (StateMachineInput const input)
+bool WorldView::StateDeathRattle (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateDeathRattle")
     switch (input)
@@ -794,7 +794,7 @@ bool WorldView::StateDeathRattle (StateMachineInput const input)
     return false;
 }
 
-bool WorldView::StateGameOver (StateMachineInput const input)
+bool WorldView::StateGameOver (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateGameOver")
     switch (input)
@@ -818,7 +818,7 @@ bool WorldView::StateGameOver (StateMachineInput const input)
     return false;
 }
 
-bool WorldView::StateOutro (StateMachineInput const input)
+bool WorldView::StateOutro (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateOutro")
     switch (input)
@@ -843,7 +843,7 @@ bool WorldView::StateOutro (StateMachineInput const input)
     return false;
 }
 
-bool WorldView::StatePostOutro (StateMachineInput const input)
+bool WorldView::StatePostOutro (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StatePostOutro")
     switch (input)
@@ -855,7 +855,7 @@ bool WorldView::StatePostOutro (StateMachineInput const input)
     return false;
 }
 
-void WorldView::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
+void WorldView::ScheduleStateMachineInput (StateMachineInput input, Float const time_delay)
 {
     CancelScheduledStateMachineInput();
     EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));

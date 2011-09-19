@@ -23,133 +23,133 @@ using namespace Xrb;
 
 namespace Dis {
 
-ControlsPanel::ControlsPanel ()
+ControlsPanel::ControlsPanel (WidgetContext &context)
     :
-    ContainerWidget("ControlsPanel"),
+    ContainerWidget(context, "ControlsPanel"),
     m_greater_than_zero_validator(0, 1)
 {
     Label *l = NULL;
 
-    Layout *main_layout = new Layout(HORIZONTAL);
+    Layout *main_layout = new Layout(HORIZONTAL, Context());
 
-    Layout *left_side_layout = new Layout(VERTICAL);
+    Layout *left_side_layout = new Layout(VERTICAL, Context());
     {
-        left_side_layout->AttachChild(new SpacerWidget());
+        left_side_layout->AttachChild(new SpacerWidget(context));
 
         {
-            l = new Label("Video Controls");
+            l = new Label("Video Controls", Context());
             l->SetIsHeightFixedToTextHeight(true);
             left_side_layout->AttachChild(l);
             
-            Layout *video_controls_layout = new Layout(ROW, 2);
+            Layout *video_controls_layout = new Layout(ROW, 2, Context());
             {
-                l = new Label("Horizontal Resolution:");
+                l = new Label("Horizontal Resolution:", Context());
                 l->SetAlignment(Dim::X, RIGHT);
                 video_controls_layout->AttachChild(l);
                 
-                m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, "resolution x ValueEdit");
+                m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, Context(), "resolution x ValueEdit");
                 m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
         //         m_resolution_x_edit->SetIsMinWidthFixedToTextWidth(true);
                 m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 6*m_resolution_x_edit->GetFont()->PixelHeight());
                 m_resolution_x_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
                 video_controls_layout->AttachChild(m_resolution_x_edit);
 
-                l = new Label("Vertical Resolution:");
+                l = new Label("Vertical Resolution:", Context());
                 l->SetAlignment(Dim::X, RIGHT);
                 video_controls_layout->AttachChild(l);
                 
-                m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, "resolution y ValueEdit");
+                m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, Context(), "resolution y ValueEdit");
                 m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
         //         m_resolution_y_edit->SetIsMinWidthFixedToTextWidth(true);
                 m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 6*m_resolution_y_edit->GetFont()->PixelHeight());
                 m_resolution_y_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
                 video_controls_layout->AttachChild(m_resolution_y_edit);
 
-                l = new Label("Fullscreen:");
+                l = new Label("Fullscreen:", Context());
                 l->SetIsHeightFixedToTextHeight(true);
                 l->SetAlignment(Dim::X, RIGHT);
                 video_controls_layout->AttachChild(l);
                 
-                CellPaddingWidget *cpw = new CellPaddingWidget();
+                CellPaddingWidget *cpw = new CellPaddingWidget(context);
                 cpw->SetAlignment(Dim::X, LEFT);
                 {
-                    m_fullscreen_checkbox = new CheckBox();
+                    m_fullscreen_checkbox = new CheckBox(context);
                     cpw->AttachChild(m_fullscreen_checkbox);
                 }
                 video_controls_layout->AttachChild(cpw);
             }
             left_side_layout->AttachChild(video_controls_layout);
 
-            l = new Label("Changes to the video controls will take effect after restarting.");
+            l = new Label("Changes to the video controls will take effect after restarting.", Context());
             l->SetIsHeightFixedToTextHeight(true);
             l->SetWordWrap(true);
             left_side_layout->AttachChild(l);
         }
     /*
         {
-            l = new Label("Audio Controls");
+            l = new Label("Audio Controls", Context());
             l->SetIsHeightFixedToTextHeight(true);
             left_side_layout->AttachChild(l);
         }
     */
 
-        left_side_layout->AttachChild(new SpacerWidget());
+        left_side_layout->AttachChild(new SpacerWidget(context));
 
         {
-            l = new Label("Game Difficulty");
+            l = new Label("Game Difficulty", Context());
             l->SetIsHeightFixedToTextHeight(true);
             left_side_layout->AttachChild(l);
             
-            Layout *game_difficulty_layout = new Layout(ROW, 2);
+            Layout *game_difficulty_layout = new Layout(ROW, 2, Context());
             {
                 for (Uint32 i = 0; i < DL_COUNT; ++i)
                 {
-                    l = new Label(DifficultyLevelString(static_cast<DifficultyLevel>(i)));
+                    l = new Label(DifficultyLevelString(static_cast<DifficultyLevel>(i)), Context());
                     l->SetIsHeightFixedToTextHeight(true);
                     l->SetAlignment(Dim::X, RIGHT);
                     game_difficulty_layout->AttachChild(l);
 
-                    CellPaddingWidget *cpw = new CellPaddingWidget();
+                    CellPaddingWidget *cpw = new CellPaddingWidget(context);
                     cpw->SetAlignment(Dim::X, LEFT);
                     {
-                        cpw->AttachChild(new RadioButton<DifficultyLevel, DL_COUNT>(static_cast<DifficultyLevel>(i), &m_difficulty_level));
+                        cpw->AttachChild(new RadioButton<DifficultyLevel, DL_COUNT>(static_cast<DifficultyLevel>(i), &m_difficulty_level, Context()));
                     }
                     game_difficulty_layout->AttachChild(cpw);
                 }
             }
             left_side_layout->AttachChild(game_difficulty_layout);
 
-            l = new Label("Changes to the game difficulty will take effect at the beginning of each new game.");
+            l = new Label("Changes to the game difficulty will take effect at the beginning of each new game.", Context());
             l->SetIsHeightFixedToTextHeight(true);
             l->SetWordWrap(true);
             left_side_layout->AttachChild(l);
         }
 
-        left_side_layout->AttachChild(new SpacerWidget());
+        left_side_layout->AttachChild(new SpacerWidget(context));
     }
     main_layout->AttachChild(left_side_layout);
 
     // input controls
-    Layout *right_side_layout = new Layout(VERTICAL);
+    Layout *right_side_layout = new Layout(VERTICAL, Context());
     {
-        right_side_layout->AttachChild(new SpacerWidget());
+        right_side_layout->AttachChild(new SpacerWidget(context));
 
-        l = new Label("Input Controls");
+        l = new Label("Input Controls", Context());
         l->SetIsHeightFixedToTextHeight(true);
         right_side_layout->AttachChild(l);
 
-        Layout *two_columns_layout = new Layout(HORIZONTAL);
+        Layout *two_columns_layout = new Layout(HORIZONTAL, Context());
         {
             // left column
-            Layout *input_controls_layout = new Layout(ROW, 2);
+            Layout *input_controls_layout = new Layout(ROW, 2, Context());
             for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT / 2; ++i)
     //         for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
             {
-                l = new Label(Config::ms_input_action_label[i]);
+                l = new Label(Config::ms_input_action_label[i], Context());
                 l->SetAlignment(Dim::X, RIGHT);
                 input_controls_layout->AttachChild(l);
                 
-                m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID);
+                m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, Context());
                 m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
                 m_input_action_button[i]->SetIsMaxWidthFixedToTextWidth(false);
     //             m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
@@ -160,14 +160,14 @@ ControlsPanel::ControlsPanel ()
             two_columns_layout->AttachChild(input_controls_layout);
             
             // right column
-            input_controls_layout = new Layout(ROW, 2);
+            input_controls_layout = new Layout(ROW, 2, Context());
             for (Uint32 i = KEY_INPUT_ACTION_COUNT / 2; i < KEY_INPUT_ACTION_COUNT; ++i)
             {
-                l = new Label(Config::ms_input_action_label[i]);
+                l = new Label(Config::ms_input_action_label[i], Context());
                 l->SetAlignment(Dim::X, RIGHT);
                 input_controls_layout->AttachChild(l);
                 
-                m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID);
+                m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, Context());
                 m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
                 m_input_action_button[i]->SetIsMaxWidthFixedToTextWidth(false);
     //             m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
@@ -179,7 +179,7 @@ ControlsPanel::ControlsPanel ()
         }
         right_side_layout->AttachChild(two_columns_layout);
 
-        right_side_layout->AttachChild(new SpacerWidget());
+        right_side_layout->AttachChild(new SpacerWidget(context));
     }
     main_layout->AttachChild(right_side_layout);
 
@@ -239,9 +239,7 @@ void ControlsPanel::SetDifficultyLevel (DifficultyLevel difficulty_level)
     m_difficulty_level.SetID(difficulty_level);
 }
 
-void ControlsPanel::SetInputActionKeyCode (
-    KeyInputAction const input_action,
-    Key::Code const key_code)
+void ControlsPanel::SetInputActionKeyCode (KeyInputAction input_action, Key::Code key_code)
 {
     ASSERT1(input_action < KEY_INPUT_ACTION_COUNT);
     ASSERT1(m_input_action_button[input_action] != NULL);

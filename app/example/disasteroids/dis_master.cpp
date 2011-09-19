@@ -23,6 +23,7 @@
 #include "xrb_pal.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp"
+#include "xrb_widgetcontext.hpp"
 #include "xrb_widgetskin.hpp"
 
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
@@ -69,8 +70,10 @@ Master::Master (Screen *const screen)
 
     m_high_scores.Read(HIGH_SCORES_FILENAME);
 
-    // set up the custom disasteroids WidgetSkin.
+    // set up the custom disasteroids WidgetSkin.  populate it with the defaults, then override some.
     WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    
     widget_skin->SetWidgetBackground(
         WidgetSkin::BUTTON_BACKGROUND,
         new WidgetBackgroundTextured3Way(
@@ -107,7 +110,7 @@ Master::Master (Screen *const screen)
         GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/)); // this one is square
 
     // m_screen takes ownership of the pointer.
-    m_screen->SetWidgetSkin(widget_skin);
+    m_screen->Context().SetWidgetSkin(widget_skin);
 }
 
 Master::~Master ()
@@ -273,9 +276,9 @@ void Master::AcceptScore (Score const &score)
     if (m_high_scores.IsNewHighScore(score))
     {
         // create a HighScoreNameEntryDialog
-        HighScoreNameEntryDialog *dialog = new HighScoreNameEntryDialog(score.Points(), score.WaveCount());
+        HighScoreNameEntryDialog *dialog = new HighScoreNameEntryDialog(score.Points(), score.WaveCount(), m_screen->Context());
         dialog->CenterOnWidget(*m_screen);
-        m_screen->AttachChild(dialog);
+        m_screen->AttachAsModalChildWidget(*dialog);
         // hook up the OK/cancel button signals
         SignalHandler::Connect1(
             dialog->SenderSubmitName(),
@@ -353,7 +356,7 @@ void Master::ActivateTitleScreen ()
     ASSERT1(m_title_screen_widget == NULL);
 
     // create a new title screen and set it as the main widget
-    m_title_screen_widget = new TitleScreenWidget( m_show_high_scores_immediately, m_show_best_points_high_scores_first);
+    m_title_screen_widget = new TitleScreenWidget(m_show_high_scores_immediately, m_show_best_points_high_scores_first, m_screen->Context());
     m_title_screen_widget->SetHighScores(m_high_scores);
     m_screen->AttachChild(m_title_screen_widget);
     m_screen->SetMainWidget(m_title_screen_widget);
@@ -375,7 +378,8 @@ void Master::DeactivateTitleScreen ()
     ASSERT1(m_game_world == NULL);
     ASSERT1(m_title_screen_widget != NULL);
 
-    // delete and nullify the title screen
+    // detach, delete and nullify the title screen
+    m_title_screen_widget->DetachFromParent();
     DeleteAndNullify(m_title_screen_widget);
 }
 
@@ -388,7 +392,7 @@ void Master::ActivateGame ()
     // create the game world
     m_game_world = World::Create(g_config.GetDifficultyLevel());
     // create the game widget
-    m_game_widget = new GameWidget(m_game_world);
+    m_game_widget = new GameWidget(m_game_world, m_screen->Context());
     m_screen->AttachChild(m_game_widget);
     // set it as the main widget
     m_screen->SetMainWidget(m_game_widget);
@@ -413,7 +417,9 @@ void Master::DeactivateGame ()
     ASSERT1(m_game_world != NULL);
     ASSERT1(m_title_screen_widget == NULL);
 
-    // delete the game widget and world, in that order and nullify them.
+    // detach the game widget from its parent, then delete the game widget
+    // and world, in that order and nullify them.
+    m_game_widget->DetachFromParent();
     DeleteAndNullify(m_game_widget);
     DeleteAndNullify(m_game_world);
 }

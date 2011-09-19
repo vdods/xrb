@@ -18,36 +18,36 @@ using namespace Xrb;
 
 namespace Dis {
 
-HighScoresWidget::HighScoresWidget ()
+HighScoresWidget::HighScoresWidget (WidgetContext &context)
     :
-    ContainerWidget("HighScoresWidget")
+    ContainerWidget(context, "HighScoresWidget")
 {
-    Layout *main_layout = new Layout(VERTICAL, "main HighScoresWidget layout");
+    Layout *main_layout = new Layout(VERTICAL, Context(), "main HighScoresWidget layout");
     main_layout->SetIsUsingZeroedFrameMargins(false);
     {
-        m_title_label = new Label("x");
+        m_title_label = new Label("x", Context());
         m_title_label->SetIsSizeFixedToTextSize(true);
 //         m_title_label->SetFontHeightRatio(0.025f); // HIPPO
         main_layout->AttachChild(m_title_label);
 
-        Layout *scores_layout = new Layout(ROW, 4, "HighScoresWidget grid layout");
+        Layout *scores_layout = new Layout(ROW, 4, Context(), "HighScoresWidget grid layout");
         for (Uint32 row = 0; row < HighScores::MAX_HIGH_SCORES; ++row)
         {
-            Label *position_label = new Label(Util::StringPrintf("#%u", row+1));
+            Label *position_label = new Label(Util::StringPrintf("#%u", row+1), Context());
 //             position_label->SetFontHeightRatio(0.025f); // HIPPO
             position_label->SetAlignment(Dim::X, RIGHT);
             scores_layout->AttachChild(position_label);
 
-            m_name_label[row] = new Label("x");
+            m_name_label[row] = new Label("x", Context());
 //             m_name_label[row]->SetFontHeightRatio(0.025f); // HIPPO
             scores_layout->AttachChild(m_name_label[row]);
 
-            m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint<Uint32>);
+            m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint<Uint32>, Context());
 //             m_wave_count_label[row]->SetFontHeightRatio(0.025f); // HIPPO
             m_wave_count_label[row]->SetAlignment(Dim::X, RIGHT);
             scores_layout->AttachChild(m_wave_count_label[row]);
 
-            m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>);
+            m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, Context());
             m_points_label[row]->SetValue(0);
 //             m_points_label[row]->SetFontHeightRatio(0.025f); // HIPPO
             m_points_label[row]->SetAlignment(Dim::X, RIGHT);

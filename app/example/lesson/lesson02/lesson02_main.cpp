@@ -101,6 +101,7 @@ well enough, it was probably already explained in
 #include "xrb_screen.hpp"         // For use of the necessary Screen widget class.
 #include "xrb_sdlpal.hpp"         // For use of the SDLPal platform abstraction layer.
 #include "xrb_transformation.hpp" // For use of Transformation::Lowercase and Uppercase.
+#include "xrb_widgetcontext.hpp"  // For use of the WidgetContext class.
 
 // Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;
@@ -135,6 +136,12 @@ int main (int argc, char **argv)
         CleanUp();
         return 2;
     }
+    // Create a WidgetSkin, populate it with default values, and set the WidgetSkin
+    // property of the WidgetContext associated to the Screen.  The WidgetContext
+    // takes ownership of the WidgetSkin, so we don't need to worry about deleting it.
+    WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    screen->Context().SetWidgetSkin(widget_skin);
 
     /* @endcode
     At this point, the singletons and the Pal have been initialized, the video
@@ -144,7 +151,11 @@ int main (int argc, char **argv)
     @code */
     {
         // Create a Layout widget to contain everything within the Screen.
-        Layout *main_layout = new Layout(VERTICAL, "main layout");
+        // A reference to the screen's WidgetContext must be passed in to
+        // each widget constructor -- each widget belongs to exactly one
+        // WidgetContext (which corresponds one-to-one with the instances
+        // of Screen).
+        Layout *main_layout = new Layout(VERTICAL, screen->Context(), "main layout");
         // Attach the main layout to the screen as a child widget.
         screen->AttachChild(main_layout);
         // Cause @c main_layout to always fill the Screen.
@@ -161,7 +172,7 @@ int main (int argc, char **argv)
         after adding everything to @c button_signal_demi_layout in order
         to generally lessen the layout calculation.
         @code */
-        Layout *button_signal_demo_layout = new Layout(ROW, 2, "button signal demo layout");
+        Layout *button_signal_demo_layout = new Layout(ROW, 2, screen->Context(), "button signal demo layout");
         
         /* @endcode
         Create four Buttons which will change different properties of the
@@ -172,24 +183,28 @@ int main (int argc, char **argv)
         Button *disable_label_via_press_button =
             new Button(
                 "Press to disable Label below",
+                screen->Context(), 
                 "disable label via press button");
         button_signal_demo_layout->AttachChild(disable_label_via_press_button);
 
         Button *enable_label_via_press_button =
             new Button(
                 "Press to enable Label below",
+                screen->Context(), 
                 "enable label via press button");
         button_signal_demo_layout->AttachChild(enable_label_via_press_button);
 
         Button *disable_label_via_release_button =
             new Button(
                 "Press and release to disable Label below",
+                screen->Context(), 
                 "disable label via release button");
         button_signal_demo_layout->AttachChild(disable_label_via_release_button);
 
         Button *enable_label_via_release_button =
             new Button(
                 "Press and release to enable Label below",
+                screen->Context(), 
                 "enable label via release button");
         button_signal_demo_layout->AttachChild(enable_label_via_release_button);
 
@@ -198,6 +213,7 @@ int main (int argc, char **argv)
         Label *mabel_the_disabled_label =
             new Label(
                 "MY NAME IS MABEL THE LABEL\nIf the text is white, it is enabled.\nIf the text is darkened, it is disabled.",
+                screen->Context(), 
                 "mabel the disabled label");
         main_layout->AttachChild(mabel_the_disabled_label);
         /* @endcode
@@ -205,13 +221,13 @@ int main (int argc, char **argv)
         later hook up to the Screen's Screen::RequestQuit SignalReceiver.
         We'll also double the font size to make it look "HELLA TUFF."
         @code */
-        Button *quit_button = new Button("Press and release this button to QUIT", "quit button");
+        Button *quit_button = new Button("Press and release this button to QUIT", screen->Context(), "quit button");
         //quit_button->SetFontHeight(2 * quit_button->GetFont()->PixelHeight()); // HIPPO
         main_layout->AttachChild(quit_button);
         /* @endcode
         Create another grid Layout for another set of demo widgets.
         @code */
-        Layout *text_signal_demo_layout = new Layout(ROW, 2, "text signal demo layout");
+        Layout *text_signal_demo_layout = new Layout(ROW, 2, screen->Context(), "text signal demo layout");
         /* @endcode
         Create four pairs of widgets -- a Label/LineEdit, and three Label/Label
         pairs.  The LineEdit will be used to enter text, and will emit signals
@@ -222,34 +238,34 @@ int main (int argc, char **argv)
         The signal connections and transformations will be handled after we
         create all our widgets.
         @code */
-        Label *generic_label = new Label("Enter text here:");
+        Label *generic_label = new Label("Enter text here:", screen->Context());
         generic_label->SetAlignment(Dim::X, RIGHT);
         text_signal_demo_layout->AttachChild(generic_label);
 
-        LineEdit *enter_text_line_edit = new LineEdit(40, "enter text lineedit");
+        LineEdit *enter_text_line_edit = new LineEdit(40, screen->Context(), "enter text lineedit");
         text_signal_demo_layout->AttachChild(enter_text_line_edit);
 
-        generic_label = new Label("Verbatim text:");
+        generic_label = new Label("Verbatim text:", screen->Context());
         generic_label->SetAlignment(Dim::X, RIGHT);
         text_signal_demo_layout->AttachChild(generic_label);
 
-        Label *verbatim_label = new Label("", "verbatim label");
+        Label *verbatim_label = new Label("", screen->Context(), "verbatim label");
         verbatim_label->SetAlignment(Dim::X, LEFT);
         text_signal_demo_layout->AttachChild(verbatim_label);
 
-        generic_label = new Label("Text in lowercase:");
+        generic_label = new Label("Text in lowercase:", screen->Context());
         generic_label->SetAlignment(Dim::X, RIGHT);
         text_signal_demo_layout->AttachChild(generic_label);
 
-        Label *lowercase_label = new Label("", "lowercase label");
+        Label *lowercase_label = new Label("", screen->Context(), "lowercase label");
         lowercase_label->SetAlignment(Dim::X, LEFT);
         text_signal_demo_layout->AttachChild(lowercase_label);
 
-        generic_label = new Label("Text in UPPERCASE:");
+        generic_label = new Label("Text in UPPERCASE:", screen->Context());
         generic_label->SetAlignment(Dim::X, RIGHT);
         text_signal_demo_layout->AttachChild(generic_label);
 
-        Label *uppercase_label = new Label("", "UPPERCASE label");
+        Label *uppercase_label = new Label("", screen->Context(), "UPPERCASE label");
         uppercase_label->SetAlignment(Dim::X, LEFT);
         text_signal_demo_layout->AttachChild(uppercase_label);
         

@@ -33,7 +33,7 @@ public:
         GO_COUNT
     };
 
-    ProgressBar (GrowOrientation grow_orientation, std::string const &name = "ProgressBar");
+    ProgressBar (GrowOrientation grow_orientation, WidgetContext &context, std::string const &name = "ProgressBar");
     virtual ~ProgressBar ();
 
     Float Progress () const { return m_progress; }

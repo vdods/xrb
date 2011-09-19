@@ -80,7 +80,7 @@ public:
             m_path(path),
             m_pixel_height(pixel_height)
         {
-            //ASSERT1(m_pixel_height > 0); // HIPPO
+            ASSERT1(m_pixel_height > 0);
         }
 
         std::string const &Path () const { return m_path; }

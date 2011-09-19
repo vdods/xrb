@@ -10,15 +10,20 @@
 
 #include "xrb_gui_events.hpp"
 
+#include "xrb_screen.hpp"
 #include "xrb_widget.hpp"
+#include "xrb_widgetcontext.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-void EventDeleteChildWidget::DeleteChildWidget () const
+void EventDetachAndDeleteChildWidget::DetachAndDeleteChildWidget () const
 {
-    ASSERT1(m_child_to_delete != NULL);
-    DeleteAndNullify(m_child_to_delete);
+    ASSERT1(m_child_to_detach_and_delete != NULL);
+    if (m_child_to_detach_and_delete->IsModal())
+        m_child_to_detach_and_delete->Context().GetScreen().DetachAsModalChildWidget(*m_child_to_detach_and_delete);
+    else
+        m_child_to_detach_and_delete->DetachFromParent();
+    DeleteAndNullify(m_child_to_detach_and_delete);
 }
 
 } // end of namespace Xrb

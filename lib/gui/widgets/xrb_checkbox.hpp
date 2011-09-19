@@ -21,7 +21,7 @@ class CheckBox : public Button
 {
 public:
 
-    CheckBox (std::string const &name = "CheckBox");
+    CheckBox (WidgetContext &context, std::string const &name = "CheckBox");
     virtual ~CheckBox () { }
 
     inline bool IsChecked () const { return m_is_checked; }
@@ -53,13 +53,11 @@ public:
 protected:
 
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
+    virtual void HandleChangedWidgetSkin ();
     virtual void UpdateRenderBackground ();
     virtual void UpdateRenderPicture ();
 
     virtual void HandleIsCheckedChanged () { }
-
-    // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkin ();
 
 private:
 

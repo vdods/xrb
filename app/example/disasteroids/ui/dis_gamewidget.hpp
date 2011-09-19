@@ -43,7 +43,7 @@ class GameWidget : public WidgetStack
 {
 public:
 
-    GameWidget (World *world);
+    GameWidget (World *world, WidgetContext &context);
     virtual ~GameWidget () { }
 
     SignalSender0 const *SenderQuitGame ();
@@ -62,6 +62,10 @@ public:
 
     void SetMineralInventory (Uint8 mineral_index, Float mineral_inventory);
 
+protected:
+
+    virtual void HandleActivate ();
+    
 private:
 
     void SetWaveCount (Uint32 wave_count);

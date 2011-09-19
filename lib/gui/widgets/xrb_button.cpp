@@ -11,12 +11,13 @@
 #include "xrb_button.hpp"
 
 #include "xrb_input_events.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-Button::Button (std::string const &text, std::string const &name)
+Button::Button (std::string const &text, WidgetContext &context, std::string const &name)
     :
-    Label(text, name),
+    Label(text, context, name),
     m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
@@ -29,9 +30,9 @@ Button::Button (std::string const &text, std::string const &name)
     Initialize();
 }
 
-Button::Button (Resource<GlTexture> const &picture, std::string const &name)
+Button::Button (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name)
     :
-    Label(picture, name),
+    Label(picture, context, name),
     m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
@@ -48,7 +49,7 @@ void Button::SetIsEnabled (bool is_enabled)
     Widget::SetIsEnabled(is_enabled);
     if (!IsEnabled())
         m_is_pressed = false;
-    UpdateRenderBackground();
+    SetRenderBackgroundNeedsUpdate();
 }
 
 bool Button::ProcessMouseButtonEvent (EventMouseButton const *e)
@@ -74,9 +75,7 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *e)
                     "IsMouseButtonDownEvent() and IsMouseButtonUpEvent() "
                     "both failed.  Something's wacky.");
         }
-
-        // update the render properties
-        UpdateRenderBackground();
+        SetRenderBackgroundNeedsUpdate();
     }
 
     return true;
@@ -85,14 +84,14 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *e)
 void Button::HandleMouseoverOn ()
 {
     ASSERT1(IsMouseover());
-    UpdateRenderBackground();
+    SetRenderBackgroundNeedsUpdate();
 }
 
 void Button::HandleMouseoverOff ()
 {
     ASSERT1(!IsMouseover());
     m_is_pressed = false;
-    UpdateRenderBackground();
+    SetRenderBackgroundNeedsUpdate();
 }
 
 void Button::HandlePressed ()
@@ -113,23 +112,24 @@ void Button::HandleReleased ()
     m_sender_released_with_id.Signal(m_id);
 }
 
-void Button::UpdateRenderBackground ()
-{
-    // state priority: disabled, pressed, mouseover, default
-    if (!IsEnabled())
-        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
-    else if (IsPressed())
-        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
-    else if (IsMouseover() && AcceptsMouseover())
-        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
-    else
-        SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
-}
-
 void Button::HandleChangedWidgetSkin ()
 {
     Label::HandleChangedWidgetSkin();
-    UpdateRenderBackground();
+    SetRenderBackgroundNeedsUpdate();
+}
+
+void Button::UpdateRenderBackground ()
+{
+    Label::UpdateRenderBackground();
+    // state priority: disabled, pressed, mouseover, default
+    if (!IsEnabled())
+        SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
+    else if (IsPressed())
+        SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
+    else if (IsMouseover() && AcceptsMouseover())
+        SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
+    else
+        SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
 }
 
 void Button::Initialize ()

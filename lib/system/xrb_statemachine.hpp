@@ -85,7 +85,7 @@ void StateMachine<OwnerClass>::Initialize (State initial_state)
 }
 
 template <typename OwnerClass>
-void StateMachine<OwnerClass>::RunCurrentState (StateMachineInput const input)
+void StateMachine<OwnerClass>::RunCurrentState (StateMachineInput input)
 {
     ASSERT1(input <= SM_HIGHEST_USER_INPUT_VALUE && "Users are not allowed to send state-machine-defined input");
     RunCurrentStatePrivate(input);
@@ -117,7 +117,7 @@ void StateMachine<OwnerClass>::SetNextState (State state)
 }
 
 template <typename OwnerClass>
-void StateMachine<OwnerClass>::RunCurrentStatePrivate (StateMachineInput const input)
+void StateMachine<OwnerClass>::RunCurrentStatePrivate (StateMachineInput input)
 {
     ASSERT1(!m_is_running_a_state && "This method should not be used from inside a state");
     ASSERT1(m_current_state != NULL && "This state machine has not been initialized");

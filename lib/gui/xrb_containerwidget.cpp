@@ -13,6 +13,7 @@
 #include "xrb_gui_events.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
@@ -20,9 +21,9 @@ namespace Xrb {
 // constructor and destructor
 // ///////////////////////////////////////////////////////////////////////////
 
-ContainerWidget::ContainerWidget (std::string const &name)
+ContainerWidget::ContainerWidget (WidgetContext &context, std::string const &name)
     :
-    Widget(name)
+    Widget(context, name)
 {
 //     fprintf(stderr, "ContainerWidget::ContainerWidget(%s);\n", name.c_str());
 
@@ -54,6 +55,26 @@ ContainerWidget::~ContainerWidget ()
 // ///////////////////////////////////////////////////////////////////////////
 // accessors
 // ///////////////////////////////////////////////////////////////////////////
+
+Bool2 const &ContainerWidget::MinSizeEnabled () const
+{
+    return m_main_widget ? m_main_widget->MinSizeEnabled() : m_size_properties.m_min_size_enabled;
+}
+
+ScreenCoordVector2 const &ContainerWidget::MinSize () const
+{
+    return m_main_widget ? m_main_widget->MinSize() : m_size_properties.m_min_size;
+}
+
+Bool2 const &ContainerWidget::MaxSizeEnabled () const
+{
+    return m_main_widget ? m_main_widget->MaxSizeEnabled() : m_size_properties.m_max_size_enabled;
+}
+
+ScreenCoordVector2 const &ContainerWidget::MaxSize () const
+{
+    return m_main_widget ? m_main_widget->MaxSize() : m_size_properties.m_max_size;
+}
 
 ScreenCoordVector2 ContainerWidget::AdjustedSize (ScreenCoordVector2 const &size) const
 {
@@ -283,11 +304,16 @@ void ContainerWidget::SetSizeProperty (
 
 void ContainerWidget::SetMainWidget (Widget *main_widget)
 {
+    if (main_widget != NULL && main_widget->Parent() != this)
+    {
+        ASSERT1(false && "you can't call SetMainWidget on a non-child");
+        return;
+    }
+    
     m_main_widget = main_widget;
     if (m_main_widget != NULL)
     {
         ASSERT0(!m_main_widget->IsModal() && "You can't use a modal widget as a main widget");
-        ASSERT1(m_main_widget->Parent() == this);
         m_main_widget->Resize(Size());
         m_main_widget->MoveTo(Position());
         ParentChildSizePropertiesUpdate(false);
@@ -297,6 +323,21 @@ void ContainerWidget::SetMainWidget (Widget *main_widget)
 // ///////////////////////////////////////////////////////////////////////////
 // procedures
 // ///////////////////////////////////////////////////////////////////////////
+
+void ContainerWidget::PreDraw()
+{
+    Widget::PreDraw();
+    // call Draw on all the child widgets with the appropriate clipping
+    for (WidgetVector::const_iterator it = m_child_vector.begin(),
+                                      it_end = m_child_vector.end();
+         it != it_end;
+         ++it)
+    {
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        child.PreDraw();
+    }
+}
 
 void ContainerWidget::Draw (RenderContext const &render_context) const
 {
@@ -312,75 +353,33 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
          it != it_end;
          ++it)
     {
-        Widget *child = *it;
-        ASSERT1(child != NULL);
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
 
         // skip hidden and modal children (modal widgets are drawn
         // by the top-level widget.
-        if (!child->IsHidden() && !child->IsModal())
+        if (!child.IsHidden() && !child.IsModal())
         {
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
-            child_render_context.SetClipRect(
-                render_context.ClippedRect(child->ScreenRect()));
+            child_render_context.SetClipRect(render_context.ClippedRect(child.ScreenRect()));
             // don't even bother drawing a child widget if this resulting
             // clip rect is invalid (0 area)
             if (child_render_context.ClipRect().IsValid())
             {
                 // set the color bias and color mask
                 child_render_context.ColorBias() = render_context.ColorBias();
-                child_render_context.ApplyColorBias(child->ColorBias());
+                child_render_context.ApplyColorBias(child.ColorBias());
                 child_render_context.ColorMask() = render_context.ColorMask();
-                child_render_context.ApplyColorMask(child->ColorMask());
+                child_render_context.ApplyColorMask(child.ColorMask());
                 // if the child widget is disabled (but this widget is enabled),
                 // apply a transparent color mask as a visual indicator
-                if (!child->IsEnabled() && IsEnabled())
+                if (!child.IsEnabled() && IsEnabled())
                     child_render_context.ApplyAlphaMaskToColorMask(s_disabled_widget_alpha_mask);
                 // set up the GL clip rect for the child
-                RootWidgetAsScreen().SetViewport(child_render_context.ClipRect());
+                Context().GetScreen().SetViewport(child_render_context.ClipRect());
                 // do the actual draw call
-                child->Draw(child_render_context);
-            }
-        }
-    }
-
-    // if there are modal widgets, draw them
-    if (!m_modal_widget_stack.empty())
-    {
-        ASSERT1(IsRootWidget());
-
-        // draw all the modal widgets, from the bottom of the stack, up.
-        for (WidgetList::const_iterator it = m_modal_widget_stack.begin(),
-                                        it_end = m_modal_widget_stack.end();
-             it != it_end;
-             ++it)
-        {
-            Widget *modal_widget = *it;
-            ASSERT1(modal_widget != NULL);
-
-            // skip hidden modal widgets
-            if (modal_widget->IsHidden())
-                continue;
-
-            // calculate the drawing clip rect from this widget's clip rect
-            // and the child widget's virtual rect.
-            child_render_context.SetClipRect(
-                render_context.ClippedRect(modal_widget->ScreenRect()));
-            // don't even bother drawing a modal widget if this resulting
-            // clip rect is invalid (0 area)
-            if (child_render_context.ClipRect().IsValid())
-            {
-                // set the color bias and color mask
-                child_render_context.ColorBias() = render_context.ColorBias();
-                child_render_context.ApplyColorBias(modal_widget->ColorBias());
-                child_render_context.ColorMask() = render_context.ColorMask();
-                child_render_context.ApplyColorMask(modal_widget->ColorMask());
-
-                ASSERT1(modal_widget->IsEnabled());
-                // set up the clip rect for the child
-                RootWidgetAsScreen().SetViewport(child_render_context.ClipRect());
-                // do the actual draw call
-                modal_widget->Draw(child_render_context);
+                child.Draw(child_render_context);
             }
         }
     }
@@ -388,7 +387,22 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // restore the GL clip rect for this widget (this may be unnecessary,
     // because any widget that has child widgets shouldn't really be drawing
     // anything explicitly -- all its drawing will be handled by Widget).
-    RootWidgetAsScreen().SetViewport(render_context.ClipRect());
+    Context().GetScreen().SetViewport(render_context.ClipRect());
+}
+
+void ContainerWidget::PostDraw()
+{
+    Widget::PostDraw();
+    // call Draw on all the child widgets with the appropriate clipping
+    for (WidgetVector::const_iterator it = m_child_vector.begin(),
+                                      it_end = m_child_vector.end();
+         it != it_end;
+         ++it)
+    {
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        child.PostDraw();
+    }
 }
 
 void ContainerWidget::MoveBy (ScreenCoordVector2 const &delta)
@@ -440,7 +454,11 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 void ContainerWidget::AttachChild (Widget *child)
 {
     ASSERT1(child != NULL);
-    ASSERT1(child->m_parent == NULL);
+    if (child->m_parent != NULL)
+    {
+        ASSERT1(false && "this child already has a parent");
+        return;
+    }
 
     // because AttachChild is no longer called during construction, it is
     // possible to accidentally call a ContainerWidget's AttachChild on itself
@@ -449,7 +467,11 @@ void ContainerWidget::AttachChild (Widget *child)
     ContainerWidget *ancestor = this;
     while (ancestor != NULL)
     {
-        ASSERT1(child != ancestor && "you AttachChild'ed a widget to itself (possibly indirectly) -- you're a bad programmer.");
+        if (child == ancestor)
+        {
+            ASSERT1(false && "you AttachChild'ed a widget to itself (possibly indirectly) -- you're a bad programmer.");
+            return;
+        }
         ancestor = ancestor->m_parent;
     }
     
@@ -472,10 +494,6 @@ void ContainerWidget::AttachChild (Widget *child)
     m_child_vector.insert(it, child);
     // set its parent
     child->m_parent = this;
-    // set the owner event queue
-    child->SetOwnerEventQueue(OwnerEventQueue());
-    // attempt to make the child inherit this widget's WidgetSkin,
-    child->SetWidgetSkin(m_widget_skin);
     // allow the child to cope with having a new parent.
     child->HandleAttachedToParent();
 }
@@ -484,9 +502,13 @@ void ContainerWidget::DetachChild (Widget *child)
 {
     ASSERT1(child != NULL);
     ASSERT1(child->Parent() == this);
-    // check that its actually a child
+    // check that it's actually a child
     WidgetVector::iterator it = FindChildWidget(child);
-    ASSERT1(it != m_child_vector.end() && *it == child && "not a child of this widget");
+    if (it == m_child_vector.end())
+    {
+        ASSERT1(false && "not a child of this widget");
+        return;
+    }
     // allow the child to come to terms with its parent's imminent disappearance.
     child->HandleAboutToDetachFromParent();
     // make sure to unfocus it
@@ -615,27 +637,11 @@ void ContainerWidget::DeleteAllChildren ()
         DetachChild(child);
         Delete(child);
     }
-
-    // clear the modal widget stack
-    m_modal_widget_stack.clear();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // protected functions
 // ///////////////////////////////////////////////////////////////////////////
-
-Uint32 ContainerWidget::WidgetSkinHandlerChildCount () const
-{
-    return m_child_vector.size();
-}
-
-WidgetSkinHandler *ContainerWidget::WidgetSkinHandlerChild (Uint32 index)
-{
-    ASSERT1(index < m_child_vector.size());
-    Widget *child = m_child_vector[index];
-    ASSERT1(child != NULL);
-    return static_cast<WidgetSkinHandler *>(child);
-}
 
 Bool2 ContainerWidget::ContentsMinSizeEnabled () const
 {
@@ -665,66 +671,43 @@ void ContainerWidget::HandleFrame ()
 {
     // call ProcessFrame on all the child widgets
     for (WidgetVector::iterator it = m_child_vector.begin(),
-                              it_end = m_child_vector.end();
+                                it_end = m_child_vector.end();
          it != it_end;
          ++it)
     {
-        Widget *child = *it;
-        ASSERT1(child != NULL);
-        child->ProcessFrame(FrameTime());
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        child.ProcessFrame(FrameTime());
     }
 }
 
-bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e)
+bool ContainerWidget::ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e)
 {
-    ASSERT1(e->ChildToDelete() != this && "a widget must not delete itself");
-    e->DeleteChildWidget();
+    ASSERT1(e->ChildToDetachAndDelete() != this && "a widget must not delete itself");
+    e->DetachAndDeleteChildWidget();
     return true;
 }
 
-void ContainerWidget::AddModalWidget (Widget *modal_widget)
+/// Calls HandleActivate on all child widgets as well.
+void ContainerWidget::HandleActivate ()
 {
-    ASSERT1(modal_widget != NULL);
-    ASSERT1(modal_widget->IsModal());
-    ASSERT1(modal_widget->IsEnabled());
-    ASSERT1(!modal_widget->IsRootWidget());
-
-    // if this is a top level widget, then add the modal widget to the
-    // modal widget stack.  otherwise, pass it up to the parent
-    if (IsRootWidget())
+    for (WidgetVector::iterator it = m_child_vector.begin(), it_end = m_child_vector.end(); it != it_end; ++it)
     {
-        // turn off mouseover on this top level widget and all subordinate
-        // widgets that have mouseover focus
-        MouseoverOffWidgetLine();
-        // focus the modal widget
-        modal_widget->Focus();
-        // stick the modal widget on the modal widget stack
-        m_modal_widget_stack.push_back(modal_widget);
-    }
-    else
-    {
-        // pass this call up to the parent
-        Parent()->AddModalWidget(modal_widget);
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        child.HandleActivate();
     }
 }
 
-void ContainerWidget::RemoveModalWidget (Widget *modal_widget)
+/// Calls HandleDeactivate on all child widgets as well.
+void ContainerWidget::HandleDeactivate ()
 {
-    ASSERT1(modal_widget != NULL);
-    ASSERT1(modal_widget->IsModal());
-    ASSERT1(modal_widget->IsEnabled());
-
-    // if this is a top level widget, then remove the modal widget from the
-    // modal widget stack.  otherwise, pass it up to the parent
-    if (IsRootWidget())
+    for (WidgetVector::iterator it = m_child_vector.begin(), it_end = m_child_vector.end(); it != it_end; ++it)
     {
-        modal_widget->Unfocus();
-        WidgetList::iterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
-        ASSERT1(it != m_modal_widget_stack.end());
-        m_modal_widget_stack.erase(it);
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        child.HandleDeactivate();
     }
-    else
-        Parent()->RemoveModalWidget(modal_widget);
 }
 
 void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
@@ -1024,51 +1007,24 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *e)
     if (!m_accepts_focus && m_child_vector.size() == 0)
         return false;
 
-    // if there are any modal widgets, then focus can only go the top
-    // unhidden modal widget.
-    Widget *modal_widget = NULL;
-    for (WidgetList::reverse_iterator it = m_modal_widget_stack.rbegin(),
-                                   it_end = m_modal_widget_stack.rend();
-         it != it_end;
-         ++it)
+    // loop through all the child widgets (from top to bottom)
+    WidgetVector::reverse_iterator it;
+    WidgetVector::reverse_iterator it_end;
+    for (it = m_child_vector.rbegin(),
+            it_end = m_child_vector.rend();
+            it != it_end;
+            ++it)
     {
-        Widget *widget = *it;
-        ASSERT1(widget != NULL);
-        if (!widget->IsHidden())
-        {
-            modal_widget = widget;
-            break;
-        }
+        Widget *child = *it;
+        ASSERT1(child != NULL);
+        if (!child->IsHidden() &&
+            child->ScreenRect().IsPointInside(e->Position()) &&
+            child->InternalProcessFocusEvent(e))
+            return true;
     }
 
-    if (modal_widget != NULL)
-    {
-        if (modal_widget->ScreenRect().IsPointInside(e->Position()))
-            return modal_widget->InternalProcessFocusEvent(e);
-        else
-            return false;
-    }
-    // otherwise, loop through all the child widgets (from top to bottom)
-    else
-    {
-        WidgetVector::reverse_iterator it;
-        WidgetVector::reverse_iterator it_end;
-        for (it = m_child_vector.rbegin(),
-             it_end = m_child_vector.rend();
-             it != it_end;
-             ++it)
-        {
-            Widget *child = *it;
-            ASSERT1(child != NULL);
-            if (!child->IsHidden() &&
-                child->ScreenRect().IsPointInside(e->Position()) &&
-                child->InternalProcessFocusEvent(e))
-                return true;
-        }
-
-        // if none of the widgets accepted focus, hand it to the superclass' method
-        return Widget::InternalProcessFocusEvent(e);
-    }
+    // if none of the widgets accepted focus, hand it to the superclass' method
+    return Widget::InternalProcessFocusEvent(e);
 }
 
 bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *e)

@@ -30,7 +30,7 @@ public:
 
     typedef ValueType (*TextToValueFunctionType)(char const *);
 
-    ValueEdit (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name = "ValueEdit");
+    ValueEdit (std::string const &printf_format, TextToValueFunctionType text_to_value_function, WidgetContext &context, std::string const &name = "ValueEdit");
     virtual ~ValueEdit () { }
 
     ValueType Value () const { return m_value; }
@@ -85,9 +85,9 @@ private:
 }; // end of class ValueEdit
 
 template <typename ValueType>
-ValueEdit<ValueType>::ValueEdit (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name)
+ValueEdit<ValueType>::ValueEdit (std::string const &printf_format, TextToValueFunctionType text_to_value_function, WidgetContext &context, std::string const &name)
     :
-    LineEdit(20, name),
+    LineEdit(20, context, name),
     m_sender_value_updated(this),
     m_sender_value_set_by_enter_key(this),
     m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)

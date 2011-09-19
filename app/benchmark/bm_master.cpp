@@ -25,6 +25,7 @@
 #include "xrb_resourcelibrary.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_transformation.hpp"
+#include "xrb_widgetcontext.hpp"
 
 using namespace Xrb;
 
@@ -49,6 +50,10 @@ Master::Master (Screen *screen)
 
 //     m_game_widget = NULL;
     m_world = NULL;
+
+    WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    m_screen->Context().SetWidgetSkin(widget_skin);
 }
 
 Master::~Master ()
@@ -160,33 +165,33 @@ void Master::Run ()
 
 
 
+        WidgetContext &context = m_screen->Context();
 
-
-        Layout *main_layout = new Layout(VERTICAL, "main layout");
+        Layout *main_layout = new Layout(VERTICAL, context, "main layout");
         {
 
-            Layout *frame_layout = new Layout(HORIZONTAL, "frame layout");
+            Layout *frame_layout = new Layout(HORIZONTAL, context, "frame layout");
             {
-                Label *reference_frame_label = new Label(GlTexture::Load("resources/solitary.png"), "reference frame label");
+                Label *reference_frame_label = new Label(GlTexture::Load("resources/solitary.png"), context, "reference frame label");
                 reference_frame_label->SetPictureKeepsAspectRatio(true);
                 frame_layout->AttachChild(reference_frame_label);
 
-                Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget();
+                Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget(context);
                 frame_layout->AttachChild(world_view_widget);
             }
             main_layout->AttachChild(frame_layout);
 
-            Layout *button_layout = new Layout(HORIZONTAL, "button layout");
+            Layout *button_layout = new Layout(HORIZONTAL, context, "button layout");
             {
-                Button *control_panel_button = new Button("Control Panel", "control panel button");
+                Button *control_panel_button = new Button("Control Panel", context, "control panel button");
                 control_panel_button->SetIsHeightFixedToTextHeight(true);
                 button_layout->AttachChild(control_panel_button);
                 
-                Button *take_screenshot_button = new Button("Take Screenshot", "take screenshot button");
+                Button *take_screenshot_button = new Button("Take Screenshot", context, "take screenshot button");
                 take_screenshot_button->SetIsHeightFixedToTextHeight(true);
                 button_layout->AttachChild(take_screenshot_button);
                 
-                Button *mode_toggle_button = new Button("Still-frame Mode", "mode toggle button");
+                Button *mode_toggle_button = new Button("Still-frame Mode", context, "mode toggle button");
                 mode_toggle_button->SetIsHeightFixedToTextHeight(true);
                 button_layout->AttachChild(mode_toggle_button);
             }
@@ -365,7 +370,9 @@ void Master::Run ()
 //         }
     }
 
-    // delete the game widget and world, in that order, and nullify them.
+    // detach the game widget from its parent, delete the game widget and
+    // world, in that order, and nullify them.
+//     m_game_widget->DetachFromParent();
 //     DeleteAndNullify(m_game_widget);
 //     DeleteAndNullify(m_world);
 

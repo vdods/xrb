@@ -11,12 +11,13 @@
 #include "xrb_checkbox.hpp"
 
 #include "xrb_input_events.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-CheckBox::CheckBox (std::string const &name)
+CheckBox::CheckBox (WidgetContext &context, std::string const &name)
     :
-    Button(Resource<GlTexture>(), name),
+    Button(Resource<GlTexture>(), context, name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -29,11 +30,9 @@ CheckBox::CheckBox (std::string const &name)
 
     FixSize(
         ScreenCoordVector2(
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
-    SetFrameMargins(WidgetSkinMargins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
-    CheckBox::UpdateRenderBackground();
-    CheckBox::UpdateRenderPicture();
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
 }
 
 void CheckBox::SetIsEnabled (bool const is_enabled)
@@ -51,7 +50,7 @@ void CheckBox::ToggleIsChecked ()
 {
     m_is_checked = !m_is_checked;
     HandleIsCheckedChanged();
-    UpdateRenderPicture();
+    SetRenderPictureNeedsUpdate();
 
     m_sender_checked_state_changed.Signal(m_is_checked);
     if (m_is_checked)
@@ -72,29 +71,31 @@ bool CheckBox::ProcessMouseButtonEvent (EventMouseButton const *const e)
     return true;
 }
 
-void CheckBox::UpdateRenderBackground ()
-{
-    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
-}
-
-void CheckBox::UpdateRenderPicture ()
-{
-    if (IsChecked())
-        SetRenderPicture(WidgetSkinTexture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
-    else
-        SetRenderPicture(Resource<GlTexture>());
-}
-
 void CheckBox::HandleChangedWidgetSkin ()
 {
     Button::HandleChangedWidgetSkin();
     FixSize(
         ScreenCoordVector2(
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
-    SetFrameMargins(WidgetSkinMargins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
-    UpdateRenderBackground();
-    UpdateRenderPicture();
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
+    SetRenderBackgroundNeedsUpdate();
+    SetRenderPictureNeedsUpdate();
+}
+
+void CheckBox::UpdateRenderBackground ()
+{
+    Button::UpdateRenderBackground();
+    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
+}
+
+void CheckBox::UpdateRenderPicture ()
+{
+    Button::UpdateRenderPicture();
+    if (IsChecked())
+        SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
+    else
+        SetRenderPicture(Resource<GlTexture>());
 }
 
 } // end of namespace Xrb

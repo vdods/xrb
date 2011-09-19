@@ -29,37 +29,37 @@ extern Dis::Config g_config;
 
 namespace Dis {
 
-TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool show_best_points_high_scores_first)
+TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool show_best_points_high_scores_first, WidgetContext &context)
     :
-    ContainerWidget("TitleScreenWidget"),
+    ContainerWidget(context, "TitleScreenWidget"),
     m_state_machine(this),
     m_immediately_show_high_scores(immediately_show_high_scores),
     m_show_best_points_high_scores_first(show_best_points_high_scores_first),
     m_internal_receiver_activate_controls_dialog(&TitleScreenWidget::ActivateControlsDialog, this),
     m_internal_receiver_controls_dialog_returned(&TitleScreenWidget::ControlsDialogReturned, this)
 {
-    Layout *main_layout = new Layout(VERTICAL, "main title screen layout");
+    Layout *main_layout = new Layout(VERTICAL, Context(), "main title screen layout");
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
     {
-        CellPaddingWidget *logo_padding_widget = new CellPaddingWidget("logo padding widget");
+        CellPaddingWidget *logo_padding_widget = new CellPaddingWidget(Context(), "logo padding widget");
 //         logo_padding_widget->FixHeightRatio(0.20f); // HIPPO
         {
-            m_logo_label = new Label("DISASTEROIDS", "logo label");
+            m_logo_label = new Label("DISASTEROIDS", Context(), "logo label");
 //             m_logo_label->SetFontHeightRatio(0.10f); // HIPPO
             logo_padding_widget->AttachChild(m_logo_label);
         }
         main_layout->AttachChild(logo_padding_widget);
 
-        WidgetStack *center_panel_widget_stack = new WidgetStack("center panel widget stack");
+        WidgetStack *center_panel_widget_stack = new WidgetStack(Context(), "center panel widget stack");
         {
-            m_game_widget_dummy = new Label("game demo widget", "game widget dummy");
+            m_game_widget_dummy = new Label("game demo widget", Context(), "game widget dummy");
 //             m_game_widget_dummy->SetFontHeightRatio(0.10f); // HIPPO
             m_game_widget_dummy->SetBackground(new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f)));
             center_panel_widget_stack->AttachChild(m_game_widget_dummy);
 
-            CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget("high scores padding widget");
+            CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget(Context(), "high scores padding widget");
             {
-                m_high_scores_widget = new HighScoresWidget();
+                m_high_scores_widget = new HighScoresWidget(Context());
                 m_high_scores_widget->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
                 high_scores_padding_widget->AttachChild(m_high_scores_widget);
                 m_high_scores_widget->Hide();
@@ -68,23 +68,23 @@ TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool sh
         }
         main_layout->AttachChild(center_panel_widget_stack);
 
-        Layout *stuff_layout = new Layout(VERTICAL, "stuff layout");
+        Layout *stuff_layout = new Layout(VERTICAL, Context(), "stuff layout");
         stuff_layout->FixHeightRatio(0.20f);
         stuff_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
         {
-            CellPaddingWidget *controls_padding_widget = new CellPaddingWidget("controls padding widget");
+            CellPaddingWidget *controls_padding_widget = new CellPaddingWidget(Context(), "controls padding widget");
             {
-                Layout *controls_layout = new Layout(HORIZONTAL, "controls layout");
+                Layout *controls_layout = new Layout(HORIZONTAL, Context(), "controls layout");
                 {
-                    m_start_button = new Button("START", "start button");
+                    m_start_button = new Button("START", Context(), "start button");
                     m_start_button->SetIsHeightFixedToTextHeight(true);
                     controls_layout->AttachChild(m_start_button);
 
-                    m_controls_button = new Button("CONTROLS", "controls button");
+                    m_controls_button = new Button("CONTROLS", Context(), "controls button");
                     m_controls_button->SetIsHeightFixedToTextHeight(true);
                     controls_layout->AttachChild(m_controls_button);
 
-                    m_quit_button = new Button("QUIT", "quit button");
+                    m_quit_button = new Button("QUIT", Context(), "quit button");
                     m_quit_button->SetIsHeightFixedToTextHeight(true);
                     controls_layout->AttachChild(m_quit_button);
                 }
@@ -92,15 +92,15 @@ TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool sh
             }
             stuff_layout->AttachChild(controls_padding_widget);
             
-            Layout *footnotes_layout = new Layout(HORIZONTAL, "footnotes_layout layout");
+            Layout *footnotes_layout = new Layout(HORIZONTAL, Context(), "footnotes_layout layout");
             footnotes_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
             {
-                Label *credits_label = new Label("By Victor Dods", "credits label");
+                Label *credits_label = new Label("By Victor Dods", Context(), "credits label");
                 credits_label->SetIsHeightFixedToTextHeight(true);
                 credits_label->SetAlignment(Dim::X, LEFT);
                 footnotes_layout->AttachChild(credits_label);
 
-                Label *library_label = new Label("Part of the XuqRijBuh Game Engine", "library label");
+                Label *library_label = new Label("Part of the XuqRijBuh Game Engine", Context(), "library label");
                 library_label->SetIsHeightFixedToTextHeight(true);
                 library_label->SetAlignment(Dim::X, RIGHT);
                 footnotes_layout->AttachChild(library_label);
@@ -158,17 +158,17 @@ void TitleScreenWidget::ActivateControlsDialog ()
 {
     ASSERT1(m_controls_panel == NULL);
     // create the dialog and add a new ControlsPanel to it
-    Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, "controls dialog");
+    Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, Context(), "controls dialog");
     {
-        m_controls_panel = new ControlsPanel();
+        m_controls_panel = new ControlsPanel(Context());
         // initialize the ControlsPanel with the Config values
         m_controls_panel->ReadValuesFromConfig(g_config);
         // attach it to the dialog
         controls_dialog->DialogLayout()->AttachChild(m_controls_panel);
         // make the dialog full-screen
-        controls_dialog->MoveToAndResize(RootWidget().ScreenRect());
+        controls_dialog->MoveToAndResize(Context().GetScreen().ScreenRect());
     }
-    this->AttachChild(controls_dialog);
+    Context().GetScreen().AttachAsModalChildWidget(*controls_dialog);
 
     // connect up the dialog OK button to ControlsDialogReturnedOK
     SignalHandler::Connect1(
@@ -176,7 +176,7 @@ void TitleScreenWidget::ActivateControlsDialog ()
         &m_internal_receiver_controls_dialog_returned);
 }
 
-void TitleScreenWidget::ControlsDialogReturned (Dialog::ButtonID const button_id)
+void TitleScreenWidget::ControlsDialogReturned (Dialog::ButtonID button_id)
 {
     ASSERT1(m_controls_panel != NULL);
 
@@ -201,7 +201,7 @@ void TitleScreenWidget::ControlsDialogReturned (Dialog::ButtonID const button_id
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&TitleScreenWidget::x)
 
-bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
+bool TitleScreenWidget::StateGameDemo (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateGameDemo")
     ASSERT1(m_high_scores_widget->IsHidden());
@@ -218,7 +218,7 @@ bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
     return false;
 }
 
-bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const input)
+bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateDisplayFirstHighScores")
     switch (input)
@@ -243,7 +243,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
     return false;
 }
 
-bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const input)
+bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StatePauseBetweenHighScores")
     ASSERT1(m_high_scores_widget->IsHidden());
@@ -260,7 +260,7 @@ bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const inp
     return false;
 }
 
-bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const input)
+bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateDisplaySecondHighScores")
     switch (input)
@@ -285,7 +285,7 @@ bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const in
     return false;
 }
 
-void TitleScreenWidget::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
+void TitleScreenWidget::ScheduleStateMachineInput (StateMachineInput input, Float const time_delay)
 {
     CancelScheduledStateMachineInput();
     EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));

@@ -182,8 +182,8 @@ lib_libxrb_la_SOURCES = \
     lib/gui/xrb_sizeproperties.cpp \
     lib/gui/xrb_widget.cpp \
     lib/gui/xrb_widgetbackground.cpp \
+    lib/gui/xrb_widgetcontext.cpp \
     lib/gui/xrb_widgetskin.cpp \
-    lib/gui/xrb_widgetskinhandler.cpp \
     \
     lib/gui/widgets/xrb_button.cpp \
     lib/gui/widgets/xrb_cellpaddingwidget.cpp \
@@ -309,8 +309,8 @@ include_HEADERS = \
     lib/gui/xrb_sizeproperties.hpp \
     lib/gui/xrb_widget.hpp \
     lib/gui/xrb_widgetbackground.hpp \
+    lib/gui/xrb_widgetcontext.hpp \
     lib/gui/xrb_widgetskin.hpp \
-    lib/gui/xrb_widgetskinhandler.hpp \
     \
     lib/gui/widgets/xrb_button.hpp \
     lib/gui/widgets/xrb_cellpaddingwidget.hpp \

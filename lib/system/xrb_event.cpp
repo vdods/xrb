@@ -38,7 +38,7 @@ std::string const &Event::Name (EventType const event_type)
         "JOYHAT",
         "FOCUS",
         "MOUSEOVER",
-        "DELETE_CHILD_WIDGET",
+        "DETACH_AND_DELETE_CHILD_WIDGET",
         "QUIT",
         "STATE_MACHINE_INPUT",
         "ENGINE2_DELETE_ENTITY",

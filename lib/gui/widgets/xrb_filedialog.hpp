@@ -22,14 +22,14 @@ class FileDialog : public Dialog
 {
 public:
 
-    FileDialog (std::string const &title_text, FilePanel::Operation file_operation, std::string const &name = "FileDialog");
+    FileDialog (std::string const &title_text, FilePanel::Operation file_operation, WidgetContext &context, std::string const &name = "FileDialog");
     virtual ~FileDialog () { }
 
-    inline FilePanel::Operation FileOperation () const { return m_file_panel->FileOperation(); }
-    inline std::string const &Path () const { return m_file_panel->Path(); }
+    FilePanel::Operation FileOperation () const { return m_file_panel->FileOperation(); }
+    std::string const &Path () const { return m_file_panel->Path(); }
 
-    inline SignalSender1<std::string const &> const *SenderSubmitPath () { return &m_sender_submit_path; }
-    inline SignalSender1<std::string> const *SenderSubmitPathV () { return &m_sender_submit_path_v; }
+    SignalSender1<std::string const &> const *SenderSubmitPath () { return &m_sender_submit_path; }
+    SignalSender1<std::string> const *SenderSubmitPathV () { return &m_sender_submit_path_v; }
 
 protected:
 

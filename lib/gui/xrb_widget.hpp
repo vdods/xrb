@@ -27,7 +27,6 @@
 #include "xrb_sizeproperties.hpp"
 #include "xrb_vector.hpp"
 #include "xrb_widgetskin.hpp"
-#include "xrb_widgetskinhandler.hpp"
 
 /** @file xrb_widget.h
   * @brief Contains the class declaration of the foundation of the GUI
@@ -38,7 +37,7 @@ namespace Xrb {
 
 class ContainerWidget;
 class EventCustom;
-class EventDeleteChildWidget;
+class EventDetachAndDeleteChildWidget;
 class EventFocus;
 class EventJoy;
 class EventKey;
@@ -58,6 +57,7 @@ class EventRotateMotion;
 class EventStateMachineInput;
 class Screen;
 class WidgetBackground;
+class WidgetContext;
 
 /** The base class for all GUI widgets and provides 90% of the framework
   * necessary for the GUI's operation.
@@ -102,7 +102,7 @@ class WidgetBackground;
   * @brief The class which forms the foundation of the GUI system.
   * @note All GUI widgets must derive from this class to function properly.
   */
-class Widget : public WidgetSkinHandler, public FrameHandler, public EventHandler, public SignalHandler
+class Widget : public FrameHandler, public EventHandler, public SignalHandler
 {
 public:
 
@@ -110,117 +110,62 @@ public:
     // constructor and destructor
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief Constructs a Widget.  The widget will be attached to the given
-      *        parent widget during construction.
-      * @param name A textual label applied to the specific widget being
-      *             constructed.  As for now, this is only used in a debug-
-      *             related capacity.
-      */
-    Widget (std::string const &name = "Widget");
-    /** Ensures the widget is set to not modal, ensures mouseover is off,
-      * deletes all children, and clears the modal widget stack.
-      * @brief Destructor.  Deletes all children.
-      */
+    /// @brief The widget will be associated to the given WidgetContext widget during construction.
+    /// @param name A textual label applied to the specific widget being constructed.
+    /// As for now, this is only used in a debug-related capacity.
+    Widget (WidgetContext &context, std::string const &name = "Widget");
+    /// The widget removes itself from WidgetContext upon destruction.
     virtual ~Widget ();
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceiver accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief Accessor for the SignalReceiver which calls @a SetIsEnabled
-      *        with the received value.
-      */
+    /// This receiver calls SetIsEnabled.
     SignalReceiver1<bool> const *ReceiverSetIsEnabled () { return &m_receiver_set_is_enabled; }
-    /** @brief Accessor for the SignalReceiver which enables the widget.
-      *        Calls @a Enable.
-      */
+    /// This receiver calls Enable.
     SignalReceiver0 const *ReceiverEnable () { return &m_receiver_enable; }
-    /** @brief Accessor for the SignalReceiver which disables the widget.
-      *        Calls @a Disable.
-      */
+    /// This receiver calls Disable.
     SignalReceiver0 const *ReceiverDisable () { return &m_receiver_disable; }
 
-    /** @brief Accessor for the SignalReceiver which calls @a SetIsHidden
-      *        with the received value.
-      */
+    /// This receiver calls SetIsHidden.
     SignalReceiver1<bool> const *ReceiverSetIsHidden () { return &m_receiver_set_is_hidden; }
-    /** @brief Accessor for the SignalReceiver which hides the widget.
-      *        Calls @a Hide.
-      */
+    /// This receiver calls Hide.
     SignalReceiver0 const *ReceiverHide () { return &m_receiver_hide; }
-    /** @brief Accessor for the SignalReceiver which shows the widget.
-      *        Calls @a Show.
-      */
+    /// This receiver calls Show.
     SignalReceiver0 const *ReceiverShow () { return &m_receiver_show; }
 
     // ///////////////////////////////////////////////////////////////////////
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief Returns the name of this widget
-      */
+    /// Returns a const reference to the WidgetContext to which this Widget belongs.
+    WidgetContext const &Context () const { return m_context; }
+    /// Returns a reference to the WidgetContext to which this Widget belongs.
+    WidgetContext &Context () { return m_context; }
+    /// Returns the name of this widget
     std::string const &Name () const { return m_name; }
-    /** @brief Returns a pointer to the parent (const) of this widget.
-      */
+    /// Returns a pointer to the parent (const) of this widget.
     ContainerWidget const *Parent () const { return m_parent; }
-    /** @brief Returns a pointer to the parent (non-const) of this widget.
-      */
+    /// Returns a pointer to the parent (non-const) of this widget.
     ContainerWidget *Parent () { return m_parent; }
-    /** Modal widgets behave slightly differently than normal widgets.  Since
-      * they must appear above all other widgets, effectively their parent
-      * is the root widget (see @c Screen), which does some special
-      * handling of drawing and events for their proper operation.
-      * @brief Returns a pointer to the effective parent (const) of this
-      *        widget -- if this is a modal widget, the root widget is
-      *        returned, otherwise its direct parent.
-      */
-    ContainerWidget const *EffectiveParent () const;
-    /** Modal widgets behave slightly differently than normal widgets.  Since
-      * they must appear above all other widgets, effectively their parent
-      * is the root widget (see @c Screen), which does some special
-      * handling of drawing and events for their proper operation.
-      * @brief Returns a pointer to the effective parent (non-const) of this
-      *        widget -- if this is a modal widget, the root widget is
-      *        returned, otherwise its direct parent.
-      */
-    ContainerWidget *EffectiveParent ();
-    
-    /// Returns true iff this Widget has no parent.
-    bool IsRootWidget () const { return m_parent == NULL; }
-    /// Returns a pointer to the highest ancestor Widget, which is 'this' if this Widget has no parent.
-    Widget const &RootWidget () const;
-    /// Returns a pointer to the highest ancestor Widget, which is 'this' if this Widget has no parent.
-    Widget &RootWidget ();
-
-    /// Returns true iff this Widget's root widget is a Screen.
-    bool RootWidgetIsScreen () const;
-    /// Does a dynamic_cast on the result of RootWidget -- so in particular, if the root widget
-    /// is not actually a Screen, it will throw a bad_cast exception.
-    Screen const &RootWidgetAsScreen () const;
-    /// Does a dynamic_cast on the result of RootWidget -- so in particular, if the root widget
-    /// is not actually a Screen, it will throw a bad_cast exception.
-    Screen &RootWidgetAsScreen ();
-    
-    /** @brief Returns true iff this widget is focused.  If this is a
-      *        top-level widget, then it has focus by default.
-      */
+    /// @brief Returns true iff this widget has been added to the "active" set of
+    /// widgets that are being rendered and controlled by the Screen.
+    /// @details A widget is considered "active" if it has a direct line of 
+    /// ancestry to the Screen in the WidgetContext.  This is useful in determining 
+    /// focus, mouseover, etc.
+    bool IsActive () const;
+    /// Returns true iff this widget is focused.  If this is a top-level widget, then it has focus by default.
     bool IsFocused () const;
-    /** The member variable @c m_accepts_focus should be set in Widget
-      * derivative classes to indicate if they will accept focus.  The
-      * default value set by the constructor of Widget is false.
-      * @brief Returns true iff this widget even accepts focus.
-      */
+    /// @brief Returns true iff this widget even accepts focus.
+    /// @details The member variable @c m_accepts_focus should be set in Widget derivative classes to indicate
+    /// if they will accept focus.  The default value set by the constructor of Widget is false.
     bool AcceptsFocus () const { return m_accepts_focus; }
-    /** @brief Returns true iff this widget currently has mouseover focus
-      *        (i.e. its parent has this widget as its m_mouseover_focus
-      *        value).
-      */
+    /// Returns true iff this widget currently has mouseover focus (i.e. its parent has this widget as its m_mouseover_focus value).
     bool IsMouseover () const;
-    /** The member variable @c m_accepts_mouseover should be set in Widget
-      * derivative classes to indicate if they will accept mouseover focus.
-      * The default value set by the constructor of Widget is true.
-      * @brief Returns true iff this widget accepts mouseover focus.
-      */
+    /// @brief Returns true iff this widget accepts mouseover focus.
+    /// @details The member variable @c m_accepts_mouseover should be set in Widget derivative classes
+    /// to indicate if they will accept mouseover focus. The default value set by the constructor of Widget is true.
     bool AcceptsMouseover () const { return m_accepts_mouseover; }
     /** @brief Returns true iff this widget has mouse grab focus (meaning that
       *        all mouse events will go to/through it even if the mouse is not
@@ -235,7 +180,7 @@ public:
     bool IsHidden () const { return m_is_hidden; }
     /** @brief Returns true iff this widget is currently modal.
       */
-    bool IsModal () const { return m_is_modal; }
+    bool IsModal () const;
     /** @brief Returns the widget stack priority of this widget.
       * @see StackPriority
       */
@@ -274,8 +219,6 @@ public:
     /** @brief Returns the height of this widget.
       */
     ScreenCoord Height () const { return m_screen_rect.Height(); }
-    /// Used for font pixel height calculations.  Gives the "useful" size of this Widget.
-    ScreenCoord SizeRatioBasis () const { return Min(Width(), Height()); }
     /** @brief Returns the boolean vector containing the
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
@@ -465,12 +408,6 @@ public:
         FloatVector2 const &ratios,
         bool defer_parent_update = false);
 
-    /** Makes the call to @a AddModalWidget or @a RemoveModalWidget as
-      * appropriate).  If this causes the widget to become not modal, then
-      * SetIsHidden(true) is called.
-      * @brief Sets the modal state of this widget.
-      */
-    void SetIsModal (bool is_modal);
     /** Will cause a reshuffling of child widgets in this widget's parent's
       * child vector, in order to maintain proper widget stack priority
       * ordering.
@@ -546,6 +483,8 @@ public:
       */
     void UnfixHeight ();
 
+    /// An overridable, non-const method which is called immediately before any widgets are Draw'n.
+    virtual void PreDraw ();
     /** This function should be overridden in subclasses to provide the
       * means to draw whatever is necessary.  Generally the subclass's Draw
       * function should call the Draw function of its immediate superclass
@@ -562,6 +501,9 @@ public:
       *       area).
       */
     virtual void Draw (RenderContext const &render_context) const;
+    /// An overridable, non-const method which is called immediately after all widgets are Draw'n.
+    virtual void PostDraw ();
+    
     /** @brief Move this widget to the given position.
       * @param position The intended position of the lower-left corner of
       *                 this widget.
@@ -663,30 +605,26 @@ public:
 
 protected:
 
+    /// Returns true iff this widget is the Screen in the associated WidgetContext.
+    bool IsScreen () const;
+
+    /// This method is called when the WidgetContext's widget skin changes.
+    /// Classes which override this method should call the parent's method.
     virtual void HandleChangedWidgetSkin ();
 
-    virtual ScreenCoord WidgetSkinHandlerSizeRatioBasis () const { return RootWidget().SizeRatioBasis(); }
-    
-    /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::WidgetSkinHandlerChildCount
-      */
-    virtual Uint32 WidgetSkinHandlerChildCount () const { return 0; }
-    /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::WidgetSkinHandlerChild
-      */
-    virtual WidgetSkinHandler *WidgetSkinHandlerChild (Uint32 index) { return NULL; }
-    /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::WidgetSkinHandlerParent
-      */
-    virtual WidgetSkinHandler *WidgetSkinHandlerParent ();
+    /// Returns the a pointer to the background object which is rendered in @a Widget::Draw.
+    WidgetBackground const *RenderBackground () const { ASSERT1(!RenderBackgroundNeedsUpdate()); return m_render_background; }
+    /// Returns the a pointer to the background object which is rendered in @a Widget::Draw,
+    /// but calls UpdateRenderBackground if RenderBackgroundNeedsUpdate() returns true.
+    WidgetBackground const *RenderBackground ()
+    {
+        if (RenderBackgroundNeedsUpdate())
+            UpdateRenderBackground();
+        ASSERT1(!RenderBackgroundNeedsUpdate());
+        return m_render_background;
+    }
 
-    /** @brief Returns the a pointer to the background object which is
-      *        rendered in @a Widget::Draw.
-      */
-    WidgetBackground const *RenderBackground () const { return m_render_background; }
-
-    /** @brief Sets the background to use in @a Widget::Draw.
-      */
+    /// Sets the background to use in @a Widget::Draw.
     void SetRenderBackground (WidgetBackground const *render_background) { m_render_background = render_background; }
 
     /** Calls FrameHandler::ProcessFrame on all child widgets.
@@ -706,328 +644,187 @@ protected:
       *        generic event processing.
       */
     virtual bool HandleEvent (Event const *e);
-    /** Subclasses may override this to process key events.
-      * @brief Process a key event.
-      */
+    /// Subclasses may override this to process key events.
     virtual bool ProcessKeyEvent (EventKey const *e) { return false; }
-    /** Subclasses may override this to process mouse button events.
-      * @brief Process a mouse button event.
-      */
+    /// Subclasses may override this to process mouse button events.
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e) { return false; }
-    /** Subclasses may override this to process mouse wheel events.
-      * @brief Process a mouse wheel event.
-      */
+    /// Subclasses may override this to process mouse wheel events.
     virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e) { return false; }
-    /** Subclasses may override this to process motion events.
-      * @brief Process a mouse motion event.
-      */
+    /// Subclasses may override this to process motion events.
     virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e) { return false; }
-    /** Subclasses may override this to process pinch begin events.
-      * @brief Process a pinch begin event.
-      */
+    /// Subclasses may override this to process pinch begin events.
     virtual bool ProcessPinchBeginEvent (EventPinchBegin const *e) { return false; }
-    /** Subclasses may override this to process pinch end events.
-      * @brief Process a pinch end event.
-      */
+    /// Subclasses may override this to process pinch end events.
     virtual bool ProcessPinchEndEvent (EventPinchEnd const *e) { return false; }
-    /** Subclasses may override this to process pinch motion events.
-      * @brief Process a pinch motion event.
-      */
+    /// Subclasses may override this to process pinch motion events.
     virtual bool ProcessPinchMotionEvent (EventPinchMotion const *e) { return false; }
-    /** Subclasses may override this to process rotate motion events.
-      * @brief Process a rotate motion event.
-      */
+    /// Subclasses may override this to process rotate motion events.
     virtual bool ProcessRotateMotionEvent (EventRotateMotion const *e) { return false; }
-    /** Subclasses may override this to process rotate begin events.
-      * @brief Process a rotate begin event.
-      */
+    /// Subclasses may override this to process rotate begin events.
     virtual bool ProcessRotateBeginEvent (EventRotateBegin const *e) { return false; }
-    /** Subclasses may override this to process rotate end events.
-      * @brief Process a rotate end event.
-      */
+    /// Subclasses may override this to process rotate end events.
     virtual bool ProcessRotateEndEvent (EventRotateEnd const *e) { return false; }
-    /** Subclasses may override this to process joystick events.
-      * @brief Process a joystick event.
-      */
+    /// Subclasses may override this to process joystick events.
     virtual bool ProcessJoyEvent (EventJoy const *e) { return false; }
-    /** Subclasses may override this to process StateMachineInput events.
-      * @brief Process a StateMachineInput event.
-      */
+    /// Subclasses may override this to process StateMachineInput events.
     virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e) { return false; }
-    /** Subclasses may override this to process custom events -- events not
-      * explicitly handled by the above overridable handlers.
-      * @brief Process a custom event.
-      */
+    /// Subclasses may override this to process custom events -- events not explicitly handled by the above overridable handlers.
     virtual bool ProcessCustomEvent (EventCustom const *e) { return false; }
-    /** @brief Processes a delete child widget event.  This is used mainly to
-      *        delete modal widgets.
-      */
-    virtual bool ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e);
+    /// Processes a delete child widget event.  This is used mainly to delete modal widgets.
+    virtual bool ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e);
 
-    /** Subclasses should override this when they need to do something when
-      * @c ContainerWidget::AttachChild is called on this.  This method will
-      * be called after the child is attached (so in particular, Parent() is
-      * not NULL).
-      * @brief Handler that is called when this widget is attached to a parent.
-      */
-    virtual void HandleAttachedToParent () { }
-    /** Subclasses should override this when they need to do something when
-      * @c ContainerWidget::DetachChild is called on this.  This method will
-      * be called before the child is detached (so in particular, Parent() is
-      * not NULL).
-      * @brief Handler that is called when this widget is detached from a parent.
-      */
-    virtual void HandleAboutToDetachFromParent () { }
-    /** Subclasses should override this when they need to do something when
-      * the widget gains focus.
-      * @brief Handler that is called when this widget becomes focused.
-      */
+    /// @brief Handler that is called when this widget is attached to a parent.
+    /// @details Subclasses should override this when they need to do something when
+    /// @c ContainerWidget::AttachChild is called on this.  This method will
+    /// be called after the child is attached (so in particular, Parent() is not NULL).
+    virtual void HandleAttachedToParent ();
+    /// @brief Handler that is called when this widget is detached from a parent.
+    /// @details Subclasses should override this when they need to do something when
+    /// @c ContainerWidget::DetachChild is called on this.  This method will
+    /// be called before the child is detached (so in particular, Parent() is not NULL).
+    virtual void HandleAboutToDetachFromParent ();
+    /// Overridable method that is called when this widget becomes active (see @c Widget::IsActive).
+    virtual void HandleActivate () { }
+    /// Overridable method that is called when this widget goes from active to not active (see @c Widget::IsActive).
+    virtual void HandleDeactivate () { }
+    /// Overridable method that is called when this widget becomes focused.
     virtual void HandleFocus () { }
-    /** Subclasses should override this when they need to do something when
-      * the widget loses focus.
-      * @brief Handler that is called when this widget becomes unfocused.
-      */
+    /// Overridable method that is called when this widget becomes unfocused.
     virtual void HandleUnfocus () { }
-    /** Subclasses should override this when they need to do something when
-      * the mouse moves onto the widget.
-      * @brief Handler that is called when the mouseover flag is set
-      *        ON (from off).
-      */
+    /// Overridable method that is called when the mouseover flag is set ON (from off).
     virtual void HandleMouseoverOn () { }
-    /** Subclasses should override this when they need to do something when
-      * the mouse moves off the widget.
-      * @brief Handler that is called when the mouseover flag is set
-      *        OFF (from on).
-      */
+    /// Overridable method that is called when the mouseover flag is set OFF (from on).
     virtual void HandleMouseoverOff () { }
-    /** Subclasses should override this when they need to do something when
-      * the mouse input grab is turned on.
-      * @brief Handler that is called when this widget grabs the mouse input.
-      */
+    /// Overridable method that is called when this widget grabs the mouse input.
     virtual void HandleMouseGrabOn () { }
-    /** Subclasses should override this when they need to do something when
-      * the mouse input grab is turned off.
-      * @brief Handler that is called when this widget lets go of the
-      *        mouse input.
-      */
+    /// Overridable method that is called when this widget lets go of the mouse input.
     virtual void HandleMouseGrabOff () { }
-    /** Subclasses should override this when they need to do something when
-      * the basic render background object has changed.
-      * @brief Handler that is called when the basic background object is
-      *        changed.
-      * @note If a subclass overrides this function, it should call
-      *       @a Widget::HandleChangedBackground -- or the
-      *       HandleChangedBackground belonging to its superclass, if
-      *       applicable.
-      */
-    virtual void HandleChangedBackground ();
-    /** Subclasses should override this when they need to do something when
-      * the frame margins have been changed.
-      * @see Layout
-      * @brief Handler that is called when the frame margins have been
-      *        changed.
-      */
+    /// Overridable method that is called when the frame margins have been changed.  @see Layout.
     virtual void HandleChangedFrameMargins () { }
-    /** Subclasses should override this when they need to do something when
-      * the content margins have been changed.
-      * @see Layout
-      * @brief Handler that is called when the content margins have been
-      *        changed.
-      */
+    /// Overridable method that is called when the content margins have been changed.  @see Layout.
     virtual void HandleChangedContentMargins () { }
 
-    /** Subclasses may override this function to implement custom background
-      * behavior such as mouseover highlighting and button-depressing.
-      * @brief Assigns the basic widget background to the render background.
-      */
+    /// @brief Assigns the basic widget background to the render background.
+    /// @details Subclasses may override this function to implement custom background
+    /// behavior such as mouseover highlighting and button-depressing.
     virtual void UpdateRenderBackground ();
-    /** @brief Calls ChildSizePropertiesChanged on this widget's parent,
-      *        with the "this" pointer as the parameter.
-      * @param defer_parent_update If this is false, nothing is done.
-      *                            This is used primarily when there is going
-      *                            to be lots of updates in a row, and all but
-      *                            the last update don't matter.
-      */
+    /// Returns true iff the "render background needs update" flag is set.  @see SetRenderBackgroundNeedsUpdate.
+    bool RenderBackgroundNeedsUpdate () const { return m_render_background_needs_update; }
+    /// Indicates that @c UpdateRenderBackground should be called before @c Draw.
+    void SetRenderBackgroundNeedsUpdate () { m_render_background_needs_update = true; }
+    /// @brief Calls ChildSizePropertiesChanged on this widget's parent, with the "this" pointer as the parameter.
+    /// @param defer_parent_update If this is false, nothing is done.  This is used primarily when there is going
+    /// to be lots of updates in a row, and all but the last update don't matter.
     void ParentChildSizePropertiesUpdate (bool defer_parent_update);
-    /** @brief Adjusts *size by the minimum size.
-      * @return True iff *size was changed.
-      */
+    /// Adjusts *size by the minimum size.  Returns true iff *size was changed.
     bool AdjustFromMinSize (ScreenCoordRect *screen_rect) const;
-    /** @brief Adjusts *size by the maximum size.
-      * @return True iff *size was changed.
-      */
+    /// Adjusts *size by the maximum size.  Returns true iff *size was changed.
     bool AdjustFromMaxSize (ScreenCoordRect *screen_rect) const;
-    /** @brief Performs range checking to ensure the min and max sizes
-      *        are valid after the minimum size was changed.
-      */
+    /// Performs range checking to ensure the min and max sizes are valid after the minimum size was changed.
     void MinSizeUpdated ();
-    /** @brief Performs range checking to ensure the min and max sizes
-      *        are valid after the maximum size was changed.
-      */
+    /// Performs range checking to ensure the min and max sizes are valid after the maximum size was changed.
     void MaxSizeUpdated ();
-    /** @brief Ensures the size of the given rectangle is non-negative
-      *        in both dimensions.
-      */
+    /// Ensures the size of the given rectangle is non-negative in both dimensions.
     void SizeRangeAdjustment (ScreenCoordRect *rect) const;
 
-    /** @brief Contains the min/max and min/max-enabled size
-      *        properties of this widget.
-      */
+    /// Contains the min/max and min/max-enabled size properties of this widget.
     SizeProperties m_size_properties;
-    /** A value of false <strong>will</strong> prevent container widgets
-      * from blocking child widgets from gaining focus.
-      * @brief Indicates if this widget accepts focus on its own.
-      */
+    /// @brief Indicates if this widget accepts focus on its own.
+    /// @details  A value of false <strong>will</strong> prevent container widgets from blocking child widgets from gaining focus.
     bool m_accepts_focus;
-    /** A value of false <strong>will not</strong> prevent container widgets
-      * from blocking child widgets from accepting mouseover.
-      * @brief Indicates if this widget accepts the mouseover flag on its own.
-      */
+    /// @brief Indicates if this widget accepts the mouseover flag on its own.
+    /// @details A value of false <strong>will not</strong> prevent container
+    /// widgets from blocking child widgets from accepting mouseover.
     bool m_accepts_mouseover;
-    /** The color bias represents a blending function which is applied to
-      * each drawing operation at or below this widget in the widget hierarchy.
-      * @brief The color bias of the widget.
-      */
+    /// @brief The color bias of the widget used in rendering.
+    /// @details The color bias represents a blending function which is applied
+    /// to each drawing operation at or below this widget in the widget hierarchy.
     Color m_color_bias;
-    /** The color mask represents a modulation function (simple multiplication)
-      * which is applied to each drawing operation at or below this widget in
-      * the widget hierarchy.
-      * @brief The color mask of the widget.
-      */
+    /// @brief The color mask of the widget used in rendering.
+    /// @details The color mask represents a modulation function (simple multiplication)
+    /// which is applied to each drawing operation at or below this widget in the widget hierarchy.
     Color m_color_mask;
+    /// Used in the interplay of the destructors of Widget, Screen and WidgetContext.
+    /// <strong>Do not change</strong> -- this should be set by Widget and Screen only.
+    bool m_remove_from_widget_context_upon_destruction;
 
 private:
 
-    /** @brief Focuses all widgets in this widget's line of parency,
-      *        from top down.
-      */
+    /// Focuses all widgets in this widget's line of parency, from top down.
     void FocusWidgetLine ();
-    /** @brief Unfocuses all widgets from this one down, starting at
-      *        the lowest child .
-      *
-      */
+    /// Unfocuses all widgets from this one down, starting at the lowest child .
     void UnfocusWidgetLine ();
-    /** @brief Changes the mouseover to this widget.
-      * @return True iff a widget accepted mouseover.
-      */
+    /// Changes the mouseover to this widget.  Returns true iff a widget accepted mouseover.
     bool MouseoverOn ();
-    /** @brief Removes mouseover from this widget.
-      */
+    /// Removes mouseover from this widget.
     void MouseoverOff ();
-    /** @brief Mouseover-ons all widgets in this widget's
-      *        line of parency, top down.
-      */
+    /// Mouseover-ons all widgets in this widget's line of parency, top down.
     void MouseoverOnWidgetLine ();
-    /** @brief Mouseover-offs all widgets from this one
-      *        down, starting at lowest child, going up.
-      */
+    /// Mouseover-offs all widgets from this one down, starting at lowest child, going up.
     void MouseoverOffWidgetLine ();
-    /** @brief Performs some necessary event processing on key
-      *        events before the key event handler gets them.
-      */
+    /// Performs some necessary event processing on key events before the key event handler gets them.
     virtual bool InternalProcessKeyEvent (EventKey const *e);
-    /** @brief Performs some necessary event processing on mouse
-      *        events before the mouse event handler gets them.
-      */
+    /// Performs some necessary event processing on mouse events before the mouse event handler gets them.
     virtual bool InternalProcessMouseEvent (EventMouse const *e);
-    /** @brief Performs some necessary event processing on pinch
-      *        events before the pinch event handler gets them.
-      */
+    /// Performs some necessary event processing on pinch events before the pinch event handler gets them.
     virtual bool InternalProcessPinchEvent (EventPinch const *e);
-    /** @brief Performs some necessary event processing on rotate
-      *        events before the rotate event handler gets them.
-      */
+    /// Performs some necessary event processing on rotate events before the rotate event handler gets them.
     virtual bool InternalProcessRotateEvent (EventRotate const *e);
-    /** @brief Performs some necessary event processing on joy
-      *        events before the joy event handler gets them.
-      */
+    /// Performs some necessary event processing on joy events before the joy event handler gets them.
     virtual bool InternalProcessJoyEvent (EventJoy const *e);
-    /** @brief Performs some necessary event processing on focus events.
-      */
+    /// Performs some necessary event processing on focus events.
     virtual bool InternalProcessFocusEvent (EventFocus const *e);
-    /** @brief Performs some necessary event processing on mouseover events.
-      */
+    /// Performs some necessary event processing on mouseover events.
     virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
 
-    /** Currently only used for debugging purposes
-      * @brief Textual name of this instance of the widget.
-      */
+    /// Gives access to "global" context with respect to the "active" widgets associated with a Screen object.
+    WidgetContext &m_context;
+    /// Textual name of this instance of the widget.  Incredibly useful when debugging GUI code.
     std::string m_name;
-    /** NULL indicates that this is a top-level widget (or a parentless one
-      * hanging out in limbo).
-      * @brief Pointer to the parent widget.
-      */
+    /// @brief Pointer to the parent widget.
+    /// @details NULL indicates that this is a top-level widget or a parentless one hanging out in limbo.
     ContainerWidget *m_parent;
-    /** @brief Indicates if this widget is enabled.
-      */
+    /// Indicates if this widget is enabled.
     bool m_is_enabled;
-    /** @brief Stores the SignalSender-blocking state while the widget
-      *        is disabled.
-      */
+    /// Stores the SignalSender-blocking state while the widget is disabled.
     bool m_enabled_sender_blocking_state;
-    /** @brief Iff true, this widget is hidden.
-      */
+    /// Iff true, this widget is hidden.
     bool m_is_hidden;
-    /** @brief The screen-coordinate rectangle which defines the size
-      *        and position of this widget.
-      */
+    /// The screen-coordinate rectangle which defines the size and position of this widget.
     ScreenCoordRect m_screen_rect;
-    /** @brief Last known mouse position (from processed mouse motion events).
-      */
+    /// Last known mouse position (from processed mouse motion events).
     ScreenCoordVector2 m_last_mouse_position;
-    /** @brief Iff true, this is a modal widget.
-      */
-    bool m_is_modal;
-    /** Indicates which block this widget will remain in inside
-      * m_child_vector.
-      * @brief Widget stack priority.
-      */
+    /// Widget stack priority (indicates which block this widget will remain in inside m_child_vector).
     StackPriority m_stack_priority;
-    /** @brief the basic background for the widget
-      */
+    /// The basic background for the widget.
     WidgetBackground *m_background;
-    /** Subclasses can use this to specify different backgrounds for different
-      * behaviors.  NULL indicates no background will be rendered
-      * (transparent).
-      * @brief The background which will be rendered in @c Draw .
-      */
+    /// @brief The background which will be rendered in @c Draw .
+    /// @details Subclasses can use this to specify different backgrounds for different behaviors.  NULL
+    /// indicates no background will be rendered (transparent).  Also @see m_render_background_needs_update.
     WidgetBackground const *m_render_background;
-    /** @brief Contains the frame margins which are used by the background
-      *        and various other Widget subclasses for drawing and layout.
-      */
+    /// Indicates if @c UpdateRenderBackground should be called before @c Draw.
+    bool m_render_background_needs_update;
+    /// Contains the frame margins which are used by the background and various other Widget subclasses for drawing and layout.
     ScreenCoordMargins m_frame_margins;
-    /** @brief Contains the content margins which are used by various widgets.
-      */
+    /// Contains the content margins which are used by various widgets.
     ScreenCoordMargins m_content_margins;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief SignalReceiver which calls @a SetIsEnabled with the
-      *        received value.
-      */
-    SignalReceiver1<bool> m_receiver_set_is_enabled;
-    /** @brief SignalReceiver which calls @a Enable.
-      */
-    SignalReceiver0 m_receiver_enable;
-    /** @brief SignalReceiver which calls @a Disable .
-      */
-    SignalReceiver0 m_receiver_disable;
+    SignalReceiver1<bool> m_receiver_set_is_enabled;    ///< Calls SetIsEnabled.
+    SignalReceiver0 m_receiver_enable;                  ///< Calls Enable.
+    SignalReceiver0 m_receiver_disable;                 ///< Calls Disable.
 
-    /** @brief SignalReceiver which calls @a SetIsHidden with the
-      *        received value.
-      */
-    SignalReceiver1<bool> m_receiver_set_is_hidden;
-    /** @brief SignalReceiver which calls @a Hide .
-      */
-    SignalReceiver0 m_receiver_hide;
-    /** @brief SignalReceiver which calls @a Show .
-      */
-    SignalReceiver0 m_receiver_show;
+    SignalReceiver1<bool> m_receiver_set_is_hidden;     ///< Calls SetIsHidden.
+    SignalReceiver0 m_receiver_hide;                    ///< Calls Hide.
+    SignalReceiver0 m_receiver_show;                    ///< Calls Show.
 
     // kludgey (as are all friend statements), but this is the simplest way
     friend class ContainerWidget;
+    friend class Screen;
+    friend class WidgetContext;
 }; // end of class Widget
 
 } // end of namespace Xrb

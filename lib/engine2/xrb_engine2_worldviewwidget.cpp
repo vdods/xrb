@@ -16,9 +16,9 @@
 namespace Xrb {
 namespace Engine2 {
 
-WorldViewWidget::WorldViewWidget (std::string const &name)
+WorldViewWidget::WorldViewWidget (WidgetContext &context, std::string const &name)
     :
-    Widget(name)
+    Widget(context, name)
 {
     m_transform = FloatSimpleTransform2::ms_identity;
     m_is_transform_scaling_based_upon_widget_radius = false;

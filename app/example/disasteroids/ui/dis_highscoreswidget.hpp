@@ -33,7 +33,7 @@ public:
         M_COUNT
     }; // end of enum HighScoresWidget::Mode
 
-    HighScoresWidget ();
+    HighScoresWidget (WidgetContext &context);
 
     void Update (HighScores const &high_scores, Mode mode);
 

@@ -13,13 +13,13 @@
 #include <stdarg.h>
 
 #include "xrb_gl.hpp"
-#include "xrb_screen.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-TextWidget::TextWidget (std::string const &text, std::string const &name)
+TextWidget::TextWidget (std::string const &text, WidgetContext &context, std::string const &name)
     :
-    Widget(name),
+    Widget(context, name),
     m_text(text),
     m_receiver_set_text(&TextWidget::SetText, this),
     m_receiver_set_text_v(&TextWidget::SetTextV, this)
@@ -28,23 +28,18 @@ TextWidget::TextWidget (std::string const &text, std::string const &name)
     m_accepts_mouseover = false;
 
     m_text_color = Color(1.0, 1.0, 1.0, 1.0);
-    SetRenderTextColor(m_text_color);
-    m_font = WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT); // HIPPO TEMP
+    m_render_text_color_needs_update = true;
+    m_render_font_needs_update = true;
+    m_font = Context().WidgetSkin_LoadFont(WidgetSkin::DEFAULT_FONT);
     
     m_is_min_width_fixed_to_text_width = false;
     m_is_max_width_fixed_to_text_width = false;
     m_is_min_height_fixed_to_text_height = false;
     m_is_max_height_fixed_to_text_height = false;
-
-    TextWidget::UpdateRenderBackground();
-    TextWidget::UpdateRenderTextColor();
-    TextWidget::UpdateRenderFont();
 }
 
 Resource<Font> const &TextWidget::GetFont () const
 {
-//     if (!m_font.IsValid()) // lazy initialization
-//         m_font = WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT);
     return m_font;
 }
 
@@ -60,7 +55,7 @@ void TextWidget::SetText (std::string const &text)
 void TextWidget::SetTextColor (Color const &color)
 {
     m_text_color = color;
-    UpdateRenderTextColor();
+    SetRenderTextColorNeedsUpdate();
 }
 
 void TextWidget::SetIsMinWidthFixedToTextWidth (bool is_min_width_fixed_to_text_width)
@@ -158,6 +153,19 @@ void TextWidget::SetIsSizeFixedToTextSize (bool is_size_fixed_to_text_size)
     }
 }
 
+void TextWidget::PreDraw ()
+{
+    Widget::PreDraw();
+    
+    if (RenderTextColorNeedsUpdate())
+        UpdateRenderTextColor();
+    ASSERT1(!RenderTextColorNeedsUpdate());
+    
+    if (RenderFontNeedsUpdate())
+        UpdateRenderFont();
+    ASSERT1(!RenderFontNeedsUpdate());
+}
+
 void TextWidget::SetRenderFont (Resource<Font> const &render_font)
 {
     if (m_render_font != render_font)
@@ -165,6 +173,27 @@ void TextWidget::SetRenderFont (Resource<Font> const &render_font)
         m_render_font = render_font;
         UpdateMinAndMaxSizesFromText();
     }
+}
+
+void TextWidget::HandleChangedWidgetSkin ()
+{
+    Widget::HandleChangedWidgetSkin();
+    m_font = Context().WidgetSkin_LoadFont(WidgetSkin::DEFAULT_FONT);
+    SetRenderBackgroundNeedsUpdate();
+    SetRenderTextColorNeedsUpdate();
+    SetRenderFontNeedsUpdate();
+}
+
+void TextWidget::UpdateRenderTextColor ()
+{
+    m_render_text_color_needs_update = false;
+    SetRenderTextColor(TextColor());
+}
+
+void TextWidget::UpdateRenderFont ()
+{
+    m_render_font_needs_update = false;
+    SetRenderFont(GetFont());
 }
 
 void TextWidget::HandleChangedFrameMargins ()
@@ -177,25 +206,6 @@ void TextWidget::HandleChangedContentMargins ()
 {
     Widget::HandleChangedContentMargins();
     UpdateMinAndMaxSizesFromText();
-}
-
-void TextWidget::UpdateRenderTextColor ()
-{
-    SetRenderTextColor(TextColor());
-}
-
-void TextWidget::UpdateRenderFont ()
-{
-    SetRenderFont(GetFont());
-}
-
-void TextWidget::HandleChangedWidgetSkin ()
-{
-    Widget::HandleChangedWidgetSkin();
-    m_font = WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT);
-    TextWidget::UpdateRenderBackground();
-    TextWidget::UpdateRenderTextColor();
-    TextWidget::UpdateRenderFont();
 }
 
 ScreenCoordRect TextWidget::TextRect () const

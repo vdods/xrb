@@ -14,12 +14,13 @@
 #include "xrb_render.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_utf8.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-LineEdit::LineEdit (Uint32 character_limit, std::string const &name)
+LineEdit::LineEdit (Uint32 character_limit, WidgetContext &context, std::string const &name)
     :
-    TextWidget("", name),
+    TextWidget("", context, name),
     m_sender_text_updated(this),
     m_sender_text_updated_v(this),
     m_sender_text_set_by_enter_key(this),
@@ -44,14 +45,10 @@ LineEdit::LineEdit (Uint32 character_limit, std::string const &name)
     ASSERT1(m_last_text_update.empty());
 
     SetIsHeightFixedToTextHeight(true);
-
-    LineEdit::UpdateRenderBackground();
 }
 
 void LineEdit::SetText (std::string const &text)
 {
-    ASSERT1(RenderFont().IsValid());
-
     // only do stuff if the text is different
     if (m_text != text)
     {
@@ -90,7 +87,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
             // calculate the color mask
             string_render_context.ApplyColorMask(RenderTextColor());
             // set up the GL clip rect
-            RootWidgetAsScreen().SetViewport(string_render_context.ClipRect());
+            Context().GetScreen().SetViewport(string_render_context.ClipRect());
             // draw the text
             RenderFont()->DrawString(
                 string_render_context,
@@ -128,15 +125,16 @@ void LineEdit::SetRenderFont (Resource<Font> const &render_font)
     UpdateTextWidth();
 }
 
-void LineEdit::UpdateRenderBackground ()
-{
-    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
-}
-
 void LineEdit::HandleChangedWidgetSkin ()
 {
     TextWidget::HandleChangedWidgetSkin();
-    UpdateRenderBackground();
+    SetRenderBackgroundNeedsUpdate();
+}
+
+void LineEdit::UpdateRenderBackground ()
+{
+    TextWidget::UpdateRenderBackground();
+    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
 }
 
 void LineEdit::HandleFrame ()

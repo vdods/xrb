@@ -34,12 +34,12 @@ public:
       * horizontally and vertically.
       * @brief Constructs a text label.
       */
-    Label (std::string const &text, std::string const &name = "Label");
+    Label (std::string const &text, WidgetContext &context, std::string const &name = "Label");
     /** The picture texture is stretched to fill the area inside the
       * frame margins, adding the content margins.
       * @brief Constructs a picture label.
       */
-    Label (Resource<GlTexture> const &picture, std::string const &name = "Label");
+    Label (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name = "Label");
     /** @brief Destructor.
       */
     virtual ~Label () { }
@@ -84,7 +84,10 @@ public:
     virtual void SetPicture (Resource<GlTexture> const &picture);
     void SetPictureKeepsAspectRatio (bool picture_keeps_aspect_ratio) { m_picture_keeps_aspect_ratio = picture_keeps_aspect_ratio; }
 
+    virtual void PreDraw ();
     virtual void Draw (RenderContext const &render_context) const;
+
+    
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);
 
 protected:
@@ -92,7 +95,14 @@ protected:
     void DrawText (RenderContext const &render_context) const;
     void DrawPicture (RenderContext const &render_context) const;
 
-    Resource<GlTexture> const &RenderPicture () const { return m_render_picture; }
+    Resource<GlTexture> const &RenderPicture () const { ASSERT1(!RenderPictureNeedsUpdate()); return m_render_picture; }
+    Resource<GlTexture> const &RenderPicture ()
+    {
+        if (RenderPictureNeedsUpdate())
+            UpdateRenderPicture();
+        ASSERT1(!RenderPictureNeedsUpdate());
+        return m_render_picture;
+    }
 
     virtual void SetRenderFont (Resource<Font> const &render_font);
     void SetRenderPicture (Resource<GlTexture> const &render_picture);
@@ -101,7 +111,12 @@ protected:
     virtual void HandleChangedContentMargins ();
 
     virtual void UpdateRenderFont ();
+    // subclasses should override this to specify how to set the render picture.
     virtual void UpdateRenderPicture ();
+
+    bool RenderPictureNeedsUpdate () const { return m_render_picture_needs_update; }
+    // indicates that UpdateRenderPicture should be called before Draw.
+    void SetRenderPictureNeedsUpdate () { m_render_picture_needs_update = true; }
 
     virtual ScreenCoordRect TextRect () const;
     virtual void UpdateMinAndMaxSizesFromText ();
@@ -131,6 +146,8 @@ private:
     Resource<GlTexture> m_picture;
     // the texture which will be used to render the picture
     Resource<GlTexture> m_render_picture;
+    // indicates that UpdateRenderPicture should be called before Draw.
+    bool m_render_picture_needs_update;
     // indicates if the picture will maintain its aspect ratio, growing to
     // the largest size that will still fit inside this label.
     bool m_picture_keeps_aspect_ratio;

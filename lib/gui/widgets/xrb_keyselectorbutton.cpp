@@ -15,12 +15,13 @@
 #include "xrb_label.hpp"
 #include "xrb_layout.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-KeySelectorButton::KeySelectorButton (std::string const &input_action_name, Key::Code key_code, std::string const &name)
+KeySelectorButton::KeySelectorButton (std::string const &input_action_name, Key::Code key_code, WidgetContext &context, std::string const &name)
     :
-    Button(Singleton::InputState().KeyName(key_code), name),
+    Button(Singleton::InputState().KeyName(key_code), context, name),
     m_input_action_name(input_action_name),
     m_internal_receiver_dialog_returned(&KeySelectorButton::DialogReturned, this)
 {
@@ -28,7 +29,7 @@ KeySelectorButton::KeySelectorButton (std::string const &input_action_name, Key:
     m_key_selector_dialog = NULL;
 }
 
-void KeySelectorButton::SetKeyCode (Key::Code const key_code)
+void KeySelectorButton::SetKeyCode (Key::Code key_code)
 {
     if (Singleton::InputState().IsValidKeyCode(key_code))
         m_key_code = key_code;
@@ -40,16 +41,16 @@ void KeySelectorButton::SetKeyCode (Key::Code const key_code)
 void KeySelectorButton::HandleReleased ()
 {
     ASSERT1(m_key_selector_dialog == NULL);
-    m_key_selector_dialog = new KeySelectorDialog("Press new key/button for \"" + m_input_action_name + "\"");
-    m_key_selector_dialog->CenterOnWidget(RootWidget());
-    RootWidgetAsScreen().AttachChild(m_key_selector_dialog);
+    m_key_selector_dialog = new KeySelectorDialog("Press new key/button for \"" + m_input_action_name + "\"", Context());
+    m_key_selector_dialog->CenterOnWidget(Context().GetScreen());
+    Context().GetScreen().AttachAsModalChildWidget(*m_key_selector_dialog);
     
     SignalHandler::Connect1(
         m_key_selector_dialog->SenderDialogReturned(),
         &m_internal_receiver_dialog_returned);
 }
 
-void KeySelectorButton::DialogReturned (Dialog::ButtonID const button_id)
+void KeySelectorButton::DialogReturned (Dialog::ButtonID button_id)
 {
     ASSERT1(m_key_selector_dialog != NULL);
     if (button_id == Dialog::ID_OK)
@@ -61,26 +62,31 @@ void KeySelectorButton::DialogReturned (Dialog::ButtonID const button_id)
 // KeySelectorButton::KeySelectorDialog
 // ///////////////////////////////////////////////////////////////////////////
 
-KeySelectorButton::KeySelectorDialog::KeySelectorDialog (std::string const &message, std::string const &name)
+KeySelectorButton::KeySelectorDialog::KeySelectorDialog (std::string const &message, WidgetContext &context, std::string const &name)
     :
-    Dialog(DT_CANCEL, name)
+    Dialog(DT_CANCEL, context, name)
 {
     // this is so clicking on the CANCEL button eats the mouse event and
     // ProcessMouseButtonEvent is not called
     m_children_get_input_events_first = true;
-    // this is so if you want to set a mouse button/wheel as the key code,
-    // the mouse cursor doesn't have to be over this dialog to register it.
-    GrabMouse();
 
     m_key_code = Key::INVALID;
 
     Label *l;
-    l = new Label(message);
+    l = new Label(message, Context());
     l->SetIsHeightFixedToTextHeight(true);
     DialogLayout()->AttachChild(l);
 }
 
-bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *const e)
+void KeySelectorButton::KeySelectorDialog::HandleActivate ()
+{
+    Dialog::HandleActivate();
+    // this is so if you want to set a mouse button/wheel as the key code,
+    // the mouse cursor doesn't have to be over this dialog to register it.
+    GrabMouse();
+}
+
+bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *e)
 {
     ASSERT1(e != NULL);
     ASSERT1(Singleton::InputState().IsValidKeyCode(e->KeyCode()));
@@ -89,7 +95,7 @@ bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *cons
     return true;
 }
 
-bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *e)
 {
     ASSERT1(e != NULL);
     ASSERT1(Singleton::InputState().IsValidKeyCode(e->ButtonCode()));
@@ -98,7 +104,7 @@ bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseBu
     return true;
 }
 
-bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *const e)
+bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *e)
 {
     ASSERT1(e != NULL);
     ASSERT1(Singleton::InputState().IsValidKeyCode(e->ButtonCode()));

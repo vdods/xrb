@@ -16,9 +16,9 @@ using namespace Xrb;
 
 namespace Xrb {
 
-ProgressBar::ProgressBar (GrowOrientation grow_orientation, std::string const &name)
+ProgressBar::ProgressBar (GrowOrientation grow_orientation, WidgetContext &context, std::string const &name)
     :
-    Widget(name),
+    Widget(context, name),
     m_receiver_set_progress(&ProgressBar::SetProgress, this)
 {
     ASSERT1(grow_orientation < GO_COUNT);

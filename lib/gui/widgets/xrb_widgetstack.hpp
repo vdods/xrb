@@ -21,12 +21,7 @@ class WidgetStack : public ContainerWidget
 {
 public:
 
-    WidgetStack (std::string const &name = "WidgetStack")
-        :
-        ContainerWidget(name)
-    {
-        DirtyContentsSizeProperties();
-    }
+    WidgetStack (WidgetContext &context, std::string const &name = "WidgetStack");
     virtual ~WidgetStack () { }
 
     virtual Bool2 ContentsMinSizeEnabled () const;

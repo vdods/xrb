@@ -11,53 +11,40 @@
 #include "xrb_modalwidget.hpp"
 
 #include "xrb_gui_events.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-ModalWidget::ModalWidget (std::string const &name)
+ModalWidget::ModalWidget (WidgetContext &context, std::string const &name)
     :
-    ContainerWidget(name)
+    ContainerWidget(context, name)
 {
-    ASSERT1(!IsModal()); // will become modal after it is attached to the parent.
 }
 
 void ModalWidget::Shutdown ()
 {
-    // tell the parent to delete this widget
     ASSERT1(Parent() != NULL);
-    EventDeleteChildWidget *delete_child_widget_event = new EventDeleteChildWidget(this, Parent()->MostRecentFrameTime());
-    Parent()->EnqueueEvent(delete_child_widget_event);
-
-//     // make this widget un-modal // HIPPO
-//     SetIsModal(false);
+    // tell the Screen to detach and delete this.
+    Parent()->EnqueueEvent(new EventDetachAndDeleteChildWidget(this, Parent()->MostRecentFrameTime()));
     // block future events
     SetIsBlockingEvents(true);
 }
 
-void ModalWidget::UpdateRenderBackground ()
+void ModalWidget::HandleActivate ()
 {
-    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
+    Focus();
 }
 
-void ModalWidget::HandleChangedModalWidgetBackground ()
+void ModalWidget::UpdateRenderBackground ()
 {
-    UpdateRenderBackground();
+    ContainerWidget::UpdateRenderBackground();
+    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
 }
 
 void ModalWidget::HandleChangedWidgetSkin ()
 {
     ContainerWidget::HandleChangedWidgetSkin();
-    HandleChangedModalWidgetBackground();
-}
-
-void ModalWidget::HandleAttachedToParent ()
-{
-    SetIsModal(true);
-}
-
-void ModalWidget::HandleAboutToDetachFromParent ()
-{
-    SetIsModal(false);
+    SetRenderBackgroundNeedsUpdate();
 }
 
 } // end of namespace Xrb

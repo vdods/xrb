@@ -25,7 +25,7 @@ public:
 
     typedef ValueType (*TextToValueFunctionType)(char const *);
 
-    ValueLabel (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name = "ValueLabel");
+    ValueLabel (std::string const &printf_format, TextToValueFunctionType text_to_value_function, WidgetContext &context, std::string const &name = "ValueLabel");
     virtual ~ValueLabel () { }
 
     ValueType Value () const { return m_value; }
@@ -57,9 +57,9 @@ private:
 }; // end of class ValueLabel
 
 template <typename ValueType>
-ValueLabel<ValueType>::ValueLabel (std::string const &printf_format, TextToValueFunctionType text_to_value_function, std::string const &name)
+ValueLabel<ValueType>::ValueLabel (std::string const &printf_format, TextToValueFunctionType text_to_value_function, WidgetContext &context, std::string const &name)
     :
-    Label("", name),
+    Label("", context, name),
     m_receiver_set_value(&ValueLabel<ValueType>::SetValue, this)
 {
     // set up the printf format string

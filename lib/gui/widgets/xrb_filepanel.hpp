@@ -30,7 +30,7 @@ public:
         OP_SAVE
     }; // end of enum Operation
 
-    FilePanel (std::string const &title_text, Operation file_operation, std::string const &name = "FilePanel");
+    FilePanel (std::string const &title_text, Operation file_operation, WidgetContext &context, std::string const &name = "FilePanel");
     virtual ~FilePanel () { }
 
     Operation FileOperation () const { return m_file_operation; }

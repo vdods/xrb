@@ -15,35 +15,40 @@
 #include "xrb_gl.hpp"
 #include "xrb_render.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-Label::Label (std::string const &text, std::string const &name)
+Label::Label (std::string const &text, WidgetContext &context, std::string const &name)
     :
-    TextWidget(text, name)
+    TextWidget(text, context, name)
 {
     DirtyTextFormatting();
     m_line_format_vector_source = NULL;
     m_alignment = Alignment2(CENTER, CENTER);
     m_word_wrap = false;
     m_is_picture_label = false;
+    m_render_picture_needs_update = false; // this is not a picture label
     SetIsMinSizeFixedToTextSize(true);
     ASSERT1(!m_picture.IsValid());
     ASSERT1(!m_render_picture.IsValid());
 }
 
-Label::Label (Resource<GlTexture> const &picture, std::string const &name)
+Label::Label (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name)
     :
-    TextWidget("", name),
+    TextWidget("", context, name),
     m_picture(picture)
 {
     // this must be done before clearing the font
     m_is_picture_label = true;
+    // override these values (default is true in TextWidget constructor).
+    SetRenderTextColorNeedsUpdate(false);
+    SetRenderFontNeedsUpdate(false);
     // clear the font (because the presence or absence of a font
     // is what dictates if this is a text or picture label).
     ReleaseFont();
+    m_render_picture_needs_update = true;
     m_picture_keeps_aspect_ratio = false;
-    Label::UpdateRenderPicture();
 }
 
 void Label::SetText (std::string const &text)
@@ -99,7 +104,7 @@ void Label::SetPicture (std::string const &picture_name)
     if (m_picture != picture)
     {
         m_picture = picture;
-        UpdateRenderPicture();
+        SetRenderPictureNeedsUpdate();
     }
 }
 
@@ -111,12 +116,24 @@ void Label::SetPicture (Resource<GlTexture> const &picture)
     if (m_picture != picture)
     {
         m_picture = picture;
-        UpdateRenderPicture();
+        SetRenderPictureNeedsUpdate();
     }
+}
+
+void Label::PreDraw ()
+{
+    TextWidget::PreDraw();
+    if (RenderPictureNeedsUpdate())
+        UpdateRenderPicture();
+    ASSERT1(!RenderPictureNeedsUpdate());
 }
 
 void Label::Draw (RenderContext const &render_context) const
 {
+    ASSERT1(!RenderPictureNeedsUpdate());
+    ASSERT1(!RenderTextColorNeedsUpdate());     // from TextWidget, since there's no Draw implementation.
+    ASSERT1(!RenderFontNeedsUpdate());          // from TextWidget, since there's no Draw implementation.
+    
     // this handles drawing of the background
     Widget::Draw(render_context);
 
@@ -168,7 +185,7 @@ void Label::DrawText (RenderContext const &render_context) const
         // calculate the color mask
         string_render_context.ApplyColorMask(RenderTextColor());
         // set up the GL clip rect
-        RootWidgetAsScreen().SetViewport(string_render_context.ClipRect());
+        Context().GetScreen().SetViewport(string_render_context.ClipRect());
         // draw the text
         ASSERT1(m_line_format_vector_source != NULL);
         RenderFont()->DrawLineFormattedText(
@@ -248,12 +265,15 @@ void Label::SetRenderPicture (Resource<GlTexture> const &render_picture)
 
 void Label::UpdateRenderFont ()
 {
-    if (!m_is_picture_label)
+    if (m_is_picture_label)
+        ASSERT1(!RenderFontNeedsUpdate());
+    else
         TextWidget::UpdateRenderFont();
 }
 
 void Label::UpdateRenderPicture ()
 {
+    m_render_picture_needs_update = false;
     SetRenderPicture(Picture());
 }
 
@@ -272,6 +292,9 @@ void Label::UpdateMinAndMaxSizesFromText ()
     if (m_is_picture_label)
         return;
 
+    if (RenderFontNeedsUpdate())
+        UpdateRenderFont();
+    ASSERT1(!RenderFontNeedsUpdate());
     ASSERT1(RenderFont().IsValid());
 
     // if word-wrapping is enabled, then we can't base the min/max width
@@ -290,6 +313,7 @@ void Label::UpdateMinAndMaxSizesFromText ()
 void Label::UpdateCachedFormattedText () const
 {
     ASSERT1(!m_is_picture_label);
+    ASSERT1(!RenderFontNeedsUpdate());
     ASSERT1(RenderFont().IsValid());
 
     // if no update was required, early-out

@@ -22,8 +22,8 @@ class Layout : public ContainerWidget
 {
 public:
 
-    Layout (LineDirection major_direction, Uint32 major_count, std::string const &name = "Layout");
-    Layout (Orientation orientation, std::string const &name = "Layout");
+    Layout (LineDirection major_direction, Uint32 major_count, WidgetContext &context, std::string const &name = "Layout");
+    Layout (Orientation orientation, WidgetContext &context, std::string const &name = "Layout");
     virtual ~Layout ();
 
     LineDirection MajorDirection () const { return m_major_direction; }
@@ -88,23 +88,11 @@ public:
 
 protected:
 
-    ScreenCoordMargins CalculateLayoutFrameMargins () const
-    {
-        return IsUsingZeroedFrameMargins() ?
-               ScreenCoordMargins::ms_zero :
-               WidgetSkinMargins(WidgetSkin::LAYOUT_FRAME_MARGINS);
-    }
-    ScreenCoordMargins CalculateLayoutSpacingMargins () const
-    {
-        return IsUsingZeroedLayoutSpacingMargins() ?
-               ScreenCoordMargins::ms_zero :
-               WidgetSkinMargins(WidgetSkin::LAYOUT_SPACING_MARGINS);
-    }
+    ScreenCoordMargins CalculateLayoutFrameMargins () const;
+    ScreenCoordMargins CalculateLayoutSpacingMargins () const;
 
-    // WidgetSkinHandler overrides
     virtual void HandleChangedWidgetSkin ();
 
-    // NOT part of WidgetSkinHandler
     virtual void HandleChangedLayoutFrameMargins ();
     virtual void HandleChangedLayoutSpacingMargins ();
 

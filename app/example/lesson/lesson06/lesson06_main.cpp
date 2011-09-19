@@ -103,7 +103,7 @@ well enough, it was probably already explained in
 @code */
 #include "xrb.hpp"                         // Must be included in every source/header file.
 
-#include <set>                           // For use of the std::set template class.
+#include <set>                             // For use of the std::set template class.
 
 #include "xrb_engine2_objectlayer.hpp"     // For use of the Engine2::ObjectLayer class.
 #include "xrb_engine2_physicshandler.hpp"  // For use of the Engine2::PhysicsHandler class.
@@ -118,8 +118,9 @@ well enough, it was probably already explained in
 #include "xrb_math.hpp"                    // For use of the functions in the Math namespace.
 #include "xrb_screen.hpp"                  // For use of the necessary Screen widget class.
 #include "xrb_sdlpal.hpp"                  // For use of the SDLPal platform abstraction layer.
+#include "xrb_widgetcontext.hpp"           // For use of the WidgetContext class.
 
-using namespace Xrb;                     // To avoid having to use Xrb:: everywhere.
+using namespace Xrb;                       // To avoid having to use Xrb:: everywhere.
 
 // AwesomeEntity remains unchanged relative to the @ref lesson05 "previous lesson".
 class AwesomeEntity : public Engine2::Entity
@@ -137,20 +138,20 @@ public:
     { }
 
     // Trivial accessors for the properties of AwesomeEntity.
-    inline Float Mass () const { return m_mass; }
-    inline FloatVector2 const &Velocity () const { return m_velocity; }
-    inline FloatVector2 const &Force () const { return m_force; }
+    Float Mass () const { return m_mass; }
+    FloatVector2 const &Velocity () const { return m_velocity; }
+    FloatVector2 const &Force () const { return m_force; }
 
     // Modifiers for the properties of AwesomeEntity.  The ASSERT_NAN_SANITY_CHECK
     // macro is used in various places in Engine2 code to quickly catch common
     // bugs in game code which result in NaN values being fed to the snake.
-    inline void SetMass (Float mass)
+    void SetMass (Float mass)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass));
         ASSERT1(mass > 0.0f);
         m_mass = mass;
     }
-    inline void SetVelocity (FloatVector2 const &velocity)
+    void SetVelocity (FloatVector2 const &velocity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
@@ -235,7 +236,7 @@ public:
     }
 
     // Trivial accessor for m_gravitational_constant.
-    inline Float GravitationalConstant () const { return m_gravitational_constant; }
+    Float GravitationalConstant () const { return m_gravitational_constant; }
     // Helper function to calculate Newton's Law Of Universal Gravitation.
     Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
     {
@@ -491,7 +492,7 @@ public:
 protected:
 
     // Trivial accessor to retrieve a pointer to the World's AwesomePhysicsHandler.
-    inline AwesomePhysicsHandler *GetPhysicsHandler () { return dynamic_cast<AwesomePhysicsHandler *>(m_physics_handler); }
+    AwesomePhysicsHandler *GetPhysicsHandler () { return dynamic_cast<AwesomePhysicsHandler *>(m_physics_handler); }
 
     /* @endcode
     Since we have moved all the physics code into the HandleFrame method of
@@ -583,6 +584,11 @@ int main (int argc, char **argv)
         CleanUp();
         return 2;
     }
+    // Create and use a default-valued WidgetSkin.  The WidgetContext takes
+    // ownership of the WidgetSkin, so we don't need to worry about deleting it.
+    WidgetSkin *widget_skin = new WidgetSkin();
+    widget_skin->PopulateUsingDefaults();
+    screen->Context().SetWidgetSkin(widget_skin);
 
     // Here is where the application-specific code begins.
     {
@@ -590,7 +596,7 @@ int main (int argc, char **argv)
         AwesomeWorld *world = new AwesomeWorld();
         // Create the WorldViewWidget as a child of screen.  This is what will
         // contain an instance of WorldView and will cause it to be rendered.
-        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget();
+        Engine2::WorldViewWidget *world_view_widget = new Engine2::WorldViewWidget(screen->Context());
         screen->AttachChild(world_view_widget);
         screen->SetMainWidget(world_view_widget);
         // Create an instance of our AwesomeWorldView, using the newly created
@@ -638,8 +644,10 @@ int main (int argc, char **argv)
             screen->Draw(current_real_time);
         }
 
-        // Delete world_view_widget and world, in that order.  This will
-        // automatically delete our AwesomeWorldView instance.
+        // Detach world_view_widget from its parent, delete world_view_widget,
+        // then delete world, in that order.  This will automatically delete
+        // our AwesomeWorldView instance.
+        world_view_widget->DetachFromParent();
         Delete(world_view_widget);
         Delete(world);
     }

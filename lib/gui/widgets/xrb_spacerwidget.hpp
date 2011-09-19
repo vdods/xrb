@@ -27,7 +27,7 @@ public:
 
     /** @brief Constructs a SpacerWidget, attaching it to parent.
       */
-    SpacerWidget ();
+    SpacerWidget (WidgetContext &context);
     /** @brief Boring destructor.  Does nothing.
       */
     virtual ~SpacerWidget () { }

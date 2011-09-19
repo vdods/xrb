@@ -21,8 +21,8 @@ class Button : public Label
 {
 public:
 
-    Button (std::string const &text, std::string const &name = "Button");
-    Button (Resource<GlTexture> const &picture, std::string const &name = "Button");
+    Button (std::string const &text, WidgetContext &context, std::string const &name = "Button");
+    Button (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name = "Button");
     virtual ~Button () { }
 
     bool IsPressed () const { return m_is_pressed; }
@@ -51,10 +51,8 @@ protected:
     virtual void HandleMouseoverOff ();
     virtual void HandlePressed ();
     virtual void HandleReleased ();
-    virtual void UpdateRenderBackground ();
-
-    // WidgetSkinHandler overrides
     virtual void HandleChangedWidgetSkin ();
+    virtual void UpdateRenderBackground ();
 
 private:
 

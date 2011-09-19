@@ -44,6 +44,8 @@ public:
     bool IsQuitRequested () const { return m_is_quit_requested; }
     // returns the dimensions of the physical video device
     ScreenCoordVector2 const &DeviceSize () const { return m_device_size; }
+    /// Used for font pixel height calculations.  Gives the "useful" size of this Widget.
+    ScreenCoord SizeRatioBasis () const { return Min(Width(), Height()); }
 
     // if the is-quit-requested flag is false, sets it to true and signals.
     void RequestQuit ();
@@ -57,9 +59,21 @@ public:
     static void SetProjectionMatrix (ScreenCoordRect const &clip_rect);
     // sets the viewport for drawing into a widget
     void SetViewport (ScreenCoordRect const &clip_rect) const;
-    // draws the whole fucking thing.
-    void Draw (Float real_time) const;
+    // draws the whole fucking thing.  this is only non-const to allow PreDraw and PostDraw to be called.
+    void Draw (Float real_time);
 
+    /// Returns true iff the specified widget is currently attached as a modal widget.
+    bool IsAttachedAsModalChildWidget (Widget const &widget) const;
+    /// @brief Analogous to @c ContainerWidget::AttachChild, except this method attaches
+    /// the child widget as a modal widget,  (a modal widget is one which is drawn
+    /// on top of everything else, and usurps all input until it is dismissed.
+    /// @details Modal widget behavior requires the Screen to divert events
+    /// directly to the modal widget immediately, bypassing the widget hierarchy,
+    /// which is why this is a separate "add" method.
+    virtual void AttachAsModalChildWidget (Widget &child);
+    /// Removes a modal child widget.  @see Screen::AttachChildAsModalWidget
+    virtual void DetachAsModalChildWidget (Widget &child);
+    
 protected:
 
     // protected constructor so that you must use Create
@@ -71,6 +85,8 @@ protected:
     // otherwise it will pass the event to VirtualScreen::ProcessEvent()
     // and return that function's return value.
     virtual bool HandleEvent (Event const *e);
+    // override from ContainerWidget in order to handle modal child widgets' focus
+    virtual bool InternalProcessFocusEvent (EventFocus const *e);
 
 private:
 
@@ -79,6 +95,12 @@ private:
     ScreenCoordVector2 RotatedScreenVector (ScreenCoordVector2 const &v) const;
     ScreenCoordRect RotatedScreenRect (ScreenCoordRect const &r) const;
 
+    // this creates the context, sets m_context and returns it.  used in construction.
+    WidgetContext *CreateAndInitializeWidgetContext ();
+    
+    // this is the pointer which "owns" the context.
+    WidgetContext *m_context;
+    
     // quit condition (maybe temporary)
     bool m_is_quit_requested;
     // screenshot path
@@ -90,6 +112,11 @@ private:
     // stores the angle the screen is rotated by
     Sint32 const m_angle;
 
+    /// @brief Contains the stack of modal widgets (used only if this is a top-level widget).
+    /// @details The beginning of the list is the bottom of the stack, while the
+    /// end is the top.  The modal widgets are drawn from bottom to top.
+    WidgetList m_modal_child_widget_stack;
+    
     SignalSender0 m_sender_quit_requested;
 
     SignalReceiver0 m_receiver_request_quit;

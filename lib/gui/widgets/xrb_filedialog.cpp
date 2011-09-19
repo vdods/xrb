@@ -17,14 +17,14 @@
 
 namespace Xrb {
 
-FileDialog::FileDialog (std::string const &title_text, FilePanel::Operation const file_operation, std::string const &name)
+FileDialog::FileDialog (std::string const &title_text, FilePanel::Operation file_operation, WidgetContext &context, std::string const &name)
     :
-    Dialog(DT_OK_CANCEL, name),
+    Dialog(DT_OK_CANCEL, context, name),
     m_sender_submit_path(this),
     m_sender_submit_path_v(this),
     m_internal_receiver_path_submitted(&FileDialog::InternalPathSubmitted, this)
 {
-    m_file_panel = new FilePanel(title_text, file_operation);
+    m_file_panel = new FilePanel(title_text, file_operation, Context());
     DialogLayout()->AttachChild(m_file_panel);
 
     SignalHandler::Connect1(

@@ -17,8 +17,8 @@
 
 namespace Xrb {
 
-class Layout;
 class Button;
+class Layout;
 
 /** Child widgets are added to a Layout inside of the Dialog, not to the
   * Dialog itself.  The button controls are inside the Layout as well, but
@@ -64,7 +64,7 @@ public:
       * @param parent The parent of this widget (see Widget::Widget).
       * @param name The name of this widget (see Widget::Widget).
       */
-    Dialog (DialogType const dialog_type, std::string const &name = "Dialog");
+    Dialog (DialogType const dialog_type, WidgetContext &context, std::string const &name = "Dialog");
     /** Doesn't do anything special.  The child widgets are deleted
       * by Widget's destructor.
       * @brief Destructor.

@@ -18,6 +18,33 @@ namespace Xrb {
 
 WidgetSkin::WidgetSkin ()
 {
+    for (Uint32 i = 0; i < WIDGET_BACKGROUND_TYPE_COUNT; ++i)
+        m_widget_background[i] = NULL;
+
+    for (Uint32 i = 0; i < FONT_TYPE_COUNT; ++i)
+    {
+        m_font_specification[i].m_path = "resources/FreeSansBoldCustom.ttf";
+        // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
+        m_font_specification[i].m_height_ratio = 0.03f;
+    }
+
+    // the textures are already constructed empty.
+    
+    for (Uint32 i = 0; i < MARGINS_TYPE_COUNT; ++i)
+        m_margins_ratios[i] = FloatMargins::ms_zero;
+}
+
+WidgetSkin::~WidgetSkin ()
+{
+    // in case it didn't already happen.
+    ReleaseAllResources();
+}
+
+void WidgetSkin::PopulateUsingDefaults ()
+{
+    // in case there was stuff in here already
+    ReleaseAllResources();
+    
     // ///////////////////////////////////////////////////////////////////////
     // widget backgrounds
     // ///////////////////////////////////////////////////////////////////////
@@ -61,50 +88,26 @@ WidgetSkin::WidgetSkin ()
     m_margins_ratios[RADIO_BUTTON_FRAME_MARGINS] = FloatMargins(FloatVector2::ms_zero);
 }
 
-WidgetSkin::~WidgetSkin ()
-{
-    // just in case it didn't already happen.
-    ReleaseAllResources();
-}
-
 void WidgetSkin::ReleaseAllResources ()
 {
     for (Uint32 i = 0; i < WIDGET_BACKGROUND_TYPE_COUNT; ++i)
         DeleteAndNullify(m_widget_background[i]);
 
+    for (Uint32 i = 0; i < FONT_TYPE_COUNT; ++i)
+    {
+        m_font_specification[i].m_path = "resources/FreeSansBoldCustom.ttf";
+        // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
+        m_font_specification[i].m_height_ratio = 0.03f;
+    }
+    
     for (Uint32 i = 0; i < TEXTURE_TYPE_COUNT; ++i)
     {
         m_texture[i].Release();
         ASSERT1(!m_texture[i].IsValid());
     }
-}
 
-ScreenCoord WidgetSkin::FontPixelHeight (Float font_height_ratio, ScreenCoord size_ratio_basis)
-{
-    ASSERT1(size_ratio_basis > 0);
-    return ScreenCoord(Math::Round(font_height_ratio * size_ratio_basis));
-}
-
-Float WidgetSkin::FontHeightRatio (ScreenCoord font_pixel_height, ScreenCoord size_ratio_basis)
-{
-    ASSERT1(size_ratio_basis > 0);
-    Float font_height_ratio = Float(font_pixel_height) / size_ratio_basis;
-    ASSERT1(FontPixelHeight(font_height_ratio, size_ratio_basis) == font_pixel_height);
-    return font_height_ratio;
-}
-
-Resource<Font> WidgetSkin::LoadFont (FontType font_type, ScreenCoord size_ratio_basis) const
-{
-    ASSERT1(font_type < FONT_TYPE_COUNT);
-    ASSERT1(size_ratio_basis > 0);
-    return Font::Load(m_font_specification[font_type].m_path, FontPixelHeight(m_font_specification[font_type].m_height_ratio, size_ratio_basis));
-}
-
-ScreenCoordMargins WidgetSkin::Margins (MarginsType margins_type, ScreenCoord size_ratio_basis) const
-{
-    ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-    ASSERT1(size_ratio_basis > 0);
-    return (m_margins_ratios[margins_type] * Float(size_ratio_basis)).StaticCast<ScreenCoord>();
+    for (Uint32 i = 0; i < MARGINS_TYPE_COUNT; ++i)
+        m_margins_ratios[i] = FloatMargins::ms_zero;
 }
 
 void WidgetSkin::SetWidgetBackground (WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background)

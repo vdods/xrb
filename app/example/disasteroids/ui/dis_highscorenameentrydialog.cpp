@@ -20,28 +20,28 @@ using namespace Xrb;
 
 namespace Dis {
 
-HighScoreNameEntryDialog::HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count)
+HighScoreNameEntryDialog::HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count, WidgetContext &context)
     :
-    Dialog(DT_OK, "HighScoreNameEntryDialog"),
+    Dialog(DT_OK, context, "HighScoreNameEntryDialog"),
     m_sender_submit_name(this),
     m_internal_receiver_name_submitted(&HighScoreNameEntryDialog::InternalNameSubmitted, this)
 {
-    Layout *main_layout = new Layout(VERTICAL);
+    Layout *main_layout = new Layout(VERTICAL, Context());
     {
-        main_layout->AttachChild(new Label("NEW HIGH SCORE"));
+        main_layout->AttachChild(new Label("NEW HIGH SCORE", Context()));
 
-        Layout *score_layout = new Layout(HORIZONTAL);
+        Layout *score_layout = new Layout(HORIZONTAL, Context());
         {
-            score_layout->AttachChild(new Label(Util::StringPrintf("WAVE %u", wave_count)));
-            score_layout->AttachChild(new Label(Util::StringPrintf("%u", points)));
+            score_layout->AttachChild(new Label(Util::StringPrintf("WAVE %u", wave_count), Context()));
+            score_layout->AttachChild(new Label(Util::StringPrintf("%u", points), Context()));
         }
         main_layout->AttachChild(score_layout);
 
-        Layout *name_entry_layout = new Layout(HORIZONTAL);
+        Layout *name_entry_layout = new Layout(HORIZONTAL, Context());
         {
-            name_entry_layout->AttachChild(new Label("ENTER YOUR NAME"));
+            name_entry_layout->AttachChild(new Label("ENTER YOUR NAME", Context()));
             
-            m_name_edit = new LineEdit(30, "name edit");
+            m_name_edit = new LineEdit(30, Context(), "name edit");
             name_entry_layout->AttachChild(m_name_edit);
         }
         main_layout->AttachChild(name_entry_layout);

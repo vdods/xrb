@@ -35,7 +35,7 @@ class TitleScreenWidget : public ContainerWidget
 {
 public:
 
-    TitleScreenWidget (bool immediately_show_high_scores, bool show_best_points_high_scores_first);
+    TitleScreenWidget (bool immediately_show_high_scores, bool show_best_points_high_scores_first, WidgetContext &context);
     virtual ~TitleScreenWidget ();
 
     SignalSender0 const *SenderStartGame ();

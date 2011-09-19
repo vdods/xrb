@@ -64,7 +64,7 @@ public:
       *             constructed.  As for now, this is only used in a debug-
       *             related capacity.
       */
-    ContainerWidget (std::string const &name = "ContainerWidget");
+    ContainerWidget (WidgetContext &context, std::string const &name = "ContainerWidget");
     /** Ensures the widget is set to not modal, ensures mouseover is off,
       * deletes all children, and clears the modal widget stack.
       * @brief Destructor.  Deletes all children.
@@ -75,59 +75,22 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief Returns a pointer to the focused child widget, or NULL if
-      *        no child widget is currently focused.
-      */
+    /// Returns a pointer to the focused child widget, or NULL if no child widget is currently focused.
     Widget *Focus () const { return m_focus; }
-    /** @brief Returns the currently mouseover-focused child widget,
-      *        or NULL if none.
-      */
+    /// Returns the currently mouseover-focused child widget, or NULL if none.
     Widget *MouseoverFocus () const { return m_mouseover_focus; }
-    /** @brief Returns true iff the focused child widget has mouse grab on.
-      */
+    /// Returns true iff the focused child widget has mouse grab on.
     bool FocusHasMouseGrab () const { return m_focus_has_mouse_grab; }
-    /** @brief Returns the "main widget" child, or NULL if there is
-      *        none currently.
-      */
+    /// Returns the "main widget" child, or NULL if there is none currently.
     Widget *GetMainWidget () const { return m_main_widget; }
-    /** @brief Returns the boolean vector containing the
-      *        is-minimum-size-enabled values for width and height in the
-      *        x and y components respectively.
-      */
-    virtual Bool2 const &MinSizeEnabled () const
-    {
-        return m_main_widget ?
-               m_main_widget->MinSizeEnabled() :
-               m_size_properties.m_min_size_enabled;
-    }
-    /** @brief Returns the screen-coordinate vector containing the minimum
-      *        width and height in the X and Y components respectively.
-      */
-    virtual ScreenCoordVector2 const &MinSize () const
-    {
-        return m_main_widget ?
-               m_main_widget->MinSize() :
-               m_size_properties.m_min_size;
-    }
-    /** @brief Returns the boolean vector containing the
-      *        is-maximum-size-enabled values for width and height in the
-      *        X and Y components respectively.
-      */
-    virtual Bool2 const &MaxSizeEnabled () const
-    {
-        return m_main_widget ?
-               m_main_widget->MaxSizeEnabled() :
-               m_size_properties.m_max_size_enabled;
-    }
-    /** @brief Returns the screen-coordinate vector containing the maximum
-      *        width and height in the X and Y components respectively.
-      */
-    virtual ScreenCoordVector2 const &MaxSize () const
-    {
-        return m_main_widget ?
-               m_main_widget->MaxSize() :
-               m_size_properties.m_max_size;
-    }
+    /// Returns the boolean vector containing the is-minimum-size-enabled values for width and height.
+    virtual Bool2 const &MinSizeEnabled () const;
+    /// Returns the screen-coordinate vector containing the minimum width and height in the X and Y components respectively.
+    virtual ScreenCoordVector2 const &MinSize () const;
+    /// Returns the boolean vector containing the is-maximum-size-enabled values for width and height.
+    virtual Bool2 const &MaxSizeEnabled () const;
+    /// Returns the screen-coordinate vector containing the maximum width and height.
+    virtual ScreenCoordVector2 const &MaxSize () const;
     virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;
 
     // ///////////////////////////////////////////////////////////////////////
@@ -227,47 +190,15 @@ public:
     // procedures
     // ///////////////////////////////////////////////////////////////////////
 
-    /** This function should be overridden in subclasses to provide the
-      * means to draw whatever is necessary.  Generally the subclass's Draw
-      * function should call the Draw function of its immediate superclass
-      * before doing anything else, in order to have the background and
-      * other necessary visual elements drawn.
-      *
-      * Draw should only be called on top-level widgets -- the Widget
-      * baseclass takes care of setting up the RenderContext and calling
-      * Draw on its child widgets appropriately.
-      *
-      * @brief Draws the widget using the provided RenderContext.
-      * @note You can NOT count on Draw being called every single video frame,
-      *       since it will not be called if the clip_rect is not valid (0
-      *       area).
-      */
+    virtual void PreDraw ();
     virtual void Draw (RenderContext const &render_context) const;
-    /** @brief Move this widget by a specific delta vector.
-      * @param delta The vector to add to this widget's position.
-      */
+    virtual void PostDraw ();
     virtual void MoveBy (ScreenCoordVector2 const &delta);
-    /** This function should be overridden when it is necessary to know when
-      * a widget has been resized.
-      *
-      * The Widget baseclass will resize the widget based on its minimum
-      * and maximum sizes, if applicable.  If there is a main widget,
-      * @c Resize will be called on the main widget with the min/max adjusted
-      * size.
-      *
-      * If the size of the widget was actually changed, then its parent will
-      * be notified of the change via @c ParentChildSizePropertiesUpdate.
-      *
-      * For examples of overriding these and related functions, see @a Layout
-      * and @a CellPaddingWidget.
-      *
-      * @brief Attempt to resize this widget to the given size.
-      * @param size The requested size.
-      * @return The actual size of the widget after the resize operation.
-      */
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);
+    
     /** The given @c child widget must not currently have a parent widget.
       * @brief Attaches the given widget as a child of this widget.
+      * @param child The Widget to attach using this ContainerWidget as a parent.
       */
     virtual void AttachChild (Widget *child);
     /** The given @c child widget must be a child of this widget.
@@ -322,15 +253,6 @@ public:
 
 protected:
 
-    /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::WidgetSkinHandlerChildCount
-      */
-    virtual Uint32 WidgetSkinHandlerChildCount () const;
-    /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::WidgetSkinHandlerChild
-      */
-    virtual WidgetSkinHandler *WidgetSkinHandlerChild (Uint32 index);
-
     // TODO document
     // these are interfaces for container widgets
     virtual Bool2 ContentsMinSizeEnabled () const;
@@ -353,24 +275,12 @@ protected:
       *        loop.
       */
     virtual void HandleFrame ();
-    /** @brief Processes a delete child widget event.  This is used mainly to
-      *        delete modal widgets.
-      */
-    virtual bool ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e);
+    // overridden from Widget
+    virtual bool ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e);
 
-    /** Modal widget behavior requires the top level widget to divert events
-      * directly to the modal widget immediately, bypassing the widget
-      * hierarchy.
-      * @brief Adds a modal widget to the Screen (the top level widget).
-      * @note You shouldn't use this function directly.  It is called
-      *       automatically when making a non-modal widget modal.
-      */
-    virtual void AddModalWidget (Widget *modal_widget);
-    /** @brief Removes a modal widget from the Screen (the top level widget).
-      * @note You shouldn't use this function directly.  It is called
-      *       automatically when making a modal widget non-modal.
-      */
-    virtual void RemoveModalWidget (Widget *modal_widget);
+    virtual void HandleActivate ();
+    virtual void HandleDeactivate ();
+    
     /** Only used by container widgets that control the size and position
       * if their child widgets.
       * @brief Used to make sure this widget's min/max size constraints
@@ -392,9 +302,7 @@ protected:
       *       called automatically when changing the stack priority
       *       of a widget.
       */
-    virtual void ChildStackPriorityChanged (
-        Widget *child,
-        StackPriority previous_stack_priority);
+    virtual void ChildStackPriorityChanged (Widget *child, StackPriority previous_stack_priority);
 
     typedef std::vector<Widget *> WidgetVector;
 
@@ -420,78 +328,42 @@ protected:
       */
     bool m_children_get_input_events_first;
 
-private:
-
     typedef std::list<Widget *> WidgetList;
 
-    /** @brief Returns a WidgetVector::iterator which matches the given
-      *        child in m_child_vector.
-      */
+private:
+
+    /// Returns a WidgetVector::iterator which matches the given child in m_child_vector.
     WidgetVector::iterator FindChildWidget (Widget const *child);
-    /** @brief Performs some necessary event processing on key
-      *        events before the key event handler gets them.
-      */
+
+    // some overrides from Widget
     virtual bool InternalProcessKeyEvent (EventKey const *e);
-    /** @brief Performs some necessary event processing on mouse
-      *        events before the mouse event handler gets them.
-      */
     virtual bool InternalProcessMouseEvent (EventMouse const *e);
-    /** @brief Performs some necessary event processing on pinch
-      *        events before the pinch event handler gets them.
-      */
     virtual bool InternalProcessPinchEvent (EventPinch const *e);
-    /** @brief Performs some necessary event processing on rotate
-      *        events before the rotate event handler gets them.
-      */
     virtual bool InternalProcessRotateEvent (EventRotate const *e);
-    /** @brief Performs some necessary event processing on joy
-      *        events before the joy event handler gets them.
-      */
     virtual bool InternalProcessJoyEvent (EventJoy const *e);
-    /** @brief Performs some necessary event processing on focus events.
-      */
     virtual bool InternalProcessFocusEvent (EventFocus const *e);
-    /** @brief Performs some necessary event processing on mouseover events.
-      */
     virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
-    /** @brief A convenience function for sending a mouse event to the
-      *        child widget highest in m_child_vector which lies underneath
-      *        the mouse event position.
-      * @return True iff the mouse event was accepted by any of the children.
-      */
+    
+    /// @brief A convenience function for sending a mouse event to the child widget
+    /// highest in m_child_vector which lies underneath the mouse event position.
+    /// @return True iff the mouse event was accepted by any of the children.
     bool SendMouseEventToChild (EventMouse const *e);
 
     void IncrementResizeBlockerCount ();
     void DecrementResizeBlockerCount ();
 
-    /** NULL indicates that there is currently no focused widget.
-      * @brief Child widget which currently has focus.
-      */
+    /// Child widget which currently has focus.  NULL indicates that there is currently no focused widget.
     Widget *m_focus;
-    /** NULL indicates that there is currently no mouseover focus widget.
-      * @brief Child widget which currently has mouseover focus.
-      */
+    /// Child widget which currently has mouseover focus.  NULL indicates that there is currently no mouseover focus widget.
     Widget *m_mouseover_focus;
-    /** @brief Iff true, the focused widget has mouse grab.
-      */
+    /// Iff true, the focused widget has mouse grab.
     bool m_focus_has_mouse_grab;
-    /** The beginning of the list is the bottom of the stack, while the
-      * end is the top.  The modal widgets are drawn from bottom to top.
-      * @brief Contains the stack of modal widgets (used only if this is a
-      *        top-level widget).
-      */
-    WidgetList m_modal_widget_stack;
-    /** The main widget gets resized/repositioned whenever this widget does,
-      * and when the main widget is resized, this widget is resized to match
-      * it.  Also the size properties of each are matched in a similar manner.
-      * @brief Pointer to the 'main' widget.
-      */
+    /// @brief Pointer to the 'main' widget.
+    /// @details The main widget gets resized/repositioned whenever this widget does, and when the main widget is
+    /// resized, this widget is resized to match it.  Also the size properties of each are matched in a similar manner.
     Widget *m_main_widget;
-    /** Once this value goes from 1 to 0, this widget will attempt to resize
-      * the children to bring its layout up to date.
-      * @brief Number of ResizeBlockers currently blocking this widget from
-      *        resizing its child widgets.
-      */
+    /// @brief Number of ResizeBlockers currently blocking this widget from resizing its child widgets.
+    /// @details Once this value goes from 1 to 0, this widget will attempt to resize the children to bring its layout up to date.
     Uint32 m_child_resize_blocker_count;
     /// Indicates that a resize (this widget or a child) was blocked and Resize
     /// should be called once the last ChildResizeBlocker is released.

@@ -36,7 +36,7 @@ class ModalWidget : public ContainerWidget
 public:
 
     /// Constructs a modal widget in the same manner as a Widget.
-    ModalWidget (std::string const &name = "ModalWidget");
+    ModalWidget (WidgetContext &context, std::string const &name = "ModalWidget");
     virtual ~ModalWidget () { }
 
     /// The widget makes itself not modal, and blocks all events.
@@ -45,17 +45,12 @@ public:
 
 protected:
 
+    /// Sets focus
+    virtual void HandleActivate ();
     /// Sets the render background to the WidgetSkin's ModalWidget background.
     virtual void UpdateRenderBackground ();
-    /// Called by ModalWidget when the ModalWidget background changes.
-    virtual void HandleChangedModalWidgetBackground ();
     /// Used to catch when the modal widget background is changed.
     virtual void HandleChangedWidgetSkin ();
-
-    /// Used to set the IsModal flag which does certain other initialization.
-    virtual void HandleAttachedToParent ();
-    /// Used to set the IsModal flag which does certain other shutdown.
-    virtual void HandleAboutToDetachFromParent ();
 }; // end of class ModalWidget
 
 } // end of namespace Xrb

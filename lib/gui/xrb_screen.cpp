@@ -19,6 +19,7 @@
 #include "xrb_input_events.hpp"
 #include "xrb_pal.hpp"
 #include "xrb_texture.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
@@ -29,12 +30,15 @@ Screen::~Screen ()
     // we must delete all child widgets, because they will potentially access
     // the condemned owner EventQueue via ~EventHandler.
     DeleteAllChildren();
-    // now delete the owner EventQueue.
-    ASSERT1(OwnerEventQueue() != NULL);
-    delete OwnerEventQueue();
-    SetOwnerEventQueue(NULL);
 
-    ReleaseAllWidgetSkinResources();
+    // unset the event queue before deleting the context (because the context owns the event queue)
+    SetOwnerEventQueue(NULL);
+    
+    // destroy the WidgetContext (this doesn't cause a problem with the
+    // Add/RemoveWidget tracking, since this Screen widget is not tracked).
+    // this must be done before the singletons and the video are shutdown.
+    delete m_context;
+    m_context = NULL;
 
     Singleton::ShutdownGl();
     Singleton::Pal().ShutdownVideo();
@@ -62,14 +66,12 @@ Screen *Screen::Create (ScreenCoord width, ScreenCoord height, Uint32 bit_depth,
     // happens before this constructor, because the Widget constructor
     // is called, which loads textures and makes GL calls.
     Screen *retval = new Screen(angle);
-    retval->m_device_size.SetComponents(width, height);
+    retval->m_device_size.SetComponents(width, height);         // TODO: this initialization should be moved to a constructor
     retval->m_original_screen_size = retval->RotatedScreenSize(retval->m_device_size);
     // this resizing must happen before the widget skin is created.
     retval->MoveTo(ScreenCoordVector2::ms_zero);
     retval->ContainerWidget::Resize(retval->m_original_screen_size);
     retval->FixSize(retval->m_original_screen_size);
-    retval->SetWidgetSkin(new WidgetSkin());
-    retval->m_delete_widget_skin = true;
     retval->SetBackground(NULL);
 
     return retval;
@@ -131,7 +133,7 @@ void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
         rotated_clip_rect.Height());
 }
 
-void Screen::Draw (Float real_time) const
+void Screen::Draw (Float real_time)
 {
     // NOTE: this method encompasses all drawing.
 
@@ -184,8 +186,46 @@ void Screen::Draw (Float real_time) const
     SetViewport(render_context.ClipRect());
 
     // call draw on the ContainerWidget base class.
+    PreDraw();
     ContainerWidget::Draw(render_context);
+    PostDraw();
 
+    // create a render context for the child widgets
+    RenderContext child_render_context(render_context);
+    // if there are modal widgets, draw them from the bottom of the stack, up.
+    for (WidgetList::const_iterator it = m_modal_child_widget_stack.begin(),
+                                    it_end = m_modal_child_widget_stack.end();
+         it != it_end;
+         ++it)
+    {
+        ASSERT1(*it != NULL);
+        Widget &modal_widget = **it;
+
+        // skip hidden modal widgets
+        if (modal_widget.IsHidden())
+            continue;
+
+        // calculate the drawing clip rect from this widget's clip rect
+        // and the child widget's virtual rect.
+        child_render_context.SetClipRect(render_context.ClippedRect(modal_widget.ScreenRect()));
+        // don't even bother drawing a modal widget if this resulting
+        // clip rect is invalid (0 area)
+        if (child_render_context.ClipRect().IsValid())
+        {
+            // set the color bias and color mask
+            child_render_context.ColorBias() = render_context.ColorBias();
+            child_render_context.ApplyColorBias(modal_widget.ColorBias());
+            child_render_context.ColorMask() = render_context.ColorMask();
+            child_render_context.ApplyColorMask(modal_widget.ColorMask());
+
+            ASSERT1(modal_widget.IsEnabled());
+            // set up the clip rect for the child
+            Context().GetScreen().SetViewport(child_render_context.ClipRect());
+            // do the actual draw call
+            modal_widget.Draw(child_render_context);
+        }
+    }
+    
     // need to pop the matrix we saved above.
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
@@ -214,9 +254,41 @@ void Screen::Draw (Float real_time) const
     }
 }
 
+bool Screen::IsAttachedAsModalChildWidget (Widget const &widget) const
+{
+    return std::find(m_modal_child_widget_stack.begin(), m_modal_child_widget_stack.end(), &widget) != m_modal_child_widget_stack.end();
+}
+
+void Screen::AttachAsModalChildWidget (Widget &child)
+{
+    ASSERT1(!child.IsModal());
+    ASSERT1(child.IsEnabled());
+    ASSERT1(!child.IsScreen());
+
+    // stick the modal widget on the modal widget stack
+    m_modal_child_widget_stack.push_back(&child);
+    // first add it as an ordinary child, specifying focus=true
+    AttachChild(&child);
+    // turn off mouseover on this top level widget and all subordinate widgets that have mouseover focus
+    MouseoverOffWidgetLine();
+}
+
+void Screen::DetachAsModalChildWidget (Widget &child)
+{
+    ASSERT1(child.IsModal());
+    ASSERT1(child.IsEnabled());
+
+    // remove the child from this as a ContainerWidget
+    DetachChild(&child);
+    // remove the child from the modal child widget stack
+    WidgetList::iterator it = std::find(m_modal_child_widget_stack.begin(), m_modal_child_widget_stack.end(), &child);
+    ASSERT1(it != m_modal_child_widget_stack.end());
+    m_modal_child_widget_stack.erase(it);
+}
+
 Screen::Screen (Sint32 angle)
     :
-    ContainerWidget("Screen"),
+    ContainerWidget(*CreateAndInitializeWidgetContext(), "Screen"),
     m_angle(angle),
     m_sender_quit_requested(this),
     m_receiver_request_quit(&Screen::RequestQuit, this)
@@ -224,13 +296,10 @@ Screen::Screen (Sint32 angle)
     ASSERT1(m_angle % 90 == 0);
     ASSERT1(m_angle >= 0 && m_angle < 360);
 
+    m_remove_from_widget_context_upon_destruction = false;
     m_is_quit_requested = false;
     m_device_size = ScreenCoordVector2::ms_zero;
     m_original_screen_size = ScreenCoordVector2::ms_zero;
-
-    // Screen creates its own EventQueue (which is the
-    // master EventQueue for all the widgets it commands).
-    SetOwnerEventQueue(new EventQueue());
 }
 
 void Screen::HandleFrame ()
@@ -279,16 +348,13 @@ bool Screen::HandleEvent (Event const *e)
 
         if (e->IsMouseMotionEvent())
         {
-            EventMouseMotion const *mouse_motion_event =
-                DStaticCast<EventMouseMotion const *>(e);
+            EventMouseMotion const *mouse_motion_event = DStaticCast<EventMouseMotion const *>(e);
 
             // transform the mouse motion event position delta
             mouse_motion_event->SetDelta(RotatedScreenVector(mouse_motion_event->Delta()));
 
             // generate a mouseover event from the mouse motion event
-            EventMouseover mouseover_event(
-                mouse_motion_event->Position(),
-                mouse_motion_event->Time());
+            EventMouseover mouseover_event(mouse_motion_event->Position(), mouse_motion_event->Time());
             ProcessEvent(&mouseover_event);
         }
 
@@ -304,9 +370,8 @@ bool Screen::HandleEvent (Event const *e)
 
         // get the top of the modal widget stack
         Widget *modal_widget = NULL;
-        for (ContainerWidget::WidgetList::reverse_iterator
-                 it = m_modal_widget_stack.rbegin(),
-                 it_end = m_modal_widget_stack.rend();
+        for (ContainerWidget::WidgetList::reverse_iterator it = m_modal_child_widget_stack.rbegin(),
+                                                           it_end = m_modal_child_widget_stack.rend();
              it != it_end;
              ++it)
         {
@@ -332,12 +397,44 @@ bool Screen::HandleEvent (Event const *e)
                 if (!modal_widget->ScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->Position()))
                     return false;
 
-            return modal_widget->ProcessEvent(e);
+            // only return if the modal widget accepted the event.
+            if (modal_widget->ProcessEvent(e))
+                return true;
         }
     }
 
     // pass the event to the ContainerWidget base class
     return ContainerWidget::HandleEvent(e);
+}
+
+bool Screen::InternalProcessFocusEvent (EventFocus const *e)
+{
+    // if there are any modal widgets, then focus can only go the top unhidden modal widget.
+    Widget *modal_widget = NULL;
+    for (WidgetList::reverse_iterator it = m_modal_child_widget_stack.rbegin(),
+                                      it_end = m_modal_child_widget_stack.rend();
+         it != it_end;
+         ++it)
+    {
+        Widget *widget = *it;
+        ASSERT1(widget != NULL);
+        if (!widget->IsHidden())
+        {
+            modal_widget = widget;
+            break;
+        }
+    }
+
+    if (modal_widget != NULL)
+    {
+        if (modal_widget->ScreenRect().IsPointInside(e->Position()))
+            return modal_widget->InternalProcessFocusEvent(e);
+        else
+            return false;
+    }
+
+    // otherwise fall back to the superclass' method.
+    return ContainerWidget::InternalProcessFocusEvent(e);
 }
 
 ScreenCoordVector2 Screen::RotatedScreenSize (ScreenCoordVector2 const &v) const
@@ -413,6 +510,16 @@ ScreenCoordRect Screen::RotatedScreenRect (ScreenCoordRect const &r) const
                 r.Bottom() + r.Height(),
                 m_device_size[Dim::Y] - r.Right() + r.Width());
     }
+}
+
+WidgetContext *Screen::CreateAndInitializeWidgetContext ()
+{
+    // this method is called as a parameter to Widget's constructor,
+    // so nothing in Screen is constructed yet, so be careful.
+    ASSERT1(this != NULL); // why not check, just this once.
+    m_context = new WidgetContext(*this);
+    ASSERT1(m_context != NULL); // why not.
+    return m_context;
 }
 
 } // end of namespace Xrb

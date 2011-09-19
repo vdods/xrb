@@ -14,6 +14,13 @@
 
 namespace Xrb {
 
+WidgetStack::WidgetStack (WidgetContext &context, std::string const &name)
+    :
+    ContainerWidget(context, name)
+{
+    DirtyContentsSizeProperties();
+}
+
 Bool2 WidgetStack::ContentsMinSizeEnabled () const
 {
     UpdateContentsSizeProperties();
@@ -165,6 +172,7 @@ void WidgetStack::ChildSizePropertiesChanged (Widget *child)
 
 void WidgetStack::UpdateRenderBackground ()
 {
+    ContainerWidget::UpdateRenderBackground();
     SetRenderBackground(NULL);
 }
 

@@ -205,10 +205,22 @@ BUGS:
   this may require adding support for RGB textures.
 
 TODO:
-- turn /** */ style doxygen comments into /// (except in e.g. lesson##)
-- it looks like m_background in Widget probably goes undeleted (unless controlled by
-  WidgetSkinHandler).  generally redo this type of thing (widget skins) to use Resource
-  so that deletion is no longer an explicit worry.
+- black-outlined fonts
+- split Label into TextLabel and PictureLabel.
+- add "custom types" to WidgetSkin, so that particular apps can specify their own
+  texture types and fonts, etc, and it doesn't all need to be done by hand.  probably do this
+  by changing the WidgetSkin type enums into strings.
+- filesystem design:
+  abstract API (so that this can be effectively used by iPhone port):
+  * open path (for reading or writing, or both, model this on std file io)
+  particular implementations:
+    STD:
+    * add path (in a layering manner)
+    * get path list (supplying delimiter)
+    iPhone
+    * print message indicating the Documents and Cache directories (?)
+- turn /** */ style doxygen comments into /// (except in e.g. lesson##).  possibly move doxygen
+  comments from hpp files to cpp, so hpp are more clean.
 - default GlTexture flags specified in the PAL or something.  make sure to take care of
   GlTexture::LoadParameters::Fallback and other procedurally-texture-generating methods
 - enable load-time level-of-detail mode where the sprite image files that come with the game
@@ -277,10 +289,10 @@ TODO:
   vertical justification.  this will make arbitrary text drawing easier
 - make picture labels use alignment properly
 - make AsciiFont properly use UTF8
-- resource library should not map resources to paths, but to sets of
-  properties (the properties being one of many possible subclasses of some
-  "property" baseclass).  this will allow loading of the same path for
-  different things (among other extra versatilities).
+- use an 8-bit-console-looking font in XPM form so that there is a built-in
+  font which can be used as a fallback or as a default.  this will require
+  changing the font system to allow non-pixel-for-pixel rendering.  use the
+  BIOS (DOS?) font.
 - the framehandler time for WorldView must be synchronized with the
   framehandler time for World.  (depends on having the physics and
   visibility computation split up)
@@ -324,10 +336,6 @@ TODO:
   functionality should be renamed.
 - add modal widget frame/content margins (maybe just make it so that
   setting a main widget puts stuff inside the content margins)
-- for widgets who take the default property a single time at the beginning,
-  make it so they keep updating their property with the WidgetSkin,
-  but if you manually set the property to something else, then it will stay
-  different and not update with the WidgetSkin.
 - make the content margins based at the edge of the widget, instead
   of the frame margins.
 - add type-specific range checking for WidgetSkin properties.
@@ -351,8 +359,6 @@ TODO:
 - support for bit depths besides 32
 - WidgetSkin properties for checkbox/radiobutton/toolbar button sizes
 - maybe WidgetBackground should provide the FrameMargins and ContentMargins
-- make WidgetSkin properties data-driven and/or use events for the
-  multiplexed functions.
 - change all functions which accept a bool or int as a type of something
   or a behavior to use enums instead, to make code more self-documenting.
 - special Vector2 ValueEdit

@@ -10,20 +10,20 @@
 
 #include "xrb_layout.hpp"
 
-#include "xrb_screen.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
 
-Layout::Layout (LineDirection major_direction, Uint32 major_count, std::string const &name)
+Layout::Layout (LineDirection major_direction, Uint32 major_count, WidgetContext &context, std::string const &name)
     :
-    ContainerWidget(name)
+    ContainerWidget(context, name)
 {
     Initialize(major_direction, major_count);
 }
 
-Layout::Layout (Orientation orientation, std::string const &name)
+Layout::Layout (Orientation orientation, WidgetContext &context, std::string const &name)
     :
-    ContainerWidget(name)
+    ContainerWidget(context, name)
 {
     LineDirection major_direction;
     Uint32 major_count = 1;
@@ -444,6 +444,20 @@ void Layout::MoveChildToTop (Widget *child)
         IndicateChildResizeWasBlocked();
 }
 
+ScreenCoordMargins Layout::CalculateLayoutFrameMargins () const
+{
+    return IsUsingZeroedFrameMargins() ?
+           ScreenCoordMargins::ms_zero :
+           Context().WidgetSkin_Margins(WidgetSkin::LAYOUT_FRAME_MARGINS);
+}
+
+ScreenCoordMargins Layout::CalculateLayoutSpacingMargins () const
+{
+    return IsUsingZeroedLayoutSpacingMargins() ?
+           ScreenCoordMargins::ms_zero :
+           Context().WidgetSkin_Margins(WidgetSkin::LAYOUT_SPACING_MARGINS);
+}
+
 void Layout::HandleChangedWidgetSkin ()
 {
     ContainerWidget::HandleChangedWidgetSkin();
@@ -689,7 +703,7 @@ void Layout::DelegateHeightsToRows ()
 
         // update the remaining height left
         total_height_left -= m_row_height[row_index];
-//         ASSERT1(total_height_left >= 0); // HIPPO
+        ASSERT1(total_height_left >= 0);
     }
 
     DeleteArray(row_order);

@@ -15,8 +15,7 @@
 
 #include "xrb_event.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Widget;
 
@@ -29,24 +28,17 @@ class EventFocus : public Event
 {
 public:
 
-    /** @brief Constructs a focus event from the given screen coordinate
-      *        vector (the position of the mouse at the time of a mouse button
-      *        down event).
-      */
-    EventFocus (
-        ScreenCoordVector2 const &position,
-        Float const time)
+    /// Constructs a focus event from the given screen coordinate vector
+    /// (the position of the mouse at the time of a mouse button down event).
+    EventFocus (ScreenCoordVector2 const &position, Float time)
         :
         Event(time, FOCUS)
     {
         m_position = position;
     }
-    /** @brief Boring destructor.
-      */
     virtual ~EventFocus () { }
 
-    /** @brief Returns the position used to construct this event.
-      */
+    /// Returns the position used to construct this event.
     ScreenCoordVector2 const &Position () const { return m_position; }
 
 private:
@@ -63,24 +55,17 @@ class EventMouseover : public Event
 {
 public:
 
-    /** @brief Constructs a mouseover event from the given screen coordinate
-      *        vector (the position of the mouse at the time of a mouse
-      *        motion event).
-      */
-    EventMouseover (
-        ScreenCoordVector2 const &position,
-        Float const time)
+    /// Constructs a mouseover event from the given screen coordinate vector
+    /// (the position of the mouse at the time of a mouse motion event).
+    EventMouseover (ScreenCoordVector2 const &position, Float time)
         :
         Event(time, MOUSEOVER)
     {
         m_position = position;
     }
-    /** @brief Destructor.  Dull, dull, dull, oh GOD it's so desperately dull.
-      */
     virtual ~EventMouseover () { }
 
-    /** @brief Returns the position used to construct this event.
-      */
+    /// Returns the position used to construct this event.
     ScreenCoordVector2 const &Position () const { return m_position; }
 
 private:
@@ -92,45 +77,38 @@ private:
   *
   * Automatically processed by Widget.
   *
-  * @brief Used to asynchronously schedule widget deletion.
+  * @brief Used to asynchronously schedule widget detachment and deletion.
   */
-class EventDeleteChildWidget : public Event
+class EventDetachAndDeleteChildWidget : public Event
 {
 public:
 
-    /** @brief Constructs the event, specifying a pointer to the child
-      *        widget to delete.
-      */
-    EventDeleteChildWidget (
-        Widget *const child_to_delete,
-        Float const time)
+    /// Constructs the event, specifying a pointer to the child widget to delete.
+    EventDetachAndDeleteChildWidget (Widget *child_to_detach_and_delete, Float time)
         :
-        Event(time, DELETE_CHILD_WIDGET)
+        Event(time, DETACH_AND_DELETE_CHILD_WIDGET)
     {
-        ASSERT1(child_to_delete != NULL);
-        m_child_to_delete = child_to_delete;
+        ASSERT1(child_to_detach_and_delete != NULL);
+        m_child_to_detach_and_delete = child_to_detach_and_delete;
     }
-    /** @brief Destructor.
-      */
-    virtual ~EventDeleteChildWidget ()
+    virtual ~EventDetachAndDeleteChildWidget ()
     {
-        m_child_to_delete = NULL;
+        m_child_to_detach_and_delete = NULL;
     }
 
 private:
 
-    /** @brief Returns a pointer to the child widget to delete.
-      */
-    inline Widget *ChildToDelete () const { return m_child_to_delete; }
+    /// Returns a pointer to the child widget to delete.
+    Widget *ChildToDetachAndDelete () const { return m_child_to_detach_and_delete; }
 
-    /** @brief Deletes and nullifies the child to delete widget pointer.
-      */
-    void DeleteChildWidget () const;
+    /// Detaches the child from its parent (calling DetachAsModalChildWidget if the
+    /// child is modal), then deletes and nullifies the child to delete widget pointer.
+    void DetachAndDeleteChildWidget () const;
 
-    mutable Widget *m_child_to_delete;
+    mutable Widget *m_child_to_detach_and_delete;
 
     friend class ContainerWidget;
-}; // end of class EventDeleteChildWidget
+}; // end of class EventDetachAndDeleteChildWidget
 
 } // end of namespace Xrb
 

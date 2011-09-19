@@ -18,6 +18,7 @@
 #include "xrb_button.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_key.hpp"
+#include "xrb_widgetcontext.hpp"
 
 namespace Xrb {
     
@@ -28,8 +29,8 @@ class RadioButton : public Button
 {
 public:
 
-    RadioButton (T id, RadioButtonGroup<T, sentinel> *group, std::string const &name = "RadioButton");
-    RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, std::string const &name = "RadioButton");
+    RadioButton (T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
+    RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
     virtual ~RadioButton ();
 
     bool IsChecked () const { return m_is_checked; }
@@ -54,12 +55,9 @@ public:
 protected:
 
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-
+    virtual void HandleChangedWidgetSkin ();
     virtual void UpdateRenderBackground ();
     virtual void UpdateRenderPicture ();
-
-    // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkin ();
 
 private:
 
@@ -157,9 +155,9 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename T, T sentinel>
-RadioButton<T, sentinel>::RadioButton (T id, RadioButtonGroup<T, sentinel> *group, std::string const &name)
+RadioButton<T, sentinel>::RadioButton (T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name)
     :
-    Button(Resource<GlTexture>(), name),
+    Button(Resource<GlTexture>(), context, name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -169,9 +167,9 @@ RadioButton<T, sentinel>::RadioButton (T id, RadioButtonGroup<T, sentinel> *grou
 }
 
 template <typename T, T sentinel>
-RadioButton<T, sentinel>::RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, std::string const &name)
+RadioButton<T, sentinel>::RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name)
     :
-    Button(picture, name),
+    Button(picture, context, name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -204,8 +202,8 @@ void RadioButton<T, sentinel>::Check ()
         m_sender_checked_state_changed.Signal(m_is_checked);
         m_sender_checked.Signal();
     }
-    UpdateRenderBackground();
-    UpdateRenderPicture();
+    SetRenderBackgroundNeedsUpdate();
+    SetRenderPictureNeedsUpdate();
 }
 
 template <typename T, T sentinel>
@@ -222,36 +220,38 @@ bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (EventMouseButton const *
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::UpdateRenderBackground ()
-{
-    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
-}
-
-template <typename T, T sentinel>
-void RadioButton<T, sentinel>::UpdateRenderPicture ()
-{
-    if (IsChecked())
-    {
-        if (Picture().IsValid())
-            SetRenderPicture(Picture());
-        else
-            SetRenderPicture(WidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
-    }
-    else
-        SetRenderPicture(Resource<GlTexture>());
-}
-
-template <typename T, T sentinel>
 void RadioButton<T, sentinel>::HandleChangedWidgetSkin ()
 {
     Button::HandleChangedWidgetSkin();
     FixSize(
         ScreenCoordVector2(
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
-    SetFrameMargins(WidgetSkinMargins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
-    UpdateRenderBackground();
-    UpdateRenderPicture();
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
+    SetRenderBackgroundNeedsUpdate();
+    SetRenderPictureNeedsUpdate();
+}
+
+template <typename T, T sentinel>
+void RadioButton<T, sentinel>::UpdateRenderBackground ()
+{
+    Button::UpdateRenderBackground();
+    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
+}
+
+template <typename T, T sentinel>
+void RadioButton<T, sentinel>::UpdateRenderPicture ()
+{
+    Button::UpdateRenderPicture();
+    if (IsChecked())
+    {
+        if (Picture().IsValid())
+            SetRenderPicture(Picture());
+        else
+            SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
+    }
+    else
+        SetRenderPicture(Resource<GlTexture>());
 }
 
 template <typename T, T sentinel>
@@ -264,8 +264,8 @@ void RadioButton<T, sentinel>::Uncheck ()
         m_sender_checked_state_changed.Signal(m_is_checked);
         m_sender_unchecked.Signal();
     }
-    UpdateRenderBackground();
-    UpdateRenderPicture();
+    SetRenderBackgroundNeedsUpdate();
+    SetRenderPictureNeedsUpdate();
 }
 
 template <typename T, T sentinel>
@@ -297,11 +297,9 @@ void RadioButton<T, sentinel>::Initialize (T id, RadioButtonGroup<T, sentinel> *
 
     FixSize(
         ScreenCoordVector2(
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            WidgetSkinLoadFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
-    SetFrameMargins(WidgetSkinMargins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
-    RadioButton<T, sentinel>::UpdateRenderBackground();
-    RadioButton<T, sentinel>::UpdateRenderPicture();
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -387,8 +385,7 @@ void RadioButtonGroup<T, sentinel>::AddButton (RadioButton<T, sentinel> *button)
     // make sure there's no button with the same ID already in there
     typename RadioButtonMap::iterator it = m_button_map.find(button->ID());
     // only if there was no match will we add the button
-    ASSERT1(it == m_button_map.end() &&
-            "You tried to add two RadioButtons with the same ID");
+    ASSERT1(it == m_button_map.end() && "You tried to add two RadioButtons with the same ID");
     m_button_map[button->ID()] = button;
     // if there were no buttons in this group, set the new one checked
     if (no_buttons_in_group)
