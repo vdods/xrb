@@ -30,9 +30,9 @@ CheckBox::CheckBox (WidgetContext &context, std::string const &name)
 
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::CHECK_BOX_FRAME));
 }
 
 void CheckBox::SetIsEnabled (bool const is_enabled)
@@ -76,9 +76,9 @@ void CheckBox::HandleChangedWidgetSkin ()
     Button::HandleChangedWidgetSkin();
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::CHECK_BOX_FRAME));
     SetRenderBackgroundNeedsUpdate();
     SetRenderPictureNeedsUpdate();
 }
@@ -86,14 +86,14 @@ void CheckBox::HandleChangedWidgetSkin ()
 void CheckBox::UpdateRenderBackground ()
 {
     Button::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
+    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::CHECK_BOX));
 }
 
 void CheckBox::UpdateRenderPicture ()
 {
     Button::UpdateRenderPicture();
     if (IsChecked())
-        SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
+        SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::TextureType::CHECK_BOX));
     else
         SetRenderPicture(Resource<GlTexture>());
 }

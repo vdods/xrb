@@ -104,23 +104,35 @@ char Util::Uppercase (char c)
         return c;
 }
 
-void Util::MakeLowercase (std::string *const str)
+std::string Util::Lowercase (std::string const &str)
 {
-    ASSERT1(str != NULL);
-    for (Uint32 i = 0; i < str->length(); ++i)
-        if ((*str)[i] >= 'A' && (*str)[i] <= 'Z')
-            (*str)[i] += 'a' - 'A';
+    std::string retval(str);
+    MakeLowercase(retval);
+    return retval;
 }
 
-void Util::MakeUppercase (std::string *const str)
+std::string Util::Uppercase (std::string const &str)
 {
-    ASSERT1(str != NULL);
-    for (Uint32 i = 0; i < str->length(); ++i)
-        if ((*str)[i] >= 'a' && (*str)[i] <= 'z')
-            (*str)[i] += 'A' - 'a';
+    std::string retval(str);
+    MakeUppercase(retval);
+    return retval;
 }
 
-char Util::ShiftedAscii (char const c)
+void Util::MakeLowercase (std::string &str)
+{
+    for (Uint32 i = 0; i < str.length(); ++i)
+        if (str[i] >= 'A' && str[i] <= 'Z')
+            str[i] += 'a' - 'A';
+}
+
+void Util::MakeUppercase (std::string &str)
+{
+    for (Uint32 i = 0; i < str.length(); ++i)
+        if (str[i] >= 'a' && str[i] <= 'z')
+            str[i] += 'A' - 'a';
+}
+
+char Util::ShiftedAscii (char c)
 {
     static char const ascii_to_shifted_ascii[128] =
     {
@@ -145,7 +157,7 @@ char Util::ShiftedAscii (char const c)
     return (c >= 0) ? ascii_to_shifted_ascii[(Uint32)c] : '\0';
 }
 
-bool Util::CharacterLiteralCharNeedsEscaping (char const c)
+bool Util::CharacterLiteralCharNeedsEscaping (char c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -153,7 +165,7 @@ bool Util::CharacterLiteralCharNeedsEscaping (char const c)
     return (c >= '\a' && c <= '\r') || c == '\0' || c == '\n' || c == '\\' || c == '\'';
 }
 
-bool Util::StringLiteralCharNeedsEscaping (char const c)
+bool Util::StringLiteralCharNeedsEscaping (char c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -161,7 +173,7 @@ bool Util::StringLiteralCharNeedsEscaping (char const c)
     return (c >= '\a' && c <= '\r') || c == '\0' || c == '\n' || c == '\\' || c == '\"';
 }
 
-char Util::EscapeCode (char const c)
+char Util::EscapeCode (char c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -179,7 +191,7 @@ char Util::EscapeCode (char const c)
     }
 }
 
-char Util::EscapedChar (char const c)
+char Util::EscapedChar (char c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -197,7 +209,7 @@ char Util::EscapedChar (char const c)
     }
 }
 
-std::string Util::CharacterLiteral (char const c)
+std::string Util::CharacterLiteral (char c)
 {
     std::string retval("'");
     if (CharacterLiteralCharNeedsEscaping(c))

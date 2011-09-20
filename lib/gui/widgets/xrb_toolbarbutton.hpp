@@ -75,15 +75,15 @@ void ToolbarButton<T, sentinel>::UpdateRenderBackground ()
     RadioButton<T, sentinel>::UpdateRenderBackground();
     // state priority: disabled, pressed, mouseover, checked, default
     if (!this->IsEnabled())
-        SetRenderBackground(this->Context().WidgetSkin_WidgetBackground(WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
+        SetRenderBackground(this->Context().WidgetSkin_Background(WidgetSkin::BackgroundType::TOOLBAR_BUTTON));
     else if (this->IsPressed())
-        SetRenderBackground(this->Context().WidgetSkin_WidgetBackground(WidgetSkin::TOOLBAR_BUTTON_PRESSED_BACKGROUND));
+        SetRenderBackground(this->Context().WidgetSkin_Background(WidgetSkin::BackgroundType::TOOLBAR_BUTTON_PRESSED));
     else if (this->IsMouseover() && this->AcceptsMouseover())
-        SetRenderBackground(this->Context().WidgetSkin_WidgetBackground(WidgetSkin::TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND));
+        SetRenderBackground(this->Context().WidgetSkin_Background(WidgetSkin::BackgroundType::TOOLBAR_BUTTON_MOUSEOVER));
     else if (this->IsChecked())
-        SetRenderBackground(this->Context().WidgetSkin_WidgetBackground(WidgetSkin::TOOLBAR_BUTTON_CHECKED_BACKGROUND));
+        SetRenderBackground(this->Context().WidgetSkin_Background(WidgetSkin::BackgroundType::TOOLBAR_BUTTON_CHECKED));
     else
-        SetRenderBackground(this->Context().WidgetSkin_WidgetBackground(WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
+        SetRenderBackground(this->Context().WidgetSkin_Background(WidgetSkin::BackgroundType::TOOLBAR_BUTTON));
 }
 
 template <typename T, T sentinel>

@@ -13,6 +13,8 @@
 
 #include "xrb.hpp"
 
+#include <map>
+
 #include "xrb_font.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_margins.hpp"
@@ -30,64 +32,59 @@ class WidgetSkin
 {
 public:
 
-    enum WidgetBackgroundType
+    /// This struct provides a "namespace" for the base background type strings.
+    struct BackgroundType
     {
-        MODAL_WIDGET_BACKGROUND = 0,
-        BUTTON_BACKGROUND,
-        BUTTON_MOUSEOVER_BACKGROUND,
-        BUTTON_PRESSED_BACKGROUND,
-        LINE_EDIT_BACKGROUND,
-        CHECK_BOX_BACKGROUND,
-        RADIO_BUTTON_BACKGROUND,
-        TOOLBAR_BUTTON_BACKGROUND,
-        TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND,
-        TOOLBAR_BUTTON_CHECKED_BACKGROUND,
-        TOOLBAR_BUTTON_PRESSED_BACKGROUND,
+        static std::string const MODAL_WIDGET;
+        static std::string const BUTTON_IDLE;
+        static std::string const BUTTON_MOUSEOVER;
+        static std::string const BUTTON_PRESSED;
+        static std::string const LINE_EDIT;
+        static std::string const CHECK_BOX;
+        static std::string const RADIO_BUTTON;
+        static std::string const TOOLBAR_BUTTON_IDLE;
+        static std::string const TOOLBAR_BUTTON_MOUSEOVER;
+        static std::string const TOOLBAR_BUTTON_CHECKED;
+        static std::string const TOOLBAR_BUTTON_PRESSED;
+    }; // end of struct WidgetSkin::BackgroundType
 
-        WIDGET_BACKGROUND_TYPE_COUNT
-    }; // end of enum WidgetSkin::WidgetBackgroundType
-
-    enum FontType
+    /// This struct provides a "namespace" for the base font type strings.
+    struct FontType
     {
-        DEFAULT_FONT = 0,
+        static std::string const DEFAULT;
+    }; // end of struct WidgetSkin::FontType
 
-        FONT_TYPE_COUNT
-    }; // end of enum WidgetSkin::FontType
-
-    enum TextureType
+    /// This struct provides a "namespace" for the base texture type strings.
+    struct TextureType
     {
-        CHECK_BOX_CHECK_TEXTURE = 0,
-        RADIO_BUTTON_CHECK_TEXTURE,
+        static std::string const CHECK_BOX;
+        static std::string const RADIO_BUTTON;
+    }; // end of struct WidgetSkin::TextureType
 
-        TEXTURE_TYPE_COUNT
-    }; // end of enum WidgetSkin::TextureType
-
-    enum MarginsType
+    /// This struct provides a "namespace" for the base margins type strings.
+    struct MarginsType
     {
-        DEFAULT_FRAME_MARGINS = 0,
-        DEFAULT_CONTENT_MARGINS,
-        LAYOUT_FRAME_MARGINS,
-        LAYOUT_SPACING_MARGINS, // this only uses m_bottom_left
-        CHECK_BOX_FRAME_MARGINS,
-        RADIO_BUTTON_FRAME_MARGINS,
+        static std::string const DEFAULT_FRAME;
+        static std::string const DEFAULT_CONTENT;
+        static std::string const LAYOUT_FRAME;
+        static std::string const LAYOUT_SPACING; // this only uses m_bottom_left
+        static std::string const CHECK_BOX_FRAME;
+        static std::string const RADIO_BUTTON_FRAME;
+    }; // end of struct WidgetSkin::MarginsType
 
-        MARGINS_TYPE_COUNT
-    }; // end of enum WidgetSkin::MarginsType
+    static WidgetBackground const *const ms_fallback_background;
+    static std::string const ms_fallback_font_path;
+    static Float const ms_fallback_font_height_ratio;
+    static Resource<GlTexture> const &ms_fallback_texture;
+    static FloatMargins const &ms_fallback_margins_ratios;
 
-    /** This constructor needs to be replaced by a static Create() function
-      * which specifies some path of a widgetskin property descriptor file
-      * and the constructor should be made protected.
-      * @brief Constructs a WidgetSkin with a bunch of default values for now.
-      */
+    /// Constructs a WidgetSkin with a bunch of really default/austere properties.
     WidgetSkin ();
-    /** Deletes all the widget backgrounds.  The resourced properties will
-      * go out of scope and be automatically deleted here.
-      * @brief Destructor.
-      */
+    /// Deletes all the widget backgrounds.  The resourced properties will go out of scope and be automatically deleted here.
     ~WidgetSkin ();
 
     /// Populates this WidgetSkin with sensible default values.
-    void PopulateUsingDefaults ();
+    void PopulateUsingDefaults (std::string const &font_path_override = ms_fallback_font_path);
     /// Used by whatever owns the WidgetSkin (e.g. Screen) to unload everything (e.g. before the Gl singleton dies)
     void ReleaseAllResources ();
 
@@ -97,63 +94,56 @@ public:
     static Float FontHeightRatio (ScreenCoord font_pixel_height, ScreenCoord size_ratio_basis);
 
     /// Returns a pointer to the const WidgetBackground object of the requested type.
-    WidgetBackground const *GetWidgetBackground (WidgetBackgroundType widget_background_type) const
-    {
-        ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
-        return m_widget_background[widget_background_type];
-    }
+    /// @note The type string is case-insensitive.
+    WidgetBackground const *Background (std::string const &type) const;
     /// Returns the font path for the given font type.
-    std::string const &FontPath (FontType font_type) const
-    {
-        ASSERT1(font_type < FONT_TYPE_COUNT);
-        return m_font_specification[font_type].m_path;
-    }
+    /// @note The type string is case-insensitive.
+    std::string const &FontPath (std::string const &type) const;
     /// Returns the font height ratio for the given font type.
-    Float FontHeightRatio (FontType font_type) const
-    {
-        ASSERT1(font_type < FONT_TYPE_COUNT);
-        return m_font_specification[font_type].m_height_ratio;
-    }
+    /// @note The type string is case-insensitive.
+    Float FontHeightRatio (std::string const &type) const;
     /// Returns the const resourced GlTexture object of the requested type.
-    Resource<GlTexture> const &GetTexture (TextureType texture_type) const
-    {
-        ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
-        return m_texture[texture_type];
-    }
+    /// @note The type string is case-insensitive.
+    Resource<GlTexture> const &GetTexture (std::string const &type) const;
     /// Returns a screen coordinate vector containing the requested margins type.
-    FloatMargins MarginsRatios (MarginsType margins_type) const
-    {
-        ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-        return m_margins_ratios[margins_type];
-    }
+    /// @note The type string is case-insensitive.
+    FloatMargins MarginsRatios (std::string const &type) const;
 
     /// Sets the given type of widget background.  Specifying NULL will cause the WidgetBackground
     /// to be entirely transparent.  This WidgetSkin takes ownership of the given pointer.  The
     /// background being replaced is deleted, if it exists.
-    void SetWidgetBackground (WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background);
+    /// @note The type string is case-insensitive.
+    void SetBackground (std::string const &type, WidgetBackground const *background);
     /// Sets the given type of font using the given font face.
-    void SetFontPath (FontType font_type, std::string const &font_path);
-    /// Sets the screen size-ratio-basis height ratio of the specified font type.
-    void SetFontHeightRatio (FontType font_type, Float font_height_ratio);
+    /// @note The type string is case-insensitive.
+    void SetFont (std::string const &type, std::string const &font_path, Float font_height_ratio);
     /// Sets the given type of texture.
-    void SetTexture (TextureType texture_type, Resource<GlTexture> const &texture);
+    /// @note The type string is case-insensitive.
+    void SetTexture (std::string const &type, Resource<GlTexture> const &texture);
     /// Sets the screen size-ratio-basis margins ratios of the specified type.
-    void SetMarginsRatios (MarginsType margins_type, FloatMargins const &margins_ratios);
+    /// @note The type string is case-insensitive.
+    void SetMarginsRatios (std::string const &type, FloatMargins const &margins_ratios);
 
 private:
 
-    struct FontSpecification
+    struct FontSpec
     {
         std::string m_path;
         Float m_height_ratio;
 
-        FontSpecification () : m_height_ratio(0.0f) { }
-    }; // end of struct WidgetSkin::FontSpecification
+        FontSpec () : m_height_ratio(0.0f) { }
+        FontSpec (std::string const &path, Float height_ratio) : m_path(path), m_height_ratio(height_ratio) { }
+    }; // end of struct WidgetSkin::FontSpec
 
-    WidgetBackground const *m_widget_background[WIDGET_BACKGROUND_TYPE_COUNT];
-    FontSpecification m_font_specification[FONT_TYPE_COUNT];
-    Resource<GlTexture> m_texture[TEXTURE_TYPE_COUNT];
-    FloatMargins m_margins_ratios[MARGINS_TYPE_COUNT];
+    typedef std::map<std::string, WidgetBackground const *> BackgroundMap;
+    typedef std::map<std::string, FontSpec> FontSpecificationMap;
+    typedef std::map<std::string, Resource<GlTexture> > TextureMap;
+    typedef std::map<std::string, FloatMargins> MarginsRatiosMap;
+
+    BackgroundMap m_background;
+    FontSpecificationMap m_font_spec;
+    TextureMap m_texture;
+    MarginsRatiosMap m_margins_ratios;
 }; // end of class WidgetSkin
 
 } // end of namespace Xrb

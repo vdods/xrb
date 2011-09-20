@@ -134,7 +134,7 @@ void LineEdit::HandleChangedWidgetSkin ()
 void LineEdit::UpdateRenderBackground ()
 {
     TextWidget::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
+    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::LINE_EDIT));
 }
 
 void LineEdit::HandleFrame ()

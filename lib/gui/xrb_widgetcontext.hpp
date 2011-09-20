@@ -74,14 +74,14 @@ public:
     /// Returns the current WidgetSkin for this context.  NULL if none.  If there
     /// is no WidgetSkin, default values will be returned by the WidgetSkin* accessors.
     WidgetSkin const *GetWidgetSkin () const { return m_widget_skin; }
-    WidgetBackground const *WidgetSkin_WidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type) const;
-    std::string const &WidgetSkin_FontPath (WidgetSkin::FontType font_type) const;
-    Float WidgetSkin_FontHeightRatio (WidgetSkin::FontType font_type) const; // when this argument type is changed, get rid of include "xrb_widgetskin.hpp"
-    ScreenCoord WidgetSkin_FontPixelHeight (WidgetSkin::FontType font_type) const;
-    Resource<Font> WidgetSkin_LoadFont (WidgetSkin::FontType font_type) const;
-    Resource<GlTexture> WidgetSkin_Texture (WidgetSkin::TextureType texture_type) const;
-    FloatMargins WidgetSkin_MarginsRatios (WidgetSkin::MarginsType margins_type) const;
-    ScreenCoordMargins WidgetSkin_Margins (WidgetSkin::MarginsType margins_type) const;
+    WidgetBackground const *WidgetSkin_Background (std::string const &type) const;
+    std::string const &WidgetSkin_FontPath (std::string const &type) const;
+    Float WidgetSkin_FontHeightRatio (std::string const &type) const; // when this argument type is changed, get rid of include "xrb_widgetskin.hpp"
+    ScreenCoord WidgetSkin_FontPixelHeight (std::string const &type) const;
+    Resource<Font> WidgetSkin_LoadFont (std::string const &type) const;
+    Resource<GlTexture> const &WidgetSkin_Texture (std::string const &type) const;
+    FloatMargins WidgetSkin_MarginsRatios (std::string const &type) const;
+    ScreenCoordMargins WidgetSkin_Margins (std::string const &type) const;
 
     /// Setting the WidgetSkin will affect all Widgets associated to this WidgetContext.
     /// If NULL is provided, default values will be returned by the WidgetSkin* accessors.

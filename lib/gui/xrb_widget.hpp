@@ -111,8 +111,8 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     /// @brief The widget will be associated to the given WidgetContext widget during construction.
-    /// @param name A textual label applied to the specific widget being constructed.
-    /// As for now, this is only used in a debug-related capacity.
+    /// @param context The WidgetContext which this Widget will be associated with.  This comes from a/the Screen ultimately.
+    /// @param name A textual label applied to the specific widget being constructed.  This is only used for debugging.
     Widget (WidgetContext &context, std::string const &name = "Widget");
     /// The widget removes itself from WidgetContext upon destruction.
     virtual ~Widget ();
@@ -167,75 +167,46 @@ public:
     /// @details The member variable @c m_accepts_mouseover should be set in Widget derivative classes
     /// to indicate if they will accept mouseover focus. The default value set by the constructor of Widget is true.
     bool AcceptsMouseover () const { return m_accepts_mouseover; }
-    /** @brief Returns true iff this widget has mouse grab focus (meaning that
-      *        all mouse events will go to/through it even if the mouse is not
-      *        directly over it).
-      */
+    /// Returns true iff this widget has mouse grab focus (meaning that all mouse
+    /// events will go to/through it even if the mouse is not directly over it).
     bool IsMouseGrabbed () const;
-    /** @brief Returns true iff this widget is enabled.
-      */
+    /// Returns true iff this widget is enabled.
     bool IsEnabled () const { return m_is_enabled; }
-    /** @brief Returns true iff this widget is hidden.
-      */
+    /// Returns true iff this widget is hidden.
     bool IsHidden () const { return m_is_hidden; }
-    /** @brief Returns true iff this widget is currently modal.
-      */
+    /// Returns true iff this widget is currently modal.
     bool IsModal () const;
-    /** @brief Returns the widget stack priority of this widget.
-      * @see StackPriority
-      */
+    /// Returns the widget stack priority of this widget.  @see StackPriority.
     StackPriority GetStackPriority () const { return m_stack_priority; }
-    /** @brief Returns the basic background for this widget.
-      * @see WidgetBackground
-      */
+    /// Returns the basic background for this widget.  @see WidgetBackground.
     WidgetBackground *Background () const { return m_background; }
-    /** @brief Returns the frame margins for this widget.
-      */
+    /// Returns the frame margins for this widget.
     ScreenCoordMargins const &FrameMargins () const { return m_frame_margins; }
-    /** The content margins are added to the frame margins to indicate the
-      * content area of the label.  The content margins can be negative (up to
-      * the point that they totally cancel the frame margins).
-      * @brief Returns the content margins for this widget.
-      */
+    /// @brief Returns the content margins for this widget.
+    /// @details The content margins are added to the frame margins to indicate the
+    /// content area of the label.  The content margins can be negative (up to
+    /// the point that they totally cancel the frame margins).
     ScreenCoordMargins const &ContentMargins () const { return m_content_margins; }
-    /** @brief Returns the last known mouse position (derived from the most
-      *        recent mouse motion event received by this widget).
-      */
+    /// Returns the last known mouse position (derived from the most recent mouse motion event received by this widget).
     ScreenCoordVector2 const &LastMousePosition () const { return m_last_mouse_position; }
-    /** @brief Returns the current position of the lower-left corner of
-      *        this widget.
-      */
+    /// Returns the current position of the lower-left corner of this widget.
     ScreenCoordVector2 Position () const { return m_screen_rect.BottomLeft(); }
-    /** Integer division is involved, so rounding may occur.
-      * @brief Returns the current position of the center of this widget.
-      */
+    /// @brief Returns the current position of the center of this widget.
+    /// @details Integer division is involved, so rounding may occur.
     ScreenCoordVector2 Center () const { return m_screen_rect.Center(); }
-    /** @brief Returns the current size of this widget.
-      */
+    /// Returns the current size of this widget.
     ScreenCoordVector2 Size () const { return m_screen_rect.Size(); }
-    /** @brief Returns the widget of this widget.
-      */
+    /// Returns the widget of this widget.
     ScreenCoord Width () const { return m_screen_rect.Width(); }
-    /** @brief Returns the height of this widget.
-      */
+    /// Returns the height of this widget.
     ScreenCoord Height () const { return m_screen_rect.Height(); }
-    /** @brief Returns the boolean vector containing the
-      *        is-minimum-size-enabled values for width and height in the
-      *        x and y components respectively.
-      */
+    /// Returns the boolean vector containing the is-minimum-size-enabled values for width and height.
     virtual Bool2 const &MinSizeEnabled () const { return m_size_properties.m_min_size_enabled; }
-    /** @brief Returns the screen-coordinate vector containing the minimum
-      *        width and height in the X and Y components respectively.
-      */
+    /// Returns the screen-coordinate vector containing the minimum width and height.
     virtual ScreenCoordVector2 const &MinSize () const { return m_size_properties.m_min_size; }
-    /** @brief Returns the boolean vector containing the
-      *        is-maximum-size-enabled values for width and height in the
-      *        X and Y components respectively.
-      */
+    /// Returns the boolean vector containing the is-maximum-size-enabled values for width and height.
     virtual Bool2 const &MaxSizeEnabled () const { return m_size_properties.m_max_size_enabled; }
-    /** @brief Returns the screen-coordinate vector containing the maximum
-      *        width and height in the X and Y components respectively.
-      */
+    /// Returns the screen-coordinate vector containing the maximum width and height.
     virtual ScreenCoordVector2 const &MaxSize () const { return m_size_properties.m_max_size; }
     /** Adjusts the size vector to satisfy the minimum size properties
       * of this widget.  Then adjusts the resulting value to satisfy

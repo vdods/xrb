@@ -17,7 +17,7 @@ namespace Xrb
 
 KeyMap const *KeyMap::Create (std::string name)
 {
-    Util::MakeLowercase(&name);
+    Util::MakeLowercase(name);
     if (name == "dvorak")
         return new KeyMapDvorak();
     else

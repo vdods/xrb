@@ -544,7 +544,7 @@ Parser::Token Scanner::Scan () throw()
 
         // check if it matches any keywords
         std::string lowercase_text(accepted_string);
-        Util::MakeLowercase(&lowercase_text);
+        Util::MakeLowercase(lowercase_text);
         if (lowercase_text == "true")
             return Parser::Token(Parser::Terminal::BOOLEAN, new Boolean(true));
         else if (lowercase_text == "false")

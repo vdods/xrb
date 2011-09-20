@@ -22,13 +22,13 @@ bool Transformation::BooleanNegation (bool value)
 
 std::string Transformation::Lowercase (std::string value)
 {
-    Util::MakeLowercase(&value);
+    Util::MakeLowercase(value);
     return value;
 }
 
 std::string Transformation::Uppercase (std::string value)
 {
-    Util::MakeUppercase(&value);
+    Util::MakeUppercase(value);
     return value;
 }
 

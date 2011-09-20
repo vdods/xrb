@@ -129,7 +129,7 @@ void Config::SetInputAction (KeyInputAction const key, std::string const &value)
     ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT);
     ASSERT1(!value.empty());
     m_input_action_name[key] = value;
-    Util::MakeUppercase(&m_input_action_name[key]);
+    Util::MakeUppercase(m_input_action_name[key]);
 }
 
 void Config::ResetToDefaults ()

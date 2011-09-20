@@ -448,14 +448,14 @@ ScreenCoordMargins Layout::CalculateLayoutFrameMargins () const
 {
     return IsUsingZeroedFrameMargins() ?
            ScreenCoordMargins::ms_zero :
-           Context().WidgetSkin_Margins(WidgetSkin::LAYOUT_FRAME_MARGINS);
+           Context().WidgetSkin_Margins(WidgetSkin::MarginsType::LAYOUT_FRAME);
 }
 
 ScreenCoordMargins Layout::CalculateLayoutSpacingMargins () const
 {
     return IsUsingZeroedLayoutSpacingMargins() ?
            ScreenCoordMargins::ms_zero :
-           Context().WidgetSkin_Margins(WidgetSkin::LAYOUT_SPACING_MARGINS);
+           Context().WidgetSkin_Margins(WidgetSkin::MarginsType::LAYOUT_SPACING);
 }
 
 void Layout::HandleChangedWidgetSkin ()

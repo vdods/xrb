@@ -240,6 +240,8 @@ class Resource
 {
 public:
 
+    static Resource<T> const ms_invalid;
+    
     /** Constructs an invalid resource (not referencing anything).
       * @brief Default constructor
       */
@@ -364,6 +366,9 @@ private:
 
     ResourceLibrary::ResourceInstance<T> *m_instance;
 }; // end of class Resource<T>
+
+template <typename T>
+Resource<T> const Resource<T>::ms_invalid;
 
 template <typename T>
 Resource<T> ResourceLibrary::Load (

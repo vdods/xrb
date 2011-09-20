@@ -27,18 +27,14 @@ namespace Xrb
   */
 namespace Util
 {
-    /** @brief Find and replace all instances of @c string_to_replace inside
-      *        @c string, using @c string_to_replace_with.
-      */
+    /// Find and replace all instances of @c string_to_replace inside @c string, using @c string_to_replace_with.
     void ReplaceAllInString (
         std::string *string,
         std::string const &string_to_replace,
         std::string const &string_to_replace_with);
-    /** @brief Performs printf into an STL string and returns it.
-      */
+    /// Performs printf into an STL string and returns it.
     std::string StringPrintf (char const *format, ...);
-    /** @brief Performs printf into the provided STL string.
-      */
+    /// Performs printf into the provided STL string.
     void StringPrintf (std::string *string, char const *format, ...);
     /*
     void StringCopy (
@@ -51,23 +47,19 @@ namespace Util
       * @brief Returns a newly allocated copy of the given string.
       */
     char *StringDuplicate (char const *string_to_duplicate);
-    /** @brief If c is an uppercase letter, returns it in lowercase, otherwise returns c.
-      * @param c The character to convert to lowercase.
-      */
+    /// If c is an uppercase letter, returns it in lowercase, otherwise returns c.
     char Lowercase (char c);
-    /** @brief If c is a lowercase letter, returns it in uppercase, otherwise returns c.
-      * @param c The character to convert to uppercase.
-      */
+    /// If c is a lowercase letter, returns it in uppercase, otherwise returns c.
     char Uppercase (char c);
-    /** @brief Converts all alphabetic characters in the string to lowercase.
-      */
-    void MakeLowercase (std::string *str);
-    /** @brief Converts all alphabetic characters in the string to uppercase.
-      */
-    void MakeUppercase (std::string *str);
-    /** @brief Returns the ASCII code of the given character as it would be
-      *        interpreted with the SHIFT key held down.
-      */
+    /// Returns a MakeLowercase'd copy of the provided string.
+    std::string Lowercase (std::string const &str);
+    /// Returns a MakeUppercase'd copy of the provided string.
+    std::string Uppercase (std::string const &str);
+    /// Converts all alphabetic characters in the string to lowercase.
+    void MakeLowercase (std::string &str);
+    /// Converts all alphabetic characters in the string to uppercase.
+    void MakeUppercase (std::string &str);
+    /// Returns the ASCII code of the given character as it would be interpreted with the SHIFT key held down.
     char ShiftedAscii (char c);
 
     /** @brief Returns true iff the given character needs to be escaped to be

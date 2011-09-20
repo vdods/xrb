@@ -104,7 +104,7 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
             try { default_type_string = root->PathElementString("|default_type"); } catch (...) { }
             AnimationType default_type = AT_COUNT;
             // if not specified, the default AnimationType is CYCLE_FORWARD
-            Util::MakeUppercase(&default_type_string);
+            Util::MakeUppercase(default_type_string);
             if (default_type_string == "")
                 default_type = CYCLE_FORWARD;
             for (Uint32 i = 0; i < AT_COUNT; ++i)

@@ -55,14 +55,14 @@ Widget::Widget (WidgetContext &context, std::string const &name)
     m_background = NULL;
     m_render_background = NULL;
     m_render_background_needs_update = true;
-    m_frame_margins = ScreenCoordVector2::ms_zero;
+    m_frame_margins = ScreenCoordVector2::ms_zero; // HIPPO
     m_content_margins = ScreenCoordVector2::ms_zero;
     m_parent = NULL;
 
     m_context.AddWidget(*this);
 
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_FRAME_MARGINS));
-    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_FRAME)); // HIPPO
+    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_CONTENT));
 }
 
 Widget::~Widget ()
@@ -189,7 +189,7 @@ void Widget::SetSizePropertyEnabled (SizeProperties::Property property, Bool2 co
     }
 }
 
-void Widget::SetSizeProperty (SizeProperties::Property const property, Uint32 component, ScreenCoord value, bool defer_parent_update)
+void Widget::SetSizeProperty (SizeProperties::Property property, Uint32 component, ScreenCoord value, bool defer_parent_update)
 {
     ASSERT1(component <= 1);
     ASSERT1(value >= 0);
@@ -634,8 +634,8 @@ bool Widget::IsScreen () const
 void Widget::HandleChangedWidgetSkin ()
 {
     SetRenderBackgroundNeedsUpdate();
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_FRAME_MARGINS));
-    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_FRAME));
+    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_CONTENT));
 }
 
 bool Widget::HandleEvent (Event const *e)

@@ -38,7 +38,7 @@ void ModalWidget::HandleActivate ()
 void ModalWidget::UpdateRenderBackground ()
 {
     ContainerWidget::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
+    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::MODAL_WIDGET));
 }
 
 void ModalWidget::HandleChangedWidgetSkin ()

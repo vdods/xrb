@@ -27,7 +27,6 @@ MAJOR TASKS:
 DISASTEROIDS:
 - rewrite design docs in dis_main.cpp to reflect actual state of the game (see notes/dis_game_design.txt)
 ** polish-related **
-- art: fix Interloper proportions
 - art: add bigger stuff in the background (galaxies, nebulae, etc) -- make inkscape renditions of hubble pictures
 - anthropomorphize the ships for the intro, credits, etc, similar to opa-opa in zillion.
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,

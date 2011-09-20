@@ -35,60 +35,60 @@ Float WidgetContext::SizeRatio (ScreenCoord pixel_size) const
     return size_ratio;
 }
 
-WidgetBackground const *WidgetContext::WidgetSkin_WidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type) const
+WidgetBackground const *WidgetContext::WidgetSkin_Background (std::string const &type) const
+{
+    ASSERT1(WidgetSkin::ms_fallback_background == NULL && "allocation worries are necessary, since Widget deletes backgrounds");
+    if (m_widget_skin == NULL)
+        return WidgetSkin::ms_fallback_background;
+    else
+        return m_widget_skin->Background(type);
+}
+
+std::string const &WidgetContext::WidgetSkin_FontPath (std::string const &type) const
 {
     if (m_widget_skin == NULL)
-        return NULL;
+        return WidgetSkin::ms_fallback_font_path;
     else
-        return m_widget_skin->GetWidgetBackground(widget_background_type);
+        return m_widget_skin->FontPath(type);
 }
 
-std::string const &WidgetContext::WidgetSkin_FontPath (WidgetSkin::FontType font_type) const
-{
-    static std::string const s_default_font_path("resources/FreeSansBoldCustom.ttf");
-    if (m_widget_skin == NULL)
-        return s_default_font_path; // TODO: built-in font which is specified by something like "internal://default"
-    else
-        return m_widget_skin->FontPath(font_type);
-}
-
-Float WidgetContext::WidgetSkin_FontHeightRatio (WidgetSkin::FontType font_type) const
+Float WidgetContext::WidgetSkin_FontHeightRatio (std::string const &type) const
 {
     if (m_widget_skin == NULL)
-        return 0.03f; // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
+        return WidgetSkin::ms_fallback_font_height_ratio;
     else
-        return m_widget_skin->FontHeightRatio(font_type);
+        return m_widget_skin->FontHeightRatio(type);
 }
 
-ScreenCoord WidgetContext::WidgetSkin_FontPixelHeight (WidgetSkin::FontType font_type) const
+ScreenCoord WidgetContext::WidgetSkin_FontPixelHeight (std::string const &type) const
 {
-    return PixelSize(WidgetSkin_FontHeightRatio(font_type));
+    return PixelSize(WidgetSkin_FontHeightRatio(type));
 }
 
-Resource<Font> WidgetContext::WidgetSkin_LoadFont (WidgetSkin::FontType font_type) const
+Resource<Font> WidgetContext::WidgetSkin_LoadFont (std::string const &type) const
 {
-    return Font::Load(WidgetSkin_FontPath(font_type), WidgetSkin_FontPixelHeight(font_type));
+    return Font::Load(WidgetSkin_FontPath(type), WidgetSkin_FontPixelHeight(type));
 }
 
-Resource<GlTexture> WidgetContext::WidgetSkin_Texture (WidgetSkin::TextureType texture_type) const
+Resource<GlTexture> const &WidgetContext::WidgetSkin_Texture (std::string const &type) const
 {
     if (m_widget_skin == NULL)
-        return Resource<GlTexture>();
+        return WidgetSkin::ms_fallback_texture;
     else
-        return m_widget_skin->GetTexture(texture_type);
+        return m_widget_skin->GetTexture(type);
 }
 
-FloatMargins WidgetContext::WidgetSkin_MarginsRatios (WidgetSkin::MarginsType margins_type) const
+FloatMargins WidgetContext::WidgetSkin_MarginsRatios (std::string const &type) const
 {
     if (m_widget_skin == NULL)
-        return FloatMargins::ms_zero;
+        return WidgetSkin::ms_fallback_margins_ratios;
     else
-        return m_widget_skin->MarginsRatios(margins_type);
+        return m_widget_skin->MarginsRatios(type);
 }
 
-ScreenCoordMargins WidgetContext::WidgetSkin_Margins (WidgetSkin::MarginsType margins_type) const
+ScreenCoordMargins WidgetContext::WidgetSkin_Margins (std::string const &type) const
 {
-    FloatMargins margins_ratios(WidgetSkin_MarginsRatios(margins_type));
+    FloatMargins margins_ratios(WidgetSkin_MarginsRatios(type));
     return ScreenCoordMargins(
         ScreenCoordVector2(
             PixelSize(margins_ratios.m_bottom_left[Dim::X]),

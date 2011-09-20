@@ -30,7 +30,7 @@ TextWidget::TextWidget (std::string const &text, WidgetContext &context, std::st
     m_text_color = Color(1.0, 1.0, 1.0, 1.0);
     m_render_text_color_needs_update = true;
     m_render_font_needs_update = true;
-    m_font = Context().WidgetSkin_LoadFont(WidgetSkin::DEFAULT_FONT);
+    m_font = Context().WidgetSkin_LoadFont(WidgetSkin::FontType::DEFAULT);
     
     m_is_min_width_fixed_to_text_width = false;
     m_is_max_width_fixed_to_text_width = false;
@@ -178,7 +178,7 @@ void TextWidget::SetRenderFont (Resource<Font> const &render_font)
 void TextWidget::HandleChangedWidgetSkin ()
 {
     Widget::HandleChangedWidgetSkin();
-    m_font = Context().WidgetSkin_LoadFont(WidgetSkin::DEFAULT_FONT);
+    m_font = Context().WidgetSkin_LoadFont(WidgetSkin::FontType::DEFAULT);
     SetRenderBackgroundNeedsUpdate();
     SetRenderTextColorNeedsUpdate();
     SetRenderFontNeedsUpdate();

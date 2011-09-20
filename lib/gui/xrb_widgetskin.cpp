@@ -12,26 +12,45 @@
 
 #include "xrb_math.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_util.hpp"
 #include "xrb_widgetbackground.hpp"
 
 namespace Xrb {
 
+std::string const WidgetSkin::BackgroundType::MODAL_WIDGET("ModalWidget");
+std::string const WidgetSkin::BackgroundType::BUTTON_IDLE("Button:idle");
+std::string const WidgetSkin::BackgroundType::BUTTON_MOUSEOVER("Button:mouseover");
+std::string const WidgetSkin::BackgroundType::BUTTON_PRESSED("Button:pressed");
+std::string const WidgetSkin::BackgroundType::LINE_EDIT("LineEdit");
+std::string const WidgetSkin::BackgroundType::CHECK_BOX("CheckBox");
+std::string const WidgetSkin::BackgroundType::RADIO_BUTTON("RadioButton");
+std::string const WidgetSkin::BackgroundType::TOOLBAR_BUTTON_IDLE("ToolbarButton:idle");
+std::string const WidgetSkin::BackgroundType::TOOLBAR_BUTTON_MOUSEOVER("ToolbarButton:mouseover");
+std::string const WidgetSkin::BackgroundType::TOOLBAR_BUTTON_CHECKED("ToolbarButton:checked");
+std::string const WidgetSkin::BackgroundType::TOOLBAR_BUTTON_PRESSED("ToolbarButton:pressed");
+
+std::string const WidgetSkin::FontType::DEFAULT("default");
+
+std::string const WidgetSkin::TextureType::CHECK_BOX("CheckBox");
+std::string const WidgetSkin::TextureType::RADIO_BUTTON("RadioButton");
+
+std::string const WidgetSkin::MarginsType::DEFAULT_FRAME("default:frame");
+std::string const WidgetSkin::MarginsType::DEFAULT_CONTENT("default:content");
+std::string const WidgetSkin::MarginsType::LAYOUT_FRAME("Layout:frame");
+std::string const WidgetSkin::MarginsType::LAYOUT_SPACING("Layout:spacing");
+std::string const WidgetSkin::MarginsType::CHECK_BOX_FRAME("CheckBox:frame");
+std::string const WidgetSkin::MarginsType::RADIO_BUTTON_FRAME("RadioButton:frame");
+
+WidgetBackground const *const WidgetSkin::ms_fallback_background = NULL; // no background (transparent)
+std::string const WidgetSkin::ms_fallback_font_path("resources/FreeSansBoldCustom.ttf"); // TODO: built-in font
+// 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
+Float const WidgetSkin::ms_fallback_font_height_ratio = 0.03f;
+Resource<GlTexture> const &WidgetSkin::ms_fallback_texture(Resource<GlTexture>::ms_invalid); // invalid/blank texture
+FloatMargins const &WidgetSkin::ms_fallback_margins_ratios(FloatMargins::ms_zero); // zeroed margins
+
 WidgetSkin::WidgetSkin ()
 {
-    for (Uint32 i = 0; i < WIDGET_BACKGROUND_TYPE_COUNT; ++i)
-        m_widget_background[i] = NULL;
-
-    for (Uint32 i = 0; i < FONT_TYPE_COUNT; ++i)
-    {
-        m_font_specification[i].m_path = "resources/FreeSansBoldCustom.ttf";
-        // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
-        m_font_specification[i].m_height_ratio = 0.03f;
-    }
-
-    // the textures are already constructed empty.
-    
-    for (Uint32 i = 0; i < MARGINS_TYPE_COUNT; ++i)
-        m_margins_ratios[i] = FloatMargins::ms_zero;
+    // empty by default
 }
 
 WidgetSkin::~WidgetSkin ()
@@ -40,7 +59,7 @@ WidgetSkin::~WidgetSkin ()
     ReleaseAllResources();
 }
 
-void WidgetSkin::PopulateUsingDefaults ()
+void WidgetSkin::PopulateUsingDefaults (std::string const &font_path_override)
 {
     // in case there was stuff in here already
     ReleaseAllResources();
@@ -49,96 +68,137 @@ void WidgetSkin::PopulateUsingDefaults ()
     // widget backgrounds
     // ///////////////////////////////////////////////////////////////////////
 
-    m_widget_background[MODAL_WIDGET_BACKGROUND] = new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 1.0f));
-    m_widget_background[BUTTON_BACKGROUND] = new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.6f, 1.0f));
-    m_widget_background[BUTTON_MOUSEOVER_BACKGROUND] = new WidgetBackgroundColored(Color(0.2f, 0.2f, 0.7f, 1.0f));
-    m_widget_background[BUTTON_PRESSED_BACKGROUND] = new WidgetBackgroundColored(Color(0.4f, 0.4f, 0.8f, 1.0f));
-    m_widget_background[LINE_EDIT_BACKGROUND] = new WidgetBackgroundColored(Color(0.2f, 0.2f, 0.2f, 1.0f));
-    m_widget_background[CHECK_BOX_BACKGROUND] = new WidgetBackgroundColored(Color(0.9f, 0.8f, 0.0f, 1.0f));
-    m_widget_background[RADIO_BUTTON_BACKGROUND] = new WidgetBackgroundColored(Color(0.9f, 0.1f, 0.0f, 1.0f));
-    m_widget_background[TOOLBAR_BUTTON_BACKGROUND] = new WidgetBackgroundColored(Color(0.0f, 0.4f, 0.0f, 1.0f));
-    m_widget_background[TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND] = new WidgetBackgroundColored(Color(0.4f, 0.8f, 0.4f, 1.0f));
-    m_widget_background[TOOLBAR_BUTTON_CHECKED_BACKGROUND] = new WidgetBackgroundColored(Color(0.2f, 0.6f, 0.2f, 1.0f));
-    m_widget_background[TOOLBAR_BUTTON_PRESSED_BACKGROUND] = new WidgetBackgroundColored(Color(0.6f, 1.0f, 0.6f, 1.0f));
+    SetBackground(BackgroundType::MODAL_WIDGET,             new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 1.0f)));
+    SetBackground(BackgroundType::BUTTON_IDLE,              new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.6f, 1.0f)));
+    SetBackground(BackgroundType::BUTTON_MOUSEOVER,         new WidgetBackgroundColored(Color(0.2f, 0.2f, 0.7f, 1.0f)));
+    SetBackground(BackgroundType::BUTTON_PRESSED,           new WidgetBackgroundColored(Color(0.4f, 0.4f, 0.8f, 1.0f)));
+    SetBackground(BackgroundType::LINE_EDIT,                new WidgetBackgroundColored(Color(0.2f, 0.2f, 0.2f, 1.0f)));
+    SetBackground(BackgroundType::CHECK_BOX,                new WidgetBackgroundColored(Color(0.9f, 0.8f, 0.0f, 1.0f)));
+    SetBackground(BackgroundType::RADIO_BUTTON,             new WidgetBackgroundColored(Color(0.9f, 0.1f, 0.0f, 1.0f)));
+    SetBackground(BackgroundType::TOOLBAR_BUTTON_IDLE,      new WidgetBackgroundColored(Color(0.0f, 0.4f, 0.0f, 1.0f)));
+    SetBackground(BackgroundType::TOOLBAR_BUTTON_MOUSEOVER, new WidgetBackgroundColored(Color(0.4f, 0.8f, 0.4f, 1.0f)));
+    SetBackground(BackgroundType::TOOLBAR_BUTTON_CHECKED,   new WidgetBackgroundColored(Color(0.2f, 0.6f, 0.2f, 1.0f)));
+    SetBackground(BackgroundType::TOOLBAR_BUTTON_PRESSED,   new WidgetBackgroundColored(Color(0.6f, 1.0f, 0.6f, 1.0f)));
 
     // ///////////////////////////////////////////////////////////////////////
     // fonts
     // ///////////////////////////////////////////////////////////////////////
 
-    // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
-    m_font_specification[DEFAULT_FONT].m_path = "resources/FreeSansBoldCustom.ttf";
-    m_font_specification[DEFAULT_FONT].m_height_ratio = 0.023f;
+    SetFont(FontType::DEFAULT, font_path_override, 0.023f);
 
     // ///////////////////////////////////////////////////////////////////////
     // gl textures
     // ///////////////////////////////////////////////////////////////////////
 
-    m_texture[CHECK_BOX_CHECK_TEXTURE] = GlTexture::Load("resources/ui/black_checkmark.png"); // TODO: replace with procedurally generated texture
-    m_texture[RADIO_BUTTON_CHECK_TEXTURE] = GlTexture::Load("resources/ui/radiobutton_dot.png"); // TODO: replace with procedurally generated texture
+    SetTexture(TextureType::CHECK_BOX,    GlTexture::Load("resources/ui/black_checkmark.png")); // TODO: replace with procedurally generated texture
+    SetTexture(TextureType::RADIO_BUTTON, GlTexture::Load("resources/ui/radiobutton_dot.png")); // TODO: replace with procedurally generated texture
 
     // ///////////////////////////////////////////////////////////////////////
     // margins
     // ///////////////////////////////////////////////////////////////////////
 
-    m_margins_ratios[DEFAULT_FRAME_MARGINS] = FloatMargins(FloatVector2(0.006667f, 0.006667f));
-    m_margins_ratios[DEFAULT_CONTENT_MARGINS] = FloatMargins(FloatVector2::ms_zero);
-    m_margins_ratios[LAYOUT_FRAME_MARGINS] = FloatMargins(FloatVector2(0.006667f, 0.006667f));
-    m_margins_ratios[LAYOUT_SPACING_MARGINS] = FloatMargins(FloatVector2(0.006667f, 0.006667f));
-    m_margins_ratios[CHECK_BOX_FRAME_MARGINS] = FloatMargins(FloatVector2::ms_zero);
-    m_margins_ratios[RADIO_BUTTON_FRAME_MARGINS] = FloatMargins(FloatVector2::ms_zero);
+    SetMarginsRatios(MarginsType::DEFAULT_FRAME, FloatMargins(FloatVector2(0.006667f, 0.006667f)));
+    SetMarginsRatios(MarginsType::DEFAULT_CONTENT, FloatMargins::ms_zero);
+    SetMarginsRatios(MarginsType::LAYOUT_FRAME, FloatMargins(FloatVector2(0.006667f, 0.006667f)));
+    SetMarginsRatios(MarginsType::LAYOUT_SPACING, FloatMargins(FloatVector2(0.006667f, 0.006667f)));
+    SetMarginsRatios(MarginsType::CHECK_BOX_FRAME, FloatMargins::ms_zero);
+    SetMarginsRatios(MarginsType::RADIO_BUTTON_FRAME, FloatMargins::ms_zero);
 }
 
 void WidgetSkin::ReleaseAllResources ()
 {
-    for (Uint32 i = 0; i < WIDGET_BACKGROUND_TYPE_COUNT; ++i)
-        DeleteAndNullify(m_widget_background[i]);
+    for (BackgroundMap::iterator it = m_background.begin(), it_end = m_background.end(); it != it_end; ++it)
+        delete it->second;
 
-    for (Uint32 i = 0; i < FONT_TYPE_COUNT; ++i)
+    m_background.clear();
+    m_font_spec.clear();
+    m_texture.clear();
+    m_margins_ratios.clear();
+}
+
+WidgetBackground const *WidgetSkin::Background (std::string const &type) const
+{
+    BackgroundMap::const_iterator it = m_background.find(Util::Lowercase(type));
+    if (it == m_background.end())
     {
-        m_font_specification[i].m_path = "resources/FreeSansBoldCustom.ttf";
-        // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
-        m_font_specification[i].m_height_ratio = 0.03f;
+        fprintf(stderr, "WidgetSkin::Background(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        return ms_fallback_background;
     }
-    
-    for (Uint32 i = 0; i < TEXTURE_TYPE_COUNT; ++i)
+    else
+        return it->second;
+}
+
+std::string const &WidgetSkin::FontPath (std::string const &type) const
+{
+    FontSpecificationMap::const_iterator it = m_font_spec.find(Util::Lowercase(type));
+    if (it == m_font_spec.end())
     {
-        m_texture[i].Release();
-        ASSERT1(!m_texture[i].IsValid());
+        fprintf(stderr, "WidgetSkin::FontPath(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        return ms_fallback_font_path;
     }
-
-    for (Uint32 i = 0; i < MARGINS_TYPE_COUNT; ++i)
-        m_margins_ratios[i] = FloatMargins::ms_zero;
+    else
+        return it->second.m_path;
 }
 
-void WidgetSkin::SetWidgetBackground (WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background)
+Float WidgetSkin::FontHeightRatio (std::string const &type) const
 {
-    ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
-    delete m_widget_background[widget_background_type];
-    m_widget_background[widget_background_type] = widget_background;
+    FontSpecificationMap::const_iterator it = m_font_spec.find(Util::Lowercase(type));
+    if (it == m_font_spec.end())
+    {
+        fprintf(stderr, "WidgetSkin::FontHeightRatio(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        return ms_fallback_font_height_ratio;
+    }
+    else
+        return it->second.m_height_ratio;
 }
 
-void WidgetSkin::SetFontPath (FontType font_type, std::string const &font_path)
+Resource<GlTexture> const &WidgetSkin::GetTexture (std::string const &type) const
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT);
-    m_font_specification[font_type].m_path = font_path;
+    TextureMap::const_iterator it = m_texture.find(Util::Lowercase(type));
+    if (it == m_texture.end())
+    {
+        fprintf(stderr, "WidgetSkin::GetTexture(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        return ms_fallback_texture;
+    }
+    else
+        return it->second;
 }
 
-void WidgetSkin::SetFontHeightRatio (FontType font_type, Float font_height_ratio)
+FloatMargins WidgetSkin::MarginsRatios (std::string const &type) const
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT);
-    m_font_specification[font_type].m_height_ratio = font_height_ratio;
+    MarginsRatiosMap::const_iterator it = m_margins_ratios.find(Util::Lowercase(type));
+    if (it == m_margins_ratios.end())
+    {
+        fprintf(stderr, "WidgetSkin::MarginsRatios(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        return ms_fallback_margins_ratios;
+    }
+    else
+        return it->second;
 }
 
-void WidgetSkin::SetTexture (TextureType texture_type, Resource<GlTexture> const &texture)
+void WidgetSkin::SetBackground (std::string const &type, WidgetBackground const *background)
 {
-    ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
-    m_texture[texture_type] = texture;
+    std::string lowercase_type(Util::Lowercase(type));
+    BackgroundMap::iterator it = m_background.find(lowercase_type);
+    if (it != m_background.end())
+        delete it->second;
+    m_background[lowercase_type] = background;
 }
 
-void WidgetSkin::SetMarginsRatios (MarginsType margins_type, FloatMargins const &margins_ratios)
+void WidgetSkin::SetFont (std::string const &type, std::string const &font_path, Float font_height_ratio)
 {
-    ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-    m_margins_ratios[margins_type] = margins_ratios;
+    ASSERT1(font_height_ratio > 0.0f);
+    m_font_spec[Util::Lowercase(type)] = FontSpec(font_path, font_height_ratio);
+}
+
+void WidgetSkin::SetTexture (std::string const &type, Resource<GlTexture> const &texture)
+{
+    m_texture[Util::Lowercase(type)] = texture;
+}
+
+void WidgetSkin::SetMarginsRatios (std::string const &type, FloatMargins const &margins_ratios)
+{
+    m_margins_ratios[Util::Lowercase(type)] = margins_ratios;
 }
 
 } // end of namespace Xrb

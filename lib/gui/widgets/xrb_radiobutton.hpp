@@ -225,9 +225,9 @@ void RadioButton<T, sentinel>::HandleChangedWidgetSkin ()
     Button::HandleChangedWidgetSkin();
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::RADIO_BUTTON_FRAME));
     SetRenderBackgroundNeedsUpdate();
     SetRenderPictureNeedsUpdate();
 }
@@ -236,7 +236,7 @@ template <typename T, T sentinel>
 void RadioButton<T, sentinel>::UpdateRenderBackground ()
 {
     Button::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_WidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
+    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::RADIO_BUTTON));
 }
 
 template <typename T, T sentinel>
@@ -248,7 +248,7 @@ void RadioButton<T, sentinel>::UpdateRenderPicture ()
         if (Picture().IsValid())
             SetRenderPicture(Picture());
         else
-            SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
+            SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::TextureType::RADIO_BUTTON));
     }
     else
         SetRenderPicture(Resource<GlTexture>());
@@ -297,9 +297,9 @@ void RadioButton<T, sentinel>::Initialize (T id, RadioButtonGroup<T, sentinel> *
 
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::DEFAULT_FONT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
+            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
+    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::RADIO_BUTTON_FRAME));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
