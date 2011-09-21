@@ -52,8 +52,6 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
     m_game_tip_data = Parse::DataFile::Load("resources/game_tip.data");
     // TODO: maybe check if the load failed if so, put an error message in the tip data
 
-//     static Float const s_grid_label_font_height_ratio = 0.018f;
-
     // a vertical layout to hold the sublayouts
     Layout *main_layout = new Layout(VERTICAL, Context(), "main InventoryPanel layout");
     main_layout->SetIsUsingZeroedFrameMargins(false);
@@ -87,7 +85,7 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
                     Layout *header = new Layout(HORIZONTAL, Context());
                     {
                         m_game_tip_header_label = new ValueLabel<Uint32>(FORMAT("GAME TIP (%u of " << m_game_tip_data->ValueCount() << ')'), Util::TextToUint<Uint32>, Context());
-            //             m_game_tip_header_label->SetFontHeightRatio(s_grid_label_font_height_ratio);
+                        m_game_tip_header_label->SetFontStyle("inventory_panel_small");
                         m_game_tip_header_label->SetIsHeightFixedToTextHeight(true);
                         m_game_tip_header_label->SetValue(1); // NOTE: TEMP
                         // TODO: hide-game-tips button
@@ -98,7 +96,7 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
                     Layout *mid = new Layout(HORIZONTAL, Context());
                     {
                         m_game_tip_text_label = new Label("X", Context());
-            //             m_game_tip_text_label->SetFontHeightRatio(s_grid_label_font_height_ratio);
+                        m_game_tip_text_label->SetFontStyle("inventory_panel_small");
                         mid->AttachChild(m_game_tip_text_label);
 
                         m_game_tip_picture_label = new Label(Resource<GlTexture>(), Context());
@@ -109,12 +107,12 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
                     Layout *footer = new Layout(HORIZONTAL, Context());
                     {
                         m_game_tip_previous_button = new Button("PREVIOUS TIP", Context());
-            //             m_game_tip_previous_button->SetFontHeightRatio(s_grid_label_font_height_ratio);
+                        m_game_tip_previous_button->SetFontStyle("inventory_panel_small");
                         m_game_tip_previous_button->SetIsHeightFixedToTextHeight(true);
                         footer->AttachChild(m_game_tip_previous_button);
 
                         m_game_tip_next_button = new Button("NEXT TIP", Context());
-            //             m_game_tip_next_button->SetFontHeightRatio(s_grid_label_font_height_ratio);
+                        m_game_tip_next_button->SetFontStyle("inventory_panel_small");
                         m_game_tip_next_button->SetIsHeightFixedToTextHeight(true);
                         footer->AttachChild(m_game_tip_next_button);
                     }
@@ -186,8 +184,6 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
     }
     this->AttachChild(main_layout);
     SetMainWidget(main_layout);
-    
-    SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 1.0f)));    
 }
 
 SignalSender0 const *InventoryPanel::SenderEndGame ()
@@ -324,19 +320,19 @@ void InventoryPanel::CreateInventoryButtonAndFriends (ItemType item_type, Contai
             ws->AttachChild(m_inventory_button[item_type]);
             // middle of the stack
             m_upgrade_indication_label[item_type] = new Label("X", Context());
-//             m_upgrade_indication_label[item_type]->SetFontHeightRatio(0.25f * s_inventory_button_size_ratios[Dim::Y]); // HIPPO
+            m_upgrade_indication_label[item_type]->SetFontHeightRatio(0.25f * s_inventory_button_size_ratios[Dim::Y]);
             m_upgrade_indication_label[item_type]->SetAlignment(Alignment2(CENTER, CENTER));
             m_upgrade_indication_label[item_type]->SetTextColor(Color(0.5f, 0.5f, 0.5f, 0.6f));
             ws->AttachChild(m_upgrade_indication_label[item_type]);
             // top of the stack
             CellPaddingWidget *cpw = new CellPaddingWidget(Context());
             cpw->SetAlignment(Alignment2(LEFT, BOTTOM));
-            cpw->SetFrameMarginRatios(0.1f * s_inventory_button_size_ratios);
+            cpw->SetFrameMarginsRatios(0.1f * s_inventory_button_size_ratios);
             {
                 m_upgrade_level_label[item_type] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, Context());
             //     m_upgrade_level_label[item_type]->FixSizeRatios(0.3f * s_inventory_button_size_ratios);
                 m_upgrade_level_label[item_type]->FixWidth(m_upgrade_level_label[item_type]->Height());
-                m_upgrade_level_label[item_type]->SetBackground(new WidgetBackgroundTextured(GlTexture::Load("resources/radiobutton_black.png")));
+                m_upgrade_level_label[item_type]->SetBackgroundStyle("upgrade_level"); // see Dis::Master::Master()
                 cpw->AttachChild(m_upgrade_level_label[item_type]);
             }
             ws->AttachChild(cpw);

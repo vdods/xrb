@@ -41,6 +41,8 @@ LineEdit::LineEdit (Uint32 character_limit, WidgetContext &context, std::string 
     m_character_filter = CharacterFilter(CharacterFilter::DENY, "");
     m_is_read_only = false;
 
+    SetBackgroundStyle(StyleSheet::BackgroundType::LINE_EDIT);
+    
     ASSERT1(m_text.empty());
     ASSERT1(m_last_text_update.empty());
 
@@ -123,18 +125,6 @@ void LineEdit::SetRenderFont (Resource<Font> const &render_font)
 {
     TextWidget::SetRenderFont(render_font);
     UpdateTextWidth();
-}
-
-void LineEdit::HandleChangedWidgetSkin ()
-{
-    TextWidget::HandleChangedWidgetSkin();
-    SetRenderBackgroundNeedsUpdate();
-}
-
-void LineEdit::UpdateRenderBackground ()
-{
-    TextWidget::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::LINE_EDIT));
 }
 
 void LineEdit::HandleFrame ()

@@ -46,9 +46,6 @@ protected:
 
     virtual void SetRenderFont (Resource<Font> const &render_font);
 
-    virtual void HandleChangedWidgetSkin ();
-    virtual void UpdateRenderBackground ();
-
     // process one computation frame
     virtual void HandleFrame ();
     // process a key event

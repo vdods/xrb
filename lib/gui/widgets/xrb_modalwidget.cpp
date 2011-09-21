@@ -19,6 +19,7 @@ ModalWidget::ModalWidget (WidgetContext &context, std::string const &name)
     :
     ContainerWidget(context, name)
 {
+    SetBackgroundStyle(StyleSheet::BackgroundType::MODAL_WIDGET);
 }
 
 void ModalWidget::Shutdown ()
@@ -33,18 +34,6 @@ void ModalWidget::Shutdown ()
 void ModalWidget::HandleActivate ()
 {
     Focus();
-}
-
-void ModalWidget::UpdateRenderBackground ()
-{
-    ContainerWidget::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::MODAL_WIDGET));
-}
-
-void ModalWidget::HandleChangedWidgetSkin ()
-{
-    ContainerWidget::HandleChangedWidgetSkin();
-    SetRenderBackgroundNeedsUpdate();
 }
 
 } // end of namespace Xrb

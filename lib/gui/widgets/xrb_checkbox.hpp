@@ -24,44 +24,49 @@ public:
     CheckBox (WidgetContext &context, std::string const &name = "CheckBox");
     virtual ~CheckBox () { }
 
-    inline bool IsChecked () const { return m_is_checked; }
+    bool IsChecked () const { return m_is_checked; }
+    std::string const &CheckedBackgroundStyle () const { return m_checked_background_style; }
+
+    void SetCheckedBackgroundStyle (std::string const &style);
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors
-    inline SignalSender1<bool> const *SenderCheckedStateChanged () { return &m_sender_checked_state_changed; }
-    inline SignalSender0 const *SenderChecked () { return &m_sender_checked; }
-    inline SignalSender0 const *SenderUnchecked () { return &m_sender_unchecked; }
+    SignalSender1<bool> const *SenderCheckedStateChanged () { return &m_sender_checked_state_changed; }
+    SignalSender0 const *SenderChecked () { return &m_sender_checked; }
+    SignalSender0 const *SenderUnchecked () { return &m_sender_unchecked; }
     // end SignalSender accessors
     //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // SignalReceiver accessors
-    inline SignalReceiver1<bool> const *ReceiverSetIsChecked () { return &m_receiver_set_is_checked; }
-    inline SignalReceiver0 const *ReceiverCheck () { return &m_receiver_check; }
-    inline SignalReceiver0 const *ReceiverUncheck () { return &m_receiver_uncheck; }
-    inline SignalReceiver0 const *ReceiverToggleIsChecked () { return &m_receiver_toggle_is_checked; }
+    SignalReceiver1<bool> const *ReceiverSetIsChecked () { return &m_receiver_set_is_checked; }
+    SignalReceiver0 const *ReceiverCheck () { return &m_receiver_check; }
+    SignalReceiver0 const *ReceiverUncheck () { return &m_receiver_uncheck; }
+    SignalReceiver0 const *ReceiverToggleIsChecked () { return &m_receiver_toggle_is_checked; }
     // end SignalReceiver accessors
     //////////////////////////////////////////////////////////////////////////
 
     virtual void SetIsEnabled (bool is_enabled);
     void SetIsChecked (bool is_checked);
 
-    inline void Check () { SetIsChecked(true); }
-    inline void Uncheck () { SetIsChecked(false); }
+    void Check () { SetIsChecked(true); }
+    void Uncheck () { SetIsChecked(false); }
     void ToggleIsChecked ();
 
 protected:
 
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-    virtual void HandleChangedWidgetSkin ();
+    virtual void HandleChangedStyleSheet ();
     virtual void UpdateRenderBackground ();
-    virtual void UpdateRenderPicture ();
+
+    virtual void HandleReleased ();
 
     virtual void HandleIsCheckedChanged () { }
 
 private:
 
     bool m_is_checked;
+    // style sheet stuff
+    std::string m_checked_background_style;
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSenders

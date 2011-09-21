@@ -29,47 +29,32 @@ class Label : public TextWidget
 {
 public:
 
-    /** Constructs a Label using the specified text.  By default, no
-      * justification will be done, though the text will be centered
-      * horizontally and vertically.
-      * @brief Constructs a text label.
-      */
+    /// Constructs a Label using the specified text.  By default, no justification will be done,
+    /// though the text will be centered horizontally and vertically.
     Label (std::string const &text, WidgetContext &context, std::string const &name = "Label");
-    /** The picture texture is stretched to fill the area inside the
-      * frame margins, adding the content margins.
-      * @brief Constructs a picture label.
-      */
+    /// Constructs a picture Label using the given texture.  The picture texture is stretched
+    /// to fill the area inside the frame margins, adding the content margins.
     Label (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name = "Label");
-    /** @brief Destructor.
-      */
     virtual ~Label () { }
 
     // ///////////////////////////////////////////////////////////////////////
     // public accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    /** Alignment values for the X and Y components.  The X component
-      * alignment can be one of @c LEFT , @c CENTER , @c RIGHT , or
-      * @c SPACED .  The Y component alignment can be one of @c TOP ,
-      * @c CENTER , @c BOTTOM , or @c SPACED .
-      * @brief Returns the alignment vector.
-      */
+    /// @brief Returns the alignment vector.
+    /// @details Alignment values for the X and Y components.  The X component alignment can be one of
+    /// @c LEFT , @c CENTER , @c RIGHT , or @c SPACED .  The Y component alignment can be one of @c TOP ,
+    /// @c CENTER , @c BOTTOM , or @c SPACED .
     Alignment2 const &GetAlignment () const { return m_alignment; }
-    /** @brief Returns true iff word-wrapping is enabled.
-      */
+    /// Returns true iff word-wrapping is enabled.
     bool WordWrap () const { return m_word_wrap; }
-    /** @brief Returns true if this is a picture label, false for text label.
-      */
+    /// Returns true if this is a picture label, false for text label.
     bool IsPictureLabel () const { return m_is_picture_label; }
-    /** If this is a text label, the returned resource will be invalid.
-      * @brief Returns the resourced GlTexture picture for this label.
-      */
+    /// @brief Returns the resourced GlTexture picture for this label.  If this is a text label, the returned resource will be invalid.
     Resource<GlTexture> const &Picture () const { return m_picture; }
-    /** Applies only when this is a picture label.  When the picture doesn't
-      * fill up the entire content area, it will be centered appropriately.
-      * @brief Iff true, indicates that the picture will be resized just small
-      *        enough to preserve its aspect ratio.
-      */
+    /// @brief Iff true, indicates that the picture will be resized just small enough to preserve its aspect ratio.
+    /// @details Applies only when this is a picture label.  When the picture doesn't fill up the entire
+    /// content area, it will be centered appropriately.
     bool PictureKeepsAspectRatio () const { return m_picture_keeps_aspect_ratio; }
 
     // ///////////////////////////////////////////////////////////////////////

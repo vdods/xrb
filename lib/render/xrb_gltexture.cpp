@@ -35,13 +35,9 @@ std::string GlTexture::LoadParameters::ResourceName () const
 bool GlTexture::LoadParameters::IsLessThan (ResourceLoadParameters const &p) const
 {
     LoadParameters const &rhs = *DStaticCast<LoadParameters const *>(&p);
-    int comparison = m_path.compare(rhs.m_path);
-    if (comparison < 0)
-        return true;
-    else if (comparison > 0)
-        return false;
-    else
-        return m_flags < rhs.m_flags;
+    return m_path < rhs.m_path
+           ||
+           (m_path == rhs.m_path && m_flags < rhs.m_flags);
 }
 
 void GlTexture::LoadParameters::Fallback ()

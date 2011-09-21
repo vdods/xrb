@@ -26,9 +26,15 @@ public:
     virtual ~Button () { }
 
     bool IsPressed () const { return m_is_pressed; }
-    Uint32 Id () const { return m_id; }
+//     Uint32 Id () const { return m_id; }
+    std::string const &IdleBackgroundStyle () const { return m_idle_background_style; }
+    std::string const &PressedBackgroundStyle () const { return m_pressed_background_style; }
+    std::string const &MouseoverBackgroundStyle () const { return m_mouseover_background_style; }
 
-    void SetId (Uint32 id) { m_id = id; }
+//     void SetId (Uint32 id) { m_id = id; }
+    void SetIdleBackgroundStyle (std::string const &style);
+    void SetPressedBackgroundStyle (std::string const &style);
+    void SetMouseoverBackgroundStyle (std::string const &style);
 
     virtual void SetIsEnabled (bool is_enabled);
 
@@ -38,9 +44,9 @@ public:
     SignalSender0 const *SenderPressed () { return &m_sender_pressed; }
     SignalSender0 const *SenderReleased () { return &m_sender_released; }
 
-    SignalSender2<bool,Uint32> const *SenderPressedStateChangedWithId () { return &m_sender_pressed_state_changed_with_id; }
-    SignalSender1<Uint32> const *SenderPressedWithId () { return &m_sender_pressed_with_id; }
-    SignalSender1<Uint32> const *SenderReleasedWithId () { return &m_sender_released_with_id; }
+//     SignalSender2<bool,Uint32> const *SenderPressedStateChangedWithId () { return &m_sender_pressed_state_changed_with_id; }
+//     SignalSender1<Uint32> const *SenderPressedWithId () { return &m_sender_pressed_with_id; }
+//     SignalSender1<Uint32> const *SenderReleasedWithId () { return &m_sender_released_with_id; }
     // end of SignalSender accessors
     //////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +57,6 @@ protected:
     virtual void HandleMouseoverOff ();
     virtual void HandlePressed ();
     virtual void HandleReleased ();
-    virtual void HandleChangedWidgetSkin ();
     virtual void UpdateRenderBackground ();
 
 private:
@@ -60,18 +65,23 @@ private:
 
     // indicates if a mouse button is currently pressed on this widget
     bool m_is_pressed;
-    // optionally specifiable identifier that can be sent when the button state changes
-    Uint32 m_id;
+//     // optionally specifiable identifier that can be sent when the button state changes
+//     Uint32 m_id;
 
+    // style sheet stuff
+    std::string m_idle_background_style;
+    std::string m_pressed_background_style;
+    std::string m_mouseover_background_style;
+    
     //////////////////////////////////////////////////////////////////////////
     // SignalSenders
     SignalSender1<bool> m_sender_pressed_state_changed;
     SignalSender0 m_sender_pressed;
     SignalSender0 m_sender_released;
 
-    SignalSender2<bool,Uint32> m_sender_pressed_state_changed_with_id;
-    SignalSender1<Uint32> m_sender_pressed_with_id;
-    SignalSender1<Uint32> m_sender_released_with_id;
+//     SignalSender2<bool,Uint32> m_sender_pressed_state_changed_with_id;
+//     SignalSender1<Uint32> m_sender_pressed_with_id;
+//     SignalSender1<Uint32> m_sender_released_with_id;
     // end of SignalSenders
     //////////////////////////////////////////////////////////////////////////
 }; // end of class Button

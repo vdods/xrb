@@ -18,6 +18,8 @@ WidgetStack::WidgetStack (WidgetContext &context, std::string const &name)
     :
     ContainerWidget(context, name)
 {
+    SetFrameMarginsStyle(StyleSheet::MarginsType::ZERO);
+    SetContentMarginsStyle(StyleSheet::MarginsType::ZERO);
     DirtyContentsSizeProperties();
 }
 

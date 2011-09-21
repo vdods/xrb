@@ -25,9 +25,9 @@ namespace Xrb {
   * to its parent.
   *
   * The ModalWidget class has a default widget background, provided by
-  * WidgetSkin.  There are facilities to handle the necessary updating
+  * StyleSheet.  There are facilities to handle the necessary updating
   * automatically (necessary only if you want the ModalWidget background
-  * provided by WidgetSkin).
+  * provided by StyleSheet).
   *
   * @brief Baseclass for modal widgets.
   */
@@ -47,10 +47,6 @@ protected:
 
     /// Sets focus
     virtual void HandleActivate ();
-    /// Sets the render background to the WidgetSkin's ModalWidget background.
-    virtual void UpdateRenderBackground ();
-    /// Used to catch when the modal widget background is changed.
-    virtual void HandleChangedWidgetSkin ();
 }; // end of class ModalWidget
 
 } // end of namespace Xrb

@@ -68,11 +68,11 @@ Screen *Screen::Create (ScreenCoord width, ScreenCoord height, Uint32 bit_depth,
     Screen *retval = new Screen(angle);
     retval->m_device_size.SetComponents(width, height);         // TODO: this initialization should be moved to a constructor
     retval->m_original_screen_size = retval->RotatedScreenSize(retval->m_device_size);
-    // this resizing must happen before the widget skin is created.
+    // this resizing must happen before the style sheet is created.
     retval->MoveTo(ScreenCoordVector2::ms_zero);
     retval->ContainerWidget::Resize(retval->m_original_screen_size);
     retval->FixSize(retval->m_original_screen_size);
-    retval->SetBackground(NULL);
+    retval->SetBackgroundStyle(StyleSheet::BackgroundType::TRANSPARENT);
 
     return retval;
 }

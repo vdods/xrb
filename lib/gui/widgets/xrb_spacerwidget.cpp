@@ -16,7 +16,7 @@ SpacerWidget::SpacerWidget (WidgetContext &context)
     :
     Widget(context, "SpacerWidget")
 {
-    SetBackground(NULL);
+    SetBackgroundStyle(StyleSheet::BackgroundType::TRANSPARENT);
 }
 
 } // end of namespace Xrb

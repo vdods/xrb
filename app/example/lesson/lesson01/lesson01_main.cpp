@@ -129,20 +129,20 @@ int main (int argc, char **argv)
     requires during construction.  Each Widget therefore belongs to exactly
     one Screen, and (for now) can't be moved between Screens.
 
-    A WidgetSkin specifies the look of the various widgets we will use to create
-    our GUI interface.  WidgetSkin properties include fonts and font sizes, margin
+    A StyleSheet specifies the look of the various widgets we will use to create
+    our GUI interface.  StyleSheet properties include fonts and font sizes, margin
     sizes, various textures and backgrounds.  Each WidgetContext has exactly one
-    WidgetSkin, which applies to all Widgets associated to that context.
-    Specifying a WidgetSkin is optional, but if none is specified, very austere
+    StyleSheet, which applies to all Widgets associated to that context.
+    Specifying a StyleSheet is optional, but if none is specified, very austere
     default skin properties will be used.
 
-    Create a WidgetSkin, populate it with default values, and set the WidgetSkin
+    Create a StyleSheet, populate it with default values, and set the StyleSheet
     property of the WidgetContext associated to the Screen.  The WidgetContext
-    takes ownership of the WidgetSkin, so we don't need to worry about deleting it.
+    takes ownership of the StyleSheet, so we don't need to worry about deleting it.
     @code */
-    WidgetSkin *widget_skin = new WidgetSkin();
-    widget_skin->PopulateUsingDefaults();
-    screen->Context().SetWidgetSkin(widget_skin);
+    StyleSheet *style_sheet = new StyleSheet();
+    style_sheet->PopulateUsingDefaults();
+    screen->Context().SetStyleSheet(style_sheet);
     /* @endcode
     There are custom subclasses of Widget (such as Label, LineEdit, Button,
     Layout, etc) to perform various functions.  Widgets are organized in a

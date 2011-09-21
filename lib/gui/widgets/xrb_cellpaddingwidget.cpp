@@ -22,9 +22,9 @@ CellPaddingWidget::CellPaddingWidget (WidgetContext &context, std::string const 
     m_accepts_mouseover = true;
     m_alignment = Alignment2(CENTER, CENTER);
 
-    // there should be no frame margins for CellPaddingWidget, since it's
-    // more of a utility ContainerWidget.
-    SetFrameMargins(ScreenCoordVector2::ms_zero);
+    // there should be no frame margins for CellPaddingWidget, since it's more of a utility ContainerWidget.
+    SetFrameMarginsStyle(StyleSheet::MarginsType::ZERO);
+    SetContentMarginsStyle(StyleSheet::MarginsType::ZERO);
 
     DirtyContentsSizeProperties();
 }

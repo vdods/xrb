@@ -20,7 +20,7 @@
 #include "xrb_margins.hpp"
 #include "xrb_resourcelibrary.hpp"
 #include "xrb_screencoord.hpp"
-#include "xrb_widgetskin.hpp"
+#include "xrb_stylesheet.hpp"
 
 namespace Xrb {
 
@@ -70,27 +70,30 @@ public:
     ScreenCoord PixelSize (Float size_ratio) const;
     /// Accessor for converting from pixel size value to screen proportion value.
     Float SizeRatio (ScreenCoord pixel_size) const;
+    /// Accessor for converting from [screen-proportion-based] margins ratios to [pixel-based] margins.
+    ScreenCoordMargins MarginsFromRatios (FloatMargins const &ratios) const;
+    /// Accessor for converting from [pixel-based] margins to [screen-proportion-based] margins ratios.
+    FloatMargins RatiosFromMargins (ScreenCoordMargins const &margins) const;
 
-    /// Returns the current WidgetSkin for this context.  NULL if none.  If there
-    /// is no WidgetSkin, default values will be returned by the WidgetSkin* accessors.
-    WidgetSkin const *GetWidgetSkin () const { return m_widget_skin; }
-    WidgetBackground const *WidgetSkin_Background (std::string const &type) const;
-    std::string const &WidgetSkin_FontPath (std::string const &type) const;
-    Float WidgetSkin_FontHeightRatio (std::string const &type) const; // when this argument type is changed, get rid of include "xrb_widgetskin.hpp"
-    ScreenCoord WidgetSkin_FontPixelHeight (std::string const &type) const;
-    Resource<Font> WidgetSkin_LoadFont (std::string const &type) const;
-    Resource<GlTexture> const &WidgetSkin_Texture (std::string const &type) const;
-    FloatMargins WidgetSkin_MarginsRatios (std::string const &type) const;
-    ScreenCoordMargins WidgetSkin_Margins (std::string const &type) const;
+    /// Returns the current StyleSheet for this context.  NULL if none.  If there
+    /// is no StyleSheet, default values will be returned by the StyleSheet* accessors.
+    StyleSheet const *GetStyleSheet () const { return m_style_sheet; }
+    WidgetBackground const *StyleSheet_Background (std::string const &type) const;
+    std::string const &StyleSheet_FontPath (std::string const &type) const;
+    Float StyleSheet_FontHeightRatio (std::string const &type) const;
+    ScreenCoord StyleSheet_FontPixelHeight (std::string const &type) const;
+    Resource<GlTexture> const &StyleSheet_Texture (std::string const &type) const;
+    FloatMargins const &StyleSheet_MarginsRatios (std::string const &type) const;
+    ScreenCoordMargins StyleSheet_Margins (std::string const &type) const;
 
-    /// Setting the WidgetSkin will affect all Widgets associated to this WidgetContext.
-    /// If NULL is provided, default values will be returned by the WidgetSkin* accessors.
-    /// If the owned widget skin is changed, WidgetSkinWasChanged() should be called,
-    /// not SetWidgetSkin again.
-    void SetWidgetSkin (WidgetSkin *widget_skin);
-    /// Call this method if you change the context-owned WidgetSkin -- the widgets
+    /// Setting the StyleSheet will affect all Widgets associated to this WidgetContext.
+    /// If NULL is provided, default values will be returned by the StyleSheet* accessors.
+    /// If the owned style sheet is changed, StyleSheetWasChanged() should be called,
+    /// not SetStyleSheet again.
+    void SetStyleSheet (StyleSheet *style_sheet);
+    /// Call this method if you change the context-owned StyleSheet -- the widgets
     /// associated with this context will be informed of the change.
-    void WidgetSkinWasChanged ();
+    void StyleSheetWasChanged ();
 
 private:
 
@@ -111,7 +114,7 @@ private:
 
     EventQueue *m_event_queue;
     Screen &m_screen;
-    WidgetSkin *m_widget_skin;
+    StyleSheet *m_style_sheet;
     WidgetSet m_widget_set;
     
     friend class Screen; // only Screen can construct/destruct one of these

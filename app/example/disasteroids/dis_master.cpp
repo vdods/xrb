@@ -24,7 +24,7 @@
 #include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp"
 #include "xrb_widgetcontext.hpp"
-#include "xrb_widgetskin.hpp"
+#include "xrb_stylesheet.hpp"
 
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
 
@@ -70,51 +70,73 @@ Master::Master (Screen *const screen)
 
     m_high_scores.Read(HIGH_SCORES_FILENAME);
 
-    // set up the custom disasteroids WidgetSkin.  populate it with the defaults, then override some.
-    WidgetSkin *widget_skin = new WidgetSkin();
-    widget_skin->PopulateUsingDefaults();
+    // set up the custom disasteroids StyleSheet.  populate it with the defaults, then override some.
+    StyleSheet *style_sheet = new StyleSheet();
+    style_sheet->PopulateUsingDefaults();
     
-    widget_skin->SetBackground(
-        WidgetSkin::BackgroundType::BUTTON_IDLE,
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::BUTTON_IDLE,
         new WidgetBackgroundTextured3Way(
             GlTexture::Load("resources/button_left_black.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
-    widget_skin->SetBackground(
-        WidgetSkin::BackgroundType::BUTTON_MOUSEOVER,
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::BUTTON_MOUSEOVER,
         new WidgetBackgroundTextured3Way(
             GlTexture::Load("resources/button_left_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
-    widget_skin->SetBackground(
-        WidgetSkin::BackgroundType::BUTTON_PRESSED,
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::BUTTON_PRESSED,
         new WidgetBackgroundTextured3Way(
             GlTexture::Load("resources/button_left_green.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
 
-    widget_skin->SetBackground(
-        WidgetSkin::BackgroundType::CHECK_BOX,
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::CHECK_BOX_UNCHECKED,
         new WidgetBackgroundTextured(
             GlTexture::Load("resources/radiobutton_black.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
-    widget_skin->SetTexture(
-        WidgetSkin::TextureType::CHECK_BOX,
-        GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/)); // this one is square
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::CHECK_BOX_MOUSEOVER,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::CHECK_BOX_PRESSED,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_yellow.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::CHECK_BOX_CHECKED,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_green.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
 
-    widget_skin->SetBackground(
-        WidgetSkin::BackgroundType::RADIO_BUTTON,
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::RADIO_BUTTON_UNCHECKED,
         new WidgetBackgroundTextured(
             GlTexture::Load("resources/radiobutton_black.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
-    widget_skin->SetTexture(
-        WidgetSkin::TextureType::RADIO_BUTTON,
-        GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/)); // this one is square
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::RADIO_BUTTON_MOUSEOVER,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::RADIO_BUTTON_PRESSED,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_yellow.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
+    style_sheet->SetBackground(
+        StyleSheet::BackgroundType::RADIO_BUTTON_CHECKED,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_green.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
 
-    // custom WidgetSkin property types:
-    widget_skin->SetFont("game_status", WidgetSkin::ms_fallback_font_path, 0.05f);
-    widget_skin->SetFont("giant", WidgetSkin::ms_fallback_font_path, 0.1f);
+    // custom StyleSheet property types:
+    style_sheet->SetBackground("black_half_opaque", new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+    style_sheet->SetBackground("upgrade_level",     new WidgetBackgroundTextured(GlTexture::Load("resources/radiobutton_black.png")));
+    style_sheet->SetBackground("game_demo",         new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f))); // HIPPO TEMP
+    style_sheet->SetFont("inventory_panel_small", StyleSheet::ms_fallback_font_path, 0.018f); // HIPPO use particular font path
+    style_sheet->SetFont("hud_element",           StyleSheet::ms_fallback_font_path, 0.05f);  // HIPPO use particular font path
+    style_sheet->SetFont("giant",                 StyleSheet::ms_fallback_font_path, 0.1f);   // HIPPO use particular font path
     
     // m_screen takes ownership of the pointer.
-    m_screen->Context().SetWidgetSkin(widget_skin);
+    m_screen->Context().SetStyleSheet(style_sheet);
 }
 
 Master::~Master ()

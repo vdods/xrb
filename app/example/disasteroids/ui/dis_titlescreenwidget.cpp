@@ -42,10 +42,10 @@ TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool sh
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
     {
         CellPaddingWidget *logo_padding_widget = new CellPaddingWidget(Context(), "logo padding widget");
-//         logo_padding_widget->FixHeightRatio(0.20f); // HIPPO
+        logo_padding_widget->FixHeightRatio(0.20f);
         {
             m_logo_label = new Label("DISASTEROIDS", Context(), "logo label");
-//             m_logo_label->SetFontHeightRatio(0.10f); // HIPPO
+            m_logo_label->SetFontStyle("giant");
             logo_padding_widget->AttachChild(m_logo_label);
         }
         main_layout->AttachChild(logo_padding_widget);
@@ -53,14 +53,14 @@ TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool sh
         WidgetStack *center_panel_widget_stack = new WidgetStack(Context(), "center panel widget stack");
         {
             m_game_widget_dummy = new Label("game demo widget", Context(), "game widget dummy");
-//             m_game_widget_dummy->SetFontHeightRatio(0.10f); // HIPPO
-            m_game_widget_dummy->SetBackground(new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f)));
+            m_game_widget_dummy->SetFontStyle("giant");
+            m_game_widget_dummy->SetBackgroundStyle("game_demo");
             center_panel_widget_stack->AttachChild(m_game_widget_dummy);
 
             CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget(Context(), "high scores padding widget");
             {
                 m_high_scores_widget = new HighScoresWidget(Context());
-                m_high_scores_widget->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                m_high_scores_widget->SetBackgroundStyle("black_half_opaque");
                 high_scores_padding_widget->AttachChild(m_high_scores_widget);
                 m_high_scores_widget->Hide();
             }

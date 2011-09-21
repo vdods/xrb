@@ -31,7 +31,7 @@ WorldViewWidget::WorldViewWidget (WidgetContext &context, std::string const &nam
     // and size
     ComputeTransform();
 
-    SetBackground(NULL);
+    SetBackgroundStyle(StyleSheet::BackgroundType::TRANSPARENT);
 }
 
 WorldViewWidget::~WorldViewWidget ()

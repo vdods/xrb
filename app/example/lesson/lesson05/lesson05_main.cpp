@@ -534,11 +534,11 @@ int main (int argc, char **argv)
         CleanUp();
         return 2;
     }
-    // Create and use a default-valued WidgetSkin.  The WidgetContext takes
-    // ownership of the WidgetSkin, so we don't need to worry about deleting it.
-    WidgetSkin *widget_skin = new WidgetSkin();
-    widget_skin->PopulateUsingDefaults();
-    screen->Context().SetWidgetSkin(widget_skin);
+    // Create and use a default-valued StyleSheet.  The WidgetContext takes
+    // ownership of the StyleSheet, so we don't need to worry about deleting it.
+    StyleSheet *style_sheet = new StyleSheet();
+    style_sheet->PopulateUsingDefaults();
+    screen->Context().SetStyleSheet(style_sheet);
 
     // Here is where the application-specific code begins.
     {

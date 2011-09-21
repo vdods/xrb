@@ -136,12 +136,12 @@ int main (int argc, char **argv)
         CleanUp();
         return 2;
     }
-    // Create a WidgetSkin, populate it with default values, and set the WidgetSkin
+    // Create a StyleSheet, populate it with default values, and set the StyleSheet
     // property of the WidgetContext associated to the Screen.  The WidgetContext
-    // takes ownership of the WidgetSkin, so we don't need to worry about deleting it.
-    WidgetSkin *widget_skin = new WidgetSkin();
-    widget_skin->PopulateUsingDefaults();
-    screen->Context().SetWidgetSkin(widget_skin);
+    // takes ownership of the StyleSheet, so we don't need to worry about deleting it.
+    StyleSheet *style_sheet = new StyleSheet();
+    style_sheet->PopulateUsingDefaults();
+    screen->Context().SetStyleSheet(style_sheet);
 
     /* @endcode
     At this point, the singletons and the Pal have been initialized, the video
@@ -222,7 +222,7 @@ int main (int argc, char **argv)
         We'll also double the font size to make it look "HELLA TUFF."
         @code */
         Button *quit_button = new Button("Press and release this button to QUIT", screen->Context(), "quit button");
-        //quit_button->SetFontHeight(2 * quit_button->GetFont()->PixelHeight()); // HIPPO
+        quit_button->SetFontPixelHeight(2 * quit_button->GetFont()->PixelHeight());
         main_layout->AttachChild(quit_button);
         /* @endcode
         Create another grid Layout for another set of demo widgets.

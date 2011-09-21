@@ -91,7 +91,7 @@ protected:
     ScreenCoordMargins CalculateLayoutFrameMargins () const;
     ScreenCoordMargins CalculateLayoutSpacingMargins () const;
 
-    virtual void HandleChangedWidgetSkin ();
+    virtual void HandleChangedStyleSheet ();
 
     virtual void HandleChangedLayoutFrameMargins ();
     virtual void HandleChangedLayoutSpacingMargins ();
@@ -156,10 +156,10 @@ private:
     // would store the number of columns in a row-major grid layout
     Uint32 m_major_count;
 
-    // indicates if the zero vector (true) or WidgetSkin frame margins
+    // indicates if the zero vector (true) or StyleSheet frame margins
     // (false) is to be used for the frame margin size.
     bool m_is_using_zeroed_frame_margins;
-    // indicates if the zero vector (true) or WidgetSkin layout spacing
+    // indicates if the zero vector (true) or StyleSheet layout spacing
     // margins (false) is to be used for the layout spacing margin size.
     bool m_is_using_zeroed_layout_spacing_margins;
 

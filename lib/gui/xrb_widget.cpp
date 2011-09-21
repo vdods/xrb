@@ -52,17 +52,17 @@ Widget::Widget (WidgetContext &context, std::string const &name)
     m_color_mask = Color::ms_identity_color_mask;
     m_remove_from_widget_context_upon_destruction = true;
     m_stack_priority = SP_NEUTRAL;
+    m_background_style = StyleSheet::BackgroundType::TRANSPARENT;
     m_background = NULL;
     m_render_background = NULL;
     m_render_background_needs_update = true;
-    m_frame_margins = ScreenCoordVector2::ms_zero; // HIPPO
-    m_content_margins = ScreenCoordVector2::ms_zero;
+    m_frame_margins_style = StyleSheet::MarginsType::DEFAULT_FRAME;
+    m_frame_margins_ratios = StyleSheet::ms_fallback_margins_ratios;
+    m_content_margins_style = StyleSheet::MarginsType::DEFAULT_CONTENT;
+    m_content_margins_ratios = StyleSheet::ms_fallback_margins_ratios;
     m_parent = NULL;
 
     m_context.AddWidget(*this);
-
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_FRAME)); // HIPPO
-    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_CONTENT));
 }
 
 Widget::~Widget ()
@@ -116,6 +116,40 @@ bool Widget::IsMouseGrabbed () const
 bool Widget::IsModal () const
 {
     return Context().GetScreen().IsAttachedAsModalChildWidget(*this);
+}
+
+WidgetBackground const *Widget::Background () const
+{
+    if (BackgroundStyleIsOverridden())
+        return m_background;
+    else
+        return Context().StyleSheet_Background(m_background_style);
+}
+
+ScreenCoordMargins Widget::FrameMargins () const
+{
+    return Context().MarginsFromRatios(FrameMarginsRatios());
+}
+
+FloatMargins const &Widget::FrameMarginsRatios () const
+{
+    if (FrameMarginsStyleIsOverridden())
+        return m_frame_margins_ratios;
+    else
+        return Context().StyleSheet_MarginsRatios(m_frame_margins_style);
+}
+
+ScreenCoordMargins Widget::ContentMargins () const
+{
+    return Context().MarginsFromRatios(ContentMarginsRatios());
+}
+
+FloatMargins const &Widget::ContentMarginsRatios () const
+{
+    if (ContentMarginsStyleIsOverridden())
+        return m_content_margins_ratios;
+    else
+        return Context().StyleSheet_MarginsRatios(m_content_margins_style);
 }
 
 ScreenCoordVector2 Widget::AdjustedSize (ScreenCoordVector2 const &size) const
@@ -270,50 +304,75 @@ void Widget::SetStackPriority (StackPriority stack_priority)
     }
 }
 
-void Widget::SetBackground (WidgetBackground *background)
+void Widget::SetBackgroundStyle (std::string const &style)
 {
+    ASSERT1(!style.empty() && "don't specify an empty style, use SetBackground to override the value explicitly");
+    if (m_background_style != style)
+    {
+        m_background_style = style;
+        SetRenderBackgroundNeedsUpdate();
+    }
+}
+
+void Widget::SetBackground (WidgetBackground const *background)
+{
+    m_background_style.clear(); // override style sheet by setting the style string to empty
+    ASSERT1(BackgroundStyleIsOverridden());
     Delete(m_background);
     m_background = background;
     SetRenderBackgroundNeedsUpdate();
 }
 
-void Widget::SetFrameMargins (ScreenCoordMargins const &frame_margins)
+void Widget::SetFrameMarginsStyle (std::string const &style)
 {
-    if (m_frame_margins != frame_margins)
+    ASSERT1(!style.empty() && "don't specify an empty style, use SetFrameMargins[Ratios] to override the value explicitly");
+    if (m_frame_margins_style != style)
     {
-        m_frame_margins = frame_margins;
+        m_frame_margins_style = style;
         HandleChangedFrameMargins();
     }
 }
 
-void Widget::SetFrameMarginRatios (FloatMargins const &frame_margin_ratios)
+void Widget::SetFrameMargins (ScreenCoordMargins const &frame_margins)
 {
-    ScreenCoord size_ratio_basis = Context().SizeRatioBasis();
-    ScreenCoordMargins calculated_frame_margins((frame_margin_ratios * Float(size_ratio_basis)).StaticCast<ScreenCoord>());
-    SetFrameMargins(calculated_frame_margins);
+    SetFrameMarginsRatios(Context().RatiosFromMargins(frame_margins));
 }
 
-void Widget::SetContentMargins (ScreenCoordMargins const &content_margins)
+void Widget::SetFrameMarginsRatios (FloatMargins const &frame_margins_ratios)
 {
-    ScreenCoordMargins adjusted_content_margins(
-        ScreenCoordVector2(
-            Max(content_margins.m_bottom_left[Dim::X], -m_frame_margins.m_bottom_left[Dim::X]),
-            Max(content_margins.m_bottom_left[Dim::Y], -m_frame_margins.m_bottom_left[Dim::Y])),
-        ScreenCoordVector2(
-            Max(content_margins.m_top_right[Dim::X], -m_frame_margins.m_top_right[Dim::X]),
-            Max(content_margins.m_top_right[Dim::Y], -m_frame_margins.m_top_right[Dim::Y])));
-    if (m_content_margins != adjusted_content_margins)
+    if (!m_frame_margins_style.empty() || m_frame_margins_ratios != frame_margins_ratios)
     {
-        m_content_margins = adjusted_content_margins;
+        m_frame_margins_style.clear(); // override style sheet by setting the style string to empty
+        ASSERT1(FrameMarginsStyleIsOverridden());
+        m_frame_margins_ratios = frame_margins_ratios;
+        HandleChangedFrameMargins();
+    }
+}
+
+void Widget::SetContentMarginsStyle (std::string const &style)
+{
+    ASSERT1(!style.empty() && "don't specify an empty style, use SetContentMargins[Ratios] to override the value explicitly");
+    if (m_content_margins_style != style)
+    {
+        m_content_margins_style = style;
         HandleChangedContentMargins();
     }
 }
 
-void Widget::SetContentMarginRatios (FloatMargins const &content_margin_ratios)
+void Widget::SetContentMargins (ScreenCoordMargins const &content_margins)
 {
-    ScreenCoord size_ratio_basis = Context().SizeRatioBasis();
-    ScreenCoordMargins calculated_content_margins((content_margin_ratios * Float(size_ratio_basis)).StaticCast<ScreenCoord>());
-    SetContentMargins(calculated_content_margins);
+    SetContentMarginsRatios(Context().RatiosFromMargins(content_margins));
+}
+
+void Widget::SetContentMarginsRatios (FloatMargins const &content_margins_ratios)
+{
+    if (!m_content_margins_style.empty() || m_content_margins_ratios != content_margins_ratios)
+    {
+        m_content_margins_style.clear(); // override style sheet by setting the style string to empty
+        ASSERT1(ContentMarginsStyleIsOverridden());
+        m_content_margins_ratios = content_margins_ratios;
+        HandleChangedContentMargins();
+    }
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -631,11 +690,11 @@ bool Widget::IsScreen () const
     return this == &Context().GetScreen();
 }
 
-void Widget::HandleChangedWidgetSkin ()
+void Widget::HandleChangedStyleSheet ()
 {
     SetRenderBackgroundNeedsUpdate();
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_FRAME));
-    SetContentMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::DEFAULT_CONTENT));
+    HandleChangedFrameMargins();
+    HandleChangedContentMargins();
 }
 
 bool Widget::HandleEvent (Event const *e)

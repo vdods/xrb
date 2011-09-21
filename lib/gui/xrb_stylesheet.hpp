@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_widgetskin.hpp by Victor Dods, created 2005/04/01
+// xrb_stylesheet.hpp by Victor Dods, created 2005/04/01
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_XRB_WIDGETSKIN_HPP_)
-#define _XRB_WIDGETSKIN_HPP_
+#if !defined(_XRB_STYLESHEET_HPP_)
+#define _XRB_STYLESHEET_HPP_
 
 #include "xrb.hpp"
 
@@ -26,51 +26,54 @@ namespace Xrb {
 class Screen;
 class WidgetBackground;
 
-/// See @ref section_widget_skinning "Widget Skinning" for more details.
-/// @brief Container class for widget skinning data.
-class WidgetSkin
+/// @brief Container class for style sheet data.
+/// @details Similar to the style sheets used in web technology.
+/// See @ref section_style_sheets "Style Sheets" for more details.
+class StyleSheet
 {
 public:
 
     /// This struct provides a "namespace" for the base background type strings.
     struct BackgroundType
     {
+        static std::string const TRANSPARENT;
         static std::string const MODAL_WIDGET;
         static std::string const BUTTON_IDLE;
         static std::string const BUTTON_MOUSEOVER;
         static std::string const BUTTON_PRESSED;
         static std::string const LINE_EDIT;
-        static std::string const CHECK_BOX;
-        static std::string const RADIO_BUTTON;
-        static std::string const TOOLBAR_BUTTON_IDLE;
-        static std::string const TOOLBAR_BUTTON_MOUSEOVER;
-        static std::string const TOOLBAR_BUTTON_CHECKED;
-        static std::string const TOOLBAR_BUTTON_PRESSED;
-    }; // end of struct WidgetSkin::BackgroundType
+        static std::string const CHECK_BOX_UNCHECKED;
+        static std::string const CHECK_BOX_MOUSEOVER;
+        static std::string const CHECK_BOX_PRESSED;
+        static std::string const CHECK_BOX_CHECKED;
+        static std::string const RADIO_BUTTON_UNCHECKED;
+        static std::string const RADIO_BUTTON_MOUSEOVER;
+        static std::string const RADIO_BUTTON_PRESSED;
+        static std::string const RADIO_BUTTON_CHECKED;
+    }; // end of struct StyleSheet::BackgroundType
 
     /// This struct provides a "namespace" for the base font type strings.
     struct FontType
     {
         static std::string const DEFAULT;
-    }; // end of struct WidgetSkin::FontType
+    }; // end of struct StyleSheet::FontType
 
     /// This struct provides a "namespace" for the base texture type strings.
     struct TextureType
     {
-        static std::string const CHECK_BOX;
-        static std::string const RADIO_BUTTON;
-    }; // end of struct WidgetSkin::TextureType
+    }; // end of struct StyleSheet::TextureType
 
     /// This struct provides a "namespace" for the base margins type strings.
     struct MarginsType
     {
+        static std::string const ZERO;
         static std::string const DEFAULT_FRAME;
         static std::string const DEFAULT_CONTENT;
         static std::string const LAYOUT_FRAME;
         static std::string const LAYOUT_SPACING; // this only uses m_bottom_left
         static std::string const CHECK_BOX_FRAME;
         static std::string const RADIO_BUTTON_FRAME;
-    }; // end of struct WidgetSkin::MarginsType
+    }; // end of struct StyleSheet::MarginsType
 
     static WidgetBackground const *const ms_fallback_background;
     static std::string const ms_fallback_font_path;
@@ -78,14 +81,14 @@ public:
     static Resource<GlTexture> const &ms_fallback_texture;
     static FloatMargins const &ms_fallback_margins_ratios;
 
-    /// Constructs a WidgetSkin with a bunch of really default/austere properties.
-    WidgetSkin ();
+    /// Constructs a StyleSheet with a bunch of really default/austere properties.
+    StyleSheet ();
     /// Deletes all the widget backgrounds.  The resourced properties will go out of scope and be automatically deleted here.
-    ~WidgetSkin ();
+    ~StyleSheet ();
 
-    /// Populates this WidgetSkin with sensible default values.
+    /// Populates this StyleSheet with sensible default values.
     void PopulateUsingDefaults (std::string const &font_path_override = ms_fallback_font_path);
-    /// Used by whatever owns the WidgetSkin (e.g. Screen) to unload everything (e.g. before the Gl singleton dies)
+    /// Used by whatever owns the StyleSheet (e.g. Screen) to unload everything (e.g. before the Gl singleton dies)
     void ReleaseAllResources ();
 
     /// This is the way to derive font [pixel] heights from height ratios.
@@ -107,10 +110,10 @@ public:
     Resource<GlTexture> const &GetTexture (std::string const &type) const;
     /// Returns a screen coordinate vector containing the requested margins type.
     /// @note The type string is case-insensitive.
-    FloatMargins MarginsRatios (std::string const &type) const;
+    FloatMargins const &MarginsRatios (std::string const &type) const;
 
     /// Sets the given type of widget background.  Specifying NULL will cause the WidgetBackground
-    /// to be entirely transparent.  This WidgetSkin takes ownership of the given pointer.  The
+    /// to be entirely transparent.  This StyleSheet takes ownership of the given pointer.  The
     /// background being replaced is deleted, if it exists.
     /// @note The type string is case-insensitive.
     void SetBackground (std::string const &type, WidgetBackground const *background);
@@ -133,7 +136,7 @@ private:
 
         FontSpec () : m_height_ratio(0.0f) { }
         FontSpec (std::string const &path, Float height_ratio) : m_path(path), m_height_ratio(height_ratio) { }
-    }; // end of struct WidgetSkin::FontSpec
+    }; // end of struct StyleSheet::FontSpec
 
     typedef std::map<std::string, WidgetBackground const *> BackgroundMap;
     typedef std::map<std::string, FontSpec> FontSpecificationMap;
@@ -144,8 +147,8 @@ private:
     FontSpecificationMap m_font_spec;
     TextureMap m_texture;
     MarginsRatiosMap m_margins_ratios;
-}; // end of class WidgetSkin
+}; // end of class StyleSheet
 
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_WIDGETSKIN_HPP_)
+#endif // !defined(_XRB_STYLESHEET_HPP_)

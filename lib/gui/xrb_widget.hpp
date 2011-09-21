@@ -26,7 +26,7 @@
 #include "xrb_signalhandler.hpp"
 #include "xrb_sizeproperties.hpp"
 #include "xrb_vector.hpp"
-#include "xrb_widgetskin.hpp"
+#include "xrb_stylesheet.hpp"
 
 /** @file xrb_widget.h
   * @brief Contains the class declaration of the foundation of the GUI
@@ -59,49 +59,47 @@ class Screen;
 class WidgetBackground;
 class WidgetContext;
 
-/** The base class for all GUI widgets and provides 90% of the framework
-  * necessary for the GUI's operation.
-  *
-  * The GUI system of XuqRijBuh is modeled closely upon the commonly used
-  * "widget" paradigm of GUI toolkits such as QT (http://www.trolltech.com).
-  * Some examples of specialized widgets are @c Label, @c Button, and
-  * @c CheckBox.
-  *
-  * A hierarchy of widgets (a widget being essentially a rectangular area
-  * on the screen) is created to suit the task at hand.  Widgets
-  * subordinate to a particular widget in the hierarchy are referred to as
-  * its "child widgets" or "children".  The hierarchy dictates specific
-  * rules as to how widgets are drawn and how they receive events.
-  *
-  * The top of the widget hierarchy must be an instance of @c Screen.
-  * it contains specialized functionality for initiating drawing and
-  * event-sending.
-  *
-  * Widgets are drawn in a top-down manner -- drawing begins at the @c Screen,
-  * which performs some one-time setup work (one-time per frame), and sets
-  * up the OpenGL viewport/clip rect and so forth, and then calls the drawing
-  * function on all its child widgets in the order in which they appear in
-  * the widget stack (see @c m_child_vector).  During the draw function, a
-  * widget will draw itself (e.g. backgrounds, text, pictures, nothing, etc)
-  * and then call the draw function on its own children in the order specified
-  * by @c m_child_vector.  There are a few caveats to this, including hidden
-  * widgets, but that will be explained later.
-  *
-  * Events (see @c Event) are processed in a similar fashion as drawing --
-  * starting at the top of the hierarchy, propagating down to children.  The
-  * difference here is that the event will not be "used" by all the widgets
-  * in the hierarchy.  An event is created at a particular level in the
-  * hierarchy (though usually from outside and passed to the top), and then
-  * each child widget is asked if it wishes to use the event.  A used
-  * event is not destroyed or in any way changed, allowing for parent widgets
-  * to perform further processing after a child accepts/denies usage of an
-  * event.
-  *
-  * See @ref widget_baseclass "Widget Baseclass" for extensive system details.
-  *
-  * @brief The class which forms the foundation of the GUI system.
-  * @note All GUI widgets must derive from this class to function properly.
-  */
+/// @brief The class which forms the foundation of the GUI system.
+/// @note All GUI widgets must derive from this class to function properly.
+/// @details The base class for all GUI widgets and provides 90% of the
+/// framework necessary for the GUI's operation.
+///
+/// The GUI system of XuqRijBuh is modeled closely upon the commonly used
+/// "widget" paradigm of GUI toolkits such as QT (http://www.trolltech.com).
+/// Some examples of specialized widgets are @c Label, @c Button, and
+/// @c CheckBox.
+///
+/// A hierarchy of widgets (a widget being essentially a rectangular area
+/// on the screen) is created to suit the task at hand.  Widgets
+/// subordinate to a particular widget in the hierarchy are referred to as
+/// its "child widgets" or "children".  The hierarchy dictates specific
+/// rules as to how widgets are drawn and how they receive events.
+///
+/// The top of the widget hierarchy must be an instance of @c Screen.
+/// it contains specialized functionality for initiating drawing and
+/// event-sending.
+///
+/// Widgets are drawn in a top-down manner -- drawing begins at the @c Screen,
+/// which performs some one-time setup work (one-time per frame), and sets
+/// up the OpenGL viewport/clip rect and so forth, and then calls the drawing
+/// function on all its child widgets in the order in which they appear in
+/// the widget stack (see @c m_child_vector).  During the draw function, a
+/// widget will draw itself (e.g. backgrounds, text, pictures, nothing, etc)
+/// and then call the draw function on its own children in the order specified
+/// by @c m_child_vector.  There are a few caveats to this, including hidden
+/// widgets, but that will be explained later.
+///
+/// Events (see @c Event) are processed in a similar fashion as drawing --
+/// starting at the top of the hierarchy, propagating down to children.  The
+/// difference here is that the event will not be "used" by all the widgets
+/// in the hierarchy.  An event is created at a particular level in the
+/// hierarchy (though usually from outside and passed to the top), and then
+/// each child widget is asked if it wishes to use the event.  A used
+/// event is not destroyed or in any way changed, allowing for parent widgets
+/// to perform further processing after a child accepts/denies usage of an
+/// event.
+///
+/// See @ref widget_baseclass "Widget Baseclass" for extensive system details.
 class Widget : public FrameHandler, public EventHandler, public SignalHandler
 {
 public:
@@ -121,19 +119,13 @@ public:
     // SignalReceiver accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    /// This receiver calls SetIsEnabled.
-    SignalReceiver1<bool> const *ReceiverSetIsEnabled () { return &m_receiver_set_is_enabled; }
-    /// This receiver calls Enable.
-    SignalReceiver0 const *ReceiverEnable () { return &m_receiver_enable; }
-    /// This receiver calls Disable.
-    SignalReceiver0 const *ReceiverDisable () { return &m_receiver_disable; }
+    SignalReceiver1<bool> const *ReceiverSetIsEnabled () { return &m_receiver_set_is_enabled; } ///< This receiver calls SetIsEnabled.
+    SignalReceiver0 const *ReceiverEnable () { return &m_receiver_enable; }                     ///< This receiver calls Enable.
+    SignalReceiver0 const *ReceiverDisable () { return &m_receiver_disable; }                   ///< This receiver calls Disable.
 
-    /// This receiver calls SetIsHidden.
-    SignalReceiver1<bool> const *ReceiverSetIsHidden () { return &m_receiver_set_is_hidden; }
-    /// This receiver calls Hide.
-    SignalReceiver0 const *ReceiverHide () { return &m_receiver_hide; }
-    /// This receiver calls Show.
-    SignalReceiver0 const *ReceiverShow () { return &m_receiver_show; }
+    SignalReceiver1<bool> const *ReceiverSetIsHidden () { return &m_receiver_set_is_hidden; }   ///< This receiver calls SetIsHidden.
+    SignalReceiver0 const *ReceiverHide () { return &m_receiver_hide; }                         ///< This receiver calls Hide.
+    SignalReceiver0 const *ReceiverShow () { return &m_receiver_show; }                         ///< This receiver calls Show.
 
     // ///////////////////////////////////////////////////////////////////////
     // accessors
@@ -178,15 +170,39 @@ public:
     bool IsModal () const;
     /// Returns the widget stack priority of this widget.  @see StackPriority.
     StackPriority GetStackPriority () const { return m_stack_priority; }
-    /// Returns the basic background for this widget.  @see WidgetBackground.
-    WidgetBackground *Background () const { return m_background; }
-    /// Returns the frame margins for this widget.
-    ScreenCoordMargins const &FrameMargins () const { return m_frame_margins; }
-    /// @brief Returns the content margins for this widget.
-    /// @details The content margins are added to the frame margins to indicate the
-    /// content area of the label.  The content margins can be negative (up to
-    /// the point that they totally cancel the frame margins).
-    ScreenCoordMargins const &ContentMargins () const { return m_content_margins; }
+
+    /// Returns true iff there is no background style, meaning that the background is specified explicitly.
+    bool BackgroundStyleIsOverridden () const { return m_background_style.empty(); }
+    /// If nonempty, gives the StyleSheet type of background to use.  @see StyleSheet::Background.
+    /// If empty, the backgound is accessible via Background.
+    std::string const &BackgroundStyle () const { return m_background_style; }
+    /// If the background style is overridden, returns the overridden background.  Otherwise returns the stylized background.
+    WidgetBackground const *Background () const;
+    
+    /// Returns true iff there is no frame margins style, meaning that the frame margins are specified explicitly.
+    bool FrameMarginsStyleIsOverridden () const { return m_frame_margins_style.empty(); }
+    /// If nonempty, gives the StyleSheet type of margins ratios to use for the frame margins.
+    /// @see StyleSheet::MarginsRatios.  If empty, the frame margins ratios are accessible via FrameMarginsRatios.
+    std::string const &FrameMarginsStyle () const { return m_frame_margins_style; }
+    /// @brief If the frame margins style is overridden, returns the overridden frame margins.  Otherwise returns the stylized frame margins.
+    /// @details The return value is based on the value of FrameMarginsRatios via WidgetContext::MarginsFromRatios.
+    ScreenCoordMargins FrameMargins () const;
+    /// If the frame margins style is overridden, returns the overridden frame margins ratios.
+    /// Otherwise returns the stylized frame margins ratios.
+    FloatMargins const &FrameMarginsRatios () const;
+    
+    /// Returns true iff there is no content margins style, meaning that the content margins are specified explicitly.
+    bool ContentMarginsStyleIsOverridden () const { return m_content_margins_style.empty(); }
+    /// If nonempty, gives the StyleSheet type of margins ratios to use for the content margins.
+    /// @see StyleSheet::MarginsRatios.  If empty, the content margins ratios are accessible via ContentMarginsRatios.
+    std::string const &ContentMarginsStyle () const { return m_content_margins_style; }
+    /// @brief If the content margins style is overridden, returns the overridden content margins.  Otherwise returns the stylized content margins.
+    /// @details The return value is based on the value of ContentMarginsRatios via WidgetContext::MarginsFromRatios.
+    ScreenCoordMargins ContentMargins () const;
+    /// If the content margins style is overridden, returns the overridden content margins ratios.
+    /// Otherwise returns the stylized content margins ratios.
+    FloatMargins const &ContentMarginsRatios () const;
+    
     /// Returns the last known mouse position (derived from the most recent mouse motion event received by this widget).
     ScreenCoordVector2 const &LastMousePosition () const { return m_last_mouse_position; }
     /// Returns the current position of the lower-left corner of this widget.
@@ -208,41 +224,25 @@ public:
     virtual Bool2 const &MaxSizeEnabled () const { return m_size_properties.m_max_size_enabled; }
     /// Returns the screen-coordinate vector containing the maximum width and height.
     virtual ScreenCoordVector2 const &MaxSize () const { return m_size_properties.m_max_size; }
-    /** Adjusts the size vector to satisfy the minimum size properties
-      * of this widget.  Then adjusts the resulting value to satisfy
-      * the maximum size properties of this widget.  If there is a
-      * main widget, then its min/max size properties will be used instead.
-      * @brief Returns the adjusted value of the given size vector.
-      * @param size The size vector to adjust.
-      */
+    /// @brief Returns the adjusted value of the given size vector.
+    /// @param size The size vector to adjust.
+    /// @details Adjusts the size vector to satisfy the minimum size properties of this widget.  Then adjusts
+    /// the resulting value to satisfy the maximum size properties of this widget.  If there is a main widget,
+    /// then its min/max size properties will be used instead.
     virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;
-    /** @brief Returns this widget's screen coordinate rectangle.
-      */
+    /// Returns this widget's screen coordinate rectangle.
     ScreenCoordRect const &ScreenRect () const { return m_screen_rect; }
-    /** The content area is the area within the sum of the frame margins
-      * and the content margins.  Note that the content margins can be
-      * negative, up to the negative of the frame margins.
-      * @brief Returns the rectangle representing the content area.
-      */
+    /// @brief Returns the rectangle representing the content area.
+    /// @details The content area is the area within the sum of the frame margins and the content margins.
+    /// Note that the content margins can be negative.
     ScreenCoordRect ContentsRect () const;
-    /** @brief Returns this widget's color bias (the color bias is applied to
-      * everything drawn by the widget, AFTER the color mask).
-      */
+    /// Returns this widget's color bias (the color bias is applied to everything drawn by the widget, AFTER the color mask).
     Color const &ColorBias () const { return m_color_bias; }
-    /** @brief Returns this widget's color mask (the color mask is applied to
-      * everything drawn by the widget).
-      */
+    /// Returns this widget's color mask (the color mask is applied to everything drawn by the widget).
     Color const &ColorMask () const { return m_color_mask; }
-    /** Use this method to change the color bias
-      * @brief Returns this widget's color bias as a non-const reference (the
-      * color bias is applied to everything drawn by the widget, AFTER the
-      * color mask).
-      */
+    /// Returns this widget's color bias as a non-const reference to be modified directly.
     Color &ColorBias () { return m_color_bias; }
-    /** Use this method to change the color mask.
-      * @brief Returns this widget's color mask as a non-const reference (the
-      * color mask is applied to everything drawn by the widget).
-      */
+    /// Returns this widget's color mask as a non-const reference to be modified directly.
     Color &ColorMask () { return m_color_mask; }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -379,98 +379,77 @@ public:
         FloatVector2 const &ratios,
         bool defer_parent_update = false);
 
-    /** Will cause a reshuffling of child widgets in this widget's parent's
-      * child vector, in order to maintain proper widget stack priority
-      * ordering.
-      * @brief Sets the widget's stack priority.
-      */
+    /// @brief Sets the widget's stack priority.
+    /// @details Will cause a reshuffling of child widgets in this widget's parent's
+    /// child vector, in order to maintain proper widget stack priority ordering.
     void SetStackPriority (StackPriority stack_priority);
-    /** @brief Sets the basic background for this widget, NULL for no background
-      *        (completely transparent).
-      */
-    void SetBackground (WidgetBackground *background);
-    /** @brief Sets the frame margins for this widget (in direct screen
-      *        coordinates).
-      */
+
+    /// @brief Sets the background style (see StyleSheet), overriding any manually specified background.
+    /// @details The style string can't be empty -- that indicates that the background is explicitly
+    /// specified -- Use SetBackground for this purpose instead.
+    void SetBackgroundStyle (std::string const &style);
+    /// Overrides the background style and sets the basic background for this widget.  NULL indicates no background (transparent).
+    void SetBackground (WidgetBackground const *background);
+    
+    /// @brief Sets the frame margins style (see StyleSheet), overriding any manually specified frame margins.
+    /// @details The style string can't be empty -- that indicates that the frame margins are explicitly specified.
+    /// Use SetFrameMargins or SetFrameMarginsRatios for this purpose.
+    void SetFrameMarginsStyle (std::string const &style);
+    /// Overrides the frame margins style and sets the frame margins for this widget (in direct screen coordinates).
     void SetFrameMargins (ScreenCoordMargins const &frame_margins);
-    /** Actually just calls @a SetFrameMargins with the product of the given
-      * ratios and the screen basis.
-      * @brief Sets the frame margins for this widget via screen-basis ratios.
-      * @see Screen::SizeRatioBasis
-      */
-    void SetFrameMarginRatios (FloatMargins const &frame_margin_ratios);
-    /** @brief Sets the content margins for this widget (in direct screen coordinates).
-      */
+    /// Overrides the frame margins style and sets the frame margins ratios for this widget (ratio is relative to WidgetContext::SizeRatioBasis()).
+    void SetFrameMarginsRatios (FloatMargins const &frame_margins_ratios);
+    
+    /// @brief Sets the content margins style (see StyleSheet), overriding any manually specified content margins.
+    /// @details The style string can't be empty -- that indicates that the content margins are explicitly specified.
+    /// Use SetContentMargins or SetContentMarginsRatios for this purpose.
+    void SetContentMarginsStyle (std::string const &style);
+    /// Overrides the content margins style and sets the content margins for this widget (in direct screen coordinates).
     void SetContentMargins (ScreenCoordMargins const &content_margins);
-    /** Actually just calls @a SetContentMargins with the product of the given
-      * ratios and the screen basis.
-      * @brief Sets the content margins for this widget via screen-basis ratios.
-      * @see Screen::SizeRatioBasis
-      */
-    void SetContentMarginRatios (FloatMargins const &content_margin_ratios);
+    /// Overrides the content margins style and sets the content margins ratios for this widget (ratio is relative to WidgetContext::SizeRatioBasis()).
+    void SetContentMarginsRatios (FloatMargins const &content_margins_ratios);
 
     // ///////////////////////////////////////////////////////////////////////
     // procedures
     // ///////////////////////////////////////////////////////////////////////
 
-    /** @brief Sets the min and max sizes to the given size, and then enables
-      *        min/max size enabled properties for both X and Y components.
-      */
+    /// Sets the min and max sizes to the given size, and then enables
+    /// min/max size enabled properties for both X and Y components.
     void FixSize (ScreenCoordVector2 const &size);
-    /** @brief Sets the min and max sizes to the given size, and then enables
-      *        min/max size enabled properties for both X and Y components --
-      *        the size is given in a screen-basis ratio vector.
-      */
+    /// Sets the min and max sizes to the given size, and then enables min/max size enabled
+    /// properties for both X and Y components -- the size is given in a screen-basis ratio vector.
     void FixSizeRatios (FloatVector2 const &size_ratios);
-    /** @brief Disables min and max size enabled properties for both X and Y
-      *        components.
-      */
+    /// Disables min and max size enabled properties for both X and Y components.
     void UnfixSize ();
-    /** @brief Sets the min and max width to the given width, and then enables
-      *        min/max size enabled properties for the X component only.
-      */
+    /// Sets the min and max width to the given width, and then enables min/max size enabled properties for the X component only.
     void FixWidth (ScreenCoord width);
-    /** @brief Sets the min and max widths to the given size, and then enables
-      *        min/max size enabled properties for the X component only --
-      *        the width is given as a screen-basis ratio.
-      */
+    /// Sets the min and max widths to the given size, and then enables min/max size enabled
+    /// properties for the X component only -- the width is given as a screen-basis ratio.
     void FixWidthRatio (Float width_ratio);
-    /** @brief Disables min and max size enabled properties for the X
-      *        component only.
-      */
+    /// Disables min and max size enabled properties for the X component only.
     void UnfixWidth ();
-    /** @brief Sets the min and max height to the given height, and then
-      *        enables min/max size enabled properties for the Y component
-      *        only.
-      */
+    /// Sets the min and max height to the given height, and then enables min/max size enabled properties for the Y component only.
     void FixHeight (ScreenCoord height);
-    /** @brief Sets the min and max heights to the given size, and then
-      *        enables min/max size enabled properties for the Y component
-      *        only -- the height is given as a screen-basis ratio.
-      */
+    /// Sets the min and max heights to the given size, and then enables min/max size enabled
+    /// properties for the Y component only -- the height is given as a screen-basis ratio.
     void FixHeightRatio (Float height_ratio);
-    /** @brief Disables min and max size enabled properties for the Y
-      *        component only.
-      */
+    /// Disables min and max size enabled properties for the Y component only.
     void UnfixHeight ();
 
     /// An overridable, non-const method which is called immediately before any widgets are Draw'n.
     virtual void PreDraw ();
-    /** This function should be overridden in subclasses to provide the
-      * means to draw whatever is necessary.  Generally the subclass's Draw
-      * function should call the Draw function of its immediate superclass
-      * before doing anything else, in order to have the background and
-      * other necessary visual elements drawn.
-      *
-      * Draw should only be called on top-level widgets -- the Widget
-      * baseclass takes care of setting up the RenderContext and calling
-      * Draw on its child widgets appropriately.
-      *
-      * @brief Draws the widget using the provided RenderContext.
-      * @note You can NOT count on Draw being called every single video frame,
-      *       since it will not be called if the clip_rect is not valid (0
-      *       area).
-      */
+    /// @brief Draws the widget using the provided RenderContext.
+    /// @note You can NOT count on Draw being called every single video frame, since it will not
+    /// be called if the clip_rect is not valid (0 area).
+    /// @details This function should be overridden in subclasses to provide the
+    /// means to draw whatever is necessary.  Generally the subclass's Draw
+    /// function should call the Draw function of its immediate superclass
+    /// before doing anything else, in order to have the background and
+    /// other necessary visual elements drawn.
+    ///
+    /// Draw should only be called on top-level widgets -- the Widget
+    /// baseclass takes care of setting up the RenderContext and calling
+    /// Draw on its child widgets appropriately.
     virtual void Draw (RenderContext const &render_context) const;
     /// An overridable, non-const method which is called immediately after all widgets are Draw'n.
     virtual void PostDraw ();
@@ -579,9 +558,9 @@ protected:
     /// Returns true iff this widget is the Screen in the associated WidgetContext.
     bool IsScreen () const;
 
-    /// This method is called when the WidgetContext's widget skin changes.
+    /// This method is called when the WidgetContext's style sheet changes.
     /// Classes which override this method should call the parent's method.
-    virtual void HandleChangedWidgetSkin ();
+    virtual void HandleChangedStyleSheet ();
 
     /// Returns the a pointer to the background object which is rendered in @a Widget::Draw.
     WidgetBackground const *RenderBackground () const { ASSERT1(!RenderBackgroundNeedsUpdate()); return m_render_background; }
@@ -767,18 +746,30 @@ private:
     ScreenCoordVector2 m_last_mouse_position;
     /// Widget stack priority (indicates which block this widget will remain in inside m_child_vector).
     StackPriority m_stack_priority;
-    /// The basic background for the widget.
-    WidgetBackground *m_background;
+    /// If nonempty, gives the StyleSheet type of background to use for the basic background.
+    /// @see StyleSheet::Background.  If empty, the background is specified manually in m_background.
+    std::string m_background_style;
+    /// When m_background_style is empty, this specifies the basic background for the widget.
+    WidgetBackground const *m_background;
     /// @brief The background which will be rendered in @c Draw .
     /// @details Subclasses can use this to specify different backgrounds for different behaviors.  NULL
     /// indicates no background will be rendered (transparent).  Also @see m_render_background_needs_update.
     WidgetBackground const *m_render_background;
     /// Indicates if @c UpdateRenderBackground should be called before @c Draw.
     bool m_render_background_needs_update;
-    /// Contains the frame margins which are used by the background and various other Widget subclasses for drawing and layout.
-    ScreenCoordMargins m_frame_margins;
-    /// Contains the content margins which are used by various widgets.
-    ScreenCoordMargins m_content_margins;
+    /// If nonempty, gives the StyleSheet type of margins ratios to use for the frame margins.
+    /// @see StyleSheet::MarginsRatios.  If empty, the frame margins ratios are specified manually
+    /// in m_frame_margins_ratios
+    std::string m_frame_margins_style;
+    /// When m_frame_margins_style is empty, this specifies the frame margins ratios, upon which
+    /// the frame margins (in pixels) is based via WidgetContext::MarginsFromRatios.
+    FloatMargins m_frame_margins_ratios;
+    /// If nonempty, gives the StyleSheet type of margins ratios to use for the frame margins.
+    /// @see StyleSheet::MarginsRatios.  If empty, the frame margins ratios can be specified manually.
+    std::string m_content_margins_style;
+    /// When m_contents_margins_style is empty, this specifies the content margins ratios, upon which
+    /// the content margins (in pixels) is based via WidgetContext::MarginsFromRatios.
+    FloatMargins m_content_margins_ratios;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers

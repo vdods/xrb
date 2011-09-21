@@ -30,9 +30,14 @@ CheckBox::CheckBox (WidgetContext &context, std::string const &name)
 
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::CHECK_BOX_FRAME));
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT),
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT)));
+    SetFrameMarginsStyle(StyleSheet::MarginsType::CHECK_BOX_FRAME);
+
+    SetIdleBackgroundStyle(StyleSheet::BackgroundType::CHECK_BOX_UNCHECKED);
+    SetMouseoverBackgroundStyle(StyleSheet::BackgroundType::CHECK_BOX_MOUSEOVER);
+    SetPressedBackgroundStyle(StyleSheet::BackgroundType::CHECK_BOX_PRESSED);
+    m_checked_background_style = StyleSheet::BackgroundType::CHECK_BOX_CHECKED;
 }
 
 void CheckBox::SetIsEnabled (bool const is_enabled)
@@ -50,7 +55,7 @@ void CheckBox::ToggleIsChecked ()
 {
     m_is_checked = !m_is_checked;
     HandleIsCheckedChanged();
-    SetRenderPictureNeedsUpdate();
+    SetRenderBackgroundNeedsUpdate();
 
     m_sender_checked_state_changed.Signal(m_is_checked);
     if (m_is_checked)
@@ -59,43 +64,26 @@ void CheckBox::ToggleIsChecked ()
         m_sender_unchecked.Signal();
 }
 
-bool CheckBox::ProcessMouseButtonEvent (EventMouseButton const *const e)
+void CheckBox::HandleChangedStyleSheet ()
 {
-    // first call Button's handler
-    Button::ProcessMouseButtonEvent(e);
-
-    // if the left mouse button was clicked and released, toggle m_is_checked
-    if (e->ButtonCode() == Key::LEFTMOUSE && e->IsMouseButtonUpEvent())
-        ToggleIsChecked();
-
-    return true;
-}
-
-void CheckBox::HandleChangedWidgetSkin ()
-{
-    Button::HandleChangedWidgetSkin();
+    Button::HandleChangedStyleSheet();
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::CHECK_BOX_FRAME));
-    SetRenderBackgroundNeedsUpdate();
-    SetRenderPictureNeedsUpdate();
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT),
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT)));
 }
 
 void CheckBox::UpdateRenderBackground ()
 {
     Button::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::CHECK_BOX));
+    if (IsChecked() && !IsPressed())
+        SetRenderBackground(Context().StyleSheet_Background(m_checked_background_style));
 }
 
-void CheckBox::UpdateRenderPicture ()
+void CheckBox::HandleReleased ()
 {
-    Button::UpdateRenderPicture();
-    if (IsChecked())
-        SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::TextureType::CHECK_BOX));
-    else
-        SetRenderPicture(Resource<GlTexture>());
+    Button::HandleReleased();
+    ToggleIsChecked();
 }
 
 } // end of namespace Xrb

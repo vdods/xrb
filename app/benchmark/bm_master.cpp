@@ -51,9 +51,9 @@ Master::Master (Screen *screen)
 //     m_game_widget = NULL;
     m_world = NULL;
 
-    WidgetSkin *widget_skin = new WidgetSkin();
-    widget_skin->PopulateUsingDefaults();
-    m_screen->Context().SetWidgetSkin(widget_skin);
+    StyleSheet *style_sheet = new StyleSheet();
+    style_sheet->PopulateUsingDefaults();
+    m_screen->Context().SetStyleSheet(style_sheet);
 }
 
 Master::~Master ()

@@ -36,7 +36,7 @@ handling various events and other occurrences.
     <li>@ref section_widget_modal "Modal Widgets"</li>
     <li>@ref section_widget_frame_margins "Frame Margins"</li>
     <li>@ref section_widget_backgrounds "Backgrounds"</li>
-    <li>@ref section_widget_skinning "Widget Skinning"</li>
+    <li>@ref section_style_sheets "Style Sheets"</li>
     </ul>
 
 @section section_widget_introduction Introduction
@@ -618,9 +618,9 @@ in the grid slot.
 There is a notion of margins in a @c Layout , which define space between the
 rows/columns as well as around the edge of the widget.  The space between
 the rows/columns is derived from the "layout spacing margins" in the
-@ref section_widget_skinning "widget skin" associated with the @c Layout .
+@ref section_style_sheets "style sheet" associated with the @c Layout .
 Similarly, the spacing around the border of the widget is derived from the
-"layout frame margins" in the widget skin.
+"layout frame margins" in the style sheet.
 
 *** picture demonstrating different spacing margins ***
 
@@ -707,10 +707,10 @@ to indicate the size of various sections of the background.
 Relevant methods include
 @ref Xrb::Widget::FrameMargins ,
 @ref Xrb::Widget::SetFrameMargins ,
-@ref Xrb::Widget::SetFrameMarginRatios , and
+@ref Xrb::Widget::SetFrameMarginsRatios , and
 @ref Xrb::Widget::HandleChangedFrameMargins .
 
-See also @ref section_widget_skinning "Widget Skinning" for more details.
+See also @ref section_style_sheet "Style Sheets" for more details.
 
 @section section_widget_backgrounds Backgrounds
 @ref Xrb::WidgetBackground is an abstract interface for objects that will
@@ -726,46 +726,46 @@ specify which @c WidgetBackground object should be used to when rendering.
 Additionally, the overridable method @ref Xrb::Widget::UpdateRenderBackground
 allows a subclass to specify how the background should be set.  Refer to
 @ref Xrb::Button::UpdateRenderBackground and
-@ref Xrb::Button::HandleChangedWidgetSkinWidgetBackground for example usage.
+@ref Xrb::Button::HandleChangedStyleSheet for example usage.
 
 Other relevant methods include
 @ref Xrb::Widget::Background ,
 @ref Xrb::Widget::SetBackground , and
 @ref Xrb::Widget::RenderBackground .
 
-See also @ref section_widget_skinning "Widget Skinning" for more details.
+See also @ref section_style_sheets "Style Sheets" for more details.
 
-@section section_widget_skinning Widget Skinning
-Widget skinning provides a centralized way of specifying standard sizes,
+@section section_style_sheets Style Sheets
+Style sheets provide a centralized way of specifying standard sizes,
 colors, textures, fonts, etc. for various widget types.  A
-@ref Xrb::WidgetSkin is an object which is assigned to an entire hierarchy
+@ref Xrb::StyleSheet is an object which is assigned to an entire hierarchy
 of widgets to provide a consistent look.  The widgets will access the
-properties of the @c WidgetSkin to use in various functions ( for example,
-@ref Xrb::Button::UpdateRenderBackground ).  @c WidgetSkin objects are
-handled through @ref Xrb::WidgetSkinHandler , which @ref Xrb::Widget derives
-from.  The bulk of the accessors and modifiers for dealing with @c WidgetSkin
-are in @c WidgetSkinHandler .
+properties of the @c StyleSheet to use in various functions ( for example,
+@ref Xrb::Button::UpdateRenderBackground ).  @c StyleSheet objects are
+handled through @ref Xrb::StyleSheetHandler , which @ref Xrb::Widget derives
+from.  The bulk of the accessors and modifiers for dealing with @c StyleSheet
+are in @c StyleSheetHandler .
 
-*** pictures of same widget hierarchy using different widget skins ***
+*** pictures of same widget hierarchy using different style sheets ***
 
-Widgets can also change the properties of their widget skins.  When this is
+Widgets can also change the properties of their style sheets.  When this is
 done, the entire widget hierarchy is traversed, calling the appropriate
 property-changed handler function ( see
-@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinWidgetBackground ,
-@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinFont ,
-@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinTexture , and
-@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinMargins ).  Each
+@ref Xrb::StyleSheetHandler::HandleChangedStyleSheetWidgetBackground ,
+@ref Xrb::StyleSheetHandler::HandleChangedStyleSheetFont ,
+@ref Xrb::StyleSheetHandler::HandleChangedStyleSheetTexture , and
+@ref Xrb::StyleSheetHandler::HandleChangedStyleSheetMargins ).  Each
 of these handler functions indicates which specific property has changed
 (e.g. button background, button-pressed background, etc).  The
 property-changed handler functions are meant to be overridden by @c Widget
-subclasses in order to provide custom behavior when @c WidgetSkin properties
+subclasses in order to provide custom behavior when @c StyleSheet properties
 change.
 
-@c WidgetSkin is divided up into several types of widget properties:
+@c StyleSheet is divided up into several types of widget properties:
 widget background, font, texture, and margins.  Each of these types
 contain specific properties.  For example, the widget background type includes
 specific backgrounds such as button background, button-pressed
-background, and button-mouseover background.  See @ref Xrb::WidgetSkin
+background, and button-mouseover background.  See @ref Xrb::StyleSheet
 for more details on property types and specific properties.
 
 One thing to note which may be confusing at first is that some widgets,
@@ -775,8 +775,8 @@ One thing to note which may be confusing at first is that some widgets,
 shadow a member variable which is stored in the particular @c Widget subclass,
 such as @ref Xrb::Widget::m_frame_margins or @ref Xrb::Label::m_font .
 
-It should be noted that it is not necessary to add properties to @c WidgetSkin
-just to use them in a particular widget.  @c WidgetSkin is merely meant to
+It should be noted that it is not necessary to add properties to @c StyleSheet
+just to use them in a particular widget.  @c StyleSheet is merely meant to
 provide a convenient and easy mechanism for common widget properties to be
 used and changed in an efficient and consistent manner.
 

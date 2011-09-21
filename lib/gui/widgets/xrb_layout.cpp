@@ -448,19 +448,19 @@ ScreenCoordMargins Layout::CalculateLayoutFrameMargins () const
 {
     return IsUsingZeroedFrameMargins() ?
            ScreenCoordMargins::ms_zero :
-           Context().WidgetSkin_Margins(WidgetSkin::MarginsType::LAYOUT_FRAME);
+           Context().StyleSheet_Margins(StyleSheet::MarginsType::LAYOUT_FRAME);
 }
 
 ScreenCoordMargins Layout::CalculateLayoutSpacingMargins () const
 {
     return IsUsingZeroedLayoutSpacingMargins() ?
            ScreenCoordMargins::ms_zero :
-           Context().WidgetSkin_Margins(WidgetSkin::MarginsType::LAYOUT_SPACING);
+           Context().StyleSheet_Margins(StyleSheet::MarginsType::LAYOUT_SPACING);
 }
 
-void Layout::HandleChangedWidgetSkin ()
+void Layout::HandleChangedStyleSheet ()
 {
-    ContainerWidget::HandleChangedWidgetSkin();
+    ContainerWidget::HandleChangedStyleSheet();
     // the frame margins are not explicitly stored -- see CalculateLayoutFrameMargins
     // the spacing margins are not explicitly stored -- see CalculateLayoutSpacingMargins
     HandleChangedLayoutFrameMargins();
@@ -1225,7 +1225,7 @@ void Layout::Initialize (LineDirection major_direction, Uint32 major_count)
     m_is_using_zeroed_frame_margins = true;
     m_is_using_zeroed_layout_spacing_margins = false;
 
-    SetBackground(NULL);
+    SetBackgroundStyle(StyleSheet::BackgroundType::TRANSPARENT);
 }
 
 } // end of namespace Xrb

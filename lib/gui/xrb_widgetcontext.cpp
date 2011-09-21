@@ -35,89 +35,99 @@ Float WidgetContext::SizeRatio (ScreenCoord pixel_size) const
     return size_ratio;
 }
 
-WidgetBackground const *WidgetContext::WidgetSkin_Background (std::string const &type) const
+ScreenCoordMargins WidgetContext::MarginsFromRatios (FloatMargins const &ratios) const
 {
-    ASSERT1(WidgetSkin::ms_fallback_background == NULL && "allocation worries are necessary, since Widget deletes backgrounds");
-    if (m_widget_skin == NULL)
-        return WidgetSkin::ms_fallback_background;
-    else
-        return m_widget_skin->Background(type);
-}
-
-std::string const &WidgetContext::WidgetSkin_FontPath (std::string const &type) const
-{
-    if (m_widget_skin == NULL)
-        return WidgetSkin::ms_fallback_font_path;
-    else
-        return m_widget_skin->FontPath(type);
-}
-
-Float WidgetContext::WidgetSkin_FontHeightRatio (std::string const &type) const
-{
-    if (m_widget_skin == NULL)
-        return WidgetSkin::ms_fallback_font_height_ratio;
-    else
-        return m_widget_skin->FontHeightRatio(type);
-}
-
-ScreenCoord WidgetContext::WidgetSkin_FontPixelHeight (std::string const &type) const
-{
-    return PixelSize(WidgetSkin_FontHeightRatio(type));
-}
-
-Resource<Font> WidgetContext::WidgetSkin_LoadFont (std::string const &type) const
-{
-    return Font::Load(WidgetSkin_FontPath(type), WidgetSkin_FontPixelHeight(type));
-}
-
-Resource<GlTexture> const &WidgetContext::WidgetSkin_Texture (std::string const &type) const
-{
-    if (m_widget_skin == NULL)
-        return WidgetSkin::ms_fallback_texture;
-    else
-        return m_widget_skin->GetTexture(type);
-}
-
-FloatMargins WidgetContext::WidgetSkin_MarginsRatios (std::string const &type) const
-{
-    if (m_widget_skin == NULL)
-        return WidgetSkin::ms_fallback_margins_ratios;
-    else
-        return m_widget_skin->MarginsRatios(type);
-}
-
-ScreenCoordMargins WidgetContext::WidgetSkin_Margins (std::string const &type) const
-{
-    FloatMargins margins_ratios(WidgetSkin_MarginsRatios(type));
     return ScreenCoordMargins(
         ScreenCoordVector2(
-            PixelSize(margins_ratios.m_bottom_left[Dim::X]),
-            PixelSize(margins_ratios.m_bottom_left[Dim::Y])),
+            PixelSize(ratios.m_bottom_left[Dim::X]),
+            PixelSize(ratios.m_bottom_left[Dim::Y])),
         ScreenCoordVector2(
-            PixelSize(margins_ratios.m_top_right[Dim::X]),
-            PixelSize(margins_ratios.m_top_right[Dim::Y])));
+            PixelSize(ratios.m_top_right[Dim::X]),
+            PixelSize(ratios.m_top_right[Dim::Y])));
 }
 
-void WidgetContext::SetWidgetSkin (WidgetSkin *widget_skin)
+FloatMargins WidgetContext::RatiosFromMargins (ScreenCoordMargins const &margins) const
 {
-    // delete the old widget skin.
-    delete m_widget_skin;
-    m_widget_skin = widget_skin;
-    WidgetSkinWasChanged();
+    return FloatMargins(
+        FloatVector2(
+            SizeRatio(margins.m_bottom_left[Dim::X]),
+            SizeRatio(margins.m_bottom_left[Dim::Y])),
+        FloatVector2(
+            SizeRatio(margins.m_top_right[Dim::X]),
+            SizeRatio(margins.m_top_right[Dim::Y])));
 }
 
-void WidgetContext::WidgetSkinWasChanged ()
+WidgetBackground const *WidgetContext::StyleSheet_Background (std::string const &type) const
+{
+    ASSERT1(StyleSheet::ms_fallback_background == NULL && "allocation worries are necessary, since Widget deletes backgrounds");
+    if (m_style_sheet == NULL)
+        return StyleSheet::ms_fallback_background;
+    else
+        return m_style_sheet->Background(type);
+}
+
+std::string const &WidgetContext::StyleSheet_FontPath (std::string const &type) const
+{
+    if (m_style_sheet == NULL)
+        return StyleSheet::ms_fallback_font_path;
+    else
+        return m_style_sheet->FontPath(type);
+}
+
+Float WidgetContext::StyleSheet_FontHeightRatio (std::string const &type) const
+{
+    if (m_style_sheet == NULL)
+        return StyleSheet::ms_fallback_font_height_ratio;
+    else
+        return m_style_sheet->FontHeightRatio(type);
+}
+
+ScreenCoord WidgetContext::StyleSheet_FontPixelHeight (std::string const &type) const
+{
+    return PixelSize(StyleSheet_FontHeightRatio(type));
+}
+
+Resource<GlTexture> const &WidgetContext::StyleSheet_Texture (std::string const &type) const
+{
+    if (m_style_sheet == NULL)
+        return StyleSheet::ms_fallback_texture;
+    else
+        return m_style_sheet->GetTexture(type);
+}
+
+FloatMargins const &WidgetContext::StyleSheet_MarginsRatios (std::string const &type) const
+{
+    if (m_style_sheet == NULL)
+        return StyleSheet::ms_fallback_margins_ratios;
+    else
+        return m_style_sheet->MarginsRatios(type);
+}
+
+ScreenCoordMargins WidgetContext::StyleSheet_Margins (std::string const &type) const
+{
+    return MarginsFromRatios(StyleSheet_MarginsRatios(type));
+}
+
+void WidgetContext::SetStyleSheet (StyleSheet *style_sheet)
+{
+    // delete the old style sheet.
+    delete m_style_sheet;
+    m_style_sheet = style_sheet;
+    StyleSheetWasChanged();
+}
+
+void WidgetContext::StyleSheetWasChanged ()
 {
     // update m_screen and all the widgets in this context.
-    m_screen.HandleChangedWidgetSkin();
+    m_screen.HandleChangedStyleSheet();
     for (WidgetSet::iterator it = m_widget_set.begin(), it_end = m_widget_set.end(); it != it_end; ++it)
-        (*it)->HandleChangedWidgetSkin();
+        (*it)->HandleChangedStyleSheet();
 }
 
 WidgetContext::WidgetContext (Screen &screen)
     :
     m_screen(screen),
-    m_widget_skin(NULL)
+    m_style_sheet(NULL)
 {
     m_event_queue = new EventQueue();
 }
@@ -130,7 +140,7 @@ WidgetContext::~WidgetContext ()
         fprintf(stderr, "\t\"%s\"\n", (*it)->Name().c_str());
     ASSERT1(m_widget_set.empty() && "there are dangling widgets");
 
-    DeleteAndNullify(m_widget_skin);
+    DeleteAndNullify(m_style_sheet);
     DeleteAndNullify(m_event_queue);
 }
 

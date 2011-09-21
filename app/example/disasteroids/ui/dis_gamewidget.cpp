@@ -101,7 +101,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
         {
             m_debug_info_layout = new Layout(HORIZONTAL, Context(), "debugging info layout");
             m_debug_info_layout->SetIsUsingZeroedFrameMargins(false);
-            m_debug_info_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+            m_debug_info_layout->SetBackgroundStyle("black_half_opaque"); // see Dis::Master::Master()
 
             m_world_frame_time_label =
                 new ValueLabel<Uint32>(
@@ -190,7 +190,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
         m_stats_and_inventory_layout = new Layout(HORIZONTAL, Context(), "time-alive and score layout");
         {
             m_stats_and_inventory_layout->SetIsUsingZeroedFrameMargins(false);
-            m_stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+            m_stats_and_inventory_layout->SetBackgroundStyle("black_half_opaque"); // see Dis::Master::Master()
             // NOTE: here is where m_stats_and_inventory_layout->Hide() was called before
 
             m_wave_count_label =
@@ -201,7 +201,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
                     "wave count label");
             m_wave_count_label->SetIsHeightFixedToTextHeight(true);
             m_wave_count_label->SetAlignment(Dim::X, LEFT);
-//             m_wave_count_label->SetFontHeightRatio(0.05f); // HIPPO
+            m_wave_count_label->SetFontStyle("hud_element");
             m_stats_and_inventory_layout->AttachChild(m_wave_count_label);
 
             m_wave_count = 0;
@@ -271,7 +271,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
                 m_score_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, Context(), "score label");
                 m_score_label->SetIsHeightFixedToTextHeight(true);
                 m_score_label->SetAlignment(Dim::X, RIGHT);
-//                 m_score_label->SetFontHeightRatio(0.05f); // HIPPO
+                m_score_label->SetFontStyle("hud_element");
                 widget_stack->AttachChild(m_score_label);
             }
             m_stats_and_inventory_layout->AttachChild(widget_stack);
@@ -323,7 +323,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
     // create the game over label and hide it
     {
         m_game_over_label = new Label("GAME OVER", Context(), "game over label");
-//         m_game_over_label->SetFontHeightRatio(0.10f); // HIPPO
+        m_game_over_label->SetFontStyle("giant");
         m_game_over_label->CenterOnWidget(*this);
         this->AttachChild(m_game_over_label);
         m_game_over_label->Hide();

@@ -30,11 +30,15 @@ class RadioButton : public Button
 public:
 
     RadioButton (T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
+    // this constructor is for making toolbar-type buttons
     RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
     virtual ~RadioButton ();
 
     bool IsChecked () const { return m_is_checked; }
     T ID () const { return m_id; }
+    std::string const &CheckedBackgroundStyle () const { return m_checked_background_style; }
+
+    void SetCheckedBackgroundStyle (std::string const &style);
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors
@@ -54,11 +58,11 @@ public:
 
 protected:
 
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-    virtual void HandleChangedWidgetSkin ();
+    virtual void HandleChangedStyleSheet ();
     virtual void UpdateRenderBackground ();
-    virtual void UpdateRenderPicture ();
 
+    virtual void HandleReleased ();
+    
 private:
 
     // called only by the owning RadioButtonGroup
@@ -76,6 +80,9 @@ private:
     T m_id;
     // the radio button group this radio button belongs to
     RadioButtonGroup<T, sentinel> *m_group;
+
+    // style sheet stuff
+    std::string m_checked_background_style;
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSenders
@@ -189,6 +196,14 @@ RadioButton<T, sentinel>::~RadioButton ()
 }
 
 template <typename T, T sentinel>
+void RadioButton<T, sentinel>::SetCheckedBackgroundStyle (std::string const &style)
+{
+    ASSERT1(!style.empty());
+    m_checked_background_style = style;
+    SetRenderBackgroundNeedsUpdate();
+}
+
+template <typename T, T sentinel>
 void RadioButton<T, sentinel>::Check ()
 {
     if (!m_is_checked)
@@ -201,57 +216,35 @@ void RadioButton<T, sentinel>::Check ()
             m_group->SetID(ID());
         m_sender_checked_state_changed.Signal(m_is_checked);
         m_sender_checked.Signal();
+
+        SetRenderBackgroundNeedsUpdate();
+        SetRenderPictureNeedsUpdate();
     }
-    SetRenderBackgroundNeedsUpdate();
-    SetRenderPictureNeedsUpdate();
 }
 
 template <typename T, T sentinel>
-bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (EventMouseButton const *e)
+void RadioButton<T, sentinel>::HandleChangedStyleSheet ()
 {
-    // first call Button's handler
-    Button::ProcessMouseButtonEvent(e);
-
-    // if the left mouse button was clicked and released, attempt to check it.
-    if (e->ButtonCode() == Key::LEFTMOUSE && e->IsMouseButtonDownEvent())
-        Check();
-
-    return true;
-}
-
-template <typename T, T sentinel>
-void RadioButton<T, sentinel>::HandleChangedWidgetSkin ()
-{
-    Button::HandleChangedWidgetSkin();
+    Button::HandleChangedStyleSheet();
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::RADIO_BUTTON_FRAME));
-    SetRenderBackgroundNeedsUpdate();
-    SetRenderPictureNeedsUpdate();
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT),
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT)));
 }
 
 template <typename T, T sentinel>
 void RadioButton<T, sentinel>::UpdateRenderBackground ()
 {
     Button::UpdateRenderBackground();
-    SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::RADIO_BUTTON));
+    if (IsChecked() && !IsPressed())
+        SetRenderBackground(Context().StyleSheet_Background(m_checked_background_style));
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::UpdateRenderPicture ()
+void RadioButton<T, sentinel>::HandleReleased ()
 {
-    Button::UpdateRenderPicture();
-    if (IsChecked())
-    {
-        if (Picture().IsValid())
-            SetRenderPicture(Picture());
-        else
-            SetRenderPicture(Context().WidgetSkin_Texture(WidgetSkin::TextureType::RADIO_BUTTON));
-    }
-    else
-        SetRenderPicture(Resource<GlTexture>());
+    Button::HandleReleased();
+    Check();
 }
 
 template <typename T, T sentinel>
@@ -295,11 +288,16 @@ void RadioButton<T, sentinel>::Initialize (T id, RadioButtonGroup<T, sentinel> *
     m_group = group;
     m_group->AddButton(this);
 
+    SetIdleBackgroundStyle(StyleSheet::BackgroundType::RADIO_BUTTON_UNCHECKED);
+    SetMouseoverBackgroundStyle(StyleSheet::BackgroundType::RADIO_BUTTON_MOUSEOVER);
+    SetPressedBackgroundStyle(StyleSheet::BackgroundType::RADIO_BUTTON_PRESSED);
+    m_checked_background_style = StyleSheet::BackgroundType::RADIO_BUTTON_CHECKED;
+
     FixSize(
         ScreenCoordVector2(
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT),
-            Context().WidgetSkin_FontPixelHeight(WidgetSkin::FontType::DEFAULT)));
-    SetFrameMargins(Context().WidgetSkin_Margins(WidgetSkin::MarginsType::RADIO_BUTTON_FRAME));
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT),
+            Context().StyleSheet_FontPixelHeight(StyleSheet::FontType::DEFAULT)));
+    SetFrameMarginsStyle(StyleSheet::MarginsType::RADIO_BUTTON_FRAME);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

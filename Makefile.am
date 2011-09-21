@@ -180,10 +180,10 @@ lib_libxrb_la_SOURCES = \
     lib/gui/xrb_screen.cpp \
     lib/gui/xrb_screencoord.cpp \
     lib/gui/xrb_sizeproperties.cpp \
+    lib/gui/xrb_stylesheet.cpp \
     lib/gui/xrb_widget.cpp \
     lib/gui/xrb_widgetbackground.cpp \
     lib/gui/xrb_widgetcontext.cpp \
-    lib/gui/xrb_widgetskin.cpp \
     \
     lib/gui/widgets/xrb_button.cpp \
     lib/gui/widgets/xrb_cellpaddingwidget.cpp \
@@ -307,10 +307,10 @@ include_HEADERS = \
     lib/gui/xrb_screen.hpp \
     lib/gui/xrb_screencoord.hpp \
     lib/gui/xrb_sizeproperties.hpp \
+    lib/gui/xrb_stylesheet.hpp \
     lib/gui/xrb_widget.hpp \
     lib/gui/xrb_widgetbackground.hpp \
     lib/gui/xrb_widgetcontext.hpp \
-    lib/gui/xrb_widgetskin.hpp \
     \
     lib/gui/widgets/xrb_button.hpp \
     lib/gui/widgets/xrb_cellpaddingwidget.hpp \
@@ -327,7 +327,6 @@ include_HEADERS = \
     lib/gui/widgets/xrb_radiobutton.hpp \
     lib/gui/widgets/xrb_spacerwidget.hpp \
     lib/gui/widgets/xrb_textwidget.hpp \
-    lib/gui/widgets/xrb_toolbarbutton.hpp \
     lib/gui/widgets/xrb_valueedit.hpp \
     lib/gui/widgets/xrb_valuelabel.hpp \
     lib/gui/widgets/xrb_widgetstack.hpp \

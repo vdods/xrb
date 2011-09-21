@@ -18,13 +18,13 @@ namespace Xrb {
 Button::Button (std::string const &text, WidgetContext &context, std::string const &name)
     :
     Label(text, context, name),
-    m_id(0xDEADBEEF), // sentinel uninitialized value
+//     m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
-    m_sender_released(this),
-    m_sender_pressed_state_changed_with_id(this),
-    m_sender_pressed_with_id(this),
-    m_sender_released_with_id(this)
+    m_sender_released(this)
+//     m_sender_pressed_state_changed_with_id(this),
+//     m_sender_pressed_with_id(this),
+//     m_sender_released_with_id(this)
 {
     SetAlignment(Alignment2(CENTER, CENTER));
     Initialize();
@@ -33,15 +33,36 @@ Button::Button (std::string const &text, WidgetContext &context, std::string con
 Button::Button (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name)
     :
     Label(picture, context, name),
-    m_id(0xDEADBEEF), // sentinel uninitialized value
+//     m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
-    m_sender_released(this),
-    m_sender_pressed_state_changed_with_id(this),
-    m_sender_pressed_with_id(this),
-    m_sender_released_with_id(this)
+    m_sender_released(this)
+//     m_sender_pressed_state_changed_with_id(this),
+//     m_sender_pressed_with_id(this),
+//     m_sender_released_with_id(this)
 {
     Initialize();
+}
+
+void Button::SetIdleBackgroundStyle (std::string const &style)
+{
+    ASSERT1(!style.empty());
+    m_idle_background_style = style;
+    SetRenderBackgroundNeedsUpdate();
+}
+
+void Button::SetPressedBackgroundStyle (std::string const &style)
+{
+    ASSERT1(!style.empty());
+    m_pressed_background_style = style;
+    SetRenderBackgroundNeedsUpdate();
+}
+
+void Button::SetMouseoverBackgroundStyle (std::string const &style)
+{
+    ASSERT1(!style.empty());
+    m_mouseover_background_style = style;
+    SetRenderBackgroundNeedsUpdate();
 }
 
 void Button::SetIsEnabled (bool is_enabled)
@@ -99,8 +120,8 @@ void Button::HandlePressed ()
     m_sender_pressed_state_changed.Signal(m_is_pressed);
     m_sender_pressed.Signal();
 
-    m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
-    m_sender_pressed_with_id.Signal(m_id);
+//     m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
+//     m_sender_pressed_with_id.Signal(m_id);
 }
 
 void Button::HandleReleased ()
@@ -108,14 +129,8 @@ void Button::HandleReleased ()
     m_sender_pressed_state_changed.Signal(m_is_pressed);
     m_sender_released.Signal();
 
-    m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
-    m_sender_released_with_id.Signal(m_id);
-}
-
-void Button::HandleChangedWidgetSkin ()
-{
-    Label::HandleChangedWidgetSkin();
-    SetRenderBackgroundNeedsUpdate();
+//     m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
+//     m_sender_released_with_id.Signal(m_id);
 }
 
 void Button::UpdateRenderBackground ()
@@ -123,13 +138,13 @@ void Button::UpdateRenderBackground ()
     Label::UpdateRenderBackground();
     // state priority: disabled, pressed, mouseover, default
     if (!IsEnabled())
-        SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::BUTTON_IDLE));
+        SetRenderBackground(Context().StyleSheet_Background(m_idle_background_style));
     else if (IsPressed())
-        SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::BUTTON_PRESSED));
+        SetRenderBackground(Context().StyleSheet_Background(m_pressed_background_style));
     else if (IsMouseover() && AcceptsMouseover())
-        SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::BUTTON_MOUSEOVER));
+        SetRenderBackground(Context().StyleSheet_Background(m_mouseover_background_style));
     else
-        SetRenderBackground(Context().WidgetSkin_Background(WidgetSkin::BackgroundType::BUTTON_IDLE));
+        SetRenderBackground(Context().StyleSheet_Background(m_idle_background_style));
 }
 
 void Button::Initialize ()
@@ -137,6 +152,9 @@ void Button::Initialize ()
     m_accepts_focus = true;
     m_accepts_mouseover = true;
     m_is_pressed = false;
+    m_idle_background_style = StyleSheet::BackgroundType::BUTTON_IDLE;
+    m_pressed_background_style = StyleSheet::BackgroundType::BUTTON_PRESSED;
+    m_mouseover_background_style = StyleSheet::BackgroundType::BUTTON_MOUSEOVER;
 }
 
 } // end of namespace Xrb
