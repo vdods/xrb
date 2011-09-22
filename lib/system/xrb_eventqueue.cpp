@@ -13,8 +13,7 @@
 #include "xrb_event.hpp"
 #include "xrb_eventhandler.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 // ///////////////////////////////////////////////////////////////////////////
 // EventQueue
@@ -33,8 +32,7 @@ EventQueue::~EventQueue ()
     EnqueueBufferedEvents();
 
     // delete all unprocessed events
-    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
-                                            it_end = m_time_ordered_event_queue.end();
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(), it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
     {
@@ -47,13 +45,10 @@ EventQueue::~EventQueue ()
     m_time_ordered_event_queue.clear();
 }
 
-void EventQueue::EnqueueEvent (
-    EventHandler *const event_handler,
-    Event const *const event)
+void EventQueue::EnqueueEvent (EventHandler &event_handler, Event const *event)
 {
-    ASSERT1(event_handler != NULL);
     ASSERT1(event != NULL);
-    ASSERT1(event_handler->MostRecentEventTime() <= event->Time());
+    ASSERT1(event_handler.MostRecentEventTime() <= event->Time());
 
     // this call makes sure that we don't overflow the IDs, which is essential
     // for proper ordering of events inside the queue.
@@ -64,42 +59,36 @@ void EventQueue::EnqueueEvent (
 
     // insert the bound event and eventhandler into the secondary queue, which
     // will be inserted into the main queues before processing events
-    EventBinding event_binding(event_handler, event);
+    EventBinding event_binding(&event_handler, event);
     m_buffered_time_ordered_event_queue.insert(event_binding);
 }
 
-void EventQueue::DeleteEventsBelongingToHandler (
-    EventHandler *const event_handler)
+void EventQueue::DeleteEventsBelongingToHandler (EventHandler &event_handler)
 {
-    ASSERT1(event_handler != NULL);
-
-    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
-                                            it_end = m_time_ordered_event_queue.end();
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(), it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
     {
         if (!it->GetEvent()->IsScheduledForDeletion())
-            if (it->GetEventHandler() == event_handler)
+            if (it->GetEventHandler() == &event_handler)
                 it->GetEvent()->ScheduleForDeletion();
     }
 }
 
-void EventQueue::ScheduleMatchingEventsForDeletion (
-    bool (*EventMatchingFunction)(Event const *))
+void EventQueue::ScheduleMatchingEventsForDeletion (bool (*EventMatchingFunction)(Event const &))
 {
     // check all enqueued events against the given event-matching function.
-    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
-                                            it_end = m_time_ordered_event_queue.end();
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(), it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
     {
-        Event const *event = it->GetEvent();
-        ASSERT1(event != NULL);
+        ASSERT1(it->GetEvent() != NULL);
+        Event const &event = *it->GetEvent();
         // only check events that aren't already scheduled for deletion
-        if (!event->IsScheduledForDeletion())
+        if (!event.IsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
             if (EventMatchingFunction(event))
-                event->ScheduleForDeletion();
+                event.ScheduleForDeletion();
     }
 }
 
@@ -116,17 +105,12 @@ void EventQueue::HandleFrame ()
     // get the range of events to be processed, and loop through,
     // processing them and scheduling each for deletion
     {
-        TimeOrderedEventBindingSet::iterator it_begin =
-            m_time_ordered_event_queue.begin();
-        TimeOrderedEventBindingSet::iterator it_end =
-            m_time_ordered_event_queue.upper_bound(binding_limit);
+        TimeOrderedEventBindingSet::iterator it_begin = m_time_ordered_event_queue.begin();
+        TimeOrderedEventBindingSet::iterator it_end = m_time_ordered_event_queue.upper_bound(binding_limit);
 
         // process each event and schedule it for deletion.
-        for (TimeOrderedEventBindingSet::iterator it = it_begin;
-             it != it_end;
-             ++it)
+        for (TimeOrderedEventBindingSet::iterator it = it_begin; it != it_end; ++it)
         {
-            ASSERT1(it->GetEventHandler() != NULL);
             ASSERT1(it->GetEvent() != NULL);
             // don't process the event if it's already scheduled for deletion
             if (!it->GetEvent()->IsScheduledForDeletion())
@@ -134,7 +118,7 @@ void EventQueue::HandleFrame ()
                 // schedule the event for deletion first, so if it ever checks
                 // for scheduled-to-be-deleted events during its processing,
                 // it won't end up in a recursive hell.
-                it->GetEventHandler()->ProcessEvent(it->GetEvent());
+                it->GetEventHandler()->ProcessEvent(*it->GetEvent());
                 it->GetEvent()->ScheduleForDeletion();
             }
         }
@@ -143,9 +127,7 @@ void EventQueue::HandleFrame ()
         // for-loop, otherwise calls to ScheduleMatchingEventsForDeletion
         // during processing of each event will potentially make invalid reads
         // to the deleted events.
-        for (TimeOrderedEventBindingSet::iterator it = it_begin;
-             it != it_end;
-             ++it)
+        for (TimeOrderedEventBindingSet::iterator it = it_begin; it != it_end; ++it)
         {
             ASSERT1(it->GetEvent()->IsScheduledForDeletion());
             delete it->GetEvent();            
@@ -160,9 +142,7 @@ void EventQueue::EnqueueBufferedEvents ()
 {
     // insert the secondary queue into the main queue, so we only
     // have to worry about the main queue
-    m_time_ordered_event_queue.insert(
-        m_buffered_time_ordered_event_queue.begin(),
-        m_buffered_time_ordered_event_queue.end());
+    m_time_ordered_event_queue.insert(m_buffered_time_ordered_event_queue.begin(), m_buffered_time_ordered_event_queue.end());
     // clear the buffered event queue
     m_buffered_time_ordered_event_queue.clear();
 }
@@ -180,9 +160,7 @@ void EventQueue::CompactEventIDs ()
         // events in order and the queue's ordering won't change.  set
         // the current ID to zero and start assigning
         m_current_event_id = 0;
-        for (TimeOrderedEventBindingSet::iterator
-             it = m_time_ordered_event_queue.begin(),
-             it_end = m_time_ordered_event_queue.end();
+        for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(), it_end = m_time_ordered_event_queue.end();
              it != it_end;
              ++it)
         {
@@ -198,9 +176,7 @@ void EventQueue::CompactEventIDs ()
 // EventQueue::OrderEventBindingsByEventTime
 // ///////////////////////////////////////////////////////////////////////////
 
-bool EventQueue::OrderEventBindingsByEventTime::operator () (
-    EventBinding const &left_operand,
-    EventBinding const &right_operand) const
+bool EventQueue::OrderEventBindingsByEventTime::operator () (EventBinding const &left_operand, EventBinding const &right_operand) const
 {
     if (left_operand.GetEvent()->Time() < right_operand.GetEvent()->Time())
         return true;

@@ -56,19 +56,15 @@ EventCustom::~EventCustom () { }
 // event-matching functions for use in EventQueue
 // ///////////////////////////////////////////////////////////////////////////
 
-bool MatchEventType (Event const *event, Event::EventType const event_type)
+bool MatchEventType (Event const &event, Event::EventType event_type)
 {
-    ASSERT1(event != NULL);
-
-    return event->GetEventType() == event_type;
+    return event.GetEventType() == event_type;
 }
 
-bool MatchCustomType (Event const *event, EventCustom::CustomType const custom_type)
+bool MatchCustomType (Event const &event, EventCustom::CustomType custom_type)
 {
-    ASSERT1(event != NULL);
-
-    return dynamic_cast<EventCustom const *>(event) != NULL &&
-           static_cast<EventCustom const *>(event)->GetCustomType() == custom_type;
+    EventCustom const *event_custom = dynamic_cast<EventCustom const *>(&event);
+    return event_custom != NULL && event_custom->GetCustomType() == custom_type;
 }
 
 } // end of namespace Xrb

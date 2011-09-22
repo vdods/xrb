@@ -86,29 +86,26 @@ void KeySelectorButton::KeySelectorDialog::HandleActivate ()
     GrabMouse();
 }
 
-bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *e)
+bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const &e)
 {
-    ASSERT1(e != NULL);
-    ASSERT1(Singleton::InputState().IsValidKeyCode(e->KeyCode()));
-    m_key_code = e->KeyCode();
+    ASSERT1(Singleton::InputState().IsValidKeyCode(e.KeyCode()));
+    m_key_code = e.KeyCode();
     OKButtonActivated();
     return true;
 }
 
-bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *e)
+bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const &e)
 {
-    ASSERT1(e != NULL);
-    ASSERT1(Singleton::InputState().IsValidKeyCode(e->ButtonCode()));
-    m_key_code = e->ButtonCode();
+    ASSERT1(Singleton::InputState().IsValidKeyCode(e.ButtonCode()));
+    m_key_code = e.ButtonCode();
     OKButtonActivated();
     return true;
 }
 
-bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *e)
+bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const &e)
 {
-    ASSERT1(e != NULL);
-    ASSERT1(Singleton::InputState().IsValidKeyCode(e->ButtonCode()));
-    m_key_code = e->ButtonCode();
+    ASSERT1(Singleton::InputState().IsValidKeyCode(e.ButtonCode()));
+    m_key_code = e.ButtonCode();
     OKButtonActivated();
     return true;
 }

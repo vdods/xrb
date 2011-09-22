@@ -13,15 +13,11 @@
 namespace Xrb {
 namespace Engine2 {
 
-bool MatchEntity (
-    Event const *const event,
-    Entity *const entity_to_match)
+bool MatchEntity (Event const &event, Entity *entity_to_match)
 {
-    ASSERT1(event != NULL);
     ASSERT1(entity_to_match != NULL);
-
-    return dynamic_cast<EventEntity const *>(event) != NULL &&
-           static_cast<EventEntity const *>(event)->GetEntity() == entity_to_match;
+    EventEntity const *event_entity = dynamic_cast<EventEntity const *>(&event);
+    return event_entity != NULL && event_entity->GetEntity() == entity_to_match;
 }
 
 } // end of namespace Engine2

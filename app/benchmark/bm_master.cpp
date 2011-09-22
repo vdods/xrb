@@ -312,13 +312,13 @@ void Master::Run ()
             {
                 // process key events through the InputState singleton first
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::InputState().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(*event);
 
                 // also let the key repeater have a crack at it.
-                m_key_repeater.ProcessEvent(event);
+                m_key_repeater.ProcessEvent(*event);
 
                 // let the screen (and the entire UI/view system) have the event
-                m_screen->ProcessEvent(event);
+                m_screen->ProcessEvent(*event);
                 Delete(event);
             }
         }
@@ -380,14 +380,13 @@ void Master::Run ()
     ASSERT1(m_world == NULL);
 }
 
-bool Master::HandleEvent (Event const *const e)
+bool Master::HandleEvent (Event const &e)
 {
 /*
-    ASSERT1(e != NULL);
-    ASSERT1(e->GetEventType() == Event::CUSTOM);
+    ASSERT1(e.GetEventType() == Event::CUSTOM);
 
-    EventBase const *event = DStaticCast<EventBase const *>(e);
-    switch (event->GetCustomType())
+    EventBase const &event = dynamic_cast<EventBase const &>(e);
+    switch (event.GetCustomType())
     {
         case EventBase::ACTIVATE_TITLE_SCREEN:   ActivateTitleScreen();      return true;
         case EventBase::DEACTIVATE_TITLE_SCREEN: DeactivateTitleScreen();    return true;

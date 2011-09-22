@@ -107,7 +107,7 @@ protected:
         Engine2::Circle::PhysicsHandler *physics_handler,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
     virtual void HandleFrame ();
 
     virtual void HandleAttachWorldView (Engine2::WorldView *engine2_world_view);

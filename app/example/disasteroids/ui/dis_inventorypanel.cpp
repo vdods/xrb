@@ -128,7 +128,7 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
         {
             price_layout->AttachChild(new SpacerWidget(context));
 
-            Label *l = new Label("UPGRADE COST", Context());
+            Label *l = new Label("BUY/UPGRADE COST", Context());
             l->SetIsHeightFixedToTextHeight(true);
             price_layout->AttachChild(l);
 
@@ -274,9 +274,9 @@ void InventoryPanel::UpdatePanelState ()
     }
 }
 
-bool InventoryPanel::ProcessKeyEvent (EventKey const *e)
+bool InventoryPanel::ProcessKeyEvent (EventKey const &e)
 {
-    if (e->IsKeyDownEvent() && e->KeyCode() == Key::ESCAPE)
+    if (e.IsKeyDownEvent() && e.KeyCode() == Key::ESCAPE)
     {
         Deactivate();
         return true;

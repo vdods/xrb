@@ -65,14 +65,14 @@ public:
 
     // NOT ASSOCIATED WITH EventHandler !!
     // these are overrides of Engine2::WorldView methods!
-    virtual bool ProcessKeyEvent (EventKey const *e);
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-    virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
-    virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e);
+    virtual bool ProcessKeyEvent (EventKey const &e);
+    virtual bool ProcessMouseButtonEvent (EventMouseButton const &e);
+    virtual bool ProcessMouseWheelEvent (EventMouseWheel const &e);
+    virtual bool ProcessMouseMotionEvent (EventMouseMotion const &e);
 
 protected:
 
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
     virtual void HandleFrame ();
 
 private:

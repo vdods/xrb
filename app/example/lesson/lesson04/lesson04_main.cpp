@@ -204,7 +204,7 @@ public:
     // WorldView object.  These aren't inherited from Widget (as WorldView
     // does not inherit Widget), but are called by their counterparts in
     // WorldViewWidget.
-    virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e)
+    virtual bool ProcessMouseWheelEvent (EventMouseWheel const &e)
     {
         /* @endcode
         Note that the accessor for ALT key state is on the event, and not
@@ -214,13 +214,13 @@ public:
         @code */
         // If either ALT key is pressed, we will rotate the view depending
         // on which of mouse-wheel-up or mouse-wheel-down this event indicates.
-        if (e->IsEitherAltKeyPressed())
+        if (e.IsEitherAltKeyPressed())
         {
-            if (e->ButtonCode() == Key::MOUSEWHEELUP)
+            if (e.ButtonCode() == Key::MOUSEWHEELUP)
                 RotateView(-15.0f); // Rotate 15 degrees clockwise.
             else
             {
-                ASSERT1(e->ButtonCode() == Key::MOUSEWHEELDOWN);
+                ASSERT1(e.ButtonCode() == Key::MOUSEWHEELDOWN);
                 RotateView(15.0f); // Rotate 15 degrees counterclockwise.
             }
         }
@@ -228,11 +228,11 @@ public:
         // mouse-wheel-up or mouse-wheel-down this event indicates.
         else
         {
-            if (e->ButtonCode() == Key::MOUSEWHEELUP)
+            if (e.ButtonCode() == Key::MOUSEWHEELUP)
                 ZoomView(1.2f); // Zoom in by a factor of 1.2f
             else
             {
-                ASSERT1(e->ButtonCode() == Key::MOUSEWHEELDOWN);
+                ASSERT1(e.ButtonCode() == Key::MOUSEWHEELDOWN);
                 ZoomView(1.0f / 1.2f); // Zoom out by a factor of 1.2f
             }
         }
@@ -240,15 +240,15 @@ public:
         return true;
     }
     // This method is the mouse motion analog of ProcessMouseWheelEvent.
-    virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e)
+    virtual bool ProcessMouseMotionEvent (EventMouseMotion const &e)
     {
         // Only do stuff if the left mouse button was pressed for this event.
-        if (e->IsLeftMouseButtonPressed())
+        if (e.IsLeftMouseButtonPressed())
         {
             // This transforms the screen-coordinate movement delta of the
             // mouse motion event into world-coordinates.
             FloatVector2 position_delta(
-                ParallaxedScreenToWorld() * e->Delta().StaticCast<Float>() -
+                ParallaxedScreenToWorld() * e.Delta().StaticCast<Float>() -
                 ParallaxedScreenToWorld() * FloatVector2::ms_zero);
             // Move the view using the calculated world-coordinate delta.  We
             // negate the delta because by dragging the view down, the view
@@ -412,9 +412,9 @@ int main (int argc, char **argv)
             {
                 // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::InputState().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(*event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
-                screen->ProcessEvent(event);
+                screen->ProcessEvent(*event);
                 Delete(event);
             }
 

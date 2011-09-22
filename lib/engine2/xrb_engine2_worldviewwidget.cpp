@@ -105,7 +105,7 @@ ScreenCoordVector2 WorldViewWidget::Resize (ScreenCoordVector2 const &size)
     return Size();
 }
 
-bool WorldViewWidget::ProcessKeyEvent (EventKey const *e)
+bool WorldViewWidget::ProcessKeyEvent (EventKey const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessKeyEvent(e);
@@ -113,7 +113,7 @@ bool WorldViewWidget::ProcessKeyEvent (EventKey const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessMouseButtonEvent (EventMouseButton const *e)
+bool WorldViewWidget::ProcessMouseButtonEvent (EventMouseButton const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessMouseButtonEvent(e);
@@ -121,7 +121,7 @@ bool WorldViewWidget::ProcessMouseButtonEvent (EventMouseButton const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessMouseWheelEvent (EventMouseWheel const *e)
+bool WorldViewWidget::ProcessMouseWheelEvent (EventMouseWheel const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessMouseWheelEvent(e);
@@ -129,7 +129,7 @@ bool WorldViewWidget::ProcessMouseWheelEvent (EventMouseWheel const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessMouseMotionEvent (EventMouseMotion const *e)
+bool WorldViewWidget::ProcessMouseMotionEvent (EventMouseMotion const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessMouseMotionEvent(e);
@@ -137,7 +137,7 @@ bool WorldViewWidget::ProcessMouseMotionEvent (EventMouseMotion const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessPinchBeginEvent (EventPinchBegin const *e)
+bool WorldViewWidget::ProcessPinchBeginEvent (EventPinchBegin const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessPinchBeginEvent(e);
@@ -145,7 +145,7 @@ bool WorldViewWidget::ProcessPinchBeginEvent (EventPinchBegin const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessPinchEndEvent (EventPinchEnd const *e)
+bool WorldViewWidget::ProcessPinchEndEvent (EventPinchEnd const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessPinchEndEvent(e);
@@ -153,7 +153,7 @@ bool WorldViewWidget::ProcessPinchEndEvent (EventPinchEnd const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessPinchMotionEvent (EventPinchMotion const *e)
+bool WorldViewWidget::ProcessPinchMotionEvent (EventPinchMotion const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessPinchMotionEvent(e);
@@ -161,7 +161,7 @@ bool WorldViewWidget::ProcessPinchMotionEvent (EventPinchMotion const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessRotateBeginEvent (EventRotateBegin const *e)
+bool WorldViewWidget::ProcessRotateBeginEvent (EventRotateBegin const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessRotateBeginEvent(e);
@@ -169,7 +169,7 @@ bool WorldViewWidget::ProcessRotateBeginEvent (EventRotateBegin const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessRotateEndEvent (EventRotateEnd const *e)
+bool WorldViewWidget::ProcessRotateEndEvent (EventRotateEnd const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessRotateEndEvent(e);
@@ -177,7 +177,7 @@ bool WorldViewWidget::ProcessRotateEndEvent (EventRotateEnd const *e)
         return false;
 }
 
-bool WorldViewWidget::ProcessRotateMotionEvent (EventRotateMotion const *e)
+bool WorldViewWidget::ProcessRotateMotionEvent (EventRotateMotion const &e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessRotateMotionEvent(e);

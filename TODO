@@ -298,9 +298,6 @@ TODO:
 - add asserts to wrapped collision stuff to ensure things aren't above
   1/2 of the object side length
 - do tab/shift-tab control of child widget focus
-- change methods that take an event to pass by const reference, since event pointers are
-  never NULL and will not be deleted by the event handlers.
-- should Screen make its own event queue?
 - child widgets should be based off the position of their parents, so
   screen-relative moving is unnecessary.
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)

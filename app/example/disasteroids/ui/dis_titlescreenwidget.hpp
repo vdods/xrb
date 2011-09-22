@@ -50,7 +50,7 @@ protected:
 
     virtual void HandleFrame ();
 
-    virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e);
+    virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const &e);
 
 private:
 

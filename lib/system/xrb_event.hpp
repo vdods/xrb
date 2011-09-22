@@ -263,8 +263,8 @@ private:
 // event-matching functions for use in EventQueue
 // ///////////////////////////////////////////////////////////////////////////
 
-bool MatchEventType (Event const *event, Event::EventType event_type);
-bool MatchCustomType (Event const *event, EventCustom::CustomType custom_type);
+bool MatchEventType (Event const &event, Event::EventType event_type);
+bool MatchCustomType (Event const &event, EventCustom::CustomType custom_type);
 
 } // end of namespace Xrb
 

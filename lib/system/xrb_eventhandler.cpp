@@ -13,10 +13,9 @@
 #include "xrb_event.hpp"
 #include "xrb_eventqueue.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-EventHandler::EventHandler (EventQueue *const owner_event_queue)
+EventHandler::EventHandler (EventQueue *owner_event_queue)
 {
     m_owner_event_queue = owner_event_queue;
     m_is_blocking_events = false;
@@ -29,21 +28,20 @@ EventHandler::~EventHandler ()
 {
     if (m_owner_event_queue != NULL)
     {
-        m_owner_event_queue->DeleteEventsBelongingToHandler(this);
+        m_owner_event_queue->DeleteEventsBelongingToHandler(*this);
         m_owner_event_queue = NULL;
     }
 
     m_is_blocking_events = true;
 }
 
-bool EventHandler::ProcessEvent (Event const *const e)
+bool EventHandler::ProcessEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-    ASSERT1(!e->IsScheduledForDeletion());
+    ASSERT1(!e.IsScheduledForDeletion());
 
     // make sure that events show up "in order", even if their times
     // aren't actually completely correct.
-    Float event_time = e->Time();
+    Float event_time = e.Time();
     if (event_time < m_most_recent_event_time)
         event_time = m_most_recent_event_time;
 
@@ -75,11 +73,11 @@ bool EventHandler::ProcessEvent (Event const *const e)
     return false;
 }
 
-void EventHandler::EnqueueEvent (Event const *const e)
+void EventHandler::EnqueueEvent (Event const *e)
 {
     ASSERT1(e != NULL);
     ASSERT0(m_owner_event_queue != NULL);
-    m_owner_event_queue->EnqueueEvent(this, e);
+    m_owner_event_queue->EnqueueEvent(*this, e);
 }
 
 } // end of namespace Xrb

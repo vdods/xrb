@@ -170,7 +170,7 @@ protected:
     virtual void SetMainObjectLayerIndex (Uint32 index);
 
     // process an event
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
     // this calculates one frame, called by the game loop
     virtual void HandleFrame ();
     void IncrementLowestAvailableEntityIndex ();

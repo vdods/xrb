@@ -309,11 +309,9 @@ void Screen::HandleFrame ()
     // nothing needs to be done for now
 }
 
-bool Screen::HandleEvent (Event const *e)
+bool Screen::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::QUIT:
             RequestQuit();
@@ -324,48 +322,46 @@ bool Screen::HandleEvent (Event const *e)
     }
 
     // check for screenshot/dump-atlas keys
-    if (e->GetEventType() == Event::KEYDOWN)
+    if (e.GetEventType() == Event::KEYDOWN)
     {
-        EventKeyDown const *key_down_event = DStaticCast<EventKeyDown const *>(e);
-        if (key_down_event->KeyCode() == Key::PRINT)
+        EventKeyDown const &key_down_event = dynamic_cast<EventKeyDown const &>(e);
+        if (key_down_event.KeyCode() == Key::PRINT)
         {
             static Uint32 screenshot_count = 0; // temp hack for screenshot numbering TODO real numbering
             RequestScreenshot(FORMAT("screenshot" << std::setw(3) << std::setfill('0') << screenshot_count++ << ".png"));
         }
-        else if (key_down_event->KeyCode() == Key::SCROLLLOCK)
+        else if (key_down_event.KeyCode() == Key::SCROLLLOCK)
             Singleton::Gl().DumpAtlases("atlas"); // TODO: real atlas filename
     }
 
     // special handling for the root widget (Screen)
     {
-        if (e->IsMouseEvent())
+        if (e.IsMouseEvent())
         {
-            EventMouse const *mouse_event = DStaticCast<EventMouse const *>(e);
+            EventMouse const &mouse_event = dynamic_cast<EventMouse const &>(e);
 
             // transform the mouse event screen position
-            mouse_event->SetPosition(RotatedScreenPosition(mouse_event->Position()));
+            mouse_event.SetPosition(RotatedScreenPosition(mouse_event.Position()));
         }
 
-        if (e->IsMouseMotionEvent())
+        if (e.IsMouseMotionEvent())
         {
-            EventMouseMotion const *mouse_motion_event = DStaticCast<EventMouseMotion const *>(e);
+            EventMouseMotion const &mouse_motion_event = dynamic_cast<EventMouseMotion const &>(e);
 
             // transform the mouse motion event position delta
-            mouse_motion_event->SetDelta(RotatedScreenVector(mouse_motion_event->Delta()));
+            mouse_motion_event.SetDelta(RotatedScreenVector(mouse_motion_event.Delta()));
 
             // generate a mouseover event from the mouse motion event
-            EventMouseover mouseover_event(mouse_motion_event->Position(), mouse_motion_event->Time());
-            ProcessEvent(&mouseover_event);
+            EventMouseover mouseover_event(mouse_motion_event.Position(), mouse_motion_event.Time());
+            ProcessEvent(mouseover_event);
         }
 
-        if (e->GetEventType() == Event::MOUSEBUTTONDOWN)
+        if (e.GetEventType() == Event::MOUSEBUTTONDOWN)
         {
             // create a focus event
-            EventFocus focus_event(
-                DStaticCast<EventMouseButton const *>(e)->Position(),
-                e->Time());
+            EventFocus focus_event(dynamic_cast<EventMouseButton const &>(e).Position(), e.Time());
             // send it to the event processor
-            ProcessEvent(&focus_event);
+            ProcessEvent(focus_event);
         }
 
         // get the top of the modal widget stack
@@ -375,11 +371,11 @@ bool Screen::HandleEvent (Event const *e)
              it != it_end;
              ++it)
         {
-            Widget *widget = *it;
-            ASSERT1(widget != NULL);
-            if (!widget->IsHidden())
+            ASSERT1(*it != NULL);
+            Widget &widget = **it;
+            if (!widget.IsHidden())
             {
-                modal_widget = widget;
+                modal_widget = &widget;
                 break;
             }
         }
@@ -388,18 +384,20 @@ bool Screen::HandleEvent (Event const *e)
         if (modal_widget != NULL)
         {
             // if the modal widget has mouse grab, send all input events to it
-            if (modal_widget->IsMouseGrabbed() && e->IsInputEvent())
+            if (modal_widget->IsMouseGrabbed() && e.IsInputEvent())
                 return modal_widget->ProcessEvent(e);
 
             // check if this is a mouse event and it doesn't fall inside the
             // top modal widget.  if so, throw the event out.
-            if (e->IsMouseEvent())
-                if (!modal_widget->ScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->Position()))
+            if (e.IsMouseEvent())
+                if (!modal_widget->ScreenRect().IsPointInside(dynamic_cast<EventMouse const &>(e).Position()))
                     return false;
 
             // only return if the modal widget accepted the event.
             if (modal_widget->ProcessEvent(e))
                 return true;
+
+            // HIPPO - check if this should return here (since modal widgets should catch all)
         }
     }
 
@@ -407,7 +405,7 @@ bool Screen::HandleEvent (Event const *e)
     return ContainerWidget::HandleEvent(e);
 }
 
-bool Screen::InternalProcessFocusEvent (EventFocus const *e)
+bool Screen::InternalProcessFocusEvent (EventFocus const &e)
 {
     // if there are any modal widgets, then focus can only go the top unhidden modal widget.
     Widget *modal_widget = NULL;
@@ -427,7 +425,7 @@ bool Screen::InternalProcessFocusEvent (EventFocus const *e)
 
     if (modal_widget != NULL)
     {
-        if (modal_widget->ScreenRect().IsPointInside(e->Position()))
+        if (modal_widget->ScreenRect().IsPointInside(e.Position()))
             return modal_widget->InternalProcessFocusEvent(e);
         else
             return false;

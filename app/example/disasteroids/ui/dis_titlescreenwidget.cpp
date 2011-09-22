@@ -147,10 +147,9 @@ void TitleScreenWidget::HandleFrame ()
             &TitleScreenWidget::StateGameDemo);
 }
 
-bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput const *e)
+bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput const &e)
 {
-    ASSERT1(e != NULL);
-    m_state_machine.RunCurrentState(e->GetInput());
+    m_state_machine.RunCurrentState(e.GetInput());
     return true;
 }
 

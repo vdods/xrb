@@ -49,9 +49,9 @@ private:
         // overridden so we can grab the mouse at the earliest possible moment.
         virtual void HandleActivate ();
 
-        virtual bool ProcessKeyEvent (EventKey const *e);
-        virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-        virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
+        virtual bool ProcessKeyEvent (EventKey const &e);
+        virtual bool ProcessMouseButtonEvent (EventMouseButton const &e);
+        virtual bool ProcessMouseWheelEvent (EventMouseWheel const &e);
 
     private:
 

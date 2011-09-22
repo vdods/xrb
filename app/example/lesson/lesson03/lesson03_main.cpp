@@ -642,9 +642,9 @@ int main (int argc, char **argv)
             {
                 // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::InputState().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(*event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
-                screen->ProcessEvent(event);
+                screen->ProcessEvent(*event);
                 Delete(event);
             }
 

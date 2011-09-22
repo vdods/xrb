@@ -18,8 +18,7 @@
 #include "xrb_framehandler.hpp"
 #include "xrb_input_events.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 /** Key repeat events are generated to get the effect of holding a key down
   * while typing, simulating many keystrokes of the same key very quickly.
@@ -42,9 +41,7 @@ public:
       *                     before key repeat events are generated.
       * @param repeat_period The time between successive key repeat events.
       */
-    KeyRepeater (
-        Float repeat_delay = 0.25,
-        Float repeat_period = 0.033);
+    KeyRepeater (Float repeat_delay = 0.25, Float repeat_period = 0.033);
     /** @brief Destructor.
       */
     ~KeyRepeater ();
@@ -56,20 +53,14 @@ public:
       * this HandleFrame.
       * @brief Returns true iff the key repeat event queue is full.
       */
-    inline bool IsEventQueueFull () const
-    {
-        return m_key_event_queue.IsFull();
-    }
+    bool IsEventQueueFull () const { return m_key_event_queue.IsFull(); }
     /** HandleFrame generates the key repeat events and queues them
       * so they can be later removed and put in the main EventQueue.  This
       * accessor is used when emptying the queue of key repeat events and
       * putting them into the main EventQueue.
       * @brief Returns true iff the key repeat event queue is empty.
       */
-    inline bool IsEventQueueEmpty () const
-    {
-        return m_key_event_queue.IsEmpty();
-    }
+    bool IsEventQueueEmpty () const { return m_key_event_queue.IsEmpty(); }
 
     /** The dequeued events should be enqueued into the main EventQueue.
       * @brief Dequeues a single key repeat event.
@@ -86,7 +77,7 @@ protected:
       * and timings and such.
       * @brief Processes key events.
       */
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
 
 private:
 

@@ -697,61 +697,59 @@ void Widget::HandleChangedStyleSheet ()
     HandleChangedContentMargins();
 }
 
-bool Widget::HandleEvent (Event const *e)
+bool Widget::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-
     // if this widget is disabled, it rejects all events
     if (!IsEnabled())
         return false;
 
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::KEYDOWN:
         case Event::KEYUP:
         case Event::KEYREPEAT:
-            return InternalProcessKeyEvent(DStaticCast<EventKey const *>(e));
+            return InternalProcessKeyEvent(dynamic_cast<EventKey const &>(e));
 
         case Event::MOUSEBUTTONDOWN:
         case Event::MOUSEBUTTONUP:
         case Event::MOUSEWHEEL:
         case Event::MOUSEMOTION:
-            return InternalProcessMouseEvent(DStaticCast<EventMouse const *>(e));
+            return InternalProcessMouseEvent(dynamic_cast<EventMouse const &>(e));
 
         case Event::PINCHBEGIN:
         case Event::PINCHEND:
         case Event::PINCHMOTION:
-            return InternalProcessPinchEvent(DStaticCast<EventPinch const *>(e));
+            return InternalProcessPinchEvent(dynamic_cast<EventPinch const &>(e));
 
         case Event::ROTATEBEGIN:
         case Event::ROTATEEND:
         case Event::ROTATEMOTION:
-            return InternalProcessRotateEvent(DStaticCast<EventRotate const *>(e));
+            return InternalProcessRotateEvent(dynamic_cast<EventRotate const &>(e));
 
         case Event::JOYAXIS:
         case Event::JOYBALL:
         case Event::JOYBUTTONDOWN:
         case Event::JOYBUTTONUP:
         case Event::JOYHAT:
-            return InternalProcessJoyEvent(DStaticCast<EventJoy const *>(e));
+            return InternalProcessJoyEvent(dynamic_cast<EventJoy const &>(e));
 
         case Event::FOCUS:
-            return InternalProcessFocusEvent(DStaticCast<EventFocus const *>(e));
+            return InternalProcessFocusEvent(dynamic_cast<EventFocus const &>(e));
 
         case Event::MOUSEOVER:
-            return InternalProcessMouseoverEvent(DStaticCast<EventMouseover const *>(e));
+            return InternalProcessMouseoverEvent(dynamic_cast<EventMouseover const &>(e));
 
         case Event::DETACH_AND_DELETE_CHILD_WIDGET:
-            return ProcessDetachAndDeleteChildWidgetEvent(DStaticCast<EventDetachAndDeleteChildWidget const *>(e));
+            return ProcessDetachAndDeleteChildWidgetEvent(dynamic_cast<EventDetachAndDeleteChildWidget const &>(e));
 
         case Event::QUIT:
             return false;
 
         case Event::STATE_MACHINE_INPUT:
-            return ProcessStateMachineInputEvent(DStaticCast<EventStateMachineInput const *>(e));
+            return ProcessStateMachineInputEvent(dynamic_cast<EventStateMachineInput const &>(e));
 
         case Event::CUSTOM:
-            return ProcessCustomEvent(DStaticCast<EventCustom const *>(e));
+            return ProcessCustomEvent(dynamic_cast<EventCustom const &>(e));
 
         default:
             ASSERT0(false && "Invalid Event::EventType");
@@ -759,7 +757,7 @@ bool Widget::HandleEvent (Event const *e)
     }
 }
 
-bool Widget::ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e)
+bool Widget::ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const &e)
 {
     ASSERT0(false && "this should never be called");
     return false;
@@ -1012,38 +1010,35 @@ void Widget::MouseoverOffWidgetLine ()
     HandleMouseoverOff();
 }
 
-bool Widget::InternalProcessKeyEvent (EventKey const *e)
+bool Widget::InternalProcessKeyEvent (EventKey const &e)
 {
-    ASSERT1(e != NULL);
-    return ProcessKeyEvent(DStaticCast<EventKey const *>(e));
+    return ProcessKeyEvent(dynamic_cast<EventKey const &>(e));
 }
 
-bool Widget::InternalProcessMouseEvent (EventMouse const *e)
+bool Widget::InternalProcessMouseEvent (EventMouse const &e)
 {
-    ASSERT1(e != NULL);
-
     // if it was a mouse event, record the mouse position over this widget
-    if (e->IsMouseEvent())
-        m_last_mouse_position = DStaticCast<EventMouse const *>(e)->Position();
+    if (e.IsMouseEvent())
+        m_last_mouse_position = dynamic_cast<EventMouse const &>(e).Position();
 
     // give this widget the chance to process the event
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::MOUSEBUTTONUP:
         case Event::MOUSEBUTTONDOWN:
             // let this widget have an opportunity at the event
-            if (ProcessMouseButtonEvent(DStaticCast<EventMouseButton const *>(e)))
+            if (ProcessMouseButtonEvent(dynamic_cast<EventMouseButton const &>(e)))
                 return true;
             break;
 
         case Event::MOUSEWHEEL:
-            if (ProcessMouseWheelEvent(DStaticCast<EventMouseWheel const *>(e)))
+            if (ProcessMouseWheelEvent(dynamic_cast<EventMouseWheel const &>(e)))
                 return true;
             break;
 
         case Event::MOUSEMOTION:
             // let this widget have an opportunity at the event
-            if (ProcessMouseMotionEvent(DStaticCast<EventMouseMotion const *>(e)))
+            if (ProcessMouseMotionEvent(dynamic_cast<EventMouseMotion const &>(e)))
                 return true;
             break;
 
@@ -1055,25 +1050,23 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *e)
     return false;
 }
 
-bool Widget::InternalProcessPinchEvent (EventPinch const *e)
+bool Widget::InternalProcessPinchEvent (EventPinch const &e)
 {
-    ASSERT1(e != NULL);
-
     // give this widget the chance to process the event
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::PINCHBEGIN:
-            if (ProcessPinchBeginEvent(DStaticCast<EventPinchBegin const *>(e)))
+            if (ProcessPinchBeginEvent(dynamic_cast<EventPinchBegin const &>(e)))
                 return true;
             break;
 
         case Event::PINCHEND:
-            if (ProcessPinchEndEvent(DStaticCast<EventPinchEnd const *>(e)))
+            if (ProcessPinchEndEvent(dynamic_cast<EventPinchEnd const &>(e)))
                 return true;
             break;
 
         case Event::PINCHMOTION:
-            if (ProcessPinchMotionEvent(DStaticCast<EventPinchMotion const *>(e)))
+            if (ProcessPinchMotionEvent(dynamic_cast<EventPinchMotion const &>(e)))
                 return true;
             break;
 
@@ -1085,25 +1078,23 @@ bool Widget::InternalProcessPinchEvent (EventPinch const *e)
     return false;
 }
 
-bool Widget::InternalProcessRotateEvent (EventRotate const *e)
+bool Widget::InternalProcessRotateEvent (EventRotate const &e)
 {
-    ASSERT1(e != NULL);
-
     // give this widget the chance to process the event
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::ROTATEBEGIN:
-            if (ProcessRotateBeginEvent(DStaticCast<EventRotateBegin const *>(e)))
+            if (ProcessRotateBeginEvent(dynamic_cast<EventRotateBegin const &>(e)))
                 return true;
             break;
 
         case Event::ROTATEEND:
-            if (ProcessRotateEndEvent(DStaticCast<EventRotateEnd const *>(e)))
+            if (ProcessRotateEndEvent(dynamic_cast<EventRotateEnd const &>(e)))
                 return true;
             break;
 
         case Event::ROTATEMOTION:
-            if (ProcessRotateMotionEvent(DStaticCast<EventRotateMotion const *>(e)))
+            if (ProcessRotateMotionEvent(dynamic_cast<EventRotateMotion const &>(e)))
                 return true;
             break;
 
@@ -1115,13 +1106,12 @@ bool Widget::InternalProcessRotateEvent (EventRotate const *e)
     return false;
 }
 
-bool Widget::InternalProcessJoyEvent (EventJoy const *e)
+bool Widget::InternalProcessJoyEvent (EventJoy const &e)
 {
-    ASSERT1(e != NULL);
-    return ProcessJoyEvent(DStaticCast<EventJoy const *>(e));
+    return ProcessJoyEvent(dynamic_cast<EventJoy const &>(e));
 }
 
-bool Widget::InternalProcessFocusEvent (EventFocus const *e)
+bool Widget::InternalProcessFocusEvent (EventFocus const &e)
 {
     // hidden widgets can't be focused
     if (IsHidden())
@@ -1137,7 +1127,7 @@ bool Widget::InternalProcessFocusEvent (EventFocus const *e)
     return retval;
 }
 
-bool Widget::InternalProcessMouseoverEvent (EventMouseover const *e)
+bool Widget::InternalProcessMouseoverEvent (EventMouseover const &e)
 {
     // hidden widgets can't be moused over
     if (IsHidden())

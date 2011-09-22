@@ -52,7 +52,7 @@ public:
 protected:
 
     // process a key event
-    virtual bool ProcessKeyEvent (EventKey const *e);
+    virtual bool ProcessKeyEvent (EventKey const &e);
     // the function that's called when this widget becomes unfocused
     virtual void HandleUnfocus ();
 
@@ -131,11 +131,11 @@ void ValueEdit<ValueType>::SetTextToValueFunction (TextToValueFunctionType text_
 }
 
 template <typename ValueType>
-bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *e)
+bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const &e)
 {
-    if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
+    if (e.IsKeyDownEvent() || e.IsKeyRepeatEvent())
     {
-        switch (e->KeyCode())
+        switch (e.KeyCode())
         {
             case Key::RETURN:
             case Key::KP_ENTER:

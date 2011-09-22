@@ -362,7 +362,7 @@ int main (int argc, char **argv)
                 state of said user-input devices is updated.
                 @code */
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::InputState().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(*event);
                 /* @endcode
                 All events are delegated to the proper widgets via the top of
                 the widget hierarchy (the Screen object).  Events must go
@@ -370,7 +370,7 @@ int main (int argc, char **argv)
                 based on locations of widgets (e.g. mousewheel events always
                 go to the widget(s) directly under the mouse cursor).
                 @code */
-                screen->ProcessEvent(event);
+                screen->ProcessEvent(*event);
                 /* @endcode
                 We don't want to rely on widgets deleting events themselves, as
                 it would create a maintenance nightmare, so we insist that

@@ -92,33 +92,31 @@ Key::Key ()
     m_is_pressed = false;
 }
 
-bool Key::HandleEvent (Event const *const e)
+bool Key::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::KEYDOWN:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventKeyDown const *const>(e)->KeyCode() == m_code);
+            ASSERT1(dynamic_cast<EventKeyDown const &>(e).KeyCode() == m_code);
             m_is_pressed = true;
             break;
 
         case Event::KEYUP:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventKeyUp const *const>(e)->KeyCode() == m_code);
+            ASSERT1(dynamic_cast<EventKeyUp const &>(e).KeyCode() == m_code);
             m_is_pressed = false;
             break;
 
         case Event::MOUSEBUTTONDOWN:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventMouseButtonDown const *const>(e)->ButtonCode() == m_code);
+            ASSERT1(dynamic_cast<EventMouseButtonDown const &>(e).ButtonCode() == m_code);
             m_is_pressed = true;
             break;
 
         case Event::MOUSEBUTTONUP:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventMouseButtonUp const *const>(e)->ButtonCode() == m_code);
+            ASSERT1(dynamic_cast<EventMouseButtonUp const &>(e).ButtonCode() == m_code);
             m_is_pressed = false;
             break;
 

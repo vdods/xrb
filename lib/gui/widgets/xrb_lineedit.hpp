@@ -49,9 +49,9 @@ protected:
     // process one computation frame
     virtual void HandleFrame ();
     // process a key event
-    virtual bool ProcessKeyEvent (EventKey const *e);
+    virtual bool ProcessKeyEvent (EventKey const &e);
     // process a mouse button event
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
+    virtual bool ProcessMouseButtonEvent (EventMouseButton const &e);
 
     // the function that's called when this widget becomes focused
     virtual void HandleFocus ();

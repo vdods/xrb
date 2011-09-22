@@ -141,16 +141,16 @@ public:
     // draws the contents of the view (bottom-most layer of the rendering)
     virtual void Draw (RenderContext const &render_context);
 
-    virtual bool ProcessKeyEvent (EventKey const *e);
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-    virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
-    virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e);
-    virtual bool ProcessPinchBeginEvent (EventPinchBegin const *e);
-    virtual bool ProcessPinchEndEvent (EventPinchEnd const *e);
-    virtual bool ProcessPinchMotionEvent (EventPinchMotion const *e);
-    virtual bool ProcessRotateBeginEvent (EventRotateBegin const *e);
-    virtual bool ProcessRotateEndEvent (EventRotateEnd const *e);
-    virtual bool ProcessRotateMotionEvent (EventRotateMotion const *e);
+    virtual bool ProcessKeyEvent (EventKey const &e);
+    virtual bool ProcessMouseButtonEvent (EventMouseButton const &e);
+    virtual bool ProcessMouseWheelEvent (EventMouseWheel const &e);
+    virtual bool ProcessMouseMotionEvent (EventMouseMotion const &e);
+    virtual bool ProcessPinchBeginEvent (EventPinchBegin const &e);
+    virtual bool ProcessPinchEndEvent (EventPinchEnd const &e);
+    virtual bool ProcessPinchMotionEvent (EventPinchMotion const &e);
+    virtual bool ProcessRotateBeginEvent (EventRotateBegin const &e);
+    virtual bool ProcessRotateEndEvent (EventRotateEnd const &e);
+    virtual bool ProcessRotateMotionEvent (EventRotateMotion const &e);
 
     virtual void HandleFocus () { }
     virtual void HandleUnfocus () { }

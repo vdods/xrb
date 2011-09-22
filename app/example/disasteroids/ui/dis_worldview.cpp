@@ -138,34 +138,34 @@ void WorldView::SetIsDebugZoomModeEnabled (bool is_debug_zoom_mode_enabled)
     }
 }
 
-bool WorldView::ProcessKeyEvent (EventKey const *const e)
+bool WorldView::ProcessKeyEvent (EventKey const &e)
 {
-    if (e->IsKeyDownEvent())
-        HandleInput(e->KeyCode());
+    if (e.IsKeyDownEvent())
+        HandleInput(e.KeyCode());
     return true;
 }
 
-bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool WorldView::ProcessMouseButtonEvent (EventMouseButton const &e)
 {
-    if (e->IsMouseButtonDownEvent())
-        HandleInput(e->ButtonCode());
+    if (e.IsMouseButtonDownEvent())
+        HandleInput(e.ButtonCode());
     return true;
 }
 
-bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
+bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const &e)
 {
     // don't allow mouse wheel input while the widget is not focused
     if (!ParentWorldViewWidget()->IsFocused())
         return false;
 
-    HandleInput(e->ButtonCode());
+    HandleInput(e.ButtonCode());
 
 /*
-    if (e->IsEitherAltKeyPressed())
+    if (e.IsEitherAltKeyPressed())
     {
         // when the alt key is held down, change the view's rotation
 
-        if (e->ButtonCode() == Key::MOUSEWHEELUP)
+        if (e.ButtonCode() == Key::MOUSEWHEELUP)
         {
             if (m_rotation_accumulator > 0.0f)
                 m_rotation_accumulator -=
@@ -173,7 +173,7 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
                     static_cast<Sint32>(m_rotation_accumulator / m_rotation_increment);
             m_rotation_accumulator -= m_rotation_increment;
         }
-        else if (e->ButtonCode() == Key::MOUSEWHEELDOWN)
+        else if (e.ButtonCode() == Key::MOUSEWHEELDOWN)
         {
             if (m_rotation_accumulator < 0.0f)
                 m_rotation_accumulator -=
@@ -190,13 +190,13 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     {
         // otherwise, change the view's zoom
 
-        if (e->ButtonCode() == Key::MOUSEWHEELUP)
+        if (e.ButtonCode() == Key::MOUSEWHEELUP)
         {
             if (m_zoom_accumulator < 0.0f)
                 m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
             m_zoom_accumulator += 1.0f;
         }
-        else if (e->ButtonCode() == Key::MOUSEWHEELDOWN)
+        else if (e.ButtonCode() == Key::MOUSEWHEELDOWN)
         {
             if (m_zoom_accumulator > 0.0f)
                 m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
@@ -209,18 +209,16 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     return true;
 }
 
-bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
+bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const &e)
 {
     return true;
 }
 
-bool WorldView::HandleEvent (Event const *const e)
+bool WorldView::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-
-    if (e->GetEventType() == Event::STATE_MACHINE_INPUT)
+    if (e.GetEventType() == Event::STATE_MACHINE_INPUT)
     {
-        m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(e)->GetInput());
+        m_state_machine.RunCurrentState(dynamic_cast<EventStateMachineInput const &>(e).GetInput());
         return true;
     }
 

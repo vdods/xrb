@@ -593,35 +593,35 @@ protected:
       * @brief Override of @a EventHandler::HandleEvent which does
       *        generic event processing.
       */
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
     /// Subclasses may override this to process key events.
-    virtual bool ProcessKeyEvent (EventKey const *e) { return false; }
+    virtual bool ProcessKeyEvent (EventKey const &e) { return false; }
     /// Subclasses may override this to process mouse button events.
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e) { return false; }
+    virtual bool ProcessMouseButtonEvent (EventMouseButton const &e) { return false; }
     /// Subclasses may override this to process mouse wheel events.
-    virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e) { return false; }
+    virtual bool ProcessMouseWheelEvent (EventMouseWheel const &e) { return false; }
     /// Subclasses may override this to process motion events.
-    virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e) { return false; }
+    virtual bool ProcessMouseMotionEvent (EventMouseMotion const &e) { return false; }
     /// Subclasses may override this to process pinch begin events.
-    virtual bool ProcessPinchBeginEvent (EventPinchBegin const *e) { return false; }
+    virtual bool ProcessPinchBeginEvent (EventPinchBegin const &e) { return false; }
     /// Subclasses may override this to process pinch end events.
-    virtual bool ProcessPinchEndEvent (EventPinchEnd const *e) { return false; }
+    virtual bool ProcessPinchEndEvent (EventPinchEnd const &e) { return false; }
     /// Subclasses may override this to process pinch motion events.
-    virtual bool ProcessPinchMotionEvent (EventPinchMotion const *e) { return false; }
+    virtual bool ProcessPinchMotionEvent (EventPinchMotion const &e) { return false; }
     /// Subclasses may override this to process rotate motion events.
-    virtual bool ProcessRotateMotionEvent (EventRotateMotion const *e) { return false; }
+    virtual bool ProcessRotateMotionEvent (EventRotateMotion const &e) { return false; }
     /// Subclasses may override this to process rotate begin events.
-    virtual bool ProcessRotateBeginEvent (EventRotateBegin const *e) { return false; }
+    virtual bool ProcessRotateBeginEvent (EventRotateBegin const &e) { return false; }
     /// Subclasses may override this to process rotate end events.
-    virtual bool ProcessRotateEndEvent (EventRotateEnd const *e) { return false; }
+    virtual bool ProcessRotateEndEvent (EventRotateEnd const &e) { return false; }
     /// Subclasses may override this to process joystick events.
-    virtual bool ProcessJoyEvent (EventJoy const *e) { return false; }
+    virtual bool ProcessJoyEvent (EventJoy const &e) { return false; }
     /// Subclasses may override this to process StateMachineInput events.
-    virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e) { return false; }
+    virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const &e) { return false; }
     /// Subclasses may override this to process custom events -- events not explicitly handled by the above overridable handlers.
-    virtual bool ProcessCustomEvent (EventCustom const *e) { return false; }
+    virtual bool ProcessCustomEvent (EventCustom const &e) { return false; }
     /// Processes a delete child widget event.  This is used mainly to delete modal widgets.
-    virtual bool ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e);
+    virtual bool ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const &e);
 
     /// @brief Handler that is called when this widget is attached to a parent.
     /// @details Subclasses should override this when they need to do something when
@@ -713,19 +713,19 @@ private:
     /// Mouseover-offs all widgets from this one down, starting at lowest child, going up.
     void MouseoverOffWidgetLine ();
     /// Performs some necessary event processing on key events before the key event handler gets them.
-    virtual bool InternalProcessKeyEvent (EventKey const *e);
+    virtual bool InternalProcessKeyEvent (EventKey const &e);
     /// Performs some necessary event processing on mouse events before the mouse event handler gets them.
-    virtual bool InternalProcessMouseEvent (EventMouse const *e);
+    virtual bool InternalProcessMouseEvent (EventMouse const &e);
     /// Performs some necessary event processing on pinch events before the pinch event handler gets them.
-    virtual bool InternalProcessPinchEvent (EventPinch const *e);
+    virtual bool InternalProcessPinchEvent (EventPinch const &e);
     /// Performs some necessary event processing on rotate events before the rotate event handler gets them.
-    virtual bool InternalProcessRotateEvent (EventRotate const *e);
+    virtual bool InternalProcessRotateEvent (EventRotate const &e);
     /// Performs some necessary event processing on joy events before the joy event handler gets them.
-    virtual bool InternalProcessJoyEvent (EventJoy const *e);
+    virtual bool InternalProcessJoyEvent (EventJoy const &e);
     /// Performs some necessary event processing on focus events.
-    virtual bool InternalProcessFocusEvent (EventFocus const *e);
+    virtual bool InternalProcessFocusEvent (EventFocus const &e);
     /// Performs some necessary event processing on mouseover events.
-    virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
+    virtual bool InternalProcessMouseoverEvent (EventMouseover const &e);
 
     /// Gives access to "global" context with respect to the "active" widgets associated with a Screen object.
     WidgetContext &m_context;

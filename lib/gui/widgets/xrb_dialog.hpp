@@ -105,7 +105,7 @@ protected:
     /** Ctrl+Enter is a shortcut for OK, escape is a shortcut for Cancel.
       * @brief Handles the default dialog keypresses.
       */
-    virtual bool ProcessKeyEvent (EventKey const *e);
+    virtual bool ProcessKeyEvent (EventKey const &e);
 
     /** Shuts down the dialog, and emits the appropriate signals.
       * This function can be called directly to simulate the OK button

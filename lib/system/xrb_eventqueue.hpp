@@ -18,8 +18,7 @@
 #include "xrb_event.hpp"
 #include "xrb_framehandler.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class EventHandler;
 
@@ -56,21 +55,18 @@ public:
       *
       * @brief Enqueues an event for the given EventHandler.
       */
-    void EnqueueEvent (
-        EventHandler *event_handler,
-        Event const *event);
+    void EnqueueEvent (EventHandler &event_handler, Event const *event);
     /** @note You shouldn't have to call this directly.  It will be called
       *       automatically by EventHandler's destructor.
       * @brief Deletes events which belong to the given EventHandler
       */
-    void DeleteEventsBelongingToHandler (
-        EventHandler *event_handler);
+    void DeleteEventsBelongingToHandler (EventHandler &event_handler);
     /** This is used to remove situation-specific sets of events.
       * @brief Deletes all queued events that return true when passed to the
       *        given event matching function.
       * @param EventMatchingFunction A pointer to the matching function to use.
       */
-    void ScheduleMatchingEventsForDeletion (bool (*EventMatchingFunction)(Event const *));
+    void ScheduleMatchingEventsForDeletion (bool (*EventMatchingFunction)(Event const &));
     /** This is used to remove situation-specific sets of events.
       *
       * The template parameter specifies the type of the single extra
@@ -83,7 +79,7 @@ public:
       */
     template <typename ParameterType>
     void ScheduleMatchingEventsForDeletion (
-        bool (*EventMatchingFunction)(Event const *, ParameterType),
+        bool (*EventMatchingFunction)(Event const &, ParameterType),
         ParameterType parameter);
     /** This is used to remove situation-specific sets of events.
       *
@@ -100,24 +96,19 @@ public:
       */
     template <typename Parameter1Type, typename Parameter2Type>
     void ScheduleMatchingEventsForDeletion (
-        bool (*EventMatchingFunction)(Event const *, Parameter1Type, Parameter2Type),
+        bool (*EventMatchingFunction)(Event const &, Parameter1Type, Parameter2Type),
         Parameter1Type parameter1,
         Parameter2Type parameter2);
         
 protected:
 
-    /** @brief Processes all events in the event queue with time less than or
-      *        equal to the current frame time.
-      */
+    /// Processes all events in the event queue with time less than or equal to the current frame time.
     virtual void HandleFrame ();
 
 private:
 
     // the maximum ID number
-    static inline Uint32 MaxEventID ()
-    {
-        return UINT32_UPPER_BOUND;
-    }
+    static Uint32 MaxEventID () { return UINT32_UPPER_BOUND; }
 
     // stick the buffered event queue into the main event queue
     void EnqueueBufferedEvents ();
@@ -127,38 +118,24 @@ private:
     // the EventBinding class is used to pair events with event handlers
     class EventBinding
     {
+    public:
+
+        EventBinding (EventHandler *event_handler, Event const *event) : m_event_handler(event_handler), m_event(event) { }
+
+        EventHandler *GetEventHandler () const { return m_event_handler; }
+        Event const *GetEvent () const { return m_event; }
+
     private:
 
         EventHandler *m_event_handler;
         Event const *m_event;
-
-    public:
-
-        EventBinding (
-            EventHandler *const event_handler,
-            Event const *const event)
-        {
-            m_event_handler = event_handler;
-            m_event = event;
-        }
-
-        inline EventHandler *GetEventHandler () const
-        {
-            return m_event_handler;
-        }
-        inline Event const *GetEvent () const
-        {
-            return m_event;
-        }
     }; // end of class EventBinding
 
     // the OrderEventBindingsByEventTime functor is used to provide a strict
     // weak ordering for event queues which should be ordered by event time
     struct OrderEventBindingsByEventTime
     {
-        bool operator () (
-            EventBinding const &left_operand,
-            EventBinding const &right_operand) const;
+        bool operator () (EventBinding const &left_operand, EventBinding const &right_operand) const;
     };
 
     typedef std::multiset<EventBinding, OrderEventBindingsByEventTime> TimeOrderedEventBindingSet;
@@ -181,44 +158,42 @@ private:
 
 template <typename ParameterType>
 void EventQueue::ScheduleMatchingEventsForDeletion (
-    bool (*EventMatchingFunction)(Event const *, ParameterType),
+    bool (*EventMatchingFunction)(Event const &, ParameterType),
     ParameterType parameter)
 {
     // check all enqueued events against the given event-matching function.
-    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
-                                            it_end = m_time_ordered_event_queue.end();
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(), it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
     {
-        Event const *event = it->GetEvent();
-        ASSERT1(event != NULL);
+        ASSERT1(it->GetEvent() != NULL);
+        Event const &event = *it->GetEvent();
         // only check events that aren't already scheduled for deletion
-        if (!event->IsScheduledForDeletion())
+        if (!event.IsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
             if (EventMatchingFunction(event, parameter))
-                event->ScheduleForDeletion();
+                event.ScheduleForDeletion();
     }
 }
 
 template <typename Parameter1Type, typename Parameter2Type>
 void EventQueue::ScheduleMatchingEventsForDeletion (
-    bool (*EventMatchingFunction)(Event const *, Parameter1Type, Parameter2Type),
+    bool (*EventMatchingFunction)(Event const &, Parameter1Type, Parameter2Type),
     Parameter1Type parameter1,
     Parameter2Type parameter2)
 {
     // check all enqueued events against the given event-matching function.
-    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
-                                            it_end = m_time_ordered_event_queue.end();
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(), it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
     {
-        Event const *event = it->GetEvent();
-        ASSERT1(event != NULL);
+        ASSERT1(it->GetEvent() != NULL);
+        Event const &event = *it->GetEvent();
         // only check events that aren't already scheduled for deletion
-        if (!event->IsScheduledForDeletion())
+        if (!event.IsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
             if (EventMatchingFunction(event, parameter1, parameter2))
-                event->ScheduleForDeletion();
+                event.ScheduleForDeletion();
     }
 }
 

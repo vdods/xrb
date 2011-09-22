@@ -162,15 +162,13 @@ void InputState::ResetPressed ()
     }
 }
 
-bool InputState::HandleEvent (Event const *const e)
+bool InputState::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-
     Key::Code code;
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::KEYDOWN:
-            code = static_cast<EventKeyDown const *const>(e)->KeyCode();
+            code = dynamic_cast<EventKeyDown const &>(e).KeyCode();
 
             // do caps/num/scroll lock updating
             if (code == Key::CAPSLOCK)
@@ -182,15 +180,15 @@ bool InputState::HandleEvent (Event const *const e)
             break;
 
         case Event::KEYUP:
-            code = static_cast<EventKeyUp const *const>(e)->KeyCode();
+            code = dynamic_cast<EventKeyUp const &>(e).KeyCode();
             break;
 
         case Event::MOUSEBUTTONDOWN:
-            code = static_cast<EventMouseButtonDown const *const>(e)->ButtonCode();
+            code = dynamic_cast<EventMouseButtonDown const &>(e).ButtonCode();
             break;
 
         case Event::MOUSEBUTTONUP:
-            code = static_cast<EventMouseButtonUp const *const>(e)->ButtonCode();
+            code = dynamic_cast<EventMouseButtonUp const &>(e).ButtonCode();
             break;
 
         default:

@@ -57,7 +57,7 @@ public:
 protected:
 
     // processes an event
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
     void InitKeyMaps ();
 
 private:

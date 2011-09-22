@@ -89,14 +89,14 @@ bool Dialog::HasButton (ButtonID button_id) const
     }
 }
 
-bool Dialog::ProcessKeyEvent (EventKey const *e)
+bool Dialog::ProcessKeyEvent (EventKey const &e)
 {
-    if (e->IsKeyDownEvent())
+    if (e.IsKeyDownEvent())
     {
-        switch (e->KeyCode())
+        switch (e.KeyCode())
         {
             case Key::RETURN:
-                if (HasOKButton() && e->IsEitherControlKeyPressed())
+                if (HasOKButton() && e.IsEitherControlKeyPressed())
                 {
                     OKButtonActivated();
                     return true;

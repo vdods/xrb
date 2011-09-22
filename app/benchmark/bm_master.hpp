@@ -42,7 +42,7 @@ public:
 
 protected:
 
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
 
 private:
 

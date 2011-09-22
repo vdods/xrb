@@ -681,10 +681,10 @@ void ContainerWidget::HandleFrame ()
     }
 }
 
-bool ContainerWidget::ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e)
+bool ContainerWidget::ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const &e)
 {
-    ASSERT1(e->ChildToDetachAndDelete() != this && "a widget must not delete itself");
-    e->DetachAndDeleteChildWidget();
+    ASSERT1(e.ChildToDetachAndDelete() != this && "a widget must not delete itself");
+    e.DetachAndDeleteChildWidget();
     return true;
 }
 
@@ -878,20 +878,18 @@ ContainerWidget::WidgetVector::iterator ContainerWidget::FindChildWidget (Widget
     return it;
 }
 
-bool ContainerWidget::InternalProcessKeyEvent (EventKey const *e)
+bool ContainerWidget::InternalProcessKeyEvent (EventKey const &e)
 {
-    ASSERT1(e != NULL);
-
     if (m_children_get_input_events_first)
     {
         if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
         else
-            return ProcessKeyEvent(DStaticCast<EventKey const *>(e));
+            return ProcessKeyEvent(dynamic_cast<EventKey const &>(e));
     }
     else
     {
-        if (ProcessKeyEvent(DStaticCast<EventKey const *>(e)))
+        if (ProcessKeyEvent(dynamic_cast<EventKey const &>(e)))
             return true;
         else if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
@@ -900,15 +898,13 @@ bool ContainerWidget::InternalProcessKeyEvent (EventKey const *e)
     }
 }
 
-bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *e)
+bool ContainerWidget::InternalProcessMouseEvent (EventMouse const &e)
 {
-    ASSERT1(e != NULL);
-
     if (m_children_get_input_events_first)
     {
         if (m_focus != NULL && m_focus_has_mouse_grab)
             return m_focus->ProcessEvent(e);
-        else if (SendMouseEventToChild(DStaticCast<EventMouse const *>(e)))
+        else if (SendMouseEventToChild(dynamic_cast<EventMouse const &>(e)))
             return true;
         else
             return Widget::InternalProcessMouseEvent(e);
@@ -920,27 +916,25 @@ bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *e)
         else if (Widget::InternalProcessMouseEvent(e))
             return true;
         else
-            return SendMouseEventToChild(DStaticCast<EventMouse const *>(e));
+            return SendMouseEventToChild(dynamic_cast<EventMouse const &>(e));
     }
 }
 
-bool ContainerWidget::InternalProcessPinchEvent (EventPinch const *e)
+bool ContainerWidget::InternalProcessPinchEvent (EventPinch const &e)
 {
-    ASSERT1(e != NULL);
-
     // because a pinch event is not associated with a screen position, the only way it
-    // makes to handle is like a keyboard event.  therefore send it down the focus line.
+    // makes sense to handle is like a keyboard event.  therefore send it down the focus line.
 
     if (m_children_get_input_events_first)
     {
         if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
         else
-            return Widget::InternalProcessPinchEvent(DStaticCast<EventPinch const *>(e));
+            return Widget::InternalProcessPinchEvent(dynamic_cast<EventPinch const &>(e));
     }
     else
     {
-        if (Widget::InternalProcessPinchEvent(DStaticCast<EventPinch const *>(e)))
+        if (Widget::InternalProcessPinchEvent(dynamic_cast<EventPinch const &>(e)))
             return true;
         else if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
@@ -949,23 +943,21 @@ bool ContainerWidget::InternalProcessPinchEvent (EventPinch const *e)
     }
 }
 
-bool ContainerWidget::InternalProcessRotateEvent (EventRotate const *e)
+bool ContainerWidget::InternalProcessRotateEvent (EventRotate const &e)
 {
-    ASSERT1(e != NULL);
-
     // because a rotate event is not associated with a screen position, the only way it
-    // makes to handle is like a keyboard event.  therefore send it down the focus line.
+    // makes sense to handle is like a keyboard event.  therefore send it down the focus line.
 
     if (m_children_get_input_events_first)
     {
         if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
         else
-            return Widget::InternalProcessRotateEvent(DStaticCast<EventRotate const *>(e));
+            return Widget::InternalProcessRotateEvent(dynamic_cast<EventRotate const &>(e));
     }
     else
     {
-        if (Widget::InternalProcessRotateEvent(DStaticCast<EventRotate const *>(e)))
+        if (Widget::InternalProcessRotateEvent(dynamic_cast<EventRotate const &>(e)))
             return true;
         else if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
@@ -974,20 +966,18 @@ bool ContainerWidget::InternalProcessRotateEvent (EventRotate const *e)
     }
 }
 
-bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *e)
+bool ContainerWidget::InternalProcessJoyEvent (EventJoy const &e)
 {
-    ASSERT1(e != NULL);
-
     if (m_children_get_input_events_first)
     {
         if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
-        else if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
+        else if (ProcessJoyEvent(dynamic_cast<EventJoy const &>(e)))
             return true;
     }
     else
     {
-        if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
+        if (ProcessJoyEvent(dynamic_cast<EventJoy const &>(e)))
             return true;
         else if (m_focus != NULL)
             return m_focus->ProcessEvent(e);
@@ -996,7 +986,7 @@ bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *e)
     return false;
 }
 
-bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *e)
+bool ContainerWidget::InternalProcessFocusEvent (EventFocus const &e)
 {
     // hidden widgets can't be focused
     if (IsHidden())
@@ -1010,16 +1000,11 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *e)
     // loop through all the child widgets (from top to bottom)
     WidgetVector::reverse_iterator it;
     WidgetVector::reverse_iterator it_end;
-    for (it = m_child_vector.rbegin(),
-            it_end = m_child_vector.rend();
-            it != it_end;
-            ++it)
+    for (it = m_child_vector.rbegin(), it_end = m_child_vector.rend(); it != it_end; ++it)
     {
-        Widget *child = *it;
-        ASSERT1(child != NULL);
-        if (!child->IsHidden() &&
-            child->ScreenRect().IsPointInside(e->Position()) &&
-            child->InternalProcessFocusEvent(e))
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        if (!child.IsHidden() && child.ScreenRect().IsPointInside(e.Position()) && child.InternalProcessFocusEvent(e))
             return true;
     }
 
@@ -1027,7 +1012,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *e)
     return Widget::InternalProcessFocusEvent(e);
 }
 
-bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *e)
+bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const &e)
 {
     // hidden widgets can't be moused over
     if (IsHidden())
@@ -1036,15 +1021,12 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *e)
     // loop through all the child widgets (from top to bottom)
     WidgetVector::reverse_iterator it;
     WidgetVector::reverse_iterator it_end;
-    for (it = m_child_vector.rbegin(),
-         it_end = m_child_vector.rend();
-         it != it_end;
-         ++it)
+    for (it = m_child_vector.rbegin(), it_end = m_child_vector.rend(); it != it_end; ++it)
     {
-        Widget *child = *it;
-        ASSERT1(child != NULL);
-        if (child->ScreenRect().IsPointInside(e->Position()))
-            if (child->InternalProcessMouseoverEvent(e))
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
+        if (child.ScreenRect().IsPointInside(e.Position()))
+            if (child.InternalProcessMouseoverEvent(e))
                 return true;
     }
 
@@ -1052,23 +1034,20 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *e)
     return Widget::InternalProcessMouseoverEvent(e);
 }
 
-bool ContainerWidget::SendMouseEventToChild (EventMouse const *e)
+bool ContainerWidget::SendMouseEventToChild (EventMouse const &e)
 {
     // attempt to send the mouse event to the widget that is below
     // the mouse cursor, traversing the child vector from top to
     // bottom.
-    for (WidgetVector::reverse_iterator it = m_child_vector.rbegin(),
-                                     it_end = m_child_vector.rend();
-         it != it_end;
-         ++it)
+    for (WidgetVector::reverse_iterator it = m_child_vector.rbegin(), it_end = m_child_vector.rend(); it != it_end; ++it)
     {
-        Widget *child = *it;
-        ASSERT1(child != NULL);
+        ASSERT1(*it != NULL);
+        Widget &child = **it;
         // only send the event to widgets that are not hidden
         // AND if the mouse event position is inside the widget's rect
-        if (!child->IsHidden() &&
-            child->ScreenRect().IsPointInside(e->Position()))
-            if (child->ProcessEvent(e))
+        if (!child.IsHidden() &&
+            child.ScreenRect().IsPointInside(e.Position()))
+            if (child.ProcessEvent(e))
                 return true;
     }
     // if no widget accepted it, return false

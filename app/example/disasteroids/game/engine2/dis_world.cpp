@@ -889,13 +889,11 @@ World::World (
     // HandleFrame, so that the WorldViews will be active
 }
 
-bool World::HandleEvent (Event const *e)
+bool World::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-
-    if (e->GetEventType() == Event::STATE_MACHINE_INPUT)
+    if (e.GetEventType() == Event::STATE_MACHINE_INPUT)
     {
-        m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(e)->GetInput());
+        m_state_machine.RunCurrentState(dynamic_cast<EventStateMachineInput const &>(e).GetInput());
         return true;
     }
 

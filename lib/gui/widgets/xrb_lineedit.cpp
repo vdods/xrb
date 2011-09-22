@@ -27,6 +27,7 @@ LineEdit::LineEdit (Uint32 character_limit, WidgetContext &context, std::string 
     m_sender_text_set_by_enter_key_v(this)
 {
     m_accepts_focus = true;
+    m_accepts_mouseover = true;
 
     m_character_limit = character_limit;
     m_text.reserve(m_character_limit);
@@ -137,15 +138,15 @@ void LineEdit::HandleFrame ()
     }
 }
 
-bool LineEdit::ProcessKeyEvent (EventKey const *e)
+bool LineEdit::ProcessKeyEvent (EventKey const &e)
 {
     // read only LineEdits don't allow input
     if (IsReadOnly())
         return false;
 
-    if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
+    if (e.IsKeyDownEvent() || e.IsKeyRepeatEvent())
     {
-        switch (e->KeyCode())
+        switch (e.KeyCode())
         {
             case Key::LEFT:
                 MoveCursorLeft();
@@ -201,10 +202,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *e)
             default:
                 // type the char into the text buffer, it will
                 // handle inserting/overwriting
-                char c =
-                    GetCharacterFilter().
-                        FilteredCharacter(
-                            e->ModifiedAscii());
+                char c = GetCharacterFilter().FilteredCharacter(e.ModifiedAscii());
                 if (c != '\0')
                 {
                     TypeCharacter(c);
@@ -218,9 +216,9 @@ bool LineEdit::ProcessKeyEvent (EventKey const *e)
     return true;
 }
 
-bool LineEdit::ProcessMouseButtonEvent (EventMouseButton const *e)
+bool LineEdit::ProcessMouseButtonEvent (EventMouseButton const &e)
 {
-    return e->IsMouseButtonDownEvent() && !IsReadOnly();
+    return e.IsMouseButtonDownEvent() && !IsReadOnly();
 }
 
 void LineEdit::HandleFocus ()

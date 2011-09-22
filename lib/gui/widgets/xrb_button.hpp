@@ -52,7 +52,7 @@ public:
 
 protected:
 
-    virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
+    virtual bool ProcessMouseButtonEvent (EventMouseButton const &e);
     virtual void HandleMouseoverOn ();
     virtual void HandleMouseoverOff ();
     virtual void HandlePressed ();

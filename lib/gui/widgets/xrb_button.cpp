@@ -73,16 +73,16 @@ void Button::SetIsEnabled (bool is_enabled)
     SetRenderBackgroundNeedsUpdate();
 }
 
-bool Button::ProcessMouseButtonEvent (EventMouseButton const *e)
+bool Button::ProcessMouseButtonEvent (EventMouseButton const &e)
 {
-    if (e->ButtonCode() == Key::LEFTMOUSE)
+    if (e.ButtonCode() == Key::LEFTMOUSE)
     {
-        if (e->IsMouseButtonDownEvent())
+        if (e.IsMouseButtonDownEvent())
         {
             m_is_pressed = true;
             HandlePressed();
         }
-        else if (e->IsMouseButtonUpEvent())
+        else if (e.IsMouseButtonUpEvent())
         {
             if (m_is_pressed)
             {
@@ -92,9 +92,7 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *e)
         }
         else
         {
-            ASSERT1(false &&
-                    "IsMouseButtonDownEvent() and IsMouseButtonUpEvent() "
-                    "both failed.  Something's wacky.");
+            ASSERT1(false && "IsMouseButtonDownEvent() and IsMouseButtonUpEvent() both failed.  Something's wacky.");
         }
         SetRenderBackgroundNeedsUpdate();
     }

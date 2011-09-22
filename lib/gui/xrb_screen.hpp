@@ -82,11 +82,9 @@ protected:
     // this calculates one frame, called by the game loop
     virtual void HandleFrame ();
     // processes an event, returning true if the event was captured,
-    // otherwise it will pass the event to VirtualScreen::ProcessEvent()
-    // and return that function's return value.
-    virtual bool HandleEvent (Event const *e);
+    virtual bool HandleEvent (Event const &e);
     // override from ContainerWidget in order to handle modal child widgets' focus
-    virtual bool InternalProcessFocusEvent (EventFocus const *e);
+    virtual bool InternalProcessFocusEvent (EventFocus const &e);
 
 private:
 

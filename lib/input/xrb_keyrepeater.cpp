@@ -12,12 +12,9 @@
 
 #include "xrb_eventqueue.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-KeyRepeater::KeyRepeater (
-    Float const repeat_delay,
-    Float const repeat_period)
+KeyRepeater::KeyRepeater (Float repeat_delay, Float repeat_period)
     :
     EventHandler(NULL),
     FrameHandler(),
@@ -48,32 +45,30 @@ void KeyRepeater::HandleFrame ()
     GenerateKeyEvents(FrameTime());
 }
 
-bool KeyRepeater::HandleEvent (Event const *const e)
+bool KeyRepeater::HandleEvent (Event const &e)
 {
-    if (e->IsKeyEvent())
+    if (e.IsKeyEvent())
     {
         // generate key events from the current state
-        GenerateKeyEvents(e->Time());
+        GenerateKeyEvents(e.Time());
 
-        EventKey const *key_event = static_cast<EventKey const *>(e);
-        if (key_event->IsKeyDownEvent() &&
-            Key::IsKeyRepeatable(key_event->KeyCode()))
+        EventKey const &key_event = dynamic_cast<EventKey const &>(e);
+        if (key_event.IsKeyDownEvent() && Key::IsKeyRepeatable(key_event.KeyCode()))
         {
-            EventKeyDown const *key_down_event = static_cast<EventKeyDown const *>(e);
+            EventKeyDown const &key_down_event = dynamic_cast<EventKeyDown const &>(e);
             // use this key as the current key event
-            m_current_key_event = *key_down_event;
+            m_current_key_event = key_down_event;
             m_is_current_key_event_active = true;
-            m_next_repeat_time = key_down_event->Time() + m_repeat_delay;
+            m_next_repeat_time = key_down_event.Time() + m_repeat_delay;
 
             // the event was used
             return true;
         }
-        else if (key_event->IsKeyUpEvent() &&
-                 Key::IsKeyRepeatable(key_event->KeyCode()))
+        else if (key_event.IsKeyUpEvent() && Key::IsKeyRepeatable(key_event.KeyCode()))
         {
             // if the key up event matches the current key event, then
             // deactivate the current key event.
-            if (m_current_key_event.KeyCode() == key_event->KeyCode())
+            if (m_current_key_event.KeyCode() == key_event.KeyCode())
                 m_is_current_key_event_active = false;
 
             // the event was used
@@ -85,7 +80,7 @@ bool KeyRepeater::HandleEvent (Event const *const e)
     return false;
 }
 
-void KeyRepeater::GenerateKeyEvents (Float const time)
+void KeyRepeater::GenerateKeyEvents (Float time)
 {
     // early out if there's no key being held down
     if (!m_is_current_key_event_active)

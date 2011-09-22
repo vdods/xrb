@@ -213,9 +213,7 @@ void World::SetMainObjectLayer (ObjectLayer *main_object_layer)
         m_physics_handler->SetMainObjectLayer(m_main_object_layer);
 }
 
-void World::AddStaticObject (
-    Object *const static_object,
-    ObjectLayer *const object_layer)
+void World::AddStaticObject (Object *static_object, ObjectLayer *object_layer)
 {
     ASSERT1(static_object != NULL);
     ASSERT1(object_layer != NULL);
@@ -224,9 +222,7 @@ void World::AddStaticObject (
     object_layer->AddObject(static_object);
 }
 
-void World::AddDynamicObject (
-    Object *const dynamic_object,
-    ObjectLayer *const object_layer)
+void World::AddDynamicObject (Object *dynamic_object, ObjectLayer *object_layer)
 {
     ASSERT1(dynamic_object != NULL);
     ASSERT1(object_layer != NULL);
@@ -260,7 +256,7 @@ void World::AddDynamicObject (
         m_physics_handler->AddEntity(entity);
 }
 
-void World::RemoveDynamicObject (Object *const dynamic_object)
+void World::RemoveDynamicObject (Object *dynamic_object)
 {
     ASSERT1(dynamic_object != NULL);
     ASSERT1(dynamic_object->IsDynamic());
@@ -286,9 +282,7 @@ void World::RemoveDynamicObject (Object *const dynamic_object)
     --m_entity_count;
 
     // schedule the entity's events to be deleted.
-    OwnerEventQueue()->ScheduleMatchingEventsForDeletion(
-        MatchEntity,
-        entity);
+    OwnerEventQueue()->ScheduleMatchingEventsForDeletion(MatchEntity, entity);
 
     // remove the entity from the physics handler
     if (m_physics_handler != NULL)
@@ -312,9 +306,7 @@ Entity *World::DemoteDynamicObjectToStaticObject (Object &object)
     return entity;
 }
 
-World::World (
-    PhysicsHandler *const physics_handler,
-    EntityWorldIndex const entity_capacity)
+World::World (PhysicsHandler *physics_handler, EntityWorldIndex entity_capacity)
     :
     EventHandler(NULL),
     FrameHandler(),
@@ -372,38 +364,22 @@ void World::SetMainObjectLayerIndex (Uint32 const index)
     ASSERT0(false && "Invalid index (higher than the highest object layer index)");
 }
 
-bool World::HandleEvent (Event const *const e)
+bool World::HandleEvent (Event const &e)
 {
-    ASSERT1(e != NULL);
-    switch (e->GetEventType())
+    switch (e.GetEventType())
     {
         case Event::ENGINE2_DELETE_ENTITY:
-        {
-            EventEntity const *event_entity =
-                DStaticCast<EventEntity const *>(e);
-            Entity *entity = event_entity->GetEntity();
-            ASSERT1(entity != NULL);
-            ASSERT1(entity->IsInWorld() &&
-                    "You shouldn't schedule removed entities "
-                    "for deletion -- just delete them");
-            ASSERT1(entity->OwnerObject()->GetWorld() == this);
-            RemoveDynamicObject(entity->OwnerObject());
-            delete entity->OwnerObject();
-            event_entity->NullifyEntity();
-            break;
-        }
-
         case Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD:
         {
-            EventEntity const *event_entity =
-                DStaticCast<EventEntity const *>(e);
-            Entity *entity = event_entity->GetEntity();
+            EventEntity const &event_entity = dynamic_cast<EventEntity const &>(e);
+            Entity *entity = event_entity.GetEntity();
             ASSERT1(entity != NULL);
-            ASSERT1(entity->IsInWorld() &&
-                    "You can only remove entities already in the world");
+            ASSERT1(entity->IsInWorld() && "You can only remove entities already in the world.  An entity not in the world can just be deleted");
             ASSERT1(entity->OwnerObject()->GetWorld() == this);
             RemoveDynamicObject(entity->OwnerObject());
-            event_entity->NullifyEntity();
+            if (e.GetEventType() == Event::ENGINE2_DELETE_ENTITY)
+                delete entity->OwnerObject();
+            event_entity.NullifyEntity();
             break;
         }
 

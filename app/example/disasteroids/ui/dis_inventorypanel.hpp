@@ -57,7 +57,7 @@ public:
 
 protected:
 
-    virtual bool ProcessKeyEvent (EventKey const *e);
+    virtual bool ProcessKeyEvent (EventKey const &e);
 
 private:
 

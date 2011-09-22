@@ -524,29 +524,29 @@ public:
     { }
 
     // Called by WorldViewWidget with all mouse wheel events for this WorldView
-    virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e)
+    virtual bool ProcessMouseWheelEvent (EventMouseWheel const &e)
     {
         // Rotate the view on ALT+mouse-wheel-up/down.
-        if (e->IsEitherAltKeyPressed())
-            RotateView((e->ButtonCode() == Key::MOUSEWHEELUP) ? -15.0f : 15.0f);
+        if (e.IsEitherAltKeyPressed())
+            RotateView((e.ButtonCode() == Key::MOUSEWHEELUP) ? -15.0f : 15.0f);
         // Otherwise, we will zoom the view on mouse-wheel-up/down.
         else
-            ZoomView((e->ButtonCode() == Key::MOUSEWHEELUP) ? 1.2f : 1.0f / 1.2f);
+            ZoomView((e.ButtonCode() == Key::MOUSEWHEELUP) ? 1.2f : 1.0f / 1.2f);
         // Indicates that the event was used by this method.
         return true;
     }
     // This method is the mouse motion analog of ProcessMouseWheelEvent.
-    virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e)
+    virtual bool ProcessMouseMotionEvent (EventMouseMotion const &e)
     {
         // Only do stuff if the left mouse button was pressed for this event.
-        if (e->IsLeftMouseButtonPressed())
+        if (e.IsLeftMouseButtonPressed())
         {
             // Move the view by a delta which is calculated by transforming
             // the screen coordinates of the event to world coordinates as used
             // by WorldView.
             MoveView(
                 ParallaxedScreenToWorld() * FloatVector2::ms_zero -
-                ParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
+                ParallaxedScreenToWorld() * e.Delta().StaticCast<Float>());
             // Indicates that the event was used by this method.
             return true;
         }
@@ -627,9 +627,9 @@ int main (int argc, char **argv)
             {
                 // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::InputState().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(*event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
-                screen->ProcessEvent(event);
+                screen->ProcessEvent(*event);
                 Delete(event);
             }
 

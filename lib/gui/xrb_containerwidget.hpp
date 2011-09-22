@@ -276,7 +276,7 @@ protected:
       */
     virtual void HandleFrame ();
     // overridden from Widget
-    virtual bool ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const *e);
+    virtual bool ProcessDetachAndDeleteChildWidgetEvent (EventDetachAndDeleteChildWidget const &e);
 
     virtual void HandleActivate ();
     virtual void HandleDeactivate ();
@@ -336,18 +336,18 @@ private:
     WidgetVector::iterator FindChildWidget (Widget const *child);
 
     // some overrides from Widget
-    virtual bool InternalProcessKeyEvent (EventKey const *e);
-    virtual bool InternalProcessMouseEvent (EventMouse const *e);
-    virtual bool InternalProcessPinchEvent (EventPinch const *e);
-    virtual bool InternalProcessRotateEvent (EventRotate const *e);
-    virtual bool InternalProcessJoyEvent (EventJoy const *e);
-    virtual bool InternalProcessFocusEvent (EventFocus const *e);
-    virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
+    virtual bool InternalProcessKeyEvent (EventKey const &e);
+    virtual bool InternalProcessMouseEvent (EventMouse const &e);
+    virtual bool InternalProcessPinchEvent (EventPinch const &e);
+    virtual bool InternalProcessRotateEvent (EventRotate const &e);
+    virtual bool InternalProcessJoyEvent (EventJoy const &e);
+    virtual bool InternalProcessFocusEvent (EventFocus const &e);
+    virtual bool InternalProcessMouseoverEvent (EventMouseover const &e);
     
     /// @brief A convenience function for sending a mouse event to the child widget
     /// highest in m_child_vector which lies underneath the mouse event position.
     /// @return True iff the mouse event was accepted by any of the children.
-    bool SendMouseEventToChild (EventMouse const *e);
+    bool SendMouseEventToChild (EventMouse const &e);
 
     void IncrementResizeBlockerCount ();
     void DecrementResizeBlockerCount ();

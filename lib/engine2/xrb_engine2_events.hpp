@@ -19,7 +19,7 @@ namespace Engine2 {
 class Entity;
 class ObjectLayer;
 
-bool MatchEntity (Event const *event, Entity *entity_to_match);
+bool MatchEntity (Event const &event, Entity *entity_to_match);
 
 class EventEntity : public Event
 {
@@ -34,13 +34,9 @@ public:
     }
     virtual ~EventEntity () { }
 
-    inline Entity *GetEntity () const { return m_entity; }
+    Entity *GetEntity () const { return m_entity; }
 
-    inline void NullifyEntity () const
-    {
-        ASSERT1(m_entity != NULL);
-        m_entity = NULL;
-    }
+    void NullifyEntity () const { ASSERT1(m_entity != NULL); m_entity = NULL; }
 
 private:
 
