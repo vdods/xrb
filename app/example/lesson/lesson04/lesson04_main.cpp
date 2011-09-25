@@ -335,7 +335,7 @@ Engine2::World *CreateAndPopulateWorld ()
 
 void CleanUp ()
 {
-    fprintf(stderr, "CleanUp();\n");
+    std::cerr << "CleanUp();" << std::endl;
     // Shutdown the Pal and singletons.
     Singleton::Pal().Shutdown();
     Singleton::Shutdown();
@@ -343,7 +343,7 @@ void CleanUp ()
 
 int main (int argc, char **argv)
 {
-    fprintf(stderr, "main();\n");
+    std::cerr << "main();" << std::endl;
 
     // Initialize engine singletons.
     Singleton::Initialize(SDLPal::Create, "none");
@@ -357,6 +357,7 @@ int main (int argc, char **argv)
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
+        std::cerr << "unable to initialize video mode" << std::endl;
         CleanUp();
         return 2;
     }

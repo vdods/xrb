@@ -411,7 +411,7 @@ void Master::ProcessKeyRepeatEvents ()
         EventKeyRepeat *event = m_key_repeater.DequeueEvent();
         ASSERT1(event != NULL);
         // process event
-        m_screen->OwnerEventQueue()->EnqueueEvent(m_screen, event);
+        m_screen->OwnerEventQueue()->EnqueueEvent(*m_screen, event);
     }
 }
 

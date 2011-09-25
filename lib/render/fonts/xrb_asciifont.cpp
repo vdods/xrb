@@ -104,7 +104,7 @@ AsciiFont *AsciiFont::CreateFromCache (
 
         for (Uint32 i = 0; i < ms_rendered_glyph_count; ++i)
             retval->m_glyph_specification[i].Read(serializer);
-        serializer.ReadBuffer<FontCoord>(retval->m_kern_pair_26_6, LENGTHOF(retval->m_kern_pair_26_6));
+        serializer.ReadArray<FontCoord>(retval->m_kern_pair_26_6, LENGTHOF(retval->m_kern_pair_26_6));
 
         if (hash != retval->Hash())
             throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); invalid font metadata -- delete the associated cache files"));
@@ -119,11 +119,11 @@ AsciiFont *AsciiFont::CreateFromCache (
         retval->m_gltexture = GlTexture::Create(*texture, GlTexture::USES_SEPARATE_ATLAS|GlTexture::MIPMAPS_DISABLED|GlTexture::USES_FILTER_NEAREST);
         ASSERT1(retval->m_gltexture != NULL);
 
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
+        std::cerr << "AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); loaded cached font data" << std::endl;
     }
     catch (Exception &e)
     {
-        fprintf(stderr, "%s\n", e.what());
+        std::cerr << e.what() << std::endl;
         DeleteAndNullify(retval);
     }
 
@@ -168,7 +168,7 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
     // write the font metadata out to disk
     try
     {
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
+        std::cerr << "AsciiFont::Create(\"" << FontFacePath() << "\", " << PixelHeight() << "); ";
 
         BinaryFileSerializer serializer(font_metadata_path, IOD_WRITE);
 
@@ -178,23 +178,23 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
         serializer.Write<Uint32>(ms_rendered_glyph_count);
         for (Uint32 i = 0; i < ms_rendered_glyph_count; ++i)
             m_glyph_specification[i].Write(serializer);
-        serializer.WriteBuffer<FontCoord>(m_kern_pair_26_6, LENGTHOF(m_kern_pair_26_6));
+        serializer.WriteArray<FontCoord>(m_kern_pair_26_6, LENGTHOF(m_kern_pair_26_6));
 
-        fprintf(stderr, "cached font data\n");
+        std::cerr << "cached font data" << std::endl;
 
         // continue on to write the font bitmap
 
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
+        std::cerr << "AsciiFont::Create(\"" << FontFacePath() << "\", " << PixelHeight() << "); ";
         bool success = font_texture->Save(font_bitmap_path) == Pal::SUCCESS;
         if (success)
-            fprintf(stderr, "cached font bitmap\n");
+            std::cerr << "cached font bitmap" << std::endl;
         else
-            fprintf(stderr, "error caching font bitmap file\n");
+            std::cerr << "error caching font bitmap file" << std::endl;
         return success;
     }
     catch (Exception &e)
     {
-        fprintf(stderr, "error caching font data (%s)\n", e.what());
+        std::cerr << "error caching font data (" << e.what() << ')' << std::endl;
         return false;
     }
 }

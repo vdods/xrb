@@ -12,109 +12,93 @@
 
 #include "xrb_util.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-IndentFormatter::IndentFormatter (
-    FILE *const fptr,
-    char const *const indent_string)
+IndentFormatter::IndentFormatter (std::ostream &out, std::string const &indent_string)
+    :
+    m_out(out),
+    m_indent_string(indent_string)
 {
-    ASSERT1(fptr != NULL);
-    ASSERT1(indent_string != NULL);
-    m_fptr = fptr;
-    m_state = FRESH_LINE;
-    m_indent_string = indent_string;
     m_indent_level = 0;
-
-    UpdateNewlineReplacement();
+    m_indent_before_next_output = false;
 }
 
-void IndentFormatter::PrintLine (char const *const format, ...)
+IndentFormatter::~IndentFormatter ()
 {
-    ASSERT1(m_state == FRESH_LINE);
-
-    va_list list;
-    va_start(list, format);
-    InternalPrintf(format, list, true, true);
-    va_end(list);
+    Flush();
+    ASSERT1(m_cache.str().empty());
 }
 
-void IndentFormatter::BeginLine (char const *const format, ...)
+void IndentFormatter::EnsureNewline ()
 {
-    bool indent = m_state == FRESH_LINE;
-
-    va_list list;
-    va_start(list, format);
-    InternalPrintf(format, list, indent, false);
-    va_end(list);
-
-    m_state = CONTINUING_LINE;
-}
-
-void IndentFormatter::ContinueLine (char const *const format, ...)
-{
-    ASSERT1(m_state == CONTINUING_LINE);
-
-    va_list list;
-    va_start(list, format);
-    InternalPrintf(format, list, false, false);
-    va_end(list);
-}
-
-void IndentFormatter::EndLine (char const *const format, ...)
-{
-    bool indent = m_state != CONTINUING_LINE;
-
-    va_list list;
-    va_start(list, format);
-    InternalPrintf(format, list, indent, true);
-    va_end(list);
-
-    m_state = FRESH_LINE;
+    m_indent_before_next_output = true;
+    
+    if (m_cache.str().empty())
+        return; // empty cache is as good as newline
+        
+    if (*m_cache.str().rbegin() != '\n')
+        m_cache << '\n';
 }
 
 void IndentFormatter::Indent ()
 {
     ASSERT1(m_indent_level < UINT32_UPPER_BOUND);
+    // we have to flush before the indent level changes so that all the replacements
+    // done in Flush happen with the same indent level.
+    Flush();
     ++m_indent_level;
-    UpdateNewlineReplacement();
 }
 
 void IndentFormatter::Unindent ()
 {
     ASSERT1(m_indent_level > 0);
+    // we have to flush before the indent level changes so that all the replacements
+    // done in Flush happen with the same indent level.
+    Flush();
     --m_indent_level;
-    UpdateNewlineReplacement();
 }
 
-void IndentFormatter::InternalPrintf (
-    char const *const format,
-    va_list list,
-    bool const prepend_indentation,
-    bool const append_newline)
+void IndentFormatter::Flush ()
 {
-    m_reformat.clear();
+    if (m_cache.str().empty())
+        return; // nothing to do
     
-    if (prepend_indentation)
-        for (Uint32 i = 0; i < m_indent_level; ++i)
-            m_reformat += m_indent_string;
-            
-    m_reformat += format;
-    Util::ReplaceAllInString(&m_reformat, "\n", m_newline_replacement);
+    // steal the string from m_cache
+    std::string s(m_cache.str());
+    m_cache.str(std::string()); // empty string
+    // replace newlines with newline+indentations
+    ReplaceNewlinesInString(s);
+    // output the munged string
+    m_out << s;
 
-    if (append_newline)
-        m_reformat += '\n';
-
-    ASSERT1(m_fptr != NULL);
-    vfprintf(m_fptr, m_reformat.c_str(), list);
+    if (!s.empty() && *s.rbegin() == '\n')
+        m_indent_before_next_output = true;
 }
 
-void IndentFormatter::UpdateNewlineReplacement ()
+void IndentFormatter::ReplaceNewlinesInString (std::string &s)
 {
-    m_newline_replacement.clear();
-    m_newline_replacement += '\n';
+    if (s.empty())
+        return; // nothing to do
+    
+    bool restore_ending_newline = false;
+    if (*s.rbegin() == '\n')
+    {
+        restore_ending_newline = true;
+        // erase the final newline, but remember to restore it after the other replacement
+        s.erase(s.length()-1);
+    }
+    
+    // create the newline replacement string
+    std::string newline_replacement;
+    newline_replacement += '\n';
     for (Uint32 i = 0; i < m_indent_level; ++i)
-        m_newline_replacement += m_indent_string;
+        newline_replacement += m_indent_string;
+    // replace the other newlines with newlines followed by indentation
+    Util::ReplaceAllInString(&s, "\n", newline_replacement);
+    
+    // restore the newline if indicated.  this one is waiting for indent level to possibly change before being replaced.
+    if (restore_ending_newline)
+        s.push_back('\n');
 }
 
 } // end of namespace Xrb

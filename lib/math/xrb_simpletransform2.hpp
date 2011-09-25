@@ -13,12 +13,9 @@
 
 #include "xrb.hpp"
 
-#include <stdio.h>
-
 #include "xrb_vector.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 template <typename T>
 class SimpleTransform2
@@ -49,46 +46,46 @@ public:
     // constructors and destructor
     // ///////////////////////////////////////////////////////////////////////
 
-    inline SimpleTransform2 () { }
-    inline SimpleTransform2 (T r, T s, T x, T y)
+    SimpleTransform2 () { }
+    SimpleTransform2 (T r, T s, T x, T y)
     {
         m_scale_factors.SetComponents(r, s);
         m_translation.SetComponents(x, y);
     }
-    inline SimpleTransform2 (SimpleTransform2<T> const &source)
+    SimpleTransform2 (SimpleTransform2<T> const &source)
     {
         m_scale_factors = source.m_scale_factors;
         m_translation = source.m_translation;
     }
-    inline ~SimpleTransform2 () { }
+    ~SimpleTransform2 () { }
 
     // ///////////////////////////////////////////////////////////////////////
     // overloaded operators
     // ///////////////////////////////////////////////////////////////////////
 
-    inline T const &operator [] (ScaleFactorComponent scale_factor_component) const
+    T const &operator [] (ScaleFactorComponent scale_factor_component) const
     {
         return m_scale_factors.m[static_cast<Dim::Component>(scale_factor_component)];
     }
-    inline T &operator [] (ScaleFactorComponent scale_factor_component)
+    T &operator [] (ScaleFactorComponent scale_factor_component)
     {
         return m_scale_factors.m[static_cast<Dim::Component>(scale_factor_component)];
     }
-    inline T const &operator [] (TranslationComponent translation_component) const
+    T const &operator [] (TranslationComponent translation_component) const
     {
         return m_translation.m[static_cast<Dim::Component>(translation_component)];
     }
-    inline T &operator [] (TranslationComponent translation_component)
+    T &operator [] (TranslationComponent translation_component)
     {
         return m_translation.m[static_cast<Dim::Component>(translation_component)];
     }
-    inline void operator *= (SimpleTransform2<T> const &operand)
+    void operator *= (SimpleTransform2<T> const &operand)
     {
         m_scale_factors *= operand.m_scale_factors;
         m_translation *= operand.m_scale_factors;
         m_translation += operand.m_translation;
     }
-    inline void operator = (SimpleTransform2<T> const &operand)
+    void operator = (SimpleTransform2<T> const &operand)
     {
         m_scale_factors = operand.m_scale_factors;
         m_translation = operand.m_translation;
@@ -98,19 +95,10 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    Vector<T, 2> const &ScaleFactors () const
-    {
-        return m_scale_factors;
-    }
-    Vector<T, 2> const &Translation () const
-    {
-        return m_translation;
-    }
+    Vector<T, 2> const &ScaleFactors () const { return m_scale_factors; }
+    Vector<T, 2> const &Translation () const { return m_translation; }
 
-    SimpleTransform2<T> const &Transformation () const
-    {
-        return *this;
-    }
+    SimpleTransform2<T> const &Transformation () const { return *this; }
 
     SimpleTransform2<T> Inverse () const
     {
@@ -129,7 +117,7 @@ public:
     // modifiers
     // ///////////////////////////////////////////////////////////////////////
 
-    inline void Invert ()
+    void Invert ()
     {
         T determinant = m_scale_factors[Dim::X] * m_scale_factors[Dim::Y];
         T negative_determinant = -determinant;
@@ -140,94 +128,67 @@ public:
         }
     }
 
-    inline void Scale (Vector<T, 2> const &scale_factors)
+    void Scale (Vector<T, 2> const &scale_factors)
     {
         m_scale_factors *= scale_factors;
     }
-    inline void Scale (T r, T s)
+    void Scale (T r, T s)
     {
         m_scale_factors[Dim::X] *= r;
         m_scale_factors[Dim::Y] *= s;
     }
-    inline void Scale (T scale_factor)
+    void Scale (T scale_factor)
     {
         m_scale_factors *= scale_factor;
     }
-    inline void Translate (Vector<T, 2> const &translation)
+    void Translate (Vector<T, 2> const &translation)
     {
         m_translation += translation;
     }
-    inline void Translate (T x, T y)
+    void Translate (T x, T y)
     {
         m_translation[Dim::X] += x;
         m_translation[Dim::Y] += y;
     }
 
-    inline void SetScaleFactors (Vector<T, 2> const &scale_factors)
+    void SetScaleFactors (Vector<T, 2> const &scale_factors)
     {
         m_scale_factors = scale_factors;
     }
-    inline void SetScaleFactors (T r, T s)
+    void SetScaleFactors (T r, T s)
     {
         m_scale_factors[Dim::X] = r;
         m_scale_factors[Dim::Y] = s;
     }
-    inline void SetScaleFactor (ScaleFactorComponent component, T scale_factor)
+    void SetScaleFactor (ScaleFactorComponent component, T scale_factor)
     {
         ASSERT1(component == R || component == S);
         m_scale_factors[component] = scale_factor;
     }
-    inline void SetScaleFactor (T scale_factor)
+    void SetScaleFactor (T scale_factor)
     {
         m_scale_factors[Dim::X] == scale_factor;
         m_scale_factors[Dim::Y] == scale_factor;
     }
-    inline void SetTranslation (Vector<T, 2> const &translation)
+    void SetTranslation (Vector<T, 2> const &translation)
     {
         m_translation = translation;
     }
-    inline void SetTranslation (T x, T y)
+    void SetTranslation (T x, T y)
     {
         m_translation[Dim::X] = x;
         m_translation[Dim::Y] = y;
     }
-    inline void SetTranslation (TranslationComponent component, T translation)
+    void SetTranslation (TranslationComponent component, T translation)
     {
         ASSERT1(component == X || component == Y);
         m_translation[component] = translation;
     }
 
-    inline void SetComponents (T r, T s, T x, T y)
+    void SetComponents (T r, T s, T x, T y)
     {
         m_scale_factors.SetComponents(r, s);
         m_translation.SetComponents(x, y);
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // procedures
-    // ///////////////////////////////////////////////////////////////////////
-
-    void Fprint (FILE *fptr, char const *component_printf_format) const
-    {
-        ASSERT1(fptr != NULL);
-        ASSERT1(component_printf_format != NULL);
-
-        // clever way to get zero
-        T zero = m_scale_factors[Dim::X] - m_scale_factors[Dim::X];
-
-        fprintf(fptr, "SimpleTransform2:\n\t[");
-        fprintf(fptr, component_printf_format, m_scale_factors[Dim::X]);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, zero);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, m_translation[Dim::X]);
-        fprintf(fptr, "]\n\t[");
-        fprintf(fptr, component_printf_format, m_scale_factors[Dim::Y]);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, zero);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, m_translation[Dim::Y]);
-        fprintf(fptr, "]\n");
     }
 }; // end of class SimpleTransform2
 
@@ -247,22 +208,20 @@ SimpleTransform2<T> const SimpleTransform2<T>::ms_identity(
 
 // simpletransform * simpletransform
 template <typename T>
-inline SimpleTransform2<T> operator * (SimpleTransform2<T> const left_operand,
-                                       SimpleTransform2<T> const right_operand)
+SimpleTransform2<T> operator * (SimpleTransform2<T> const &l, SimpleTransform2<T> const &r)
 {
     return SimpleTransform2<T>(
-        left_operand[SimpleTransform2<T>::R] * right_operand[SimpleTransform2<T>::R],
-        left_operand[SimpleTransform2<T>::S] * right_operand[SimpleTransform2<T>::S],
-        left_operand[SimpleTransform2<T>::R] * right_operand[SimpleTransform2<T>::X] +
-        left_operand[SimpleTransform2<T>::X],
-        left_operand[SimpleTransform2<T>::S] * right_operand[SimpleTransform2<T>::Y] +
-        left_operand[SimpleTransform2<T>::Y]);
+        l[SimpleTransform2<T>::R] * r[SimpleTransform2<T>::R],
+        l[SimpleTransform2<T>::S] * r[SimpleTransform2<T>::S],
+        l[SimpleTransform2<T>::R] * r[SimpleTransform2<T>::X] +
+        l[SimpleTransform2<T>::X],
+        l[SimpleTransform2<T>::S] * r[SimpleTransform2<T>::Y] +
+        l[SimpleTransform2<T>::Y]);
 }
 
 // vector *= simpletransform
 template <typename T>
-inline void operator *= (Vector<T, 2> &assignee,
-                         SimpleTransform2<T> const &operand)
+void operator *= (Vector<T, 2> &assignee, SimpleTransform2<T> const &operand)
 {
     assignee *= operand.m_scale_factors;
     assignee += operand.m_translation;
@@ -270,38 +229,26 @@ inline void operator *= (Vector<T, 2> &assignee,
 
 // simpletransform * vector
 template <typename T>
-inline Vector<T, 2> operator * (SimpleTransform2<T> const &left_operand,
-                                Vector<T, 2> const &right_operand)
+Vector<T, 2> operator * (SimpleTransform2<T> const &l,
+                                Vector<T, 2> const &r)
 {
     return Vector<T, 2>(
-        left_operand[SimpleTransform2<T>::R] * right_operand[Dim::X] +
-        left_operand[SimpleTransform2<T>::X],
-        left_operand[SimpleTransform2<T>::S] * right_operand[Dim::Y] +
-        left_operand[SimpleTransform2<T>::Y]);
+        l[SimpleTransform2<T>::R] * r[Dim::X] +
+        l[SimpleTransform2<T>::X],
+        l[SimpleTransform2<T>::S] * r[Dim::Y] +
+        l[SimpleTransform2<T>::Y]);
 }
 
-// ///////////////////////////////////////////////////////////////////////////
-// convenience typedefs for SimpleTransform2 of different types,
-// pre-made representations of the identity for each typedef,
-// and format-specific Fprint functions for each typedef.
-// ///////////////////////////////////////////////////////////////////////////
+template <typename T>
+std::ostream &operator << (std::ostream &stream, SimpleTransform2<T> const &t)
+{
+    return stream << "SimpleTransform2:\n"
+                     "\t[" << t.m_scale_factors[Dim::X] << ", " << T(0) << ", " << t.m_translation[Dim::X] << "]\n"
+                     "\t[" << T(0) << ", " << t.m_scale_factors[Dim::Y] << ", " << t.m_translation[Dim::Y] << "]\n";
+}
 
-/** FloatSimpleTransform2
-  * @brief Convenience typedef for a SimpleTransform2<Float>.
-  */
+/// Convenience typedef for a SimpleTransform2<Float>.
 typedef SimpleTransform2<Float> FloatSimpleTransform2;
-/** Sint32SimpleTransform2
-  * @brief Convenience typedef for a SimpleTransform2<Sint32>.
-  */
-typedef SimpleTransform2<Sint32> Sint32SimpleTransform2;
-
-/** This is a convenience function to provide a default
-  * printf format to FloatSimpleTransform2::Fprint.
-  * @brief Prints the given FloatSimpleTransform2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param matrix The FloatSimpleTransform2 to print.
-  */
-void Fprint (FILE *fptr, FloatSimpleTransform2 const &simple_transform);
 
 } // end of namespace Xrb
     

@@ -65,7 +65,7 @@ using namespace Xrb;
 // This is just a helper function to group all the shutdown code together.
 void CleanUp ()
 {
-    fprintf(stderr, "CleanUp();\n");
+    std::cerr << "CleanUp();" << std::endl;
 
     // Shutdown the platform abstraction layer.
     Singleton::Pal().Shutdown();
@@ -76,7 +76,7 @@ void CleanUp ()
 
 int main (int argc, char **argv)
 {
-    fprintf(stderr, "main();\n");
+    std::cerr << "main();" << std::endl;
 
     /* @endcode
     This call initializes the game engine singleton facilities.  This must
@@ -126,6 +126,7 @@ int main (int argc, char **argv)
     @code */
     if (screen == NULL)
     {
+        std::cerr << "unable to initialize video mode" << std::endl;
         // this shuts down the Pal and singletons.
         CleanUp();
         // return with an error value.
@@ -137,7 +138,7 @@ int main (int argc, char **argv)
     now we'll just pause for 5 seconds.
     @code */
     {
-        fprintf(stderr, "pausing for 5000 milliseconds...\n");
+        std::cerr << "pausing for 5000 milliseconds..." << std::endl;
         Singleton::Pal().Sleep(5000);
     }
 

@@ -26,7 +26,7 @@ void ModalWidget::Shutdown ()
 {
     ASSERT1(Parent() != NULL);
     // tell the Screen to detach and delete this.
-    Parent()->EnqueueEvent(new EventDetachAndDeleteChildWidget(this, Parent()->MostRecentFrameTime()));
+    Parent()->EnqueueEvent(new EventDetachAndDeleteChildWidget(this, Parent()->MostRecentEventTime()));
     // block future events
     SetIsBlockingEvents(true);
 }

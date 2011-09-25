@@ -143,7 +143,7 @@ void Polygon::Read (
     Serializer &serializer,
     FloatVector2 *compound_vertex_array)
 {
-    ASSERT1(serializer.Direction() == IOD_READ);
+    ASSERT1(serializer.IsReadable());
     ASSERT1(compound_vertex_array != NULL);
 
     ASSERT1(m_vertex_count == 0);
@@ -171,7 +171,7 @@ void Polygon::Write (
     Serializer &serializer,
     FloatVector2 const *const compound_vertex_array) const
 {
-    ASSERT1(serializer.Direction() == IOD_WRITE);
+    ASSERT1(serializer.IsWritable());
     ASSERT1(compound_vertex_array != NULL);
     ASSERT1(m_vertex_count >= 3);
 

@@ -313,7 +313,7 @@ Xrb::Pal *SDLPal::Create ()
     FT_Error error = FT_Init_FreeType(&ft_library);
     if (error != 0)
     {
-        fprintf(stderr, "SDLPal::Create(); the FreeType library failed to initialize\n");
+        std::cerr << "SDLPal::Create(); the FreeType library failed to initialize" << std::endl;
         ft_library = NULL;
     }
 
@@ -325,12 +325,12 @@ Xrb::Pal *SDLPal::Create ()
 
 Xrb::Pal::Status SDLPal::Initialize ()
 {
-    fprintf(stderr, "SDLPal::Initialize();\n");
+    std::cerr << "SDLPal::Initialize();" << std::endl;
 
     // initialize video (no parachute so we get core dumps)
     if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0)
     {
-        fprintf(stderr, "SDLPal::Initialize(); unable to initialize SDL.  error: %s\n", SDL_GetError());
+        std::cerr << "SDLPal::Initialize(); unable to initialize SDL.  error: " << SDL_GetError() << std::endl;
         return FAILURE;
     }
 
@@ -339,7 +339,7 @@ Xrb::Pal::Status SDLPal::Initialize ()
 
 void SDLPal::Shutdown ()
 {
-    fprintf(stderr, "SDLPal::Shutdown();\n");
+    std::cerr << "SDLPal::Shutdown();" << std::endl;
 
     // make sure input isn't grabbed
     SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -349,7 +349,7 @@ void SDLPal::Shutdown ()
 
 Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen)
 {
-    fprintf(stderr, "SDLPal::InitializeVideo();\n");
+    std::cerr << "SDLPal::InitializeVideo();" << std::endl;
 
     SDL_InitSubSystem(SDL_INIT_VIDEO);
 
@@ -365,25 +365,25 @@ Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height,
     SDL_Surface *surface = SDL_SetVideoMode(width, height, bit_depth, video_mode_flags);
     if (surface == NULL)
     {
-        fprintf(stderr, "SDLPal::InitializeVideo(); could not set the requested video mode\n");
+        std::cerr << "SDLPal::InitializeVideo(); could not set the requested video mode" << std::endl;
         return FAILURE;
     }
 
     int v;
-    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &v);     fprintf(stderr, "    SDL_GL_RED_SIZE = %d\n", v);
-    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &v);   fprintf(stderr, "    SDL_GL_GREEN_SIZE = %d\n", v);
-    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &v);    fprintf(stderr, "    SDL_GL_BLUE_SIZE = %d\n", v);
-    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &v);   fprintf(stderr, "    SDL_GL_ALPHA_SIZE = %d\n", v);
-    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &v);  fprintf(stderr, "    SDL_GL_BUFFER_SIZE = %d\n", v);
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &v); fprintf(stderr, "    SDL_GL_DOUBLEBUFFER = %d\n", v);
-    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &v);   fprintf(stderr, "    SDL_GL_DEPTH_SIZE = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &v);     std::cerr << "\tSDL_GL_RED_SIZE = " << v << std::endl;
+    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &v);   std::cerr << "\tSDL_GL_GREEN_SIZE = " << v << std::endl;
+    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &v);    std::cerr << "\tSDL_GL_BLUE_SIZE = " << v << std::endl;
+    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &v);   std::cerr << "\tSDL_GL_ALPHA_SIZE = " << v << std::endl;
+    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &v);  std::cerr << "\tSDL_GL_BUFFER_SIZE = " << v << std::endl;
+    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &v); std::cerr << "\tSDL_GL_DOUBLEBUFFER = " << v << std::endl;
+    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &v);   std::cerr << "\tSDL_GL_DEPTH_SIZE = " << v << std::endl;
 
     return SUCCESS;
 }
 
 void SDLPal::ShutdownVideo ()
 {
-    fprintf(stderr, "SDLPal::ShutdownVideo();\n");
+    std::cerr << "SDLPal::ShutdownVideo();" << std::endl;
 
     // this should delete the SDL_Surface which was created by
     // SDL_VideoMode in InitializeVideo.
@@ -392,7 +392,7 @@ void SDLPal::ShutdownVideo ()
 
 void SDLPal::SetWindowCaption (char const *window_caption)
 {
-    fprintf(stderr, "SDLPal::SetWindowCaption(\"%s\");\n", window_caption);
+    std::cerr << "SDLPal::SetWindowCaption(\"" << window_caption << "\");" << std::endl;
 
     ASSERT1(window_caption != NULL);
     // set a window title (the second parameter doesn't seem to do anything)
@@ -577,7 +577,7 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
 
 Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 {
-//     fprintf(stderr, "SDLPal::LoadImage(\"%s\");\n", image_path);
+//     std::cerr << "SDLPal::LoadImage(\"" << image_path << "\");" << std::endl;
 
     ASSERT1(image_path != NULL);
 
@@ -591,7 +591,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 
     if ((fp = fopen(image_path, "rb")) == NULL)
     {
-        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error opening file\n", image_path);
+        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error opening file" << std::endl;
         return NULL;
     }
 
@@ -599,7 +599,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (png_ptr == NULL)
     {
         fclose(fp);
-        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error reading PNG file\n", image_path);
+        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -607,7 +607,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (info_ptr == NULL)
     {
         fclose(fp);
-        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error reading PNG file\n", image_path);
+        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -616,7 +616,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     {
         fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error reading PNG file\n", image_path);
+        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -661,7 +661,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 
 Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &texture)
 {
-//     fprintf(stderr, "SDLPal::SaveImage(\"%s\");\n", image_path);
+//     std::cerr << "SDLPal::SaveImage(\"" << image_path << "\");" << std::endl;
 
     ASSERT1(image_path != NULL);
 
@@ -675,14 +675,14 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     fp = fopen(image_path, "wb");
     if (fp == NULL)
     {
-        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error opening file\n", image_path);
+        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error opening file" << std::endl;
         return FAILURE;
     }
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (png_ptr == NULL)
     {
-        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error in PNG creation\n", image_path);
+        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error in PNG creation" << std::endl;
         fclose(fp);
         return FAILURE;
     }
@@ -690,7 +690,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == NULL)
     {
-        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error in PNG creation\n", image_path);
+        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error in PNG creation" << std::endl;
         fclose(fp);
         png_destroy_write_struct(&png_ptr,  png_infopp_NULL);
         return FAILURE;
@@ -698,7 +698,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error in PNG creation\n", image_path);
+        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error in PNG creation" << std::endl;
         fclose(fp);
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return FAILURE;
@@ -789,9 +789,7 @@ public:
         }
 
         if (FT_HAS_KERNING(face))
-            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font with kerning\n", path.c_str());
-        else
-            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font without kerning\n", path.c_str());
+        std::cerr << "FontFace::Create(\"" << path << "\"); loaded font " << (FT_HAS_KERNING(face) ? "with" : "without") << " kerning" << std::endl;
 
         return new FontFace(path, face);
     }

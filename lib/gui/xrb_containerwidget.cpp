@@ -25,7 +25,7 @@ ContainerWidget::ContainerWidget (WidgetContext &context, std::string const &nam
     :
     Widget(context, name)
 {
-//     fprintf(stderr, "ContainerWidget::ContainerWidget(%s);\n", name.c_str());
+//     std::cerr << "ContainerWidget::ContainerWidget(); name = \"" << name << '"' << std::endl;
 
     m_accepts_focus = false;
     m_children_get_input_events_first = false;
@@ -39,7 +39,7 @@ ContainerWidget::ContainerWidget (WidgetContext &context, std::string const &nam
 
 ContainerWidget::~ContainerWidget ()
 {
-//     fprintf(stderr, "ContainerWidget::~ContainerWidget(%s);\n", m_name.c_str());
+//     std::cerr << "ContainerWidget::~ContainerWidget(); name = \"" << name << '"' << std::endl;
 
     ASSERT1(m_child_resize_blocker_count == 0 && "you must not delete a ChildResizeBlocker'ed ContainerWidget");
 

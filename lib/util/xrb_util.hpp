@@ -31,7 +31,8 @@ namespace Util
     void ReplaceAllInString (
         std::string *string,
         std::string const &string_to_replace,
-        std::string const &string_to_replace_with);
+        std::string const &string_to_replace_with,
+        std::string::size_type start_offset = 0);
     /// Performs printf into an STL string and returns it.
     std::string StringPrintf (char const *format, ...);
     /// Performs printf into the provided STL string.

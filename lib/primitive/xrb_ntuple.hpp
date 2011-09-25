@@ -13,7 +13,7 @@
 
 #include "xrb.hpp"
 
-#include <stdio.h>
+#include <iomanip>
 
 #include "xrb_enums.hpp"
 #include "xrb_serializer.hpp"
@@ -56,9 +56,7 @@ public:
     /** Does no initialization for the sake of efficiency.
       * @brief Default constructor.
       */
-    inline NTuple ()
-    {
-    }
+    NTuple () { }
     /** I gave up trying for partial template specialization (or whatever it's
       * called) to specify the two-parameter constructor for only
       * NTuple<T, 2>, and settled for asserting that @c size is 2.
@@ -66,7 +64,7 @@ public:
       * @param component0 The value to assign to the first component (m[0]).
       * @param component1 The value to assign to the second component (m[1]).
       */
-    inline NTuple (
+    NTuple (
         T const component0,
         T const component1)
     {
@@ -82,7 +80,7 @@ public:
       * @param component1 The value to assign to the second component (m[1]).
       * @param component2 The value to assign to the third component (m[2]).
       */
-    inline NTuple (
+    NTuple (
         T const component0,
         T const component1,
         T const component2)
@@ -101,7 +99,7 @@ public:
       * @param component2 The value to assign to the third component (m[2]).
       * @param component3 The value to assign to the fourth component (m[3]).
       */
-    inline NTuple (
+    NTuple (
         T const component0,
         T const component1,
         T const component2,
@@ -118,7 +116,7 @@ public:
       *                   n-tuple with.  Must be at least @c size
       *                   elements long.
       */
-    inline NTuple (T const *const components)
+    NTuple (T const *const components)
     {
         ASSERT1(components != NULL);
     #if defined(XRB_NTUPLE_USES_MEMCPY)
@@ -131,7 +129,7 @@ public:
     /** @brief Copy constructor.
       * @param source The n-tuple to copy.
       */
-    inline NTuple (NTuple<T, size> const &source)
+    NTuple (NTuple<T, size> const &source)
     {
     #if defined(XRB_NTUPLE_USES_MEMCPY)
         memcpy(m, source.m, sizeof(T) * size);
@@ -143,7 +141,7 @@ public:
     /** No cleanup is necessary.
       * @brief Destructor.
       */
-    inline ~NTuple ()
+    ~NTuple ()
     {
     }
 
@@ -154,7 +152,7 @@ public:
     /** @brief Assignment operator.
       * @param operand The n-tuple to assign.
       */
-    inline void operator = (NTuple<T, size> const &operand)
+    void operator = (NTuple<T, size> const &operand)
     {
     #if defined(XRB_NTUPLE_USES_MEMCPY)
         memcpy(m, operand.m, sizeof(T) * size);
@@ -168,7 +166,7 @@ public:
       * @return True iff each component of operand is equal to the
       *         corresponding component of this n-tuple.
       */
-    inline bool operator == (NTuple<T, size> const &operand) const
+    bool operator == (NTuple<T, size> const &operand) const
     {
     #if defined(XRB_NTUPLE_USES_MEMCMP)
         return memcmp(m, operand.m, sizeof(T) * size) == 0;
@@ -184,7 +182,7 @@ public:
       * @return True iff any component of operand is unequal to the
       *         corresponding component of this n-tuple.
       */
-    inline bool operator != (NTuple<T, size> const &operand) const
+    bool operator != (NTuple<T, size> const &operand) const
     {
     #if defined(XRB_NTUPLE_USES_MEMCMP)
         return memcmp(m, operand.m, sizeof(T) * size) != 0;
@@ -201,7 +199,7 @@ public:
       *         prefers < for the first component, then < for the
       *         second component, etc.
       */
-    inline bool operator < (NTuple<T, size> const &operand) const
+    bool operator < (NTuple<T, size> const &operand) const
     {
         for (Uint32 i = 0; i < size; ++i)
             if (m[i] < operand.m[i])
@@ -216,7 +214,7 @@ public:
       * @param index The index of the component to reference.
       * @return A const reference to the desired n-tuple component.
       */
-    inline T const &operator [] (Uint32 const index) const
+    T const &operator [] (Uint32 const index) const
     {
         ASSERT3(index < size);
         return m[index];
@@ -227,7 +225,7 @@ public:
       * @param index The index of the component to reference.
       * @return A non-const reference to the desired n-tuple component.
       */
-    inline T &operator [] (Uint32 const index)
+    T &operator [] (Uint32 const index)
     {
         ASSERT3(index < size);
         return m[index];
@@ -237,7 +235,7 @@ public:
       * @brief In-place addition operator.
       * @param operand The n-tuple to add to this n-tuple.
       */
-    inline void operator += (NTuple<T, size> const &operand)
+    void operator += (NTuple<T, size> const &operand)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] += operand.m[i];
@@ -247,7 +245,7 @@ public:
       * @brief In-place addition operator.
       * @param operand The n-tuple to subtract from this n-tuple.
       */
-    inline void operator -= (NTuple<T, size> const &operand)
+    void operator -= (NTuple<T, size> const &operand)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] -= operand.m[i];
@@ -259,7 +257,7 @@ public:
       * @param operand The n-tuple to component-wise multiply this
       *                n-tuple by.
       */
-    inline void operator *= (NTuple<T, size> const &operand)
+    void operator *= (NTuple<T, size> const &operand)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] *= operand.m[i];
@@ -269,7 +267,7 @@ public:
       * @brief In-place multiplication operator.
       * @param operand The scalar value to multiply this n-tuple by.
       */
-    inline void operator *= (T const operand)
+    void operator *= (T const operand)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] *= operand;
@@ -282,7 +280,7 @@ public:
       *                n-tuple by.
       * @note There is no protection here against dividing by zero.
       */
-    inline void operator /= (NTuple<T, size> const &operand)
+    void operator /= (NTuple<T, size> const &operand)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] /= operand.m[i];
@@ -293,7 +291,7 @@ public:
       * @param operand The scalar value to divide this n-tuple by.
       * @note There is no protection here against dividing by zero.
       */
-    inline void operator /= (T const operand)
+    void operator /= (T const operand)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] /= operand;
@@ -301,7 +299,7 @@ public:
     /** @brief Unary negation operator.
       * @return The arithmatic negative of this n-tuple.
       */
-    inline NTuple<T, size> operator - () const
+    NTuple<T, size> operator - () const
     {
         NTuple<T, size> retval;
         for (Uint32 i = 0; i < size; ++i)
@@ -318,7 +316,7 @@ public:
       * @brief The NTuple equivalent to static_cast.
       */
     template <typename U>
-    inline NTuple<U, size> StaticCast () const
+    NTuple<U, size> StaticCast () const
     {
         NTuple<U, size> retval;
         for (Uint32 i = 0; i < size; ++i)
@@ -333,7 +331,7 @@ public:
     /** @brief Sets each component in this n-tuple to the specified value.
       * @param fill_with The value to assign to each n-tuple component.
       */
-    inline void FillWith (T const fill_with)
+    void FillWith (T const fill_with)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] = fill_with;
@@ -342,7 +340,7 @@ public:
       * @code ms_zero - *this @endcode (or at least it better equal that!).
       * @brief Sets this n-tuple to the negative of itself.
       */
-    inline void Negate ()
+    void Negate ()
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] = -m[i];
@@ -354,7 +352,7 @@ public:
       * @param component0 The value to assign to the first component (m[0]).
       * @param component1 The value to assign to the second component (m[1]).
       */
-    inline void SetComponents (
+    void SetComponents (
         T const component0,
         T const component1)
     {
@@ -370,7 +368,7 @@ public:
       * @param component1 The value to assign to the second component (m[1]).
       * @param component2 The value to assign to the third component (m[2]).
       */
-    inline void SetComponents (
+    void SetComponents (
         T const component0,
         T const component1,
         T const component2)
@@ -389,7 +387,7 @@ public:
       * @param component2 The value to assign to the third component (m[2]).
       * @param component3 The value to assign to the fourth component (m[3]).
       */
-    inline void SetComponents (
+    void SetComponents (
         T const component0,
         T const component1,
         T const component2,
@@ -407,7 +405,7 @@ public:
       *                   to this n-tuple.  Must be at least @c size
       *                   elements long.
       */
-    inline void SetComponents (T const *const components)
+    void SetComponents (T const *const components)
     {
         ASSERT1(components != NULL);
     #if defined(XRB_NTUPLE_USES_MEMCPY)
@@ -423,44 +421,11 @@ public:
       * @param source The n-tuple to assign.
       */
     template <typename U>
-    inline void StaticCastAssign (NTuple<U, size> const &source)
+    void StaticCastAssign (NTuple<U, size> const &source)
     {
         for (Uint32 i = 0; i < size; ++i)
             m[i] = static_cast<T>(source.m[i]);
     }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // procedures
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** The format of each n-tuple component is specified by
-      * component_printf_format, which should be the printf format string
-      * for a single n-tuple component.  This value must be passed in because
-      * the printf format is not known in the general case.
-      * @brief Prints the size and components of this n-tuple to the given
-      *        file stream.
-      * @param fptr The file stream to print to (e.g. stderr).
-      * @param component_printf_format The printf format string for a single
-      *                                n-tuple component.
-      * @param add_newline Indicates if a newline should be printed as the
-      *                    last character (default value is true).
-      */
-    void Fprint (FILE *const fptr,
-                 char const *const component_printf_format,
-                 bool const add_newline = true) const
-    {
-        fprintf(fptr, "%uTuple = (", size);
-        Uint32 i;
-        for (i = 0; i < size-1; ++i)
-        {
-            fprintf(fptr, component_printf_format, m[i]);
-            fprintf(fptr, ", ");
-        }
-        ASSERT1(i == size-1);
-        fprintf(fptr, component_printf_format, m[i]);
-        fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
-    }
-
 }; // end of class NTuple
 
 /// Less-than/equal/greater-than style comparison function, in dictionary order.
@@ -480,150 +445,147 @@ Sint32 Compare (NTuple<T, size> const &l, NTuple<T, size> const &r)
 
 /** Performs n-tuple addition (a commutative operation) on the given n-tuples.
   * @brief Global addition operator.
-  * @param left_operand The n-tuple on the left side of the operation.
-  * @param right_operand The n-tuple on the right side of the operation.
+  * @param l The n-tuple on the left side of the operation.
+  * @param r The n-tuple on the right side of the operation.
   * @return The n-tuple sum of the given n-tuples.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator + (
-    NTuple<T, size> const &left_operand,
-    NTuple<T, size> const &right_operand)
+NTuple<T, size> operator + (NTuple<T, size> const &l, NTuple<T, size> const &r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand.m[i] + right_operand.m[i];
+        retval.m[i] = l.m[i] + r.m[i];
     return retval;
 }
 
 /** Performs n-tuple subtraction (a non-commutative operation) on the given n-tuples.
   * @brief Global subtraction operator.
-  * @param left_operand The n-tuple on the left side of the operation.
-  * @param right_operand The n-tuple on the right side of the operation.
+  * @param l The n-tuple on the left side of the operation.
+  * @param r The n-tuple on the right side of the operation.
   * @return The n-tuple difference of the given n-tuples.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator - (
-    NTuple<T, size> const &left_operand,
-    NTuple<T, size> const &right_operand)
+NTuple<T, size> operator - (NTuple<T, size> const &l, NTuple<T, size> const &r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand.m[i] - right_operand.m[i];
+        retval.m[i] = l.m[i] - r.m[i];
     return retval;
 }
 
 /** Performs scalar component-wise multiplication (a commutative operation)
   * of the n-tuple operands.
   * @brief Global multiplication operator.
-  * @param left_operand The n-tuple on the left side of the operation.
-  * @param right_operand The n-tuple on the right side of the operation.
+  * @param l The n-tuple on the left side of the operation.
+  * @param r The n-tuple on the right side of the operation.
   * @return The n-tuple which contains the component-wise products of the
   *         operands' components.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator * (
-    NTuple<T, size> const &left_operand,
-    NTuple<T, size> const &right_operand)
+NTuple<T, size> operator * (NTuple<T, size> const &l, NTuple<T, size> const &r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand.m[i] * right_operand.m[i];
+        retval.m[i] = l.m[i] * r.m[i];
     return retval;
 }
 
 /** Performs scalar multiplication (a commutative operation) of the scalar
-  * left_operand on the n-tuple right_operand.
+  * l on the n-tuple r.
   * @brief Global multiplication operator.
-  * @param left_operand The scalar on the left side of the operation.
-  * @param right_operand The n-tuple on the right side of the operation.
+  * @param l The scalar on the left side of the operation.
+  * @param r The n-tuple on the right side of the operation.
   * @return The scalar multiple of the given scalar and n-tuple.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator * (
-    T const left_operand,
-    NTuple<T, size> const &right_operand)
+NTuple<T, size> operator * (T l, NTuple<T, size> const &r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand * right_operand.m[i];
+        retval.m[i] = l * r.m[i];
     return retval;
 }
 
 /** Performs scalar multiplication (a commutative operation) of the scalar
-  * right_operand on the n-tuple left_operand.
+  * r on the n-tuple l.
   * @brief Global multiplication operator.
-  * @param left_operand The n-tuple on the left side of the operation.
-  * @param right_operand The scalar on the right side of the operation.
+  * @param l The n-tuple on the left side of the operation.
+  * @param r The scalar on the right side of the operation.
   * @return The scalar multiple of the given scalar and n-tuple.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator * (
-    NTuple<T, size> const &left_operand,
-    T const right_operand)
+NTuple<T, size> operator * (NTuple<T, size> const &l, T r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand.m[i] * right_operand;
+        retval.m[i] = l.m[i] * r;
     return retval;
 }
 
 /** Performs scalar component-wise division (a non-commutative operation)
   * of the n-tuple operands.
   * @brief Global division operator.
-  * @param left_operand The n-tuple on the left side of the operation.
-  * @param right_operand The n-tuple on the right side of the operation.
+  * @param l The n-tuple on the left side of the operation.
+  * @param r The n-tuple on the right side of the operation.
   * @return The n-tuple which contains the component-wise quotients of the
   *         operands' components.
   * @note There is no protection here against dividing by zero.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator / (
-    NTuple<T, size> const &left_operand,
-    NTuple<T, size> const &right_operand)
+NTuple<T, size> operator / (NTuple<T, size> const &l, NTuple<T, size> const &r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand.m[i] / right_operand.m[i];
+        retval.m[i] = l.m[i] / r.m[i];
     return retval;
 }
 
 /** Performs scalar component-wise division (a non-commutative operation)
   * of the scalar operand by the n-tuple operand components.
   * @brief Global division operator.
-  * @param left_operand The scalar on the left side of the operation.
-  * @param right_operand The n-tuple on the right side of the operation.
+  * @param l The scalar on the left side of the operation.
+  * @param r The n-tuple on the right side of the operation.
   * @return The n-tuple which contains the component-wise quotients of the
   *         left operand over each of the right operand's components.
   * @note There is no protection here against dividing by zero.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator / (
-    T const left_operand,
-    NTuple<T, size> const &right_operand)
+NTuple<T, size> operator / (T l, NTuple<T, size> const &r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand / right_operand.m[i];
+        retval.m[i] = l / r.m[i];
     return retval;
 }
 
 /** Performs scalar division (a non-commutative operation) of the n-tuple
-  * left_operand by the scalar right_operand.
+  * l by the scalar r.
   * @brief Global division operator.
-  * @param left_operand The n-tuple on the left side of the operation.
-  * @param right_operand The scalar on the right side of the operation.
+  * @param l The n-tuple on the left side of the operation.
+  * @param r The scalar on the right side of the operation.
   * @return The scalar quotient of the given scalar and n-tuple.
   * @note There is no protection here against dividing by zero.
   */
 template <typename T, Uint32 size>
-inline NTuple<T, size> operator / (
-    NTuple<T, size> const &left_operand,
-    T const right_operand)
+NTuple<T, size> operator / (NTuple<T, size> const &l, T r)
 {
     NTuple<T, size> retval;
     for (Uint32 i = 0; i < size; ++i)
-        retval.m[i] = left_operand.m[i] / right_operand;
+        retval.m[i] = l.m[i] / r;
     return retval;
+}
+
+template <typename T, Uint32 size>
+std::ostream &operator << (std::ostream &stream, NTuple<T, size> const &t)
+{
+    stream << size << "Tuple: (";
+    for (Uint32 i = 0; i < size-1; ++i)
+    {
+        stream << t[i];
+        if (i < size-1)
+            stream << ", ";
+    }
+    return stream << ')';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -636,52 +598,60 @@ struct Aggregate<NTuple<T,size> >
 {
     static void Read (Serializer &serializer, NTuple<T,size> &dest) throw(Exception)
     {
-        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
+        serializer.ReadArray<T>(dest.m, LENGTHOF(dest.m));
     }
     static void Write (Serializer &serializer, NTuple<T,size> const &source) throw(Exception)
     {
-        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
+        serializer.WriteArray<T>(source.m, LENGTHOF(source.m));
     }
 };
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience typedefs for n-tuples of different types and dimensions,
-// and format-specific Fprint functions for each typedef.
+// and stream output functions for each typedef.
 // ///////////////////////////////////////////////////////////////////////////
 
-/** Bool2
-  * @brief Convenience typedef for a 2-dimensional Bool vector.
-  */
+/// Convenience typedef for a 2-dimensional Bool vector.
 typedef NTuple<bool, 2> Bool2;
-/** Alignment2
-  * @brief Convenience typedef for a 2-dimensional Alignment vector.
-  */
+/// Convenience typedef for a 2-dimensional Alignment vector.
 typedef NTuple<Alignment, 2> Alignment2;
 
-/** This is a convenience function to provide a default printf format to
-  * NTuple::Fprint.
-  * @brief Prints the given Bool2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param ntuple The Bool2 to print.
-  * @param add_newline Indicates if a newline should be printed at the
-  *                    end of the formatted output.
-  */
-void Fprint (
-    FILE *fptr,
-    Bool2 const &ntuple,
-    bool add_newline = true);
-/** This is a convenience function to provide a default printf format to
-  * NTuple::Fprint.
-  * @brief Prints the given Alignment2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param ntuple The Alignment2 to print.
-  * @param add_newline Indicates if a newline should be printed at the
-  *                    end of the formatted output.
-  */
-void Fprint (
-    FILE *fptr,
-    Alignment2 const &ntuple,
-    bool add_newline = true);
+template <Uint32 size>
+std::ostream &operator << (std::ostream &stream, NTuple<bool, size> const &t)
+{
+    stream << size << "Tuple: (";
+    for (Uint32 i = 0; i < size; ++i)
+    {
+        stream << std::boolalpha << t[i];
+        if (i < size-1)
+            stream << ", ";
+    }
+    return stream << ')';
+}
+
+template <Uint32 size>
+std::ostream &operator << (std::ostream &stream, NTuple<Alignment, size> const &t)
+{
+    stream << size << "Tuple: (";
+    char const *stringified = NULL;
+    for (Uint32 i = 0; i < size; ++i)
+    {
+        switch (t[i])
+        {
+            case TOP:    stringified = STRINGIFY(TOP);    break;
+            case LEFT:   stringified = STRINGIFY(LEFT);   break;
+            case CENTER: stringified = STRINGIFY(CENTER); break;
+            case BOTTOM: stringified = STRINGIFY(BOTTOM); break;
+            case RIGHT:  stringified = STRINGIFY(RIGHT);  break;
+            case SPACED: stringified = STRINGIFY(SPACED); break;
+            default: ASSERT1(false && "Invalid Alignment"); stringified = ""; break;
+        }
+        stream << stringified;
+        if (i < size-1)
+            stream << ", ";
+    }
+    return stream << ')';
+}
 
 } // end of namespace Xrb
 

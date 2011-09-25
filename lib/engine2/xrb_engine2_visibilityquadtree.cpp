@@ -88,7 +88,7 @@ void VisibilityQuadTree::ReadObjects (
 {
     ASSERT1(object_layer != NULL);
 
-    fprintf(stderr, "VisibilityQuadTree::ReadObjects();\n");
+    std::cerr << "VisibilityQuadTree::ReadObjects();" << std::endl;
     Uint32 static_object_count;
     serializer.Read<Uint32>(static_object_count);
     while (static_object_count > 0)

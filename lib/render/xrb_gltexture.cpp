@@ -50,18 +50,18 @@ void GlTexture::LoadParameters::Fallback ()
     m_flags = NONE;
 }
 
-void GlTexture::LoadParameters::Print (FILE *fptr) const
+void GlTexture::LoadParameters::Print (std::ostream &stream) const
 {
-    fprintf(fptr, "path = \"%s\"", m_path.c_str());
+    stream << "path = \"" << m_path << '"';
     if (m_flags != NONE)
     {
-        fprintf(fptr, ", flags =");
+        stream << ", flags =";
         if (UsesSeparateAtlas())
-            fprintf(fptr, " USES_SEPARATE_ATLAS");
+            stream << " USES_SEPARATE_ATLAS";
         if (MipmapsDisabled())
-            fprintf(fptr, " MIPMAPS_DISABLED");
+            stream << " MIPMAPS_DISABLED";
         if (UsesFilterNearest())
-            fprintf(fptr, " USES_FILTER_NEAREST");
+            stream << " USES_FILTER_NEAREST";
     }
 }
 

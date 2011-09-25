@@ -183,8 +183,8 @@ GlTextureAtlas::~GlTextureAtlas ()
 {
     if (!m_placed_gltexture_set.empty())
     {
-        fprintf(stderr, "Dangling GlTexture(s) during GlTextureAtlas destruction.  ResourceLibrary inventory:\n");
-        Singleton::ResourceLibrary().PrintInventory(stderr, 1);
+        std::cerr << "Dangling GlTexture(s) during GlTextureAtlas destruction.  ResourceLibrary inventory:" << std::endl;
+        Singleton::ResourceLibrary().PrintInventory(std::cerr, 1);
     }
 
     Singleton::Gl().EnsureAtlasIsNotBound(*this);

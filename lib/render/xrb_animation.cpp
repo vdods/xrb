@@ -43,9 +43,9 @@ void Animation::Sequence::LoadParameters::Fallback ()
     m_path.clear();
 }
 
-void Animation::Sequence::LoadParameters::Print (FILE *fptr) const
+void Animation::Sequence::LoadParameters::Print (std::ostream &stream) const
 {
-    fprintf(fptr, "path = \"%s\"", m_path.c_str());
+    stream << "path = \"" << m_path << '"';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
             if (default_duration <= 0.0f)
                 THROW_STRING("invalid default_duration value " << default_duration << " (must be positive)");
 
-            fprintf(stderr, "Animation::Sequence::Create(\"%s\"); default_type = %s, default_duration = %g\n", load_parameters.Path().c_str(), ms_animation_type_string[default_type].c_str(), default_duration);
+            std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); default_type = " << ms_animation_type_string[default_type] << ", default_duration = " << default_duration << std::endl;
 
             DataFile::Array const *frames = root->PathElementArray("|frames");
             Sequence *retval = new Sequence(frames->ElementCount(), default_type, default_duration);
@@ -138,18 +138,18 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
         }
         catch (std::string const &e)
         {
-            fprintf(stderr, "Animation::Sequence::Create(\"%s\"); error \"%s\"\n", load_parameters.Path().c_str(), e.c_str());
+            std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); error \"" << e << '"' << std::endl;
         }
     }
     else
     {
-        fprintf(stderr, "Animation::Sequence::Create(\"%s\"); error ", load_parameters.Path().c_str());
+        std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); error ";
         switch (return_code)
         {
-            case DataFile::Parser::RC_INVALID_FILENAME: fprintf(stderr, "RC_INVALID_FILENAME\n"); break;
-            case DataFile::Parser::RC_FILE_OPEN_FAILURE: fprintf(stderr, "RC_FILE_OPEN_FAILURE\n"); break;
-            case DataFile::Parser::RC_PARSE_ERROR: fprintf(stderr, "RC_PARSE_ERROR\n"); break;
-            case DataFile::Parser::RC_ERRORS_ENCOUNTERED: fprintf(stderr, "RC_ERRORS_ENCOUNTERED\n"); break;
+            case DataFile::Parser::RC_INVALID_FILENAME:     std::cerr << "RC_INVALID_FILENAME" << std::endl; break;
+            case DataFile::Parser::RC_FILE_OPEN_FAILURE:    std::cerr << "RC_FILE_OPEN_FAILURE" << std::endl; break;
+            case DataFile::Parser::RC_PARSE_ERROR:          std::cerr << "RC_PARSE_ERROR" << std::endl; break;
+            case DataFile::Parser::RC_ERRORS_ENCOUNTERED:   std::cerr << "RC_ERRORS_ENCOUNTERED" << std::endl; break;
             default: ASSERT1(false && "unhandled DataFile::Parser::ReturnCode"); break;
         }
     }

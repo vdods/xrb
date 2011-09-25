@@ -53,7 +53,7 @@ typedef uint64_t Uint64;
 typedef float Float;
 
 // StateMachine input value typedef
-typedef Uint8 StateMachineInput;
+typedef Uint32 StateMachineInput;
 
 } // end of namespace Xrb
 

@@ -215,11 +215,7 @@ lib_libxrb_la_SOURCES = \
     lib/lvd/lvd_xml_scanner.reflex \
     \
     lib/math/xrb_math.cpp \
-    lib/math/xrb_matrix2.cpp \
     lib/math/xrb_polynomial.cpp \
-    lib/math/xrb_simpletransform2.cpp \
-    lib/math/xrb_transform2.cpp \
-    lib/math/xrb_vector.cpp \
     \
     lib/parse/xrb_parse_datafile.cpp \
     lib/parse/xrb_parse_datafile_parser.cpp \
@@ -231,8 +227,6 @@ lib_libxrb_la_SOURCES = \
     lib/parse/xrb_parse_util.cpp \
     \
     lib/primitive/xrb_color.cpp \
-    lib/primitive/xrb_ntuple.cpp \
-    lib/primitive/xrb_rect.cpp \
     lib/primitive/xrb_texture.cpp \
     \
     lib/render/xrb_animation.cpp \

@@ -41,7 +41,7 @@ public:
     // a dummy texture if the real texture fails to load.
     virtual void Fallback () = 0;
     // for console spew.  should print all on one line, no trailing newline.
-    virtual void Print (FILE *fptr) const = 0;
+    virtual void Print (std::ostream &stream) const = 0;
 
     // for use in sorting ResourceLoadParameters instances
     struct LessThan

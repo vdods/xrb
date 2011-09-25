@@ -124,7 +124,7 @@ WidgetBackground const *StyleSheet::Background (std::string const &type) const
     BackgroundMap::const_iterator it = m_background.find(Util::Lowercase(type));
     if (it == m_background.end())
     {
-        fprintf(stderr, "StyleSheet::Background(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        std::cerr << "StyleSheet::Background(); WARNING: type \"" << type << "\" not found.  using austere default." << std::endl;
         return ms_fallback_background;
     }
     else
@@ -136,7 +136,7 @@ std::string const &StyleSheet::FontPath (std::string const &type) const
     FontSpecificationMap::const_iterator it = m_font_spec.find(Util::Lowercase(type));
     if (it == m_font_spec.end())
     {
-        fprintf(stderr, "StyleSheet::FontPath(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        std::cerr << "StyleSheet::FontPath(); WARNING: type \"" << type << "\" not found.  using austere default." << std::endl;
         return ms_fallback_font_path;
     }
     else
@@ -148,7 +148,7 @@ Float StyleSheet::FontHeightRatio (std::string const &type) const
     FontSpecificationMap::const_iterator it = m_font_spec.find(Util::Lowercase(type));
     if (it == m_font_spec.end())
     {
-        fprintf(stderr, "StyleSheet::FontHeightRatio(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        std::cerr << "StyleSheet::FontHeightRatio(); WARNING: type \"" << type << "\" not found.  using austere default." << std::endl;
         return ms_fallback_font_height_ratio;
     }
     else
@@ -160,7 +160,7 @@ Resource<GlTexture> const &StyleSheet::GetTexture (std::string const &type) cons
     TextureMap::const_iterator it = m_texture.find(Util::Lowercase(type));
     if (it == m_texture.end())
     {
-        fprintf(stderr, "StyleSheet::GetTexture(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        std::cerr << "StyleSheet::GetTexture(); WARNING: type \"" << type << "\" not found.  using austere default." << std::endl;
         return ms_fallback_texture;
     }
     else
@@ -172,7 +172,7 @@ FloatMargins const &StyleSheet::MarginsRatios (std::string const &type) const
     MarginsRatiosMap::const_iterator it = m_margins_ratios.find(Util::Lowercase(type));
     if (it == m_margins_ratios.end())
     {
-        fprintf(stderr, "StyleSheet::MarginsRatios(); WARNING: type \"%s\" not found.  using austere default.\n", type.c_str());
+        std::cerr << "StyleSheet::MarginsRatios(); WARNING: type \"" << type << "\" not found.  using austere default." << std::endl;
         return ms_fallback_margins_ratios;
     }
     else

@@ -68,7 +68,7 @@ World *World::Create (
     CreateEntityFunction CreateEntity,
     PhysicsHandler *const physics_handler)
 {
-    ASSERT1(serializer.Direction() == IOD_READ);
+    ASSERT1(serializer.IsReadable());
 
     Uint32 entity_capacity;
     serializer.Read<Uint32>(entity_capacity);
@@ -193,7 +193,7 @@ void World::AddObjectLayer (ObjectLayer *object_layer)
             ASSERT1(ol != NULL);
             if (ol->Name() == object_layer->Name())
             {
-                fprintf(stderr, "World::AddObjectLayer(); WARNING: repeated ObjectLayer name \"%s\" - only first such named ObjectLayer will be accessible via GetObjectLayerByName\n", object_layer->Name().c_str());
+                std::cerr << "World::AddObjectLayer(); WARNING: repeated ObjectLayer name \"" << object_layer->Name() << "\" - only first such named ObjectLayer will be accessible via GetObjectLayerByName" << std::endl;
                 break;
             }
         }

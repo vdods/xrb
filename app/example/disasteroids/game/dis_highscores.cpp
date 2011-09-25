@@ -10,6 +10,8 @@
 
 #include "dis_highscores.hpp"
 
+#include <fstream>
+
 #include "dis_util.hpp"
 #include "xrb_parse_datafile_parser.hpp"
 #include "xrb_parse_datafile_value.hpp"
@@ -223,15 +225,16 @@ void HighScores::Read (std::string const &path)
 
 void HighScores::Write (std::string const &path)
 {
-    FILE *fptr = fopen(path.c_str(), "wt");
-    if (fptr == NULL)
+    std::ofstream stream;
+    stream.open(path.c_str());
+    if (!stream.is_open())
+    {
+        std::cerr << "HighScores::Write(); could not open file \"" << path << "\" for writing" << std::endl;
         return;
+    }
 
     DataFile::Structure *root = new DataFile::Structure();
-    for (ScoreList::const_iterator it = m_score_list.begin(),
-                                   it_end = m_score_list.end();
-         it != it_end;
-         ++it)
+    for (ScoreList::const_iterator it = m_score_list.begin(), it_end = m_score_list.end(); it != it_end; ++it)
     {
         try {
             root->SetPathElementString("|high_scores|+|name", it->Name());
@@ -244,10 +247,10 @@ void HighScores::Write (std::string const &path)
         }
     }
 
-    IndentFormatter formatter(fptr, "    ");
+    IndentFormatter formatter(stream, "    ");
     root->Print(formatter);
     Delete(root);
-    fclose(fptr);
+    stream.close();
 }
 
 } // end of namespace Dis

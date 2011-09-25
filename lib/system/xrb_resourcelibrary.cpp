@@ -10,8 +10,7 @@
 
 #include "xrb_resourcelibrary.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 // ///////////////////////////////////////////////////////////////////////////
 // Xrb::ResourceLibrary
@@ -25,24 +24,24 @@ ResourceLibrary::~ResourceLibrary ()
 {
     if (!m_instance_map.empty())
     {
-        fprintf(stderr, "ResourceLibrary * UNFREED RESOURCES:\n");
-        PrintInventory(stderr, 1);
+        std::cerr << "ResourceLibrary * UNFREED RESOURCES:" << std::endl;
+        PrintInventory(std::cerr, 1);
     }
 }
 
-void ResourceLibrary::PrintInventory (FILE *fptr, Uint32 tab_count) const
+void ResourceLibrary::PrintInventory (std::ostream &stream, Uint32 tab_count) const
 {
-    ASSERT1(fptr != NULL);
     for (InstanceMap::const_iterator it = m_instance_map.begin(),
                                      it_end = m_instance_map.end();
          it != it_end;
          ++it)
     {
-        ResourceLoadParameters const *load_parameters = it->first;
+        ASSERT1(it->first != NULL);
+        ResourceLoadParameters const &load_parameters = *it->first;
         for (Uint32 i = 0; i < tab_count; ++i)
-            fprintf(fptr, "    %s: ", load_parameters->ResourceName().c_str());
-        load_parameters->Print(fptr);
-        fprintf(fptr, "\n");
+            stream << "    " << load_parameters.ResourceName() << ": ";
+        load_parameters.Print(stream);
+        stream << std::endl;
     }
 }
 
@@ -52,9 +51,9 @@ void ResourceLibrary::Unload (ResourceLoadParameters const &load_parameters)
     ASSERT1(it != m_instance_map.end());
     ASSERT1(it->second != NULL);
 
-    fprintf(stderr, "ResourceLibrary * unloaded %s: ", load_parameters.ResourceName().c_str());
-    load_parameters.Print(stderr);
-    fprintf(stderr, "\n");
+    std::cerr << "ResourceLibrary * unloaded " << load_parameters.ResourceName() << ": ";
+    load_parameters.Print(std::cerr);
+    std::cerr << std::endl;
 
     // delete the stored ResourceLoadParameters.
     delete it->first;

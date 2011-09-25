@@ -10,6 +10,7 @@
 
 #include "xrb_parse_datafile_value.hpp"
 
+#include <iomanip>
 #include <sstream>
 
 #include "xrb_parse_util.hpp"
@@ -112,9 +113,7 @@ Structure const *Value::PathElementStructure (std::string const &path) const thr
 
 LeafValue::~LeafValue () { }
 
-Value const *LeafValue::SubpathElement (
-    std::string const &path,
-    Uint32 const start) const
+Value const *LeafValue::SubpathElement (std::string const &path, Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
@@ -129,36 +128,56 @@ Value const *LeafValue::SubpathElement (
 // Boolean
 // ///////////////////////////////////////////////////////////////////////////
 
+void Boolean::Print (IndentFormatter &formatter) const
+{
+    formatter << std::boolalpha << m_value;
+}
+
 void Boolean::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_BOOLEAN: %s", BOOL_TO_STRING(m_value));
+    formatter << "ET_BOOLEAN: " << std::boolalpha << m_value << '\n';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // SignedInteger
 // ///////////////////////////////////////////////////////////////////////////
 
+void SignedInteger::Print (IndentFormatter &formatter) const
+{
+    formatter << std::showpos << m_value;
+}
+
 void SignedInteger::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_SIGNED_INTEGER: %+d", m_value);
+    formatter << "ET_SIGNED_INTEGER: " << std::showpos << m_value << '\n'; 
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // UnsignedInteger
 // ///////////////////////////////////////////////////////////////////////////
 
+void UnsignedInteger::Print (IndentFormatter &formatter) const
+{
+    formatter << m_value;
+}
+
 void UnsignedInteger::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_UNSIGNED_INTEGER: %u", m_value);
+    formatter << "ET_UNSIGNED_INTEGER: " << m_value << '\n';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // Floaty
 // ///////////////////////////////////////////////////////////////////////////
 
+void Floaty::Print (IndentFormatter &formatter) const
+{
+    formatter << std::scientific << m_value;
+}
+
 void Floaty::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_FLOATY: %g", m_value);
+    formatter << "ET_FLOATY: " << m_value << '\n';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -170,9 +189,14 @@ void Character::Escape ()
     m_value = EscapedChar(m_value);
 }
 
+void Character::Print (IndentFormatter &formatter) const
+{
+    formatter << Util::CharacterLiteral(m_value);
+}
+
 void Character::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_CHARACTER: '%c'", m_value);
+    formatter << "ET_CHARACTER: '" << m_value << "'\n";
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -181,12 +205,12 @@ void Character::PrintAST (IndentFormatter &formatter) const
 
 void String::Print (IndentFormatter &formatter) const
 {
-    formatter.ContinueLine("%s", Util::StringLiteral(m_value).c_str());
+    formatter << Util::StringLiteral(m_value);
 }
 
 void String::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_STRING: %s", Util::StringLiteral(m_value).c_str());
+    formatter << "ET_STRING: " << Util::StringLiteral(m_value) << '\n';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -267,47 +291,36 @@ void KeyPair::Print (IndentFormatter &formatter) const
     ASSERT1(m_value != NULL);
     if (m_value->GetElementType() == ET_STRUCTURE)
     {
-        formatter.PrintLine("%s\n{", m_key.c_str());
+        formatter << m_key << " {\n";
         formatter.Indent();
         m_value->Print(formatter);
         formatter.Unindent();
-        formatter.BeginLine("}");
-    }
-    else if (m_value->GetElementType() == ET_ARRAY)
-    {
-        Array const *array = DStaticCast<Array const *>(m_value);
-        ASSERT1(array != NULL);
-        if (array->ShouldBeFormattedInline())
-            formatter.BeginLine("%s ", m_key.c_str());
-        else
-            formatter.PrintLine("%s", m_key.c_str());
-        m_value->Print(formatter);
+        formatter.EnsureNewline();
+        formatter << "}";
     }
     else
     {
-        formatter.BeginLine("%s ", m_key.c_str());
+        formatter << m_key << ' ';
         m_value->Print(formatter);
     }
 }
 
 void KeyPair::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_KEY_PAIR");
+    formatter << "ET_KEY_PAIR\n";
     formatter.Indent();
-    formatter.EndLine("key  : %s", m_key.c_str());
-    formatter.BeginLine("value: ");
+    formatter << "key  : " << m_key << '\n';
+    formatter << "value: ";
     ASSERT1(m_value != NULL);
     m_value->PrintAST(formatter);
     formatter.Unindent();
 }
 
-Value const *KeyPair::SubpathElement (
-    std::string const &path,
-    Uint32 const start) const
+Value const *KeyPair::SubpathElement (std::string const &path, Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "KeyPair::SubpathElement(\"%s\");\n", path.c_str()+start);
+//     std::cerr << "KeyPair::SubpathElement(\"" << path.c_str()+start << "\");" << std::endl;
 
     if (start >= path.length())
         return GetValue();
@@ -318,10 +331,7 @@ Value const *KeyPair::SubpathElement (
     return GetValue()->SubpathElement(path, start);
 }
 
-void KeyPair::SetSubpathElement (
-    std::string const &path,
-    Uint32 const start,
-    LeafValue *const value) throw(std::string)
+void KeyPair::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -388,10 +398,7 @@ void KeyPair::SetSubpathElement (
 
 Array::~Array ()
 {
-    for (ElementVector::iterator it = m_element_vector.begin(),
-                                 it_end = m_element_vector.end();
-         it != it_end;
-         ++it)
+    for (ElementVector::iterator it = m_element_vector.begin(), it_end = m_element_vector.end(); it != it_end; ++it)
     {
         Value const *value = *it;
         ASSERT1(value != NULL);
@@ -504,7 +511,7 @@ Structure const *Array::StructureElement (Uint32 index) const throw (std::string
     return value;
 }
 
-void Array::AppendValue (Value *const value)
+void Array::AppendValue (Value *value)
 {
     ASSERT1(value != NULL);
 
@@ -536,18 +543,15 @@ void Array::Print (IndentFormatter &formatter) const
     bool inlined_array = ShouldBeFormattedInline();
 
     if (inlined_array)
-        formatter.BeginLine("[ ");
+        formatter << "[ ";
     else
     {
-        formatter.PrintLine("[");
+        formatter << "[\n";
         formatter.Indent();
     }
 
     ElementVector::const_iterator it_test;
-    for (ElementVector::const_iterator it = m_element_vector.begin(),
-                                       it_end = m_element_vector.end();
-         it != it_end;
-         ++it)
+    for (ElementVector::const_iterator it = m_element_vector.begin(), it_end = m_element_vector.end(); it != it_end; ++it)
     {
         Value const *value = *it;
         ASSERT1(value != NULL);
@@ -556,7 +560,7 @@ void Array::Print (IndentFormatter &formatter) const
         if (value->GetElementType() == ET_STRUCTURE)
         {
             ASSERT1(!inlined_array);
-            formatter.PrintLine("{");
+            formatter << "{\n";
             formatter.Indent();
         }
 
@@ -566,60 +570,50 @@ void Array::Print (IndentFormatter &formatter) const
         {
             ASSERT1(!inlined_array);
             formatter.Unindent();
-            formatter.BeginLine("}");
+            formatter.EnsureNewline();
+            formatter << '}';
         }
 
         it_test = it;
         ++it_test;
         if (inlined_array)
-        {
-            if (it_test != it_end)
-                formatter.ContinueLine(", ");
-            else
-                formatter.ContinueLine(" ");
-        }
+            formatter << (it_test != it_end ? ", " : " ");
         else
-        {
-            if (it_test != it_end)
-                formatter.EndLine(", ");
-            else
-                formatter.EndLine("");
-        }
+            formatter << (it_test != it_end ? ", " : "") << '\n';
     }
 
     if (inlined_array)
-        formatter.ContinueLine("]");
+        formatter << ']';
     else
     {
+        formatter.EnsureNewline();
         formatter.Unindent();
-        formatter.BeginLine("]");
+        formatter << ']';
     }
 }
 
 void Array::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine(
-        "ET_ARRAY: %u dimensions - %u element(s) of type %s",
-        DimensionCount(),
-        m_element_vector.size(),
-        ElementTypeString(ArrayElementType()).c_str());
+    formatter << "ET_ARRAY: " << DimensionCount() << "-dimensional,  " << m_element_vector.size() << " element(s) of type " << ElementTypeString(ArrayElementType()) << '\n';
     formatter.Indent();
+
+    Uint32 max_index_width = 0;
+    if (m_element_vector.size() > 0)
+        max_index_width = FORMAT(m_element_vector.size()-1).length();
     for (Uint32 i = 0; i < m_element_vector.size(); ++i)
     {
-        formatter.BeginLine("[%3u]: ", i);
+        formatter << '[' << std::setw(max_index_width) << i << "]: ";
         ASSERT1(m_element_vector[i] != NULL);
         m_element_vector[i]->PrintAST(formatter);
     }
     formatter.Unindent();
 }
 
-Value const *Array::SubpathElement (
-    std::string const &path,
-    Uint32 start) const
+Value const *Array::SubpathElement (std::string const &path, Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "Array::SubpathElement(\"%s\");\n", path.c_str()+start);
+//     std::cerr << "Array::SubpathElement(\"" << path.c_str()+start << "\");" << std::endl;
 
     if (start >= path.length())
         return this;
@@ -649,10 +643,7 @@ Value const *Array::SubpathElement (
     return m_element_vector[array_index]->SubpathElement(path, key_delim);
 }
 
-void Array::SetSubpathElement (
-    std::string const &path,
-    Uint32 start,
-    LeafValue *const value) throw(std::string)
+void Array::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -837,9 +828,7 @@ std::string Array::DimensionAndTypeString () const
     return out.str();
 }
 
-bool Array::DoesMatchDimensionAndType (
-    Array const *const array0,
-    Array const *const array1)
+bool Array::DoesMatchDimensionAndType (Array const *array0, Array const *array1)
 {
     ASSERT1(array0 != NULL);
     ASSERT1(array1 != NULL);
@@ -868,10 +857,7 @@ bool Array::DoesMatchDimensionAndType (
 
 Structure::~Structure ()
 {
-    for (MemberMap::iterator it = m_member_map.begin(),
-                           it_end = m_member_map.end();
-         it != it_end;
-         ++it)
+    for (MemberMap::iterator it = m_member_map.begin(), it_end = m_member_map.end(); it != it_end; ++it)
     {
         KeyPair const *key_pair = it->second;
         ASSERT1(key_pair != NULL);
@@ -903,7 +889,7 @@ void Structure::AddKeyPair (std::string const &key, Value *value)
         THROW_STRING("collision with key \"" << key << "\"")
 }
 
-void Structure::AddKeyPair (KeyPair *const key_pair)
+void Structure::AddKeyPair (KeyPair *key_pair)
 {
     ASSERT1(key_pair != NULL);
     ASSERT1(!key_pair->GetKey().empty());
@@ -920,26 +906,20 @@ void Structure::AddKeyPair (KeyPair *const key_pair)
 
 void Structure::Print (IndentFormatter &formatter) const
 {
-    for (MemberMap::const_iterator it = m_member_map.begin(),
-                                it_end = m_member_map.end();
-         it != it_end;
-         ++it)
+    for (MemberMap::const_iterator it = m_member_map.begin(), it_end = m_member_map.end(); it != it_end; ++it)
     {
         KeyPair const *key_pair = it->second;
         ASSERT1(key_pair != NULL);
         key_pair->Print(formatter);
-        formatter.EndLine(";");
+        formatter << ";\n";
     }
 }
 
 void Structure::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("ET_STRUCTURE: %u element(s)", m_member_map.size());
+    formatter << "ET_STRUCTURE: " << m_member_map.size() << " element(s)\n";
     formatter.Indent();
-    for (MemberMap::const_iterator it = m_member_map.begin(),
-                                it_end = m_member_map.end();
-         it != it_end;
-         ++it)
+    for (MemberMap::const_iterator it = m_member_map.begin(), it_end = m_member_map.end(); it != it_end; ++it)
     {
         KeyPair const *key_pair = it->second;
         ASSERT1(key_pair != NULL);
@@ -948,13 +928,11 @@ void Structure::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-Value const *Structure::SubpathElement (
-    std::string const &path,
-    Uint32 start) const
+Value const *Structure::SubpathElement (std::string const &path, Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "Structure::SubpathElement(\"%s\");\n", path.c_str()+start);
+//     std::cerr << "Structure::SubpathElement(\"" << path.c_str()+start << "\");" << std::endl;
 
     if (start >= path.length())
         return this;
@@ -975,10 +953,7 @@ Value const *Structure::SubpathElement (
     }
 }
 
-void Structure::SetSubpathElement (
-    std::string const &path,
-    Uint32 start,
-    LeafValue *const value) throw(std::string)
+void Structure::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);

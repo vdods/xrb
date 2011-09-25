@@ -58,7 +58,7 @@ Object *Object::Create (
     Serializer &serializer,
     CreateEntityFunction CreateEntity)
 {
-    ASSERT1(serializer.Direction() == IOD_READ);
+    ASSERT1(serializer.IsReadable());
 
     Object *retval = NULL;
     switch (ReadObjectType(serializer))

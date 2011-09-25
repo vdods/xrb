@@ -351,7 +351,7 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
         {
             object = AnimatedSprite::Create(animation_path, context.m_current_time, context.m_gltexture_flags);
             if (object == NULL)
-                fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); failed to load animation \"%s\"\n", context.m_svg_path.c_str(), animation_path.c_str());
+                std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); failed to load animation \"" << animation_path << '"' << std::endl;
         }
         // if nothing was loaded so far, attempt to load the image as a sprite
         if (object == NULL)
@@ -415,7 +415,7 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
         }
 
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <image id='%s'>, layer '%s' (line %u in svg file): %s\n", context.m_svg_path.c_str(), image_id.c_str(), context.m_object_layer->Name().c_str(), image.m_filoc.LineNumber(), exception.c_str());
+        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in <image id='" << image_id << "'>, layer '" << context.m_object_layer->Name() << "' (line " << image.m_filoc.LineNumber() << " in svg file): " << exception << std::endl;
     }
 }
 
@@ -520,7 +520,7 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
         context.m_object_layer = NULL; // done with this layer
 
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in layer '%s': %s\n", context.m_svg_path.c_str(), layer_id.c_str(), exception.c_str());
+        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in layer '" << layer_id << "': " << exception << std::endl;
     }
 }
 
@@ -537,7 +537,7 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
     Uint32 start_time = Singleton::Pal().CurrentTime();
     Parser::ParserReturnCode parser_return_code = parser.Parse(&root);
     Uint32 end_time = Singleton::Pal().CurrentTime();
-    fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); parse time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
+    std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); parse time = " << end_time - start_time << " ms" << std::endl;
     if (parser_return_code != Parser::PRC_SUCCESS)
         THROW_STRING("general parse error in file");
 
@@ -573,7 +573,7 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
     try {
         StageProcessAttributes(context, *context.m_svg);
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <svg> element: %s\n", context.m_svg_path.c_str(), exception.c_str());
+        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in <svg> element: " << exception << std::endl;
     }
 
     // give the world a chance to process the svg element
@@ -592,7 +592,7 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
         context.m_g = NULL; // done with this g
     }
     end_time = Singleton::Pal().CurrentTime();
-    fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); process time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
+    std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); process time = " << end_time - start_time << " ms" << std::endl;
 
     Delete(root);
 }

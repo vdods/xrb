@@ -38,9 +38,9 @@ public:
         return m_path < load_parameters.Path();
     }
     virtual void Fallback () { m_path.clear(); }
-    virtual void Print (FILE *fptr) const
+    virtual void Print (std::ostream &stream) const
     {
-        fprintf(stderr, "path = \"%s\"", m_path.c_str());
+        stream << "path = \"" << m_path << '"';
     }
 
 private:

@@ -13,23 +13,13 @@
 
 #include "xrb.hpp"
 
-#include <stdio.h>
-#include <string.h>
-
 #include "xrb_enums.hpp"
 #include "xrb_serializer.hpp"
 
-/** @file xrb_vector.h
-  * Also contains convenience typedefs for specific types of vectors.
-  * @brief Defines a very efficient yet generalized vector class.
-  */
-
-namespace Xrb
-{
+namespace Xrb {
 
 // this is necessary to avoid a circular header inclusion nightmare
-namespace Math
-{
+namespace Math {
     Float Sqrt (Float x);
 } // end of namespace Math
 
@@ -76,14 +66,14 @@ public:
     /** Does no initialization for the sake of efficiency.
       * @brief Default constructor.
       */
-    inline Vector ()
+    Vector ()
     {
     }
     /** Does/can not use any memcpy/memset functions.
       * @brief Constructs a Vector, setting each component to @c fill_with.
       * @param fill_with The value to set each component to.
       */
-    inline explicit Vector (T const fill_with)
+    explicit Vector (T const fill_with)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] = fill_with;
@@ -95,7 +85,7 @@ public:
       * @param component0 The value to assign to the first component (m[0]).
       * @param component1 The value to assign to the second component (m[1]).
       */
-    inline Vector (T const component0, T const component1)
+    Vector (T const component0, T const component1)
     {
         ASSERT1(dimension == 2);
         m[0] = component0;
@@ -109,7 +99,7 @@ public:
       * @param component1 The value to assign to the second component (m[1]).
       * @param component2 The value to assign to the third component (m[2]).
       */
-    inline Vector (T const component0, T const component1, T const component2)
+    Vector (T const component0, T const component1, T const component2)
     {
         ASSERT1(dimension == 3);
         m[0] = component0;
@@ -121,7 +111,7 @@ public:
       *                   vector with.  Must be at least @c dimension
       *                   elements long.
       */
-    inline Vector (T const *const components)
+    Vector (T const *const components)
     {
         ASSERT1(components != NULL);
     #if defined(XRB_VECTOR_USES_MEMCPY)
@@ -134,7 +124,7 @@ public:
     /** @brief Copy constructor.
       * @param source The vector to copy.
       */
-    inline Vector (Vector<T, dimension> const &source)
+    Vector (Vector<T, dimension> const &source)
     {
     #if defined(XRB_VECTOR_USES_MEMCPY)
         memcpy(m, source.m, sizeof(T) * dimension);
@@ -146,7 +136,7 @@ public:
     /** No cleanup is necessary.
       * @brief Destructor.
       */
-    inline ~Vector ()
+    ~Vector ()
     {
     }
 
@@ -157,7 +147,7 @@ public:
     /** @brief Assignment operator.
       * @param operand The vector to assign.
       */
-    inline void operator = (Vector<T, dimension> const &operand)
+    void operator = (Vector<T, dimension> const &operand)
     {
     #if defined(XRB_VECTOR_USES_MEMCPY)
         memcpy(m, operand.m, sizeof(T) * dimension);
@@ -171,7 +161,7 @@ public:
       * @return True iff each component of operand is equal to the
       *         corresponding component of this vector.
       */
-    inline bool operator == (Vector<T, dimension> const &operand) const
+    bool operator == (Vector<T, dimension> const &operand) const
     {
     #if defined(XRB_VECTOR_USES_MEMCMP)
         return memcmp(m, operand.m, sizeof(T) * dimension) == 0;
@@ -187,7 +177,7 @@ public:
       * @return True iff any component of operand is unequal to the
       *         corresponding component of this vector.
       */
-    inline bool operator != (Vector<T, dimension> const &operand) const
+    bool operator != (Vector<T, dimension> const &operand) const
     {
     #if defined(XRB_VECTOR_USES_MEMCMP)
         return memcmp(m, operand.m, sizeof(T) * dimension) != 0;
@@ -204,7 +194,7 @@ public:
       * @param index The index of the component to reference.
       * @return A const reference to the desired vector component.
       */
-    inline T const &operator [] (Uint32 const index) const
+    T const &operator [] (Uint32 const index) const
     {
         ASSERT3(index < dimension);
         return m[index];
@@ -215,7 +205,7 @@ public:
       * @param index The index of the component to reference.
       * @return A non-const reference to the desired vector component.
       */
-    inline T &operator [] (Uint32 const index)
+    T &operator [] (Uint32 const index)
     {
         ASSERT3(index < dimension);
         return m[index];
@@ -225,7 +215,7 @@ public:
       * @brief In-place addition operator.
       * @param operand The vector to add to this vector.
       */
-    inline void operator += (Vector<T, dimension> const &operand)
+    void operator += (Vector<T, dimension> const &operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] += operand.m[i];
@@ -235,7 +225,7 @@ public:
       * @brief In-place addition operator.
       * @param operand The vector to subtract from this vector.
       */
-    inline void operator -= (Vector<T, dimension> const &operand)
+    void operator -= (Vector<T, dimension> const &operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] -= operand.m[i];
@@ -247,7 +237,7 @@ public:
       * @param operand The vector to component-wise multiply this
       *                vector by.
       */
-    inline void operator *= (Vector<T, dimension> const &operand)
+    void operator *= (Vector<T, dimension> const &operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] *= operand.m[i];
@@ -258,7 +248,7 @@ public:
       * @param operand The scalar value to multiply this vector by.
       */
     template <typename U>
-    inline void operator *= (U const operand)
+    void operator *= (U const operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] *= static_cast<T>(operand);
@@ -271,7 +261,7 @@ public:
       *                vector by.
       * @note There is no protection here against dividing by zero.
       */
-    inline void operator /= (Vector<T, dimension> const &operand)
+    void operator /= (Vector<T, dimension> const &operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] /= operand.m[i];
@@ -283,7 +273,7 @@ public:
       * @note There is no protection here against dividing by zero.
       */
     template <typename U>
-    inline void operator /= (U const operand)
+    void operator /= (U const operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] /= static_cast<T>(operand);
@@ -291,7 +281,7 @@ public:
     /** @brief Unary negation operator.
       * @return The arithmatic negative of this vector.
       */
-    inline Vector<T, dimension> operator - () const
+    Vector<T, dimension> operator - () const
     {
         Vector<T, dimension> retval;
         for (Uint32 i = 0; i < dimension; ++i)
@@ -309,7 +299,7 @@ public:
       * @brief Returns the length of this vector.
       * @return The length of this vector.
       */
-    inline T Length () const
+    T Length () const
     {
         return Math::Sqrt(*this | *this);
     }
@@ -318,7 +308,7 @@ public:
       * @brief Returns the square of the length of this vector.
       * @return The square of the length of this vector.
       */
-    inline T LengthSquared () const
+    T LengthSquared () const
     {
         return *this | *this;
     }
@@ -328,7 +318,7 @@ public:
       * @brief Returns the normalized version of this vector.
       * @return The normalized version of this vector.
       */
-    inline Vector<T, dimension> Normalization () const
+    Vector<T, dimension> Normalization () const
     {
         Vector<T, dimension> retval(*this);
         retval.Normalize();
@@ -338,7 +328,7 @@ public:
       * @return True iff each component of the zero vector is equal to the
       *         corresponding component of this vector.
       */
-    inline bool IsZero () const
+    bool IsZero () const
     {
     #if defined(XRB_VECTOR_USES_MEMCMP)
         return memcmp(m, ms_zero.m, sizeof(T) * dimension) == 0;
@@ -355,7 +345,7 @@ public:
       * @brief The Vector equivalent to static_cast.
       */
     template <typename U>
-    inline Vector<U, dimension> StaticCast () const
+    Vector<U, dimension> StaticCast () const
     {
         Vector<U, dimension> retval;
         for (Uint32 i = 0; i < dimension; ++i)
@@ -370,7 +360,7 @@ public:
     /** @brief Sets each component in this vector to the specified value.
       * @param fill_with The value to assign to each vector component.
       */
-    inline void FillWith (T const fill_with)
+    void FillWith (T const fill_with)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] = fill_with;
@@ -379,7 +369,7 @@ public:
       * @code ms_zero - *this @endcode (or at least it better equal that!).
       * @brief Sets this vector to the negative of itself.
       */
-    inline void Negate ()
+    void Negate ()
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] = -m[i];
@@ -389,7 +379,7 @@ public:
       * this procedure may not be 1.
       * @brief Sets this vector's length to 1, while preserving its direction.
       */
-    inline void Normalize ()
+    void Normalize ()
     {
         operator/=(Math::Sqrt(*this | *this));
     }
@@ -400,7 +390,7 @@ public:
       * @param component0 The value to assign to the first component (m[0]).
       * @param component1 The value to assign to the second component (m[1]).
       */
-    inline void SetComponents (T const component0, T const component1)
+    void SetComponents (T const component0, T const component1)
     {
         ASSERT1(dimension == 2);
         m[0] = component0;
@@ -414,7 +404,7 @@ public:
       * @param component1 The value to assign to the second component (m[1]).
       * @param component2 The value to assign to the third component (m[2]).
       */
-    inline void SetComponents (T const component0, T const component1, T const component2)
+    void SetComponents (T const component0, T const component1, T const component2)
     {
         ASSERT1(dimension == 3);
         m[0] = component0;
@@ -427,7 +417,7 @@ public:
       *                   to this vector.  Must be at least @c dimension
       *                   elements long.
       */
-    inline void SetComponents (T const *const components)
+    void SetComponents (T const *const components)
     {
         ASSERT1(components != NULL);
     #if defined(XRB_VECTOR_USES_MEMCPY)
@@ -443,42 +433,10 @@ public:
       * @param source The vector to assign.
       */
     template <typename U>
-    inline void StaticCastAssign (Vector<U, dimension> const &source)
+    void StaticCastAssign (Vector<U, dimension> const &source)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] = static_cast<T>(source.m[i]);
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // procedures
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** The format of each vector component is specified by
-      * component_printf_format, which should be the printf format string
-      * for a single vector component.  This value must be passed in because
-      * the printf format is not known in the general case.
-      * @brief Prints the dimension and components of this vector to the given
-      *        file stream.
-      * @param fptr The file stream to print to (e.g. stderr).
-      * @param component_printf_format The printf format string for a single
-      *                                vector component.
-      * @param add_newline Indicates if a newline should be printed as the
-      *                    last character (default value is true).
-      */
-    void Fprint (FILE *const fptr,
-                 char const *const component_printf_format,
-                 bool const add_newline = true) const
-    {
-        fprintf(fptr, "Vector (%uD) = (", dimension);
-        Uint32 i;
-        for (i = 0; i < dimension-1; ++i)
-        {
-            fprintf(fptr, component_printf_format, m[i]);
-            fprintf(fptr, ", ");
-        }
-        ASSERT1(i == dimension-1);
-        fprintf(fptr, component_printf_format, m[i]);
-        fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
     }
 }; // end of template <typename T> class Vector
 
@@ -495,169 +453,151 @@ Vector<T, dimension> const Vector<T, dimension>::ms_zero(static_cast<T>(0));
 
 /** Performs vector addition (a commutative operation) on the given vectors.
   * @brief Global addition operator.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The vector sum of the given vectors.
   */
 template <typename T, Uint32 dimension>
-inline Vector<T, dimension> operator + (
-    Vector<T, dimension> const &left_operand,
-    Vector<T, dimension> const &right_operand)
+Vector<T, dimension> operator + (Vector<T, dimension> const &l, Vector<T, dimension> const &r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] + right_operand.m[i];
+        retval.m[i] = l.m[i] + r.m[i];
     return retval;
 }
 
 /** Performs vector subtraction (a non-commutative operation) on the given vectors.
   * @brief Global subtraction operator.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The vector difference of the given vectors.
   */
 template <typename T, Uint32 dimension>
-inline Vector<T, dimension> operator - (
-    Vector<T, dimension> const &left_operand,
-    Vector<T, dimension> const &right_operand)
+Vector<T, dimension> operator - (Vector<T, dimension> const &l, Vector<T, dimension> const &r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] - right_operand.m[i];
+        retval.m[i] = l.m[i] - r.m[i];
     return retval;
 }
 
 /** Performs scalar component-wise multiplication (a commutative operation)
   * of the vector operands.
   * @brief Global multiplication operator.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The vector which contains the component-wise products of the
   *         operands' components.
   */
 template <typename T, Uint32 dimension>
-inline Vector<T, dimension> operator * (
-    Vector<T, dimension> const &left_operand,
-    Vector<T, dimension> const &right_operand)
+Vector<T, dimension> operator * (Vector<T, dimension> const &l, Vector<T, dimension> const &r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] * right_operand.m[i];
+        retval.m[i] = l.m[i] * r.m[i];
     return retval;
 }
 
 /** Performs scalar multiplication (a commutative operation) of the scalar
-  * left_operand on the vector right_operand.
+  * l on the vector r.
   * @brief Global multiplication operator.
-  * @param left_operand The scalar on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The scalar on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The scalar multiple of the given scalar and vector.
   */
 template <typename T, Uint32 dimension, typename U>
-inline Vector<T, dimension> operator * (
-    U const left_operand,
-    Vector<T, dimension> const &right_operand)
+Vector<T, dimension> operator * (U l, Vector<T, dimension> const &r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = static_cast<T>(left_operand) * right_operand.m[i];
+        retval.m[i] = static_cast<T>(l) * r.m[i];
     return retval;
 }
 
 /** Performs scalar multiplication (a commutative operation) of the scalar
-  * right_operand on the vector left_operand.
+  * r on the vector l.
   * @brief Global multiplication operator.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The scalar on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The scalar on the right side of the operation.
   * @return The scalar multiple of the given scalar and vector.
   */
 template <typename T, Uint32 dimension, typename U>
-inline Vector<T, dimension> operator * (
-    Vector<T, dimension> const &left_operand,
-    U const right_operand)
+Vector<T, dimension> operator * (Vector<T, dimension> const &l, U r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] * static_cast<T>(right_operand);
+        retval.m[i] = l.m[i] * static_cast<T>(r);
     return retval;
 }
 
 /** Performs scalar component-wise division (a non-commutative operation)
   * of the vector operands.
   * @brief Global division operator.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The vector which contains the component-wise quotients of the
   *         operands' components.
   * @note There is no protection here against dividing by zero.
   */
 template <typename T, Uint32 dimension>
-inline Vector<T, dimension> operator / (
-    Vector<T, dimension> const &left_operand,
-    Vector<T, dimension> const &right_operand)
+Vector<T, dimension> operator / (Vector<T, dimension> const &l, Vector<T, dimension> const &r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] / right_operand.m[i];
+        retval.m[i] = l.m[i] / r.m[i];
     return retval;
 }
 
 /** Performs scalar component-wise division (a non-commutative operation)
   * of the scalar operand by the vector operand components.
   * @brief Global division operator.
-  * @param left_operand The scalar on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The scalar on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The vector which contains the component-wise quotients of the
   *         left operand over each of the right operand's components.
   * @note There is no protection here against dividing by zero.
   */
 template <typename T, Uint32 dimension, typename U>
-inline Vector<T, dimension> operator / (
-    U const left_operand,
-    Vector<T, dimension> const &right_operand)
+Vector<T, dimension> operator / (U l, Vector<T, dimension> const &r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = static_cast<T>(left_operand) / right_operand.m[i];
+        retval.m[i] = static_cast<T>(l) / r.m[i];
     return retval;
 }
 
 /** Performs scalar division (a non-commutative operation) of the vector
-  * left_operand by the scalar right_operand.
+  * l by the scalar r.
   * @brief Global division operator.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The scalar on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The scalar on the right side of the operation.
   * @return The scalar quotient of the given scalar and vector.
   * @note There is no protection here against dividing by zero.
   */
 template <typename T, Uint32 dimension, typename U>
-inline Vector<T, dimension> operator / (
-    Vector<T, dimension> const &left_operand,
-    U const right_operand)
+Vector<T, dimension> operator / (Vector<T, dimension> const &l, U r)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] / static_cast<T>(right_operand);
+        retval.m[i] = l.m[i] / static_cast<T>(r);
     return retval;
 }
 
 /** Performs the Euclidean-inner-product (a commutative operation) on
   * the two given vectors.
   * @brief The dot product.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The sum of the multiplication of each component of the vector
-  *         left_operand with the corresponding component of the vector
-  *         right_operand.
+  *         l with the corresponding component of the vector
+  *         r.
   */
 template <typename T, Uint32 dimension>
-inline T operator | (
-    Vector<T, dimension> const &left_operand,
-    Vector<T, dimension> const &right_operand)
+T operator | (Vector<T, dimension> const &l, Vector<T, dimension> const &r)
 {
-    T retval = left_operand.m[0] * right_operand.m[0];
+    T retval = l.m[0] * r.m[0];
     for (Uint32 i = 1; i < dimension; ++i)
-        retval += left_operand.m[i] * right_operand.m[i];
+        retval += l.m[i] * r.m[i];
     return retval;
 }
 
@@ -666,41 +606,37 @@ inline T operator | (
   * Z component of the cross product of two vectors contained completely
   * in the X/Y plane.
   * @brief The scalar cross product.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return The product of the lengths of the given vectors, multiplied
   *         by the sine of the angle between them.
   */
 template <typename T>
-inline T operator & (
-    Vector<T, 2> const &left_operand,
-    Vector<T, 2> const &right_operand)
+T operator & (Vector<T, 2> const &l, Vector<T, 2> const &r)
 {
-    return left_operand.m[0] * right_operand.m[1] -
-           left_operand.m[1] * right_operand.m[0];
+    return l.m[0] * r.m[1] -
+           l.m[1] * r.m[0];
 }
 
 /** Performs the 3D vector cross product (a non-commutative operation) on
   * the two given vectors.
   * @brief The 3D vector cross product.
-  * @param left_operand The vector on the left side of the operation.
-  * @param right_operand The vector on the right side of the operation.
+  * @param l The vector on the left side of the operation.
+  * @param r The vector on the right side of the operation.
   * @return A 3D vector which is perpendicular to both of the given vectors.
   *         The length is given by the product of the given vectors,
   *         multiplied by the sine of the angle between them.
   */
 template <typename T>
-inline Vector<T, 3> operator & (
-    Vector<T, 3> const &left_operand,
-    Vector<T, 3> const &right_operand)
+Vector<T, 3> operator & (Vector<T, 3> const &l, Vector<T, 3> const &r)
 {
     return Vector<T, 3>(
-        left_operand.m[1] * right_operand.m[2] -
-        left_operand.m[2] * right_operand.m[1],
-        left_operand.m[2] * right_operand.m[0] -
-        left_operand.m[0] * right_operand.m[2],
-        left_operand.m[0] * right_operand.m[1] -
-        left_operand.m[1] * right_operand.m[0]);
+        l.m[1] * r.m[2] -
+        l.m[2] * r.m[1],
+        l.m[2] * r.m[0] -
+        l.m[0] * r.m[2],
+        l.m[0] * r.m[1] -
+        l.m[1] * r.m[0]);
 }
 
 /** Requires that T have a unary negation operator defined.
@@ -714,9 +650,22 @@ inline Vector<T, 3> operator & (
   *         positive.
   */
 template <typename T>
-inline Vector<T, 2> PerpendicularVector2 (Vector<T, 2> const &source)
+Vector<T, 2> PerpendicularVector2 (Vector<T, 2> const &source)
 {
     return Vector<T, 2>(-source[1], source[0]);
+}
+
+template <typename T, Uint32 dimension>
+std::ostream &operator << (std::ostream &stream, Vector<T, dimension> const &v)
+{
+    stream << "Vector" << dimension << ": (";
+    for (Uint32 i = 0; i < dimension; ++i)
+    {
+        stream << v[i];
+        if (i < dimension-1)
+            stream << ", ";
+    }
+    return stream << ')';
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -729,60 +678,16 @@ struct Aggregate<Vector<T,dimension> >
 {
     static void Read (Serializer &serializer, Vector<T,dimension> &dest) throw(Exception)
     {
-        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
+        serializer.ReadArray<T>(dest.m, LENGTHOF(dest.m));
     }
     static void Write (Serializer &serializer, Vector<T,dimension> const &source) throw(Exception)
     {
-        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
+        serializer.WriteArray<T>(source.m, LENGTHOF(source.m));
     }
 };
 
-// ///////////////////////////////////////////////////////////////////////////
-// convenience typedefs for vectors of different types and dimensions,
-// pre-made representations of zero for each typedef,
-// and format-specific Fprint functions for each typedef.
-// ///////////////////////////////////////////////////////////////////////////
-
-/** FloatVector2
-  * @brief Convenience typedef for a 2-dimensional Float vector.
-  */
+/// Convenience typedef for a 2-dimensional Float vector.
 typedef Vector<Float, 2> FloatVector2;
-/** Uint32Vector2
-  * @brief Convenience typedef for a 2-dimensional Uint32 vector.
-  */
-typedef Vector<Uint32, 2> Uint32Vector2;
-/** Sint32Vector2
-  * @brief Convenience typedef for a 2-dimensional Sint32 vector.
-  */
-typedef Vector<Sint32, 2> Sint32Vector2;
-
-/** This is a convenience function to provide a default printf format to
-  * Vector::Fprint.
-  * @brief Prints the given FloatVector2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param vector The FloatVector2 to print.
-  * @param add_newline Indicates if a newline should be printed at the
-  *                    end of the formatted output.
-  */
-void Fprint (FILE *fptr, FloatVector2 const &vector, bool add_newline = true);
-/** This is a convenience function to provide a default printf format to
-  * Vector::Fprint.
-  * @brief Prints the given Uint32Vector2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param vector The Uint32Vector2 to print.
-  * @param add_newline Indicates if a newline should be printed at the
-  *                    end of the formatted output.
-  */
-void Fprint (FILE *fptr, Uint32Vector2 const &vector, bool add_newline = true);
-/** This is a convenience function to provide a default printf format to
-  * Vector::Fprint.
-  * @brief Prints the given Sint32Vector2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param vector The Sint32Vector2 to print.
-  * @param add_newline Indicates if a newline should be printed at the
-  *                    end of the formatted output.
-  */
-void Fprint (FILE *fptr, Sint32Vector2 const &vector, bool add_newline = true);
 
 } // end of namespace Xrb
     

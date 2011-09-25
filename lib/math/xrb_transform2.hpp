@@ -264,44 +264,6 @@ public:
         m_cached_transform_is_dirty = true;
     }
 
-    void Fprint (
-        FILE *fptr,
-        char const *component_printf_format,
-        bool add_newline = true) const
-    {
-        ASSERT1(fptr != NULL);
-        ASSERT1(component_printf_format != NULL);
-
-        if (m_post_translate)
-        {
-            fprintf(fptr, "Transform2: scale factors (");
-            fprintf(fptr, component_printf_format, m_scale_factors[Dim::X]);
-            fprintf(fptr, ", ");
-            fprintf(fptr, component_printf_format, m_scale_factors[Dim::Y]);
-            fprintf(fptr, "), angle (");
-            fprintf(fptr, component_printf_format, m_angle);
-            fprintf(fptr, "), translation (");
-            fprintf(fptr, component_printf_format, m_translation[Dim::X]);
-            fprintf(fptr, ", ");
-            fprintf(fptr, component_printf_format, m_translation[Dim::Y]);
-            fprintf(fptr, "), %c", add_newline ? '\n' : '\0');
-        }
-        else
-        {
-            fprintf(fptr, "Transform2: translation (");
-            fprintf(fptr, component_printf_format, m_translation[Dim::X]);
-            fprintf(fptr, ", ");
-            fprintf(fptr, component_printf_format, m_translation[Dim::Y]);
-            fprintf(fptr, "), scale factors (");
-            fprintf(fptr, component_printf_format, m_scale_factors[Dim::X]);
-            fprintf(fptr, ", ");
-            fprintf(fptr, component_printf_format, m_scale_factors[Dim::Y]);
-            fprintf(fptr, "), angle (");
-            fprintf(fptr, component_printf_format, m_angle);
-            fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
-        }
-    }
-
     void RecalculateTransformIfNecessary () const
     {
         if (m_cached_transform_is_dirty)
@@ -378,6 +340,15 @@ Transform2<T> const Transform2<T>::ms_identity(
     static_cast<T>(0),
     true); // the post-translate value for ms_identity is arbitrary
 
+template <typename T>
+std::ostream &operator << (std::ostream &stream, Transform2<T> const &t)
+{
+    if (t.PostTranslate())
+        return stream << "Transform2: scale factors " << t.ScaleFactors() << ", angle " << t.Angle() << ", translation " << t.Translation();
+    else
+        return stream << "Transform2: translation " << t.Translation() << ", angle " << t.Angle() << ", scale factors " << t.ScaleFactors();
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // partial template specialization to allow Serializer::ReadAggregate and
 // Serializer::WriteAggregate on Vector<T,dimension>
@@ -418,24 +389,8 @@ struct Aggregate<Transform2<T> >
     }
 };
 
-// ///////////////////////////////////////////////////////////////////////////
-// convenience typedefs for Transform2 of different types,
-// pre-made representations of the identity, zero and one for each typedef,
-// and format-specific Fprint functions for each typedef.
-// ///////////////////////////////////////////////////////////////////////////
-
-/** FloatTransform2
-  * @brief Convenience typedef for a Transform2<Float>.
-  */
+/// Convenience typedef for a Transform2<Float>.
 typedef Transform2<Float> FloatTransform2;
-
-/** This is a convenience function to provide a default
-  * printf format to FloatTransform2::Fprint.
-  * @brief Prints the given FloatTransform2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param transform The FloatTransform2 to print.
-  */
-void Fprint (FILE *fptr, FloatTransform2 const &transform, bool add_newline = true);
 
 } // end of namespace Xrb
 

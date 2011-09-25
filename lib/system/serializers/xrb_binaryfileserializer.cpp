@@ -10,113 +10,141 @@
 
 #include "xrb_binaryfileserializer.hpp"
 
-#include <errno.h>
-#include <sstream>
-
 #include "xrb_endian.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection direction) throw(Exception)
+BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection io_direction) throw(Exception)
     :
-    Serializer(direction),
+    Serializer(),
     m_path(path),
-    m_file_endianness(Endian::LITTLE), // irrelevant, but needs to be initialized
-    m_max_allowable_array_size(ms_longest_allowable_sized_buffer_initial_value),
-    m_fptr(NULL)
+    m_is_readable(io_direction == IOD_READ || io_direction == IOD_READ_AND_WRITE),
+    m_is_writable(io_direction == IOD_WRITE || io_direction == IOD_READ_AND_WRITE),
+    m_stream(*new std::fstream())
 {
-    ASSERT1(Direction() == IOD_READ || Direction() == IOD_WRITE);
-    m_fptr = fopen(path.c_str(), (Direction() == IOD_READ ? "rb" : "wb"));
-    if (m_fptr == NULL)
-        throw Exception(FORMAT("error while opening path \"" << path << "\" (errno = " << errno << ')'));
+    if (io_direction != IOD_READ && io_direction != IOD_WRITE && io_direction != IOD_READ_AND_WRITE)
+        throw Exception(FORMAT("io_direction value is an invalid IODirection"));
 
-    if (Direction() == IOD_READ)
-        m_file_endianness = (Read<bool>() ? Endian::LITTLE : Endian::BIG);
-    else
+    m_stream.exceptions(std::ios_base::failbit|std::ios_base::badbit);
+    try {
+        std::ios_base::openmode mode = std::ios_base::binary;
+        if (m_is_readable)
+            mode |= std::ios_base::in;
+        if (m_is_writable)
+            mode |= std::ios_base::out;
+        // TODO: add option to truncate file contents (std::ios_base::trunc)
+        m_stream.open(path.c_str(), mode);
+    } catch (std::ios_base::failure const &f) {
+        delete &m_stream; // throwing during construction causes this object to go out of scope, so m_stream is also.
+        throw Exception(FORMAT("error while opening file for " <<
+                               (m_is_readable ? "reading" : "") <<
+                               (m_is_readable && m_is_writable ? " and " : "") <<
+                               (m_is_writable ? "writing" : "")));
+    }
+
+    switch (io_direction)
     {
-        m_file_endianness = Endian::MACHINE;
-        Write<bool>(m_file_endianness == Endian::LITTLE);
+        case IOD_READ:
+            m_file_endianness = (Read<bool>() ? Endianness::LITTLE : Endianness::BIG);
+            break;
+
+        case IOD_WRITE:
+            m_file_endianness = Endianness::OF_TARGET;
+            Write<bool>(m_file_endianness == Endianness::LITTLE);
+            break;
+
+        case IOD_READ_AND_WRITE:
+            ASSERT0(false && "not implemented yet");
+            break;
+
+        default:
+            ASSERT1(false && "this should never happen");
+            break;
     }
 }
 
 BinaryFileSerializer::~BinaryFileSerializer () throw()
 {
-    if (m_fptr != NULL)
-        fclose(m_fptr); // ignore errors
+    m_stream.close();
+    delete &m_stream; // this BinaryFileSerializer is about to go out of scope, so m_stream is also.
 }
 
 bool BinaryFileSerializer::IsAtEnd () const throw(Exception)
 {
-    // since the constructor throws if m_fptr is NULL, it is impossible for
-    // m_fptr to be NULL in anything except the constructor or destructor.
-    ASSERT1(m_fptr != NULL);
-
-    // there were problems with feof() only returning the existing EOF state,
-    // instead of checking if we were actually at the end of file.  so we'll
-    // just try to read a char.  if we're at EOF, return true, otherwise put
-    // the char back and pretend like nothing happened.
-    int c = fgetc(m_fptr);
-    if (c == EOF)
-        return true;
-    else
-    {
-        ungetc(c, m_fptr);
+    if (m_is_writable)
         return false;
+    
+    m_stream.peek(); // cause an i/o operation so the eof flag could be triggered
+    return m_stream.eof();
+}
+
+void BinaryFileSerializer::ReaderSeek (Sint32 offset, SeekRelativeTo relative_to) throw(Exception)
+{
+    try {
+        std::ios_base::seekdir dir;
+        switch (relative_to)
+        {
+            case FROM_BEGINNING:        dir = std::ios_base::beg; break;
+            case FROM_CURRENT_POSITION: dir = std::ios_base::cur; break;
+            case FROM_END:              dir = std::ios_base::end; break;
+            default: ASSERT1(false && "this should never happen");
+        }
+        m_stream.seekg(offset, dir);
+    } catch (std::ios_base::failure const &f) {
+        throw Exception(FORMAT("error during call to ReaderSeek"));
     }
 }
+
+void BinaryFileSerializer::WriterSeek (Sint32 offset, SeekRelativeTo relative_to) throw(Exception)
+{
+    try {
+        std::ios_base::seekdir dir;
+        switch (relative_to)
+        {
+            case FROM_BEGINNING:        dir = std::ios_base::beg; break;
+            case FROM_CURRENT_POSITION: dir = std::ios_base::cur; break;
+            case FROM_END:              dir = std::ios_base::end; break;
+            default: ASSERT1(false && "this should never happen");
+        }
+        m_stream.seekp(offset, dir);
+    } catch (std::ios_base::failure const &f) {
+        throw Exception(FORMAT("error during call to WriterSeek"));
+    }
+} 
 
 bool IsAPowerOfTwo (Uint32 value) { return value != 0 && (value & (value - 1)) == 0; }
 
-void BinaryFileSerializer::ReadRawWords (void *dest, Uint32 word_size, Uint32 word_count) throw(Exception)
+void BinaryFileSerializer::ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count) throw(Exception)
 {
     ASSERT1(word_size > 0 && "you silly human!");
     ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");
 
-    if (Direction() == IOD_WRITE)
-        throw Exception("can't read from a IOD_WRITE Serializer");
+    if (!IsReadable())
+        throw Exception("this Serializer is not readable");
 
-    // since the constructor throws if m_fptr is NULL, it is impossible for
-    // m_fptr to be NULL in anything except the constructor or destructor.
-    ASSERT1(m_fptr != NULL);
-    size_t words_read = fread(dest, word_size, word_count, m_fptr);
-    if (words_read != word_count || ferror(m_fptr) != 0)
-        throw Exception(FORMAT("error while reading (path \"" << m_path << "\")"));
+    try {
+        m_stream.read(reinterpret_cast<char *>(dest), word_size*word_count);
+    } catch (std::ios_base::failure const &f) {
+        throw Exception(FORMAT("could not read " << word_count << " words each of size " << word_size << " (hit EOF prematurely, or possibly another error occurred)"));
+    }
 
-    if (m_file_endianness != Endian::MACHINE && word_size > 1)
-    {
-        // switch the endianness of the words in the read-in buffer if necessary.
-        for (Uint32 word = 0; word < word_count; ++word)
-        {
-            // there's probably some slick bit op way to do this, but you can K.I.S.S. my ass!
-            Uint8 temp;
-            Uint8 *left = reinterpret_cast<Uint8 *>(dest);
-            Uint8 *right = reinterpret_cast<Uint8 *>(dest) + word_size - 1;
-            for (Uint32 i = 0; i < word_size/2; ++i, ++left, --right)
-            {
-                temp = *left;
-                *left = *right;
-                *right = temp;
-            }
-            ASSERT1(left == right+1);
-        }
+    if (m_file_endianness != Endianness::OF_TARGET)
+        SwitchByteOrder(dest, word_size, word_count);
+}
+
+void BinaryFileSerializer::WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count) throw(Exception)
+{
+    ASSERT1(word_size > 0 && "you silly human!");
+    ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");
+
+    if (!IsWritable())
+        throw Exception("this Serializer is not writable");
+
+    try {
+        m_stream.write(reinterpret_cast<char const *>(source), word_size*word_count);
+    } catch (std::ios_base::failure const &f) {
+        throw Exception(FORMAT("could not write " << word_count << " words each of size " << word_size));
     }
 }
-
-void BinaryFileSerializer::WriteRawWords (void const *source, Uint32 word_size, Uint32 word_count) throw(Exception)
-{
-    ASSERT1(word_size > 0 && "you silly human!");
-    ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");
-
-    if (Direction() == IOD_READ)
-        throw Exception("can't write to a IOD_READ Serializer");
-
-    // since the constructor throws if m_fptr is NULL, it is impossible for
-    // m_fptr to be NULL in anything except the constructor or destructor.
-    ASSERT1(m_fptr != NULL);
-    size_t words_written = fwrite(source, word_size, word_count, m_fptr);
-    if (words_written != word_count)
-        throw Exception(FORMAT("error while writing (path \"" << m_path << "\")"));
-}
-
+    
 } // end of namespace Xrb

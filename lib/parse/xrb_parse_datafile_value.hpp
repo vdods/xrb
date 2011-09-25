@@ -14,7 +14,6 @@
 #include "xrb.hpp"
 
 #include <map>
-#include <stdio.h>
 #include <string>
 #include <vector>
 
@@ -290,9 +289,7 @@ public:
 
 protected:
 
-    virtual Value const *SubpathElement (
-        std::string const &path,
-        Uint32 start) const = 0;
+    virtual Value const *SubpathElement (std::string const &path, Uint32 start) const = 0;
 
     // sort of a kludgey way for these to call SubpathElement
     // on other objects, but then again, fuck it.
@@ -317,9 +314,7 @@ public:
 
 protected:
 
-    virtual Value const *SubpathElement (
-        std::string const &path,
-        Uint32 start) const;
+    virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 }; // end of class LeafValue
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -340,10 +335,7 @@ public:
 
     virtual ElementType GetElementType () const { return ET_BOOLEAN; }
 
-    virtual void Print (IndentFormatter &formatter) const
-    {
-        formatter.BeginLine("%s", BOOL_TO_STRING(m_value));
-    }
+    virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
@@ -369,7 +361,7 @@ public:
 
     virtual ElementType GetElementType () const { return ET_SIGNED_INTEGER; }
 
-    virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%+d", m_value); }
+    virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
@@ -395,7 +387,7 @@ public:
 
     virtual ElementType GetElementType () const { return ET_UNSIGNED_INTEGER; }
 
-    virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%u", m_value); }
+    virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
@@ -421,10 +413,7 @@ public:
 
     virtual ElementType GetElementType () const { return ET_FLOATY; }
 
-    virtual void Print (IndentFormatter &formatter) const
-    {
-        formatter.BeginLine("%e", m_value);
-    }
+    virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
@@ -452,10 +441,7 @@ public:
 
     void Escape ();
 
-    virtual void Print (IndentFormatter &formatter) const
-    {
-        formatter.BeginLine("%s", Util::CharacterLiteral(m_value).c_str());
-    }
+    virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
@@ -527,10 +513,7 @@ protected:
 
     static NodeType ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string);
 
-    virtual void SetSubpathElement (
-        std::string const &path,
-        Uint32 start,
-        LeafValue *value) throw(std::string) = 0;
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string) = 0;
 
     friend class KeyPair;
     friend class Array;
@@ -568,14 +551,9 @@ public:
 
 protected:
 
-    virtual Value const *SubpathElement (
-        std::string const &path,
-        Uint32 start) const;
+    virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 
-    virtual void SetSubpathElement (
-        std::string const &path,
-        Uint32 start,
-        LeafValue *value) throw(std::string);
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string);
 
 private:
 
@@ -621,14 +599,9 @@ public:
 
 protected:
 
-    virtual Value const *SubpathElement (
-        std::string const &path,
-        Uint32 start) const;
+    virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 
-    virtual void SetSubpathElement (
-        std::string const &path,
-        Uint32 start,
-        LeafValue *value) throw(std::string);
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string);
 
 private:
 
@@ -667,14 +640,9 @@ public:
 
 protected:
 
-    virtual Value const *SubpathElement (
-        std::string const &path,
-        Uint32 start) const;
+    virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 
-    virtual void SetSubpathElement (
-        std::string const &path,
-        Uint32 start,
-        LeafValue *value) throw(std::string);
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string);
 
 private:
 

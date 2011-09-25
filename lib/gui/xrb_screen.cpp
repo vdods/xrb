@@ -82,22 +82,22 @@ void Screen::RequestQuit ()
     if (!m_is_quit_requested)
     {
         m_is_quit_requested = true;
-        fprintf(stderr, "Screen::RequestQuit();\n");
+        std::cerr << "Screen::RequestQuit();" << std::endl;
         m_sender_quit_requested.Signal();
     }
 }
 
 void Screen::RequestScreenshot (std::string const &screenshot_path)
 {
-    fprintf(stderr, "Screen::RequestScreenshot();");
+    std::cerr << "Screen::RequestScreenshot();";
     if (!m_screenshot_path.empty())
-        fprintf(stderr, " canceling screenshot request \"%s\"", m_screenshot_path.c_str());
+        std::cerr << " canceling screenshot request \"" << m_screenshot_path << '"';
     if (!screenshot_path.empty())
     {
         m_screenshot_path = screenshot_path;
-        fprintf(stderr, ", setting screenshot request \"%s\"", m_screenshot_path.c_str());
+        std::cerr << ", setting screenshot request \"" << m_screenshot_path << '"';
     }
-    fprintf(stderr, "\n");
+    std::cerr << std::endl;
 }
 
 void Screen::SetProjectionMatrix (ScreenCoordRect const &clip_rect)
@@ -246,7 +246,7 @@ void Screen::Draw (Float real_time)
     {
         Texture *screenshot = Texture::Create(m_device_size, Texture::UNINITIALIZED);
         ASSERT1(screenshot != NULL);
-        fprintf(stderr, "Screen::Draw(); saving screenshot \"%s\"\n", m_screenshot_path.c_str());
+        std::cerr << "Screen::Draw(); saving screenshot \"" << m_screenshot_path << '"' << std::endl;
         glReadPixels(0, 0, m_device_size[Dim::X], m_device_size[Dim::Y], GL_RGBA, GL_UNSIGNED_BYTE, screenshot->Data());
         screenshot->Save(m_screenshot_path);
         delete screenshot;
@@ -311,12 +311,23 @@ void Screen::HandleFrame ()
 
 bool Screen::HandleEvent (Event const &e)
 {
+    // basically all non-input events make it through to this widget.  except for Event::QUIT,
+    // these should be the same as in Widget::HandleEvent.
     switch (e.GetEventType())
     {
+        case Event::DETACH_AND_DELETE_CHILD_WIDGET:
+            return ProcessDetachAndDeleteChildWidgetEvent(dynamic_cast<EventDetachAndDeleteChildWidget const &>(e));
+            
         case Event::QUIT:
             RequestQuit();
             return true;
 
+        case Event::STATE_MACHINE_INPUT:
+            return ProcessStateMachineInputEvent(dynamic_cast<EventStateMachineInput const &>(e));
+
+        case Event::CUSTOM:
+            return ProcessCustomEvent(dynamic_cast<EventCustom const &>(e));
+            
         default:
             break;
     }
@@ -393,11 +404,7 @@ bool Screen::HandleEvent (Event const &e)
                 if (!modal_widget->ScreenRect().IsPointInside(dynamic_cast<EventMouse const &>(e).Position()))
                     return false;
 
-            // only return if the modal widget accepted the event.
-            if (modal_widget->ProcessEvent(e))
-                return true;
-
-            // HIPPO - check if this should return here (since modal widgets should catch all)
+            return modal_widget->ProcessEvent(e);
         }
     }
 

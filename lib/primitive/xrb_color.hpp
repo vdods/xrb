@@ -13,8 +13,6 @@
 
 #include "xrb.hpp"
 
-#include <stdio.h>
-
 #include "xrb_ntuple.hpp"
 #include "xrb_serializer.hpp"
 
@@ -121,11 +119,11 @@ struct Aggregate<Color>
 {
     static void Read (Serializer &serializer, Color &dest) throw(Exception)
     {
-        serializer.ReadBuffer<ColorCoord>(dest.m, LENGTHOF(dest.m));
+        serializer.ReadArray<ColorCoord>(dest.m, LENGTHOF(dest.m));
     }
     static void Write (Serializer &serializer, Color const &source) throw(Exception)
     {
-        serializer.WriteBuffer<ColorCoord>(source.m, LENGTHOF(source.m));
+        serializer.WriteArray<ColorCoord>(source.m, LENGTHOF(source.m));
     }
 };
 

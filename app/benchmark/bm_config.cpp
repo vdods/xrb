@@ -10,6 +10,8 @@
 
 #include "bm_config.hpp"
 
+#include <fstream>
+
 #include "xrb_inputstate.hpp"
 #include "xrb_parse_datafile_parser.hpp"
 #include "xrb_parse_datafile_value.hpp"
@@ -165,9 +167,13 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
 
 void Config::Write (string const &config_file_path) const
 {
-    FILE *fptr = fopen(config_file_path.c_str(), "wt");
-    if (fptr == NULL)
+    std::ofstream stream;
+    stream.open(config_file_path.c_str());
+    if (!stream.is_open())
+    {
+        std::cerr << "Config::Write(); could not open file \"" << config_file_path << "\" for writing" << std::endl;
         return;
+    }
 
     DataFile::Structure *root = new DataFile::Structure();
 
@@ -181,10 +187,10 @@ void Config::Write (string const &config_file_path) const
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singleton::InputState().KeyName(InputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen"); }
 
-    IndentFormatter formatter(fptr, "    ");
+    IndentFormatter formatter(stream, "    ");
     root->Print(formatter);
     Delete(root);
-    fclose(fptr);
+    stream.close();
 }
 
 } // end of namespace Bm

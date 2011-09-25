@@ -21,12 +21,13 @@ namespace Xrb
 void Util::ReplaceAllInString (
     std::string *string,
     std::string const &string_to_replace,
-    std::string const &string_to_replace_with)
+    std::string const &string_to_replace_with,
+    std::string::size_type start_offset)
 {
     ASSERT1(string != NULL);
     ASSERT1(string_to_replace.length() > 0);
-    Uint32 offset = 0;
-    while (1)
+    Uint32 offset = start_offset;
+    while (true)
     {
         Uint32 pos = static_cast<Uint32>(string->find(string_to_replace, offset));
         if (pos >= string->length())

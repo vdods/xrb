@@ -13,16 +13,11 @@
 
 #include "xrb.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-/** @brief Used for pendantically self-documenting vector indexing.
-  */
-namespace Dim
-{
-    /** @brief Gives textual names to the three most common vector components,
-      *        as well as the 4 color components (RGBA).
-      */
+/// Used for pendantically self-documenting vector indexing.
+namespace Dim {
+    /// Gives textual names to the three most common vector components, as well as the 4 color components (RGBA).
     enum Component
     {
         X = 0,     ///< The X-component index
@@ -41,8 +36,7 @@ namespace Dim
     }; // end of enum Component
 } // end of namespace Dim
 
-/** @brief Enums for text-alignment in Label (also used by CellPaddingWidget).
-  */
+/// Enums for text-alignment in Label (also used by CellPaddingWidget).
 enum Alignment
 {
     TOP = 0, ///< Align the top side of the content to the top side of the widget.
@@ -53,8 +47,7 @@ enum Alignment
     SPACED   ///< The text will be spaced to the left/right and/or top/bottom.
 }; // end of enum Alignment
 
-/** @brief Enums for child widget stack priority.
-  */
+/// Enums for child widget stack priority.
 enum StackPriority
 {
     SP_STAY_ON_BOTTOM = 0, ///< The child will stay at the bottom of the stack.
@@ -62,29 +55,26 @@ enum StackPriority
     SP_STAY_ON_TOP         ///< The child will stay at the top of the stack.
 }; // end of enum StackPriority
 
-/** @brief Enums for Layout row or column specification.
-  */
+/// Enums for Layout row or column specification.  @see Layout.
 enum LineDirection
 {
     COLUMN = 0,
     ROW
 }; // end of enum LineDirection
 
-/** @brief Enums for Layout orientation.
-  */
+/// Enums for Layout orientation.  @see Layout.
 enum Orientation
 {
     HORIZONTAL = 0,
     VERTICAL
 }; // end of enum Orientation
 
-/** @see Serializer .
-  * @brief Enums used for indicating I/O direction.
-  */
+/// Enums used for indicating I/O direction.
 enum IODirection
 {
     IOD_READ = 0,
     IOD_WRITE,
+    IOD_READ_AND_WRITE,
 
     IOD_COUNT
 }; // end of enum IODirection

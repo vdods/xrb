@@ -18,8 +18,7 @@
 #include "xrb_vector.hpp"
 #include "xrb_math.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 //
 // a matrix is
@@ -84,7 +83,7 @@ public:
         m[D] = d;
         m[Y] = y;
     }
-    Matrix2 (T const *const components)
+    Matrix2 (T const *components)
     {
         ASSERT1(components != NULL);
     #if defined(XRB_MATRIX2_USES_MEMCPY)
@@ -119,20 +118,20 @@ public:
     // overloaded operators
     // ///////////////////////////////////////////////////////////////////////
 
-    inline T const &operator [] (Component const component) const
+    T const &operator [] (Component component) const
     {
         ASSERT3(A == 0);
         ASSERT1(component < COMPONENT_COUNT);
         return m[component];
     }
-    inline T &operator [] (Component const component)
+    T &operator [] (Component component)
     {
         ASSERT3(A == 0);
         ASSERT1(component < COMPONENT_COUNT);
         return m[component];
     }
     // multiplying operand on the left side of this matrix
-    inline void operator *= (Matrix2<T> const &operand)
+    void operator *= (Matrix2<T> const &operand)
     {
         T b, x, c;
         b = operand.m[A]*m[B] + operand.m[B]*m[D];
@@ -146,7 +145,7 @@ public:
         m[C] = c;
     }
     // multiplying operand on the left side of this matrix
-    inline void operator *= (SimpleTransform2<T> const &operand)
+    void operator *= (SimpleTransform2<T> const &operand)
     {
         m[A] *= operand[SimpleTransform2<T>::R];
         m[B] *= operand[SimpleTransform2<T>::R];
@@ -155,7 +154,7 @@ public:
         m[D] *= operand[SimpleTransform2<T>::S];
         m[Y] = m[Y]*operand[SimpleTransform2<T>::S] + operand[SimpleTransform2<T>::Y];
     }
-    inline void operator = (Matrix2<T> const &operand)
+    void operator = (Matrix2<T> const &operand)
     {
     #if defined(XRB_MATRIX2_USES_MEMCPY)
         memcpy(m, operand.m, sizeof(T) * COMPONENT_COUNT);
@@ -164,7 +163,7 @@ public:
             m[i] = operand.m[i];
     #endif
     }
-    inline void operator = (SimpleTransform2<T> const &operand)
+    void operator = (SimpleTransform2<T> const &operand)
     {
         m[A] = operand[SimpleTransform2<T>::R];
         m[B] = static_cast<T>(0);
@@ -179,11 +178,11 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline T Determinant () const
+    T Determinant () const
     {
         return m[A] * m[D] - m[B] * m[C];
     }
-    inline Matrix2<T> Inverse () const
+    Matrix2<T> Inverse () const
     {
         Matrix2<T> retval;
         T determinant = m[A] * m[D] - m[B] * m[C];
@@ -213,7 +212,7 @@ public:
     // modifiers
     // ///////////////////////////////////////////////////////////////////////
 
-    inline void Invert ()
+    void Invert ()
     {
         T determinant = m[A]*m[D] - m[B]*m[C];
         T negative_determinant = -determinant;
@@ -241,11 +240,11 @@ public:
         }
     }
 
-    inline void Rotate (T const angle)
+    void Rotate (T angle)
     {
         Rotate(Math::Cos(angle), Math::Sin(angle));
     }
-    inline void Rotate (T const cos_value, T const sin_value)
+    void Rotate (T cos_value, T sin_value)
     {
         T a, b, x;
         a = m[A]*cos_value - m[C]*sin_value;
@@ -258,7 +257,7 @@ public:
         m[B] = b;
         m[X] = x;
     }
-    inline void Scale (Vector<T, 2> const &scale_factors)
+    void Scale (Vector<T, 2> const &scale_factors)
     {
         m[A] *= scale_factors[Dim::X];
         m[B] *= scale_factors[Dim::X];
@@ -267,7 +266,7 @@ public:
         m[D] *= scale_factors[Dim::Y];
         m[Y] *= scale_factors[Dim::Y];
     }
-    inline void Scale (T const r, T const s)
+    void Scale (T r, T s)
     {
         m[A] *= r;
         m[B] *= r;
@@ -276,7 +275,7 @@ public:
         m[D] *= s;
         m[Y] *= s;
     }
-    inline void Scale (T const scale_factor)
+    void Scale (T scale_factor)
     {
         m[A] *= scale_factor;
         m[B] *= scale_factor;
@@ -285,20 +284,20 @@ public:
         m[D] *= scale_factor;
         m[Y] *= scale_factor;
     }
-    inline void Translate (Vector<T, 2> const &translation)
+    void Translate (Vector<T, 2> const &translation)
     {
         m[X] += translation[Dim::X];
         m[Y] += translation[Dim::Y];
     }
-    inline void Translate (T const x, T const y)
+    void Translate (T x, T y)
     {
         m[X] += x;
         m[Y] += y;
     }
 
-    inline void SetComponents (
-        T const a, T const b, T const x,
-        T const c, T const d, T const y)
+    void SetComponents (
+        T a, T b, T x,
+        T c, T d, T y)
     {
         m[A] = a;
         m[B] = b;
@@ -306,32 +305,6 @@ public:
         m[C] = c;
         m[D] = d;
         m[Y] = y;
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // procedures
-    // ///////////////////////////////////////////////////////////////////////
-
-    void Fprint (
-        FILE *const fptr,
-        char const *const component_printf_format) const
-    {
-        ASSERT1(fptr != NULL);
-        ASSERT1(component_printf_format != NULL);
-
-        fprintf(fptr, "Matrix2:\n\t[");
-        fprintf(fptr, component_printf_format, m[A]);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, m[B]);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, m[X]);
-        fprintf(fptr, "]\n\t[");
-        fprintf(fptr, component_printf_format, m[C]);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, m[D]);
-        fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, m[Y]);
-        fprintf(fptr, "]\n");
     }
 }; // end of class Matrix2
 
@@ -351,57 +324,49 @@ Matrix2<T> const Matrix2<T>::ms_identity(
 
 // matrix * matrix
 template <typename T>
-inline Matrix2<T> operator * (
-    Matrix2<T> const &left_operand,
-    Matrix2<T> const &right_operand)
+Matrix2<T> operator * (Matrix2<T> const &l, Matrix2<T> const &r)
 {
-    Matrix2<T> retval(right_operand);
-    retval *= left_operand;
+    Matrix2<T> retval(r);
+    retval *= l;
     return retval;
 }
 
 // simpletransform * matrix
 template <typename T>
-inline Matrix2<T> operator * (
-    SimpleTransform2<T> const &left_operand,
-    Matrix2<T> const &right_operand)
+Matrix2<T> operator * (SimpleTransform2<T> const &l, Matrix2<T> const &r)
 {
-    Matrix2<T> retval(right_operand);
-    retval *= left_operand;
+    Matrix2<T> retval(r);
+    retval *= l;
     return retval;
 }
 
 // matrix * simpletransform
 template <typename T>
-inline Matrix2<T> operator * (
-    Matrix2<T> const &left_operand,
-    SimpleTransform2<T> const &right_operand)
+Matrix2<T> operator * (Matrix2<T> const &l, SimpleTransform2<T> const &r)
 {
     Matrix2<T> retval;
     retval[Matrix2<T>::A] =
-        left_operand[Matrix2<T>::A] * right_operand[SimpleTransform2<T>::R];
+        l[Matrix2<T>::A] * r[SimpleTransform2<T>::R];
     retval[Matrix2<T>::B] =
-        left_operand[Matrix2<T>::B] * right_operand[SimpleTransform2<T>::S];
+        l[Matrix2<T>::B] * r[SimpleTransform2<T>::S];
     retval[Matrix2<T>::X] =
-        left_operand[Matrix2<T>::A] * right_operand[SimpleTransform2<T>::X] +
-        left_operand[Matrix2<T>::B] * right_operand[SimpleTransform2<T>::Y] +
-        left_operand[Matrix2<T>::X];
+        l[Matrix2<T>::A] * r[SimpleTransform2<T>::X] +
+        l[Matrix2<T>::B] * r[SimpleTransform2<T>::Y] +
+        l[Matrix2<T>::X];
     retval[Matrix2<T>::C] =
-        left_operand[Matrix2<T>::C] * right_operand[SimpleTransform2<T>::R];
+        l[Matrix2<T>::C] * r[SimpleTransform2<T>::R];
     retval[Matrix2<T>::D] =
-        left_operand[Matrix2<T>::D] * right_operand[SimpleTransform2<T>::S];
+        l[Matrix2<T>::D] * r[SimpleTransform2<T>::S];
     retval[Matrix2<T>::Y] =
-        left_operand[Matrix2<T>::C] * right_operand[SimpleTransform2<T>::X] +
-        left_operand[Matrix2<T>::D] * right_operand[SimpleTransform2<T>::Y] +
-        left_operand[Matrix2<T>::Y];
+        l[Matrix2<T>::C] * r[SimpleTransform2<T>::X] +
+        l[Matrix2<T>::D] * r[SimpleTransform2<T>::Y] +
+        l[Matrix2<T>::Y];
     return retval;
 }
 
 // vector *= matrix
 template <typename T>
-inline void operator *= (
-    Vector<T, 2> &assignee,
-    Matrix2<T> const &operand)
+void operator *= (Vector<T, 2> &assignee, Matrix2<T> const &operand)
 {
     T temp =
         operand[Matrix2<T>::A] * assignee[Dim::X] +
@@ -416,33 +381,23 @@ inline void operator *= (
 
 // matrix * vector
 template <typename T>
-inline Vector<T, 2> operator * (
-    Matrix2<T> const &left_operand,
-    Vector<T, 2> const &right_operand)
+Vector<T, 2> operator * (Matrix2<T> const &l, Vector<T, 2> const &r)
 {
-    Vector<T, 2> retval(right_operand);
-    retval *= left_operand;
+    Vector<T, 2> retval(r);
+    retval *= l;
     return retval;
 }
 
-// ///////////////////////////////////////////////////////////////////////////
-// convenience typedefs for Matrix2 of different types,
-// pre-made representations of the identity for each typedef,
-// and format-specific Fprint functions for each typedef.
-// ///////////////////////////////////////////////////////////////////////////
+template <typename T>
+std::ostream &operator << (std::ostream &stream, Matrix2<T> const &m)
+{
+    return stream << "Matrix2:\n"
+                     "\t[" << m[Matrix2<T>::A] << ", " << m[Matrix2<T>::B] << ", " << m[Matrix2<T>::X] << "]\n"
+                     "\t[" << m[Matrix2<T>::C] << ", " << m[Matrix2<T>::D] << ", " << m[Matrix2<T>::Y] << "]\n";
+}
 
-/** FloatMatrix2
-  * @brief Convenience typedef for a Matrix2<Float>.
-  */
+/// Convenience typedef for a Matrix2<Float>.
 typedef Matrix2<Float> FloatMatrix2;
-
-/** This is a convenience function to provide a default
-  * printf format to FloatMatrix2::Fprint.
-  * @brief Prints the given FloatMatrix2 to the given file stream.
-  * @param fptr The file stream to print to.
-  * @param matrix The FloatMatrix2 to print.
-  */
-void Fprint (FILE *fptr, FloatMatrix2 const &matrix);
 
 } // end of namespace Xrb
 

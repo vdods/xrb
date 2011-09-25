@@ -55,9 +55,9 @@ void Font::LoadParameters::Fallback ()
     m_pixel_height = 10; // arbitrary for now
 }
 
-void Font::LoadParameters::Print (FILE *fptr) const
+void Font::LoadParameters::Print (std::ostream &stream) const
 {
-    fprintf(fptr, "path = \"%s\", pixel height = %d", m_path.c_str(), m_pixel_height);
+    stream << "path = \"" << m_path << "\", pixel height = " << m_pixel_height;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

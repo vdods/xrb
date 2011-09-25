@@ -135,9 +135,9 @@ WidgetContext::WidgetContext (Screen &screen)
 WidgetContext::~WidgetContext ()
 {
     if (!m_widget_set.empty())
-        fprintf(stderr, "WidgetContext::~WidgetContext(); DANGLING WIDGETS (m_screen \"%s\"):\n", m_screen.Name().c_str());
+        std::cerr << "WidgetContext::~WidgetContext(); DANGLING WIDGETS (m_screen \"" << m_screen.Name() << "\"):" << std::endl;
     for (WidgetSet::iterator it = m_widget_set.begin(), it_end = m_widget_set.end(); it != it_end; ++it)
-        fprintf(stderr, "\t\"%s\"\n", (*it)->Name().c_str());
+        std::cerr << "\t\"" << (*it)->Name() << '"' << std::endl;
     ASSERT1(m_widget_set.empty() && "there are dangling widgets");
 
     DeleteAndNullify(m_style_sheet);

@@ -115,7 +115,7 @@ void Compound::ReadClassSpecific (Serializer &serializer)
 
 void Compound::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(serializer.Direction() == IOD_WRITE);
+    ASSERT1(serializer.IsWritable());
     ASSERT1(m_vertex_count > 0);
     ASSERT1(m_vertex_array != NULL);
     ASSERT1(m_polygon_count > 0);

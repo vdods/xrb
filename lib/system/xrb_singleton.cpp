@@ -30,8 +30,8 @@ void Initialize (PalFactory CreatePal, char const *const key_map_name)
 {
     ASSERT1(key_map_name != NULL);
 
-    fprintf(stderr, "Singleton::Initialize();\n");
-    fprintf(stderr, "    sizeof(bool) = %d\n", Sint32(sizeof(bool)));
+    std::cerr << "Singleton::Initialize();" << std::endl;
+    std::cerr << "\tsizeof(bool) = " << sizeof(bool) << std::endl;
 
     ASSERT0(g_pal == NULL);
     ASSERT0(g_inputstate == NULL);
@@ -44,7 +44,7 @@ void Initialize (PalFactory CreatePal, char const *const key_map_name)
         g_resource_library = new Xrb::ResourceLibrary();
 
     ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
-//     fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
+//     std::cerr << "\tattempting to use KeyMap \"" << key_map_name << "\", got \"" << g_key_map->Name() << '"' << std::endl;
     ASSERT0(g_inputstate != NULL && "failed to create InputState");
     ASSERT0(g_key_map != NULL && "failed to create KeyMap");
     ASSERT0(g_resource_library != NULL && "failed to create ResourceLibrary");
@@ -57,7 +57,7 @@ void Shutdown ()
     ASSERT0(g_key_map != NULL);
     ASSERT0(g_resource_library != NULL);
 
-    fprintf(stderr, "Singleton::Shutdown();\n");
+    std::cerr << "Singleton::Shutdown();" << std::endl;
 
     ASSERT1(g_gl == NULL && "you must Singleton::ShutdownGl() first (Screen takes care of this -- maybe you didn't delete your Screen object");
 

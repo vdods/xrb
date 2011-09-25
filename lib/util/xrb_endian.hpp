@@ -13,369 +13,121 @@
 
 #include "xrb.hpp"
 
-// this file has functions which perform conversion to/from
-// different endian values
-
-namespace Xrb
+namespace Xrb {
+namespace Endianness {
+    
+/// Enum values for specifying little and big endian, as well as this machine's endianness.
+enum Value
 {
+    LITTLE = 0,
+    BIG,
 
-/** @brief Used to store enumerations and functions which deal with endian
-  *        identification and conversion.
-  */
-namespace Endian
+    // The target's endianness is set from the value in config.h
+    #if defined(WORDS_BIGENDIAN)
+    OF_TARGET = BIG,
+    #else // !defined(WORDS_BIGENDIAN)
+    OF_TARGET = LITTLE,
+    #endif // !defined(WORDS_BIGENDIAN)
+}; // end of enum Endianness::Value
+
+} // end of namespace Endianness
+
+/// Type-unsafe template functions for byte-order switching.  Use @c Word<T> instead.
+template <Uint32 word_size>
+struct WordOfSize
 {
-    /**
-      * @brief Enumerates the indicator values for little and big endian, as
-      *        well as identifying what the machine's and serializer's
-      *        endianness is.
-      */
-    enum Endianness
-    {
-        LITTLE = 0,
-        BIG,
-
-        // The machine's endianness is set from the value in config.h
-#if defined(WORDS_BIGENDIAN)
-        MACHINE = BIG,
-#else // !defined(WORDS_BIGENDIAN)
-        MACHINE = LITTLE,
-#endif // !defined(WORDS_BIGENDIAN)
-
-        // Serializer is set to the endianness of the omnipresent x86
-        // architecture so that the machine-to-serializer and
-        // serializer-to-machine are no-ops for the majoritory of machines.
-        SERIALIZER = LITTLE
-    };
-
-    // ///////////////////////////////////////////////////////////////////////
-    // byte-reordering functions
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Switches the endianness of a 1-byte word.
-      * @param word A pointer to the 1-byte word to be endian-switched.
-      */
-    inline void Switch1ByteWord (void *word)
+    /// @brief Switches the byte-order of a single word.
+    /// @param word Must point to a piece of memory containing at least word_size bytes.
+    void SwitchByteOrder (Uint8 *word)
     {
         ASSERT1(word != NULL);
-        // nothing needs to be done
+        ASSERT0(word_size % 2 == 0); // TODO: compile-time assert
+        // there's probably some slick bit op way to do this, but you can K.I.S.S. my ass!
+        Uint8 temp;
+        for (Uint8 *left = word,
+                   *right = word + word_size - 1;
+             left < right;
+             ++left, --right)
+        {
+            temp = *left;
+            *left = *right;
+            *right = temp;
+        }
     }
-    /** @brief Switches the endianness of a 2-byte word.
-      * @param word A pointer to the 2-byte word to be endian-switched.
-      */
-    inline void Switch2ByteWord (void *word)
+    /// @brief Switches the byte-order of the first @c word_count elements in the given array.
+    /// @param array Must point to a piece of memory containing at least word_size*word_count bytes.
+    /// @param word_count The number of words to byte-order switch.
+    void SwitchByteOrder (Uint8 *array, Uint32 word_count)
     {
-        ASSERT1(word != NULL);
-        Uint8 *bytes = static_cast<Uint8 *>(word);
+        ASSERT1(array != NULL);
+        for (Uint32 i = 0; i < word_count; ++i)
+            SwitchByteOrder<word_size>(array[i*word_size]);
+    }
+}; // end of struct WordOfSize<T>
 
-        Uint8 temp   = *(bytes + 0);
-        *(bytes + 0) = *(bytes + 1);
-        *(bytes + 1) = temp;
-    }
-    /** @brief Switches the endianness of a 4-byte word.
-      * @param word A pointer to the 4-byte word to be endian-switched.
-      */
-    inline void Switch4ByteWord (void *word)
-    {
-        ASSERT1(word != NULL);
-        Uint8 *bytes = static_cast<Uint8 *>(word);
+/// Partial template specialization for the 1-byte case (in which byte-order switching is a no-op).
+template <>
+struct WordOfSize<1>
+{
+    void SwitchByteOrder (Uint8 *word) { }
+    void SwitchByteOrder (Uint8 *array, Uint32 word_count) { }
+}; // end of struct WordOfSize<1>
 
-        Uint8 temp   = *(bytes + 0);
-        *(bytes + 0) = *(bytes + 3);
-        *(bytes + 3) = temp;
+/// Type-safe template functions for byte-order switching.
+template <typename T>
+struct Word
+{
+    /// Switches the byte-order of a single word.
+    void SwitchByteOrder (T &word)
+    {
+        WordOfSize<sizeof(T)>::SwitchByteOrder(reinterpret_cast<Uint8 *>(&word));
+    }
+    /// @brief Switches the byte-order of the first @c word_count elements in the given array.
+    /// @param array Must point to an array having at least @c word_count elements.
+    void SwitchByteOrder (T *array, Uint32 word_count)
+    {
+        WordOfSize<sizeof(T)>::SwitchByteOrder(reinterpret_cast<Uint8 *>(array), word_count);
+    }
+}; // end of struct Word<T>
 
-        temp         = *(bytes + 1);
-        *(bytes + 1) = *(bytes + 2);
-        *(bytes + 2) = temp;
-    }
-    /** @brief Switches the endianness of a 8-byte word.
-      * @param word A pointer to the 8-byte word to be endian-switched.
-      */
-    inline void Switch8ByteWord (void *word)
-    {
-        ASSERT1(word != NULL);
-        Uint8 *bytes = static_cast<Uint8 *>(word);
+/// Type-unsafe function for switching the byte-order of a word of a given size.
+inline void SwitchByteOrder (Uint8 *word, Uint32 word_size)
+{
+    ASSERT1(word != NULL);
+    ASSERT1(word_size > 0);
+    
+    if (word_size == 1)
+        return;
 
-        Uint8 temp   = *(bytes + 0);
-        *(bytes + 0) = *(bytes + 7);
-        *(bytes + 7) = temp;
+    ASSERT1(word_size % 2 == 0);
+    
+    // there's probably some slick bit op way to do this, but you can K.I.S.S. my ass!
+    Uint8 temp;
+    for (Uint8 *left = word,
+               *right = word + word_size - 1;
+         left < right;
+         ++left, --right)
+    {
+        temp = *left;
+        *left = *right;
+        *right = temp;
+    }
+}
 
-        temp         = *(bytes + 1);
-        *(bytes + 1) = *(bytes + 6);
-        *(bytes + 6) = temp;
+/// Type-unsafe function for switching the byte-order of each word of a given size in an array.
+inline void SwitchByteOrder (Uint8 *array, Uint32 word_size, Uint32 word_count)
+{
+    ASSERT1(array != NULL);
+    ASSERT1(word_size > 0);
+    
+    if (word_size == 1)
+        return; // no-op
 
-        temp         = *(bytes + 2);
-        *(bytes + 2) = *(bytes + 5);
-        *(bytes + 5) = temp;
+    ASSERT1(word_size % 2 == 0);
 
-        temp         = *(bytes + 3);
-        *(bytes + 3) = *(bytes + 4);
-        *(bytes + 4) = temp;
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and big
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to big endianness.
-      * @param word A pointer to the 1-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig1ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch1ByteWord(word);
-        #endif
-    }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from big to machine endianness.
-      * @param word A pointer to the 1-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine1ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch1ByteWord(word);
-        #endif
-    }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from machine to big endianness.
-      * @param word A pointer to the 2-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig2ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch2ByteWord(word);
-        #endif
-    }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from big to machine endianness.
-      * @param word A pointer to the 2-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine2ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch2ByteWord(word);
-        #endif
-    }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from machine to big endianness.
-      * @param word A pointer to the 4-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig4ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch4ByteWord(word);
-        #endif
-    }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from big to machine endianness.
-      * @param word A pointer to the 4-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine4ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch4ByteWord(word);
-        #endif
-    }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from machine to big endianness.
-      * @param word A pointer to the 8-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig8ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch8ByteWord(word);
-        #endif
-    }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from big to machine endianness.
-      * @param word A pointer to the 8-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine8ByteWord (void *word)
-    {
-        #if MACHINE != BIG
-            Switch8ByteWord(word);
-        #endif
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and little
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to little endianness.
-      * @param word A pointer to the 1-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle1ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch1ByteWord(word);
-        #endif
-    }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from little to machine endianness.
-      * @param word A pointer to the 1-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine1ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch1ByteWord(word);
-        #endif
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from machine to little endianness.
-      * @param word A pointer to the 2-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle2ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch2ByteWord(word);
-        #endif
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from little to machine endianness.
-      * @param word A pointer to the 2-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine2ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch2ByteWord(word);
-        #endif
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from machine to little endianness.
-      * @param word A pointer to the 4-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle4ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch4ByteWord(word);
-        #endif
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from little to machine endianness.
-      * @param word A pointer to the 4-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine4ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch4ByteWord(word);
-        #endif
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from machine to little endianness.
-      * @param word A pointer to the 8-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle8ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch8ByteWord(word);
-        #endif
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from little to machine endianness.
-      * @param word A pointer to the 8-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine8ByteWord (void *word)
-    {
-        #if MACHINE != LITTLE
-            Switch8ByteWord(word);
-        #endif
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and given endianness
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to the given endianness.
-      * @param word A pointer to the 1-byte word to be converted.
-      * @param endianness The desired endianness of the word.
-      */
-    inline void ConvertMachineToGiven1ByteWord (void *word, Endianness const endianness)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch1ByteWord(word);
-    }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from the given endianness to machine.
-      * @param endianness The current endianness of the word.
-      * @param word A pointer to the 1-byte word to be converted.
-      */
-    inline void ConvertGivenToMachine1ByteWord (Endianness const endianness, void *word)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch1ByteWord(word);
-    }
-    /** If the given endianness matches the machine's, then this function is a no-op.
-      * @brief Converts a 2-byte word from machine to the given endianness.
-      * @param word A pointer to the 2-byte word to be converted.
-      * @param endianness The desired endianness of the word.
-      */
-    inline void ConvertMachineToGiven2ByteWord (void *word, Endianness const endianness)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch2ByteWord(word);
-    }
-    /** If the given endianness matches the machine's, then this function is a no-op.
-      * @brief Converts a 2-byte word from the given endianness to machine.
-      * @param endianness The current endianness of the word.
-      * @param word A pointer to the 2-byte word to be converted.
-      */
-    inline void ConvertGivenToMachine2ByteWord (Endianness const endianness, void *word)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch2ByteWord(word);
-    }
-    /** If the given endianness matches the machine's, then this function is a no-op.
-      * @brief Converts a 4-byte word from machine to the given endianness.
-      * @param word A pointer to the 4-byte word to be converted.
-      * @param endianness The desired endianness of the word.
-      */
-    inline void ConvertMachineToGiven4ByteWord (void *word, Endianness const endianness)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch4ByteWord(word);
-    }
-    /** If the given endianness matches the machine's, then this function is a no-op.
-      * @brief Converts a 4-byte word from the given endianness to machine.
-      * @param endianness The current endianness of the word.
-      * @param word A pointer to the 4-byte word to be converted.
-      */
-    inline void ConvertGivenToMachine4ByteWord (Endianness const endianness, void *word)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch4ByteWord(word);
-    }
-    /** If the given endianness matches the machine's, then this function is a no-op.
-      * @brief Converts a 8-byte word from machine to the given endianness.
-      * @param word A pointer to the 8-byte word to be converted.
-      * @param endianness The desired endianness of the word.
-      */
-    inline void ConvertMachineToGiven8ByteWord (void *word, Endianness const endianness)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch8ByteWord(word);
-    }
-    /** If the given endianness matches the machine's, then this function is a no-op.
-      * @brief Converts a 8-byte word from the given endianness to machine.
-      * @param endianness The current endianness of the word.
-      * @param word A pointer to the 8-byte word to be converted.
-      */
-    inline void ConvertGivenToMachine8ByteWord (Endianness const endianness, void *word)
-    {
-        ASSERT2(endianness == LITTLE || endianness == BIG);
-        if (MACHINE != endianness)
-            Switch8ByteWord(word);
-    }
-} // end of namespace endian
+    for (Uint32 i = 0; i < word_count; ++i)
+        SwitchByteOrder(array+i*word_size, word_size);
+}
 
 } // end of namespace Xrb
 

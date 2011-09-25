@@ -316,7 +316,7 @@ bool QuadTree::ReAddObject (Object *const object)
         else
         {
             ASSERT1(object_was_added == false);
-            Fprint(stderr, object->Translation());
+            std::cerr << object->Translation() << std::endl; // HIPPO
             ASSERT1(false);
             // error - nowhere to go
         }

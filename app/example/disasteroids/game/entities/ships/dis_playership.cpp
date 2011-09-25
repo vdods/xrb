@@ -581,7 +581,7 @@ void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
         switch (option)
         {
             case INPUT__ACTIVATE_OPTION__EMP:
-                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__EMP\n");
+                std::cerr << "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__EMP" << std::endl;
                 SpawnEMPExplosion(
                     GetObjectLayer(),
                     current_time,
@@ -596,17 +596,17 @@ void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
                 break;
 
             case INPUT__ACTIVATE_OPTION__ATTACK_BOOST:
-                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__ATTACK_BOOST\n");
+                std::cerr << "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__ATTACK_BOOST" << std::endl;
                 m_attack_boost_time_remaining += ms_attack_boost_duration;
                 break;
 
             case INPUT__ACTIVATE_OPTION__DEFENSE_BOOST:
-                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__DEFENSE_BOOST\n");
+                std::cerr << "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__DEFENSE_BOOST" << std::endl;
                 m_defense_boost_time_remaining += ms_defense_boost_duration;
                 break;
 
             case INPUT__ACTIVATE_OPTION__TIME_STRETCH:
-                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__TIME_STRETCH\n");
+                std::cerr << "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__TIME_STRETCH" << std::endl;
                 m_time_stretch_time_remaining += ms_time_stretch_duration;
                 break;
 
@@ -621,7 +621,7 @@ void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
     else
     {
         // TODO make some negative sound to indicate that it didn't work
-        fprintf(stderr, "PlayerShip::ActivateOption(); no options in inventory\n");
+        std::cerr << "PlayerShip::ActivateOption(); no options in inventory" << std::endl;
     }
 }
 

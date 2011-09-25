@@ -32,12 +32,14 @@ namespace Dis {
 TitleScreenWidget::TitleScreenWidget (bool immediately_show_high_scores, bool show_best_points_high_scores_first, WidgetContext &context)
     :
     ContainerWidget(context, "TitleScreenWidget"),
-    m_state_machine(this),
+    m_state_machine(this, "TitleScreenWidget"),
     m_immediately_show_high_scores(immediately_show_high_scores),
     m_show_best_points_high_scores_first(show_best_points_high_scores_first),
     m_internal_receiver_activate_controls_dialog(&TitleScreenWidget::ActivateControlsDialog, this),
     m_internal_receiver_controls_dialog_returned(&TitleScreenWidget::ControlsDialogReturned, this)
 {
+    m_state_machine.SetTransitionLogger(&std::cerr);
+    
     Layout *main_layout = new Layout(VERTICAL, Context(), "main title screen layout");
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
     {
@@ -143,8 +145,11 @@ void TitleScreenWidget::HandleFrame ()
     if (!m_state_machine.IsInitialized())
         m_state_machine.Initialize(
             m_immediately_show_high_scores ?
-            &TitleScreenWidget::StateDisplayFirstHighScores :
-            &TitleScreenWidget::StateGameDemo);
+                &TitleScreenWidget::StateDisplayFirstHighScores :
+                &TitleScreenWidget::StateGameDemo,
+            m_immediately_show_high_scores ?
+                "StateDisplayFirstHighScores" :
+                "StateGameDemo");
 }
 
 bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput const &e)
@@ -190,19 +195,10 @@ void TitleScreenWidget::ControlsDialogReturned (Dialog::ButtonID button_id)
 // begin state machine stuff
 // ///////////////////////////////////////////////////////////////////////////
 
-#define STATE_MACHINE_STATUS(state_name) \
-    /* if (input == SM_ENTER) \
-        fprintf(stderr, "TitleScreenWidget: --> " state_name "\n"); \
-    else if (input == SM_EXIT) \
-        fprintf(stderr, "TitleScreenWidget: <-- " state_name "\n"); \
-    else \
-        fprintf(stderr, "TitleScreenWidget: input: %u\n", input);*/
-
-#define TRANSITION_TO(x) m_state_machine.SetNextState(&TitleScreenWidget::x)
+#define TRANSITION_TO(x) m_state_machine.SetNextState(&TitleScreenWidget::x, #x)
 
 bool TitleScreenWidget::StateGameDemo (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateGameDemo")
     ASSERT1(m_high_scores_widget->IsHidden());
     switch (input)
     {
@@ -219,7 +215,6 @@ bool TitleScreenWidget::StateGameDemo (StateMachineInput input)
 
 bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateDisplayFirstHighScores")
     switch (input)
     {
         case SM_ENTER:
@@ -244,7 +239,6 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput input)
 
 bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StatePauseBetweenHighScores")
     ASSERT1(m_high_scores_widget->IsHidden());
     switch (input)
     {
@@ -261,7 +255,6 @@ bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput input)
 
 bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateDisplaySecondHighScores")
     switch (input)
     {
         case SM_ENTER:

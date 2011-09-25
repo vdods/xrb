@@ -92,7 +92,11 @@ x   shield
 - additional mode for Interloper (maybe spawn them in different, fixed modes) -
   where their flocking behavior is higher priority.  another mode should be
   where they flock in the form of a snake.  the head will decide where to go, and
-  the body will provide extra mass to the collisions
+  the body will provide extra mass to the collisions.
+  the snake should be really hard to kill, and forming a snake could be the result of Interlopers
+  living for too long.  this will be a reason for players to want to kill them quickly.
+- enemies could spawn with shields giving particular strengths, so if a player overuses a weapon,
+  the enemies start spawning with strength against that weapon.
 - additional mode for Interloper -- speed charge when charging at target -- Interloper isn't
   nearly mean/tough enough
 - additional mode for Shade - maybe hide behind asteroids
@@ -202,10 +206,12 @@ BUGS:
   texture atlases, efficiency should be 100%)
 - screenshots add an alpha channel -- remove alpha channel and make PNG files without alpha.
   this may require adding support for RGB textures.
+- there's a bug in the cycle truncation of xrb_animation, the 2nd assert near line 223 gets hit (floating point roundoff) 
 
 TODO:
+- possibly rename Parse::DataFile::Structure to Map
 - black-outlined fonts
-- split Label into TextLabel and PictureLabel.
+- split Label into TextLabel and PictureLabel (maybe can't do this because of Button)
 - add "custom types" to WidgetSkin, so that particular apps can specify their own
   texture types and fonts, etc, and it doesn't all need to be done by hand.  probably do this
   by changing the WidgetSkin type enums into strings.

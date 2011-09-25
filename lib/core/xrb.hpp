@@ -11,9 +11,9 @@
 #if !defined(_XRB_HPP_)
 #define _XRB_HPP_
 
-// EVERY SOURCE FILE (H AND CPP) SHOULD INCLUDE THIS FILE
-// EVERY SOURCE FILE (H AND CPP) SHOULD INCLUDE THIS FILE
-// EVERY SOURCE FILE (H AND CPP) SHOULD INCLUDE THIS FILE
+// EVERY SOURCE FILE (HPP AND CPP) SHOULD INCLUDE THIS FILE
+// EVERY SOURCE FILE (HPP AND CPP) SHOULD INCLUDE THIS FILE
+// EVERY SOURCE FILE (HPP AND CPP) SHOULD INCLUDE THIS FILE
 
 #if defined(HAVE_CONFIG_H)
     #include "config.h"
@@ -74,6 +74,8 @@
 // end of ugliness
 // ///////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
+
 #include "xrb_assert.hpp"
 #include "xrb_debug.hpp"
 #include "xrb_delete.hpp"
@@ -94,8 +96,7 @@
   * overloads for things like Vector and Matrix2).
   * @brief Container namespace for the XuqRijBuh game engine.
   */
-namespace Xrb
-{
+namespace Xrb {
 
 /** The template type @c T must allow static_cast-ing from the integer value
   * 0, and must have a less-than operator defined.

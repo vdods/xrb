@@ -18,22 +18,20 @@
 #include "xrb_math.hpp"
 #include "xrb_texture.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-namespace
-{
+namespace {
 
 void CheckForExtension (char const *extension_name)
 {
-    fprintf(stderr, "        %s: ", extension_name);
+    std::cerr << '\t' << extension_name << ": ";
     if (strstr(reinterpret_cast<char const *>(glGetString(GL_EXTENSIONS)), extension_name) == NULL)
     {
-        fprintf(stderr, "NOT SUPPORTED -- aborting.\n");
+        std::cerr << "NOT SUPPORTED -- aborting." << std::endl;
         ASSERT0(false);
     }
     else
-        fprintf(stderr, "supported.\n");
+        std::cerr << "supported." << std::endl;
 }
 
 } // end of anonymous namespace
@@ -46,17 +44,17 @@ Gl::Gl ()
     ResetBindTextureCallCounts();
 
     // print some useful info
-    fprintf(stderr, "OpenGL initialization\n");
-    fprintf(stderr, "    GL_VENDOR = \"%s\"\n", glGetString(GL_VENDOR));
-    fprintf(stderr, "    GL_RENDERER = \"%s\"\n", glGetString(GL_RENDERER));
-    fprintf(stderr, "    GL_VERSION = \"%s\"\n", glGetString(GL_VERSION));
-    fprintf(stderr, "    GL_MAX_TEXTURE_SIZE = %d\n", Integer(GL_MAX_TEXTURE_SIZE));
+    std::cerr << "OpenGL initialization" << std::endl;
+    std::cerr << "\tGL_VENDOR = \"" << glGetString(GL_VENDOR) << '"' << std::endl;
+    std::cerr << "\tGL_RENDERER = \"" << glGetString(GL_RENDERER) << '"' << std::endl;
+    std::cerr << "\tGL_VERSION = \"" << glGetString(GL_VERSION) << '"' << std::endl;
+    std::cerr << "\tGL_MAX_TEXTURE_SIZE = " << Integer(GL_MAX_TEXTURE_SIZE) << std::endl;
 
     // check for certain extensions and values
     {
         GLint max_texture_units;
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture_units);
-        fprintf(stderr, "    Checking GL_MAX_TEXTURE_UNITS (must be at least 2): %d\n", max_texture_units);
+        std::cerr << "\tChecking GL_MAX_TEXTURE_UNITS (must be at least 2): " << max_texture_units << std::endl;
         ASSERT0(max_texture_units >= 2 && "GL_MAX_TEXTURE_UNITS must be at least 2");
     }
 
@@ -98,7 +96,7 @@ Gl::Gl ()
 
 Gl::~Gl ()
 {
-    fprintf(stderr, "Gl::~Gl(); OpenGL shutdown\n");
+    std::cerr << "Gl::~Gl(); OpenGL shutdown" << std::endl;
 
     // delete the utility textures (if necessary)
     DeleteAndNullify(m_gltexture_opaque_white);
@@ -294,7 +292,7 @@ void Gl::UnregisterGlTexture (GlTexture &gltexture)
         Uint32 efficiency = (allocated_texture_byte_count > 0) ?
                             100 * UsedTextureByteCount() / allocated_texture_byte_count :
                             100;
-        fprintf(stderr, "GlTextureAtlas count = %u, packing efficiency = %u%%\n", Uint32(m_atlas.size()), efficiency);
+        std::cerr << "GlTextureAtlas count = " << m_atlas.size() << ", packing efficiency = " << efficiency << '%' << std::endl;
     }
 }
 
@@ -457,9 +455,9 @@ Uint32 Gl::UsedTextureByteCount () const
 void Gl::DumpAtlases (std::string const &path_prefix) const
 {
 #if XRB_PLATFORM == XRB_PLATFORM_IPHONE
-    fprintf(stderr, "Gl::DumpAtlases only supported on non-iphone builds\n");
+    std::cerr << "Gl::DumpAtlases only supported on non-iphone builds" << std::endl;
 #else // XRB_PLATFORM != XRB_PLATFORM_IPHONE
-    fprintf(stderr, "Gl::DumpAtlases(); path_prefix = \"%s\"\n", path_prefix.c_str());
+    std::cerr << "Gl::DumpAtlases(); path_prefix = \"" << path_prefix << '"' << std::endl;
     for (Uint32 i = 0; i < m_atlas.size(); ++i)
     {
         ASSERT1(m_atlas[i] != NULL);
@@ -474,10 +472,10 @@ void Gl::DumpAtlases (std::string const &path_prefix) const
                        std::setw(2) << std::setfill('0') << mipmap_level << ".png"));
             Pal::Status status = dump->Save(dump_path);
             if (status == Pal::SUCCESS)
-                fprintf(stderr, "    successfully dumped ");
+                std::cerr << "    successfully dumped ";
             else
-                fprintf(stderr, "    FAILURE while dumping ");
-            fprintf(stderr, "\"%s\" (atlas %u, mipmap level %u)\n", dump_path.c_str(), i, mipmap_level);
+                std::cerr << "    FAILURE while dumping ";
+            std::cerr << '"' << dump_path << "\" (atlas " << i << ", mipmap level " << mipmap_level << ')' << std::endl;
             delete dump;
             ++mipmap_level;
         }
@@ -607,7 +605,7 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
             !Math::IsAPowerOf2(texture.Height()) ||
             !texture.Width() == texture.Height())
         {
-            fprintf(stderr, "Gl::CreateGlTexture(); ERROR: non-square, non-power-of-2-sized textures must use GlTexture::USES_SEPARATE_ATLAS\n");
+            std::cerr << "Gl::CreateGlTexture(); ERROR: non-square, non-power-of-2-sized textures must use GlTexture::USES_SEPARATE_ATLAS" << std::endl;
             return NULL;
         }
     }
@@ -617,14 +615,14 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
         gltexture_atlas_size[Dim::Y] > 0 &&
         (!Math::IsAPowerOf2(Uint32(gltexture_atlas_size[Dim::X])) || !Math::IsAPowerOf2(Uint32(gltexture_atlas_size[Dim::Y]))))
     {
-        fprintf(stderr, "Gl::CreateGlTexture(); ERROR: Pal::GlTextureAtlasSize() coordinates must be power-of-2 or nonpositive values\n");
+        std::cerr << "Gl::CreateGlTexture(); ERROR: Pal::GlTextureAtlasSize() coordinates must be power-of-2 or nonpositive values" << std::endl;
         return NULL;
     }
 
     // if the texture wants to use a separate atlas, make a new atlas just for it
     if ((gltexture_flags & GlTexture::USES_SEPARATE_ATLAS) || gltexture_atlas_size[Dim::X] <= 0 || gltexture_atlas_size[Dim::Y] <= 0)
     {
-        fprintf(stderr, "Gl::CreateGlTexture(); creating (separate) GlTextureAtlas of size (%d, %d)\n", texture.Size()[Dim::X], texture.Size()[Dim::Y]);
+        std::cerr << "Gl::CreateGlTexture(); creating (separate) GlTextureAtlas of size " << texture.Size() << std::endl;
         GlTextureAtlas *atlas = new GlTextureAtlas(texture.Size(), gltexture_flags);
         AddAtlas(atlas);
         GlTexture *retval = atlas->AttemptToPlaceTexture(texture, gltexture_flags);
@@ -645,14 +643,14 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
                 // the atlas may not have had room, so check it
                 if (retval != NULL)
                 {
-                    fprintf(stderr, "Gl atlas packing efficiency: %u%%\n", 100 * UsedTextureByteCount() / AllocatedTextureByteCount());
+                    std::cerr << "Gl atlas packing efficiency: " << 100 * UsedTextureByteCount() / AllocatedTextureByteCount() << '%' << std::endl;
                     return retval;
                 }
             }
         }
 
         // no fit so far, so add a new atlas to the end
-        fprintf(stderr, "Gl::CreateGlTexture(); creating (shared) GlTextureAtlas of size (%d, %d)\n", gltexture_atlas_size[Dim::X], gltexture_atlas_size[Dim::Y]);
+        std::cerr << "Gl::CreateGlTexture(); creating (shared) GlTextureAtlas of size " << gltexture_atlas_size << std::endl;
         GlTextureAtlas *atlas = new GlTextureAtlas(gltexture_atlas_size, gltexture_flags);
         AddAtlas(atlas);
         return atlas->AttemptToPlaceTexture(texture, gltexture_flags);
@@ -668,7 +666,7 @@ void Gl::AddAtlas (GlTextureAtlas *atlas)
     Uint32 efficiency = (allocated_texture_byte_count > 0) ?
                         100 * UsedTextureByteCount() / allocated_texture_byte_count :
                         100;
-    fprintf(stderr, "GlTextureAtlas count = %u, packing efficiency = %u%%\n", Uint32(m_atlas.size()), efficiency);
+    std::cerr << "GlTextureAtlas count = " << m_atlas.size() << ", packing efficiency = " << efficiency << '%' << std::endl;
 }
 
 } // end of namespace Xrb

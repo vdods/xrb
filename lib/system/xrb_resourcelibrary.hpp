@@ -100,7 +100,7 @@ public:
 
     /** @brief Prints a list of all currently loaded resources.
       */
-    void PrintInventory (FILE *fptr, Uint32 tab_count = 0) const;
+    void PrintInventory (std::ostream &stream, Uint32 tab_count = 0) const;
 
 private:
 
@@ -404,9 +404,9 @@ Resource<T> ResourceLibrary::Load (
 
         if (data == NULL)
         {
-            fprintf(stderr, "ResourceLibrary * FAILURE while loading %s: ", load_parameters->ResourceName().c_str());
-            load_parameters->Print(stderr);
-            fprintf(stderr, " -- falling back\n");
+            std::cerr << "ResourceLibrary * FAILURE while loading " << load_parameters->ResourceName() << ": ";
+            load_parameters->Print(std::cerr);
+            std::cerr << " -- falling back" << std::endl;
 
             load_parameters->Fallback();
 
@@ -433,17 +433,17 @@ Resource<T> ResourceLibrary::Load (
 
             if (data == NULL)
             {
-                fprintf(stderr, "ResourceLibrary * FAILURE while fallback-loading %s: ", load_parameters->ResourceName().c_str());
-                load_parameters->Print(stderr);
-                fprintf(stderr, "\n");
+                std::cerr << "ResourceLibrary * FAILURE while fallback-loading " << load_parameters->ResourceName() << ": ";
+                load_parameters->Print(std::cerr);
+                std::cerr << std::endl;
 
                 ASSERT0(false && "the fallback load should not fail");
             }
         }
 
-        fprintf(stderr, "ResourceLibrary * loaded %s: ", load_parameters->ResourceName().c_str());
-        load_parameters->Print(stderr);
-        fprintf(stderr, "\n");
+        std::cerr << "ResourceLibrary * loaded " << load_parameters->ResourceName() << ": ";
+        load_parameters->Print(std::cerr);
+        std::cerr << std::endl;
 
         ASSERT1(m_instance_map.find(load_parameters) == m_instance_map.end() &&
                 "you Load()'ed something into the very spot you were about to fill "

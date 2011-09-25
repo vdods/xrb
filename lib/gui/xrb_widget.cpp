@@ -37,7 +37,7 @@ Widget::Widget (WidgetContext &context, std::string const &name)
     m_receiver_hide(&Widget::Hide, this),
     m_receiver_show(&Widget::Show, this)
 {
-//     fprintf(stderr, "Widget::Widget(%s);\n", name.c_str());
+//     std::cerr << "Widget::Widget(); name = \"" << name << '"' << std::endl;
 
     ASSERT1(context.GetScreen().OwnerEventQueue() != NULL);
 
@@ -67,7 +67,7 @@ Widget::Widget (WidgetContext &context, std::string const &name)
 
 Widget::~Widget ()
 {
-//     fprintf(stderr, "Widget::~Widget(%s);\n", m_name.c_str());
+//     std::cerr << "Widget::~Widget(); name = \"" << name << '"' << std::endl;
     ASSERT0(m_parent == NULL && "you must DetachFromParent before deleting this widget");
 
     DeleteAndNullify(m_background);

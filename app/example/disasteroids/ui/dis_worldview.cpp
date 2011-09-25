@@ -43,7 +43,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     Engine2::WorldView(parent_world_view_widget),
     EventHandler(parent_world_view_widget->OwnerEventQueue()),
     SignalHandler(),
-    m_state_machine(this),
+    m_state_machine(this, "WorldView"),
     m_sender_player_ship_changed(this),
     m_sender_is_game_loop_info_enabled_changed(this),
     m_sender_is_debug_zoom_mode_enabled_changed(this),
@@ -65,6 +65,8 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_receiver_begin_game_over(&WorldView::BeginGameOver, this),
     m_receiver_begin_outro(&WorldView::BeginOutro, this)
 {
+    m_state_machine.SetTransitionLogger(&std::cerr, IN_PROCESS_FRAME);
+    
     m_zoom_time_total = 0.0f;
     m_zoom_time_left = 0.0f;
     m_zoom_factor_begin = ms_zoom_factor_intro_begin;
@@ -103,7 +105,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     SetDrawBorderGridLines(m_is_debug_zoom_mode_enabled);
     SetIsTransformScalingBasedUponWidgetRadius(true);
 
-    m_state_machine.Initialize(&WorldView::StatePreIntro);
+    m_state_machine.Initialize(&WorldView::StatePreIntro, "StatePreIntro");
 }
 
 WorldView::~WorldView ()
@@ -691,19 +693,10 @@ void WorldView::ProcessFade (Float const frame_dt)
 // begin state machine stuff
 // ///////////////////////////////////////////////////////////////////////////
 
-#define STATE_MACHINE_STATUS(state_name) \
-    /* if (input == SM_ENTER) \
-        fprintf(stderr, "WorldView: --> " state_name "\n"); \
-    else if (input == SM_EXIT) \
-        fprintf(stderr, "WorldView: <-- " state_name "\n"); \
-    else if (input != IN_PROCESS_FRAME) \
-        fprintf(stderr, "WorldView: input: %u\n", input); */
-
-#define TRANSITION_TO(x) m_state_machine.SetNextState(&WorldView::x)
+#define TRANSITION_TO(x) m_state_machine.SetNextState(&WorldView::x, #x)
 
 bool WorldView::StatePreIntro (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StatePreIntro")
     switch (input)
     {
         case IN_PROCESS_FRAME:
@@ -719,7 +712,6 @@ bool WorldView::StatePreIntro (StateMachineInput input)
 
 bool WorldView::StateIntro (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateIntro")
     switch (input)
     {
         case SM_ENTER:
@@ -756,7 +748,6 @@ bool WorldView::StateIntro (StateMachineInput input)
 
 bool WorldView::StateNormalGameplay (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateNormalGameplay")
     switch (input)
     {
         case IN_PROCESS_FRAME:
@@ -778,7 +769,6 @@ bool WorldView::StateNormalGameplay (StateMachineInput input)
 
 bool WorldView::StateDeathRattle (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateDeathRattle")
     switch (input)
     {
         case IN_PROCESS_FRAME:
@@ -794,7 +784,6 @@ bool WorldView::StateDeathRattle (StateMachineInput input)
 
 bool WorldView::StateGameOver (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateGameOver")
     switch (input)
     {
         case SM_ENTER:
@@ -818,7 +807,6 @@ bool WorldView::StateGameOver (StateMachineInput input)
 
 bool WorldView::StateOutro (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateOutro")
     switch (input)
     {
         case SM_ENTER:
@@ -843,7 +831,6 @@ bool WorldView::StateOutro (StateMachineInput input)
 
 bool WorldView::StatePostOutro (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StatePostOutro")
     switch (input)
     {
         case IN_PROCESS_FRAME:

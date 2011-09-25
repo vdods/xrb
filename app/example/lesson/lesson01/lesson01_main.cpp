@@ -74,7 +74,7 @@ using namespace Xrb;
 // This is just a helper function to group all the shutdown code together.
 void CleanUp ()
 {
-    fprintf(stderr, "CleanUp();\n");
+    std::cerr << "CleanUp();" << std::endl;
 
     // Shutdown the platform abstraction layer.
     Singleton::Pal().Shutdown();
@@ -85,7 +85,7 @@ void CleanUp ()
 
 int main (int argc, char **argv)
 {
-    fprintf(stderr, "main();\n");
+    std::cerr << "main();" << std::endl;
 
     // Initialize the game engine singleton facilities.
     Singleton::Initialize(SDLPal::Create, "none");
@@ -106,7 +106,7 @@ int main (int argc, char **argv)
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
-        fprintf(stderr, "failure during Screen creation\n");
+        std::cerr << "unable to initialize video mode" << std::endl;
         // this shuts down the Pal and singletons.
         CleanUp();
         // return with an error value.

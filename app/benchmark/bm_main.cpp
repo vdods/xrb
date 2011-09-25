@@ -32,7 +32,7 @@ void CleanUp ()
 
 int main (int argc, char **argv)
 {
-    fprintf(stderr, "\nmain();\n");
+    std::cerr << "\nmain();" << std::endl;
 
     {
         // read in the user's config file (video resolution, key binds, etc).

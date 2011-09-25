@@ -13,62 +13,59 @@
 
 #include "xrb.hpp"
 
-#include <stdio.h>
+#include <fstream>
 
 #include "xrb_endian.hpp"
 #include "xrb_serializer.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-/** An instance of BinaryFileSerializer can either read or write, but not both
-  * simultaneously.  Construction of a BinaryFileSerializer instance is what
-  * opens a file, destruction is what * closes it.  Exceptions are thrown to
-  * indicate error (see @ref Serializer ).
-  *
-  * Endianness is handled in the following way.  When opening a file to write,
-  * the first byte is automatically written to indicate the endianness of the
-  * ensuing data.  0xFF and 0x00 indicate little and big endian (the values
-  * written by Write<bool>(true) and Write<bool>(false) respectively).
-  *
-  * All writes are done in the endianness of the machine doing the writing.
-  * The reads are what do endian-switching when necessary.  This is easier
-  * to implement, since the read buffer is a convenient place to do in-place
-  * endian-switching, as opposed to creating temporary buffers for write-time
-  * endian-switching.
-  * 
-  * @brief Serializer implementation for binary files.
-  */
+/// @brief Serializer implementation for binary files.
+/// @details Construction of a BinaryFileSerializer instance is what opens a file,
+/// destruction is what closes it.  Exceptions are thrown to indicate error (see @ref Serializer ).
+///
+/// Endianness is handled in the following way.  When opening a file to write,
+/// the first byte is automatically written to indicate the endianness of the
+/// ensuing data.  0xFF and 0x00 indicate little and big endian (the values
+/// written by Write<bool>(true) and Write<bool>(false) respectively).
+///
+/// All writes are done in the endianness of the machine doing the writing.
+/// The reads are what do endian-switching when necessary.  This is easier
+/// to implement, since the read buffer is a convenient place to do in-place
+/// endian-switching, as opposed to creating temporary buffers for write-time
+/// endian-switching.
 class BinaryFileSerializer : public Serializer
 {
 public:
 
-    static Uint32 const ms_longest_allowable_sized_buffer_initial_value = 0x10000;
-
-    BinaryFileSerializer (std::string const &path, IODirection direction) throw(Exception);
+    BinaryFileSerializer (std::string const &path, IODirection io_direction) throw(Exception);
     virtual ~BinaryFileSerializer () throw();
 
-    // Serializer interface methods
-    virtual bool IsAtEnd () const throw(Exception);
-    virtual Uint32 MaxAllowableArraySize () const throw() { return m_max_allowable_array_size; }
-    virtual void ReadRawWords (void *dest, Uint32 word_size, Uint32 word_count) throw(Exception);
-    virtual void WriteRawWords (void const *source, Uint32 word_size, Uint32 word_count) throw(Exception);
-
     std::string const &Path () const { return m_path; }
-    Endian::Endianness FileEndianness () const { return m_file_endianness; }
 
-    void SetMaxAllowableArraySize (Uint32 max_allowable_array_size) { m_max_allowable_array_size = max_allowable_array_size; }
+    // Serializer interface methods
+    virtual bool IsReadable () const throw() { return m_is_readable; }
+    virtual bool IsWritable () const throw() { return m_is_writable; }
+    virtual bool IsReaderSeekable () const throw() { return m_is_readable; }
+    virtual bool IsWriterSeekable () const throw() { return m_is_writable; }
+    virtual bool IsAtEnd () const throw(Exception);
+    virtual void ReaderSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) throw(Exception);
+    virtual void WriterSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) throw(Exception);
+
+protected:
+
+    // Serializer interface methods
+    virtual void ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count) throw(Exception);
+    virtual void WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count) throw(Exception);
 
 private:
 
-    // can't touch me, ha ha!  the call to Serializer's
-    // constructor is arbitrary and irrelevant.
-    BinaryFileSerializer () : Serializer(IOD_READ) { ASSERT1(false && "don't use me"); }
-
     std::string const m_path;
-    Endian::Endianness m_file_endianness;
+    bool const m_is_readable;
+    bool const m_is_writable;
+    Endianness::Value m_file_endianness;
     Uint32 m_max_allowable_array_size;
-    FILE *m_fptr;
+    std::fstream &m_stream;
 }; // end of class BinaryFileSerializer
 
 } // end of namespace Xrb

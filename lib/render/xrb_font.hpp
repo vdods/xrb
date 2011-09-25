@@ -89,7 +89,7 @@ public:
         virtual std::string ResourceName () const;
         virtual bool IsLessThan (ResourceLoadParameters const &p) const;
         virtual void Fallback ();
-        virtual void Print (FILE *fptr) const;
+        virtual void Print (std::ostream &stream) const;
 
     private:
 

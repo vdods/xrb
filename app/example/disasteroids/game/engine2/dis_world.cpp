@@ -840,7 +840,7 @@ World::World (
     :
     Engine2::World(physics_handler, entity_capacity),
     SignalHandler(),
-    m_state_machine(this),
+    m_state_machine(this, "World"),
     m_sender_submit_score(this),
     m_sender_end_game(this),
     m_internal_sender_is_alert_wave(this),
@@ -855,6 +855,8 @@ World::World (
 {
     ASSERT1(difficulty_level < DL_COUNT);
 
+    m_state_machine.SetTransitionLogger(&std::cerr, IN_PROCESS_FRAME);
+    
     m_player_ship = NULL;
     m_difficulty_level = difficulty_level;
     m_score_required_for_extra_life = 50000;
@@ -905,7 +907,7 @@ void World::HandleFrame ()
     Engine2::World::HandleFrame();
 
     if (!m_state_machine.IsInitialized())
-        m_state_machine.Initialize(&World::StateIntro);
+        m_state_machine.Initialize(&World::StateIntro, "StateIntro");
 
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 }
@@ -957,19 +959,10 @@ void World::HandleAttachWorldView (Engine2::WorldView *engine2_world_view)
 // begin state machine stuff
 // ///////////////////////////////////////////////////////////////////////////
 
-#define STATE_MACHINE_STATUS(state_name) \
-    if (input == SM_ENTER) \
-        fprintf(stderr, "World: --> " state_name "\n"); \
-    else if (input == SM_EXIT) \
-        fprintf(stderr, "World: <-- " state_name "\n"); \
-    else if (input != IN_PROCESS_FRAME) \
-        fprintf(stderr, "World: input: %u\n", input);
-
-#define TRANSITION_TO(x) m_state_machine.SetNextState(&World::x)
+#define TRANSITION_TO(x) m_state_machine.SetNextState(&World::x, #x)
 
 bool World::StateIntro (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateIntro")
     switch (input)
     {
         case SM_ENTER:
@@ -998,7 +991,6 @@ bool World::StateIntro (StateMachineInput input)
 
 bool World::StateSpawnPlayerShip (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateSpawnPlayerShip")
     switch (input)
     {
         case IN_PROCESS_FRAME:
@@ -1019,7 +1011,6 @@ bool World::StateSpawnPlayerShip (StateMachineInput input)
 
 bool World::StateWaveInitialize (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateWaveInitialize")
     switch (input)
     {
         case SM_ENTER:
@@ -1076,7 +1067,6 @@ bool World::StateWaveInitialize (StateMachineInput input)
 
 bool World::StateWaveGameplay (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateWaveGameplay")
     switch (input)
     {
         case SM_ENTER:
@@ -1117,7 +1107,6 @@ bool World::StateWaveGameplay (StateMachineInput input)
 
 bool World::StateWaveIntermissionGameplay (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateWaveIntermissionGameplay")
     switch (input)
     {
         case SM_ENTER:
@@ -1155,7 +1144,6 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput input)
 
 bool World::StateCheckLivesRemaining (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateCheckLivesRemaining")
     switch (input)
     {
         case SM_ENTER:
@@ -1171,7 +1159,6 @@ bool World::StateCheckLivesRemaining (StateMachineInput input)
 
 bool World::StateWaitAfterPlayerDeath (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateWaitAfterPlayerDeath")
     switch (input)
     {
         case SM_ENTER:
@@ -1191,7 +1178,6 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput input)
 
 bool World::StateDeathRattle (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateDeathRattle")
     switch (input)
     {
         case SM_ENTER:
@@ -1217,7 +1203,6 @@ bool World::StateDeathRattle (StateMachineInput input)
 
 bool World::StateGameOver (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateGameOver")
     switch (input)
     {
         case SM_ENTER:
@@ -1238,7 +1223,6 @@ bool World::StateGameOver (StateMachineInput input)
 
 bool World::StateSubmitScore (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateSubmitScore")
     switch (input)
     {
         case SM_ENTER:
@@ -1257,7 +1241,6 @@ bool World::StateSubmitScore (StateMachineInput input)
 
 bool World::StateWaitingForSubmitScoreResponse (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateWaitingForSubmitScoreResponse")
     switch (input)
     {
         case IN_SUBMIT_SCORE_DONE:
@@ -1272,7 +1255,6 @@ bool World::StateWaitingForSubmitScoreResponse (StateMachineInput input)
 
 bool World::StateOutro (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateOutro")
     switch (input)
     {
         case SM_ENTER:
@@ -1300,7 +1282,6 @@ bool World::StateOutro (StateMachineInput input)
 
 bool World::StateEndGame (StateMachineInput input)
 {
-    STATE_MACHINE_STATUS("StateEndGame")
     switch (input)
     {
         case SM_ENTER:
