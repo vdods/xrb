@@ -271,7 +271,7 @@ void Asteroid::Die (
     {
         SpawnPowerup(
             GetObjectLayer(),
-            "resources/option_powerup.anim",
+            "fs://option_powerup.anim",
             time,
             Translation(), // spawn at the center of the asteroid
             Powerup::ms_radius,

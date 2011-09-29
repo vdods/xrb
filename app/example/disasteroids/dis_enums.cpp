@@ -31,12 +31,12 @@ std::string const &ExplosionAssetPath (ExplosionType explosion_type)
 {
     static std::string const s_explosion_asset_path[EXPLO_COUNT] =
     {
-        "resources/explosion_dense_00.png",
-        "resources/explosion1a_small.png",
-        "resources/explosion_rock_00.png",
-        "resources/shockwave.png",
-        "resources/fireball.png",
-        "resources/shockwave.png"
+        "fs://explosion_dense_00.png",
+        "fs://explosion1a_small.png",
+        "fs://explosion_rock_00.png",
+        "fs://shockwave.png",
+        "fs://fireball.png",
+        "fs://shockwave.png"
     };
 
     ASSERT1(explosion_type < EXPLO_COUNT);

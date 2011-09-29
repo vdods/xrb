@@ -19,7 +19,7 @@
 using namespace std;
 using namespace Xrb;
 
-#define CONFIG_FILE_PATH "disasteroids.config"
+#define CONFIG_FILE_PATH "fs://disasteroids.config"
 
 Dis::Config g_config;
 

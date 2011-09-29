@@ -183,7 +183,7 @@ bool Ballistic::CollidePrivate (
         case IE_PLASMA_BALL:
             SpawnSplashImpactEffect(
                 GetObjectLayer(),
-                "resources/plasma_ball_yellow.png",
+                "fs://plasma_ball_yellow.png",
                 time,
                 collision_location,
                 collision_normal,

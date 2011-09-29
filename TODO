@@ -211,6 +211,7 @@ BUGS:
   but frame_dt will still be Float.  if Uint64 is not supported, could do it "by hand" using two Uint32s.
 
 TODO:
+- add "open" methods to FileSystem which return FILE* or ostream or istream to hide the annoying OsPath calls.
 - change the "missing" animation into a two-frame animation
 - write As<WhateverType> method in ResourceLoadParameters to do the casting.
 - use exceptions in parser/scanner

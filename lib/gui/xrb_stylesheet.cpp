@@ -43,7 +43,7 @@ std::string const StyleSheet::MarginsType::CHECK_BOX_FRAME("CheckBox:frame");
 std::string const StyleSheet::MarginsType::RADIO_BUTTON_FRAME("RadioButton:frame");
 
 WidgetBackground const *const StyleSheet::ms_fallback_background = NULL; // no background (transparent)
-std::string const StyleSheet::ms_fallback_font_path("resources/FreeSansBoldCustom.ttf"); // TODO: built-in font
+std::string const StyleSheet::ms_fallback_font_path("fs://FreeSansBoldCustom.ttf"); // TODO: built-in font
 // 0.03 looks like about the smallest font that appears decently on a 640x480 screen.
 Float const StyleSheet::ms_fallback_font_height_ratio = 0.03f;
 Resource<GlTexture> const &StyleSheet::ms_fallback_texture(Resource<GlTexture>::ms_invalid); // invalid/blank texture

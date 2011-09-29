@@ -26,13 +26,7 @@ Texture::~Texture ()
 
 Texture *Texture::Create (std::string const &path)
 {
-    std::string os_path;
-    try {
-        os_path = Singleton::FileSystem().OsPath(path, FileSystem::READ_ONLY);
-        return Singleton::Pal().LoadImage(os_path.c_str());
-    } catch (Exception const &e) {
-        return NULL;
-    }
+    return Singleton::Pal().LoadImage(path.c_str());
 }
 
 Texture *Texture::Create (ScreenCoordVector2 const &size, InitialState initial_state)

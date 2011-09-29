@@ -423,7 +423,7 @@ public:
         static Uint32 const s_star_count = 100;
         for (Uint32 i = 0; i < s_star_count; ++i)
         {
-            sprite = Engine2::Sprite::Create("resources/shade_0.png");
+            sprite = Engine2::Sprite::Create("fs://shade_0.png");
             sprite->SetScaleFactor(Math::RandomFloat(0.0016f, 0.0024f) * object_layer_side_length);
             sprite->SetTranslation(
                 object_layer_side_length *
@@ -448,7 +448,7 @@ public:
         AwesomeEntity *planet;
 
         // Create a large, heavy planet.
-        sprite = Engine2::Sprite::Create("resources/demi_3.png");
+        sprite = Engine2::Sprite::Create("fs://demi_3.png");
         planet = new AwesomeEntity();
         sprite->SetEntity(planet);
         planet->SetTranslation(FloatVector2::ms_zero);
@@ -460,7 +460,7 @@ public:
         static Uint32 const s_moon_count = 50;
         for (Uint32 i = 0; i < s_moon_count; ++i)
         {
-            sprite = Engine2::Sprite::Create("resources/shade_3.png");
+            sprite = Engine2::Sprite::Create("fs://shade_3.png");
             AwesomeEntity *moon = new AwesomeEntity();
             sprite->SetEntity(moon);
             sprite->SetZDepth(-0.1f);
@@ -665,7 +665,7 @@ int main (int argc, char **argv)
     <li>Left-click and drag the view around to see the parallaxing effect
         between the two ObjectLayers.</li>
     <li>Add more starfield ObjectLayers at different z depths</li>
-    <li>Using file "resources/explosion1a_small.png" as nebulae, add a
+    <li>Using file "fs://explosion1a_small.png" as nebulae, add a
         foreground nebula field with an ObjectLayer Z depth of a negative
         value which will put it in front of the main object layer.
         Move the view around and see the effect.  Now zoom the view in

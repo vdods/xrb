@@ -1242,7 +1242,7 @@ void PlayerShip::EjectPowerup (Item *ejectee, Float ejection_angle)
         s_powerup_scale_factor,
         s_powerup_scale_factor * s_powerup_scale_factor,
         s_powerup_ejection_speed * ejection_normal,
-        "resources/powerup.png",
+        "fs://powerup.png",
         ejectee);
 */
     // remove the item from the inventory

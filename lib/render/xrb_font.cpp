@@ -87,15 +87,7 @@ Font *Font::Create (ResourceLoadParameters const &p)
             return cached_font;
     }
 
-    // filesystem search path lookup
-    std::string os_path;
-    try {
-        os_path = Singleton::FileSystem().OsPath(load_parameters.Path(), FileSystem::READ_ONLY);
-        return Singleton::Pal().LoadFont(os_path.c_str(), load_parameters.PixelHeight());
-    } catch (FileSystemException const &e) {
-        std::cerr << "Font::Create(); error: " << e.what() << std::endl;
-        return NULL;
-    }
+    return Singleton::Pal().LoadFont(load_parameters.Path().c_str(), load_parameters.PixelHeight());
 }
 
 ScreenCoordRect Font::StringRect (char const *string) const

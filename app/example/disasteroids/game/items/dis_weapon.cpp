@@ -355,7 +355,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
                 // spawn the "gauss gun trail"
                 SpawnGaussGunTrail(
                     OwnerShip()->GetObjectLayer(),
-                    "resources/laser_beam.png",
+                    "fs://laser_beam.png",
                     time,
                     fire_location,
                     fire_vector,
@@ -660,7 +660,7 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
             // spawn an impact effect at the impact site
             SpawnSplashImpactEffect(
                 OwnerShip()->GetObjectLayer(),
-                "resources/plasma_ball_green.png",
+                "fs://plasma_ball_green.png",
                 time,
                 impact_location,
                 impact_normal,
@@ -697,7 +697,7 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
     // spawn an impact effect at the weapon muzzle
     SpawnSplashImpactEffect(
         OwnerShip()->GetObjectLayer(),
-        "resources/plasma_ball_green.png",
+        "fs://plasma_ball_green.png",
         time,
         MuzzleLocation(),
         MuzzleDirection(),
@@ -712,7 +712,7 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
     // spawn the gauss gun trail
     SpawnGaussGunTrail(
         OwnerShip()->GetObjectLayer(),
-        "resources/gauss_gun_trail.png",
+        "fs://gauss_gun_trail.png",
         time,
         MuzzleLocation(),
         MuzzleDirection(),

@@ -1619,7 +1619,7 @@ void World::CreateAndPopulateSuperforegroundObjectLayer ()
     Uint32 const number_of_nebulae_to_create = 3;
     for (Uint32 i = 0; i < number_of_nebulae_to_create; ++i)
     {
-        Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/nebula00.png");
+        Engine2::Sprite *sprite = Engine2::Sprite::Create("fs://nebula00.png");
         sprite->SetTranslation(
             FloatVector2(
                 Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
@@ -1691,16 +1691,16 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_galaxy_sprite_path[] =
         {
-            "resources/starfield/galaxy_small01.png",
-            "resources/starfield/galaxy_small02.png",
-            "resources/starfield/galaxy_small03.png",
-            "resources/starfield/galaxy_small04.png",
-            "resources/starfield/galaxy_small05.png",
-            "resources/starfield/galaxy_small06.png",
-            "resources/starfield/galaxy_small07.png",
-            "resources/starfield/galaxy_small08.png",
-            "resources/starfield/galaxy_small09.png",
-            "resources/starfield/galaxy_small10.png",
+            "fs://starfield/galaxy_small01.png",
+            "fs://starfield/galaxy_small02.png",
+            "fs://starfield/galaxy_small03.png",
+            "fs://starfield/galaxy_small04.png",
+            "fs://starfield/galaxy_small05.png",
+            "fs://starfield/galaxy_small06.png",
+            "fs://starfield/galaxy_small07.png",
+            "fs://starfield/galaxy_small08.png",
+            "fs://starfield/galaxy_small09.png",
+            "fs://starfield/galaxy_small10.png",
         };
         static Uint32 const s_galaxy_sprite_path_count = LENGTHOF(s_galaxy_sprite_path);
 
@@ -1741,7 +1741,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_starfield_sprite_path[] =
         {
-            "resources/starfield00.png",
+            "fs://starfield00.png",
         };
         static Uint32 const s_starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
 
@@ -1782,10 +1782,10 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_starfield_sprite_path[] =
         {
-            "resources/star0.png",
-            "resources/star1.png",
-            "resources/star2.png",
-            "resources/star3.png",
+            "fs://star0.png",
+            "fs://star1.png",
+            "fs://star2.png",
+            "fs://star3.png",
         };
         static Uint32 const s_starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
 
@@ -1826,7 +1826,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_planetfield_sprite_path[] =
         {
-            "resources/planet_0.png",
+            "fs://planet_0.png",
         };
         static Uint32 const s_planetfield_sprite_path_count = LENGTHOF(s_planetfield_sprite_path);
 
@@ -1871,10 +1871,10 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_nebula_sprite_path[] =
         {
-            "resources/nebulas/eta_carinae.png",
-            "resources/nebulas/planetary_nebula_NGC6751.png",
-            "resources/nebulas/reflection_nebula.png",
-            "resources/nebulas/small_magellanic_cloud.png"
+            "fs://nebulas/eta_carinae.png",
+            "fs://nebulas/planetary_nebula_NGC6751.png",
+            "fs://nebulas/reflection_nebula.png",
+            "fs://nebulas/small_magellanic_cloud.png"
         };
         static Uint32 const s_nebula_sprite_path_count = LENGTHOF(s_nebula_sprite_path);
 

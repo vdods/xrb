@@ -15,8 +15,8 @@ using namespace Xrb;
 namespace Dis
 {
 
-#define RESOURCE_GLTEXTURE_INITIALIZATION(basename) m_##basename##_png = GlTexture::Load("resources/" #basename ".png");
-#define RESOURCE_ANIMATION_INITIALIZATION(basename) m_##basename##_anim = Animation::Sequence::Load("resources/" #basename ".anim");
+#define RESOURCE_GLTEXTURE_INITIALIZATION(basename) m_##basename##_png = GlTexture::Load("fs://" #basename ".png");
+#define RESOURCE_ANIMATION_INITIALIZATION(basename) m_##basename##_anim = Animation::Sequence::Load("fs://" #basename ".anim");
 
 ResourceCache::ResourceCache ()
 {

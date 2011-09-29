@@ -57,40 +57,40 @@ std::string const &Ship::ShipSpritePath (
     static std::string const s_ship_sprite_path[ET_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
     {
         {   // ET_SOLITARY
-            "resources/solitary.png",
-            "resources/solitary.png",
-            "resources/solitary.png",
-            "resources/solitary.png"
+            "fs://solitary.png",
+            "fs://solitary.png",
+            "fs://solitary.png",
+            "fs://solitary.png"
         },
         {   // ET_INTERLOPER
-            "resources/interloper_0.png",
-            "resources/interloper_1.png",
-            "resources/interloper_2.png",
-            "resources/interloper_3.png"
+            "fs://interloper_0.png",
+            "fs://interloper_1.png",
+            "fs://interloper_2.png",
+            "fs://interloper_3.png"
         },
         {   // ET_SHADE
-            "resources/shade_0.png",
-            "resources/shade_1.png",
-            "resources/shade_2.png",
-            "resources/shade_3.png"
+            "fs://shade_0.png",
+            "fs://shade_1.png",
+            "fs://shade_2.png",
+            "fs://shade_3.png"
         },
         {   // ET_REVULSION
-            "resources/revulsion_0.png",
-            "resources/revulsion_1.png",
-            "resources/revulsion_2.png",
-            "resources/revulsion_3.png"
+            "fs://revulsion_0.png",
+            "fs://revulsion_1.png",
+            "fs://revulsion_2.png",
+            "fs://revulsion_3.png"
         },
         {   // ET_DEVOURMENT
-            "resources/devourment_0.png",
-            "resources/devourment_1.png",
-            "resources/devourment_2.png",
-            "resources/devourment_3.png"
+            "fs://devourment_0.png",
+            "fs://devourment_1.png",
+            "fs://devourment_2.png",
+            "fs://devourment_3.png"
         },
         {   // ET_DEMI
-            "resources/demi_0.png",
-            "resources/demi_1.png",
-            "resources/demi_2.png",
-            "resources/demi_3.png"
+            "fs://demi_0.png",
+            "fs://demi_1.png",
+            "fs://demi_2.png",
+            "fs://demi_3.png"
         }
     };
 

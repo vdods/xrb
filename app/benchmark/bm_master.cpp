@@ -172,7 +172,7 @@ void Master::Run ()
 
             Layout *frame_layout = new Layout(HORIZONTAL, context, "frame layout");
             {
-                Label *reference_frame_label = new Label(GlTexture::Load("resources/solitary.png"), context, "reference frame label");
+                Label *reference_frame_label = new Label(GlTexture::Load("fs://solitary.png"), context, "reference frame label");
                 reference_frame_label->SetPictureKeepsAspectRatio(true);
                 frame_layout->AttachChild(reference_frame_label);
 

@@ -300,7 +300,7 @@ void Devourment::Die (
         Powerup *health_powerup =
             SpawnPowerup(
                 GetObjectLayer(),
-                "resources/health_powerup.anim",
+                "fs://health_powerup.anim",
                 time,
                 Translation() + 0.5f * VisibleRadius() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,

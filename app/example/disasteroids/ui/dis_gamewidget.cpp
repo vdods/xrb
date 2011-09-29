@@ -222,7 +222,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
 
                 Label *lives_remaining_icon_label =
                     new Label(
-                        GlTexture::Load("resources/solitary_small.png"),
+                        GlTexture::Load("fs://solitary_small.png"),
                         m_stats_and_inventory_layout,
                         context);
                 lives_remaining_icon_label->FixWidth(m_lives_remaining_label->Height());
@@ -252,7 +252,7 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
                 m_option_inventory_label->SetAlignment(Dim::X, RIGHT);
                 m_stats_and_inventory_layout->AttachChild(m_option_inventory_label);
 
-                Label *option_icon_label = new Label(GlTexture::Load("resources/radiobutton_blue.png"), Context());
+                Label *option_icon_label = new Label(GlTexture::Load("fs://radiobutton_blue.png"), Context());
                 option_icon_label->FixWidth(m_option_inventory_label->Height() * 7 / 5);
                 option_icon_label->FixHeight(m_option_inventory_label->Height() * 7 / 5);
                 m_stats_and_inventory_layout->AttachChild(option_icon_label);

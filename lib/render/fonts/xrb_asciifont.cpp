@@ -75,21 +75,17 @@ AsciiFont *AsciiFont::CreateFromCache (std::string const &font_face_path, Screen
 {
     AsciiFont *retval = NULL;
     Texture *texture = NULL;
+
+    std::string font_bitmap_path(FORMAT(font_face_path << '.' << pixel_height << ".png"));
+    // check for the appropriate font bitmap file
+    texture = Singleton::Pal().LoadImage(font_bitmap_path.c_str());
+    // if the file doesn't exist or can't be opened or loaded, get out of here
+    if (texture == NULL)
+        return retval;
+
+
     try {
-        std::string font_metadata_path(
-            Singleton::FileSystem().OsPath(
-                FORMAT(font_face_path << '.' << pixel_height << ".data"),
-                FileSystem::READ_ONLY));
-        std::string font_bitmap_path(
-            Singleton::FileSystem().OsPath(
-                FORMAT(font_face_path << '.' << pixel_height << ".png"),
-                FileSystem::READ_ONLY));
-        
-        // check for the appropriate font bitmap file
-        texture = Singleton::Pal().LoadImage(font_bitmap_path.c_str());
-        // if the file doesn't exist or can't be opened or loaded, get out of here
-        if (texture == NULL)
-            return retval;
+        std::string font_metadata_path(FORMAT(font_face_path << '.' << pixel_height << ".data"));
 
         // check for the appropriate font metadata file
         BinaryFileSerializer serializer(font_metadata_path, IOD_READ);

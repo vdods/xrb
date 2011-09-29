@@ -12,6 +12,7 @@
 
 #include <fstream>
 
+#include "xrb_filesystem.hpp"
 #include "xrb_math.hpp"
 #include "xrb_parse_datafile.hpp"
 #include "xrb_parse_datafile_value.hpp"
@@ -185,8 +186,16 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
 
 void Config::Write (string const &config_file_path) const
 {
+    std::string config_file_os_path;
+    try {
+        config_file_os_path = Singleton::FileSystem().OsPath(config_file_path, FileSystem::WRITABLE);
+    } catch (Exception const &e) {
+        std::cerr << "Config::Write(); " << e.what() << std::endl;
+        return;
+    }
+    
     std::ofstream stream;
-    stream.open(config_file_path.c_str());
+    stream.open(config_file_os_path.c_str());
     if (!stream.is_open())
     {
         std::cerr << "Config::Write(); could not open file \"" << config_file_path << "\" for writing" << std::endl;

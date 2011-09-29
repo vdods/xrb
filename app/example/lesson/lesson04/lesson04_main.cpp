@@ -316,7 +316,7 @@ Engine2::World *CreateAndPopulateWorld ()
     for (Uint32 i = 0; i < s_object_count; ++i)
     {
         // Create the sprite using the texture with given path
-        Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/interloper_2.png");
+        Engine2::Sprite *sprite = Engine2::Sprite::Create("fs://interloper_2.png");
         // Place the sprite randomly on the 1000x1000 ObjectLayer.  The
         // ObjectLayer is centered on the origin, so the valid range of
         // coordinates are [-500,500] for both X and Y.

@@ -25,7 +25,7 @@ std::string FileSystem::OsPath (std::string const &path, bool writable) const th
     if (fs_path.empty())
         throw FileSystemException(fs_path, "invalid argument -- fs_path is empty");
     
-    std::cerr << "FileSystem::OsPath(); looking for " << (writable ? "writable" : "readable") << " file \"" << fs_path << "\" in filesystem..." << std::endl;
+//     std::cerr << "FileSystem::OsPath(); looking for " << (writable ? "writable" : "readable") << " file \"" << fs_path << "\" in filesystem..." << std::endl;
     Uint32 relevant_directory_count = 0;
     for (PathEntryStack::const_reverse_iterator it = m_path_stack.rbegin(), it_end = m_path_stack.rend(); it != it_end; ++it)
     {
@@ -39,17 +39,19 @@ std::string FileSystem::OsPath (std::string const &path, bool writable) const th
 
         if (writable)
         {
-            std::cerr << "FileSystem::OsPath(); OS path \"" << file_os_path << "\" is being returned for writable-requested file \"" << fs_path << "\"" << std::endl;
+//             std::cerr << "FileSystem::OsPath(); OS path \"" << file_os_path << "\" is being returned for writable-requested file \"" << fs_path << "\"" << std::endl;
             return file_os_path;
         }
         
         if (Singleton::Pal().FileExists(file_os_path.c_str()))
         {
-            std::cerr << "FileSystem::OsPath(); file \"" << fs_path << "\" was found in directory \"" + path_entry.Path() + "\"" << std::endl;
+//             std::cerr << "FileSystem::OsPath(); file \"" << fs_path << "\" was found in directory \"" + path_entry.Path() + "\"" << std::endl;
             return file_os_path;
         }
         else
-            std::cerr << "FileSystem::OsPath(); file \"" << fs_path << "\" was not found in directory \"" << path_entry.Path() + "\"" << std::endl;
+        {
+//             std::cerr << "FileSystem::OsPath(); file \"" << fs_path << "\" was not found in directory \"" << path_entry.Path() + "\"" << std::endl;
+        }
     }
     if (relevant_directory_count == 0)
         throw FileSystemException(path, "file not found -- no " + std::string(writable ? "writable" : "") + " directories in filesystem search fs_path");

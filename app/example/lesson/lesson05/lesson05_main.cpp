@@ -270,7 +270,7 @@ public:
         AwesomeEntity *planet;
 
         // Create a large, heavy planet.
-        sprite = Engine2::Sprite::Create("resources/demi_3.png");
+        sprite = Engine2::Sprite::Create("fs://demi_3.png");
         planet = new AwesomeEntity();
         sprite->SetEntity(planet);
         planet->SetTranslation(FloatVector2::ms_zero);
@@ -282,7 +282,7 @@ public:
         static Uint32 const s_moon_count = 50;
         for (Uint32 i = 0; i < s_moon_count; ++i)
         {
-            sprite = Engine2::Sprite::Create("resources/shade_3.png");
+            sprite = Engine2::Sprite::Create("fs://shade_3.png");
             AwesomeEntity *moon = new AwesomeEntity();
             sprite->SetEntity(moon);
             sprite->SetZDepth(-0.1f);

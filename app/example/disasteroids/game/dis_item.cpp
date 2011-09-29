@@ -51,10 +51,10 @@ std::string const &Item::MineralSpritePath (Uint8 mineral_index)
 {
     static std::string const s_mineral_sprite_path[MINERAL_COUNT] =
     {
-        "resources/mineral_0.png",
-        "resources/mineral_1.png",
-        "resources/mineral_2.png",
-        "resources/mineral_3.png",
+        "fs://mineral_0.png",
+        "fs://mineral_1.png",
+        "fs://mineral_2.png",
+        "fs://mineral_3.png",
     };
 
     ASSERT1(mineral_index < MINERAL_COUNT);

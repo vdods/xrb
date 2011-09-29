@@ -87,7 +87,7 @@ Asteroid *SpawnAsteroid (
     Asteroid *asteroid = new Asteroid(mass, mineral_content, is_a_secondary_asteroid);
     SpawnDynamicSprite(
         object_layer,
-        "resources/asteroid_small.png",
+        "fs://asteroid_small.png",
         current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
@@ -127,7 +127,7 @@ Ballistic *SpawnSmartBallistic (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/plasma_ball_yellow.png",
+            "fs://plasma_ball_yellow.png",
             current_time,
             Z_DEPTH_BALLISTIC,
             true, // is transparent
@@ -170,7 +170,7 @@ Ballistic *SpawnDumbBallistic (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/energy_ball.anim",
+            "fs://energy_ball.anim",
             current_time,
             Z_DEPTH_BALLISTIC,
             false, // is transparent
@@ -213,7 +213,7 @@ Grenade *SpawnGrenade (
             health);
     SpawnDynamicSprite(
         object_layer,
-        "resources/grenade.png",
+        "fs://grenade.png",
         current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
@@ -261,7 +261,7 @@ Missile *SpawnMissile (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/missile.png",
+            "fs://missile.png",
             current_time,
             Z_DEPTH_SOLID,
             false, // is transparent
@@ -321,7 +321,7 @@ GuidedMissile *SpawnGuidedMissile (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/missile.png",
+            "fs://missile.png",
             current_time,
             Z_DEPTH_SOLID,
             false, // is transparent
@@ -523,7 +523,7 @@ EMPExplosion *SpawnEMPExplosion (
     EMPExplosion *emp_explosion = new EMPExplosion(disable_time_factor, initial_size, final_size, time_to_live, time_at_birth, owner);
     SpawnDynamicSprite(
         object_layer,
-        "resources/shockwave.png",
+        "fs://shockwave.png",
         current_time,
         Z_DEPTH_EMP_EXPLOSION,
         true, // is transparent
@@ -562,7 +562,7 @@ Fireball *SpawnFireball (
             owner);
     SpawnDynamicSprite(
         object_layer,
-        "resources/fireball.png",
+        "fs://fireball.png",
         current_time,
         Z_DEPTH_FIREBALL,
         true, // is transparent
@@ -582,7 +582,7 @@ LaserBeam *SpawnLaserBeam (Engine2::ObjectLayer *object_layer)
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/laser_beam.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("fs://laser_beam.png");
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
@@ -603,7 +603,7 @@ LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, F
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("resources/laser_impact.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("fs://laser_impact.anim", current_time);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
@@ -718,7 +718,7 @@ TractorBeam *SpawnTractorBeam (Engine2::ObjectLayer *object_layer)
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/tractor_beam.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("fs://tractor_beam.png");
     sprite->SetZDepth(Z_DEPTH_TRACTOR_BEAM);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
@@ -739,7 +739,7 @@ ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer, Float curre
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("resources/shield.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("fs://shield.anim", current_time);
     sprite->SetZDepth(Z_DEPTH_SHIELD_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
@@ -762,7 +762,7 @@ LightningEffect *SpawnLightningEffect (Engine2::ObjectLayer *object_layer, Float
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("resources/lightning.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("fs://lightning.anim", current_time);
     sprite->SetZDepth(Z_DEPTH_LIGHTNING_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
@@ -785,7 +785,7 @@ ReticleEffect *SpawnReticleEffect (Engine2::ObjectLayer *object_layer, Color con
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/reticle1.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("fs://reticle1.png");
     sprite->SetZDepth(Z_DEPTH_RETICLE_EFFECT);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
@@ -821,7 +821,7 @@ HealthTrigger *SpawnHealthTrigger (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/tractor_beam.png",
+            "fs://tractor_beam.png",
             current_time,
             0.01f, // z depth (arbitrary, since its invisible)
             true, // is transparent
@@ -1060,10 +1060,10 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
 {
     static std::string const s_grinder_asset_path[EnemyShip::ENEMY_LEVEL_COUNT] =
     {
-        "resources/grinder_0.anim",
-        "resources/grinder_1.anim",
-        "resources/grinder_2.anim",
-        "resources/grinder_3.anim"
+        "fs://grinder_0.anim",
+        "fs://grinder_1.anim",
+        "fs://grinder_2.anim",
+        "fs://grinder_3.anim"
     };
 
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);

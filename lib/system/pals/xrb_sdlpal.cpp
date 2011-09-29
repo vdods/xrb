@@ -611,13 +611,13 @@ bool SDLPal::DirectoryExists (char const *directory_id)
 Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 {
     ASSERT1(image_path != NULL);
-    std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); ... ";
+//     std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); ... ";
 
     std::string image_os_path;
     try {
         image_os_path = Xrb::Singleton::FileSystem().OsPath(image_path, Xrb::FileSystem::READ_ONLY);
     } catch (Xrb::Exception const &e) {
-        std::cerr << e.what() << std::endl;
+//         std::cerr << e.what() << std::endl;
         return NULL;
     }
     
@@ -631,7 +631,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 
     if ((fp = fopen(image_os_path.c_str(), "rb")) == NULL)
     {
-        std::cerr << "could not open file" << std::endl;
+//         std::cerr << "could not open file" << std::endl;
         return NULL;
     }
 
@@ -639,7 +639,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (png_ptr == NULL)
     {
         fclose(fp);
-        std::cerr << "error reading PNG file" << std::endl;
+//         std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -647,7 +647,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (info_ptr == NULL)
     {
         fclose(fp);
-        std::cerr << "error reading PNG file" << std::endl;
+//         std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -656,7 +656,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     {
         fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-        std::cerr << "error reading PNG file" << std::endl;
+//         std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -696,7 +696,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
     delete[] row_pointers;
 
-    std::cerr << "success" << std::endl;
+//     std::cerr << "success" << std::endl;
     
     // return the Texture we fought so hard to obtain.
     return texture;
@@ -705,13 +705,13 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &texture)
 {
     ASSERT1(image_path != NULL);
-    std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); ... ";
+//     std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); ... ";
 
     std::string image_os_path;
     try {
         image_os_path = Xrb::Singleton::FileSystem().OsPath(image_path, Xrb::FileSystem::READ_ONLY);
     } catch (Xrb::Exception const &e) {
-        std::cerr << e.what() << std::endl;
+//         std::cerr << e.what() << std::endl;
         return FAILURE;
     }
     
@@ -725,14 +725,14 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     fp = fopen(image_os_path.c_str(), "wb");
     if (fp == NULL)
     {
-        std::cerr << "could not open file" << std::endl;
+//         std::cerr << "could not open file" << std::endl;
         return FAILURE;
     }
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (png_ptr == NULL)
     {
-        std::cerr << "error in PNG creation" << std::endl;
+//         std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
         return FAILURE;
     }
@@ -740,7 +740,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == NULL)
     {
-        std::cerr << "error in PNG creation" << std::endl;
+//         std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
         png_destroy_write_struct(&png_ptr,  png_infopp_NULL);
         return FAILURE;
@@ -748,7 +748,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        std::cerr << "error in PNG creation" << std::endl;
+//         std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return FAILURE;
@@ -782,7 +782,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
 
-    std::cerr << "success" << std::endl;
+//     std::cerr << "success" << std::endl;
     
     return SUCCESS;
 }
@@ -1001,7 +1001,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
     try {
         font_os_path = Xrb::Singleton::FileSystem().OsPath(font_path, Xrb::FileSystem::READ_ONLY);
     } catch (Xrb::Exception const &e) {
-        std::cerr << e.what() << std::endl;
+//         std::cerr << e.what() << std::endl;
         return NULL;
     }
 

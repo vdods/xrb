@@ -178,17 +178,17 @@ Resource<GlTexture> InventoryButton::ButtonTexture (ItemType item_type)
     ASSERT1(item_type < IT_COUNT);
     static std::string const s_button_texture_path[IT_COUNT] =
     {
-        "resources/icon_tractor.png",           // IT_WEAPON_TRACTOR
-        "resources/icon_pea_shooter.png",       // IT_WEAPON_PEA_SHOOTER
-        "resources/icon_laser.png",             // IT_WEAPON_LASER
-        "resources/icon_flame_thrower.png",     // IT_WEAPON_FLAME_THROWER
-        "resources/icon_gauss_gun.png",         // IT_WEAPON_GAUSS_GUN
-        "resources/icon_grenade_launcher.png",  // IT_WEAPON_GRENADE_LAUNCHER
-        "resources/icon_missile_launcher.png",  // IT_WEAPON_MISSILE_LAUNCHER
-        "resources/icon_engine.png",            // IT_ENGINE
-        "resources/icon_armor.png",             // IT_ARMOR
-        "resources/icon_shield.png",            // IT_SHIELD
-        "resources/icon_power_generator.png",   // IT_POWER_GENERATOR
+        "fs://icon_tractor.png",           // IT_WEAPON_TRACTOR
+        "fs://icon_pea_shooter.png",       // IT_WEAPON_PEA_SHOOTER
+        "fs://icon_laser.png",             // IT_WEAPON_LASER
+        "fs://icon_flame_thrower.png",     // IT_WEAPON_FLAME_THROWER
+        "fs://icon_gauss_gun.png",         // IT_WEAPON_GAUSS_GUN
+        "fs://icon_grenade_launcher.png",  // IT_WEAPON_GRENADE_LAUNCHER
+        "fs://icon_missile_launcher.png",  // IT_WEAPON_MISSILE_LAUNCHER
+        "fs://icon_engine.png",            // IT_ENGINE
+        "fs://icon_armor.png",             // IT_ARMOR
+        "fs://icon_shield.png",            // IT_SHIELD
+        "fs://icon_power_generator.png",   // IT_POWER_GENERATOR
     };
     return GlTexture::Load(s_button_texture_path[item_type]);
 }

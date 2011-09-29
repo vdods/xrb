@@ -49,7 +49,7 @@ InventoryPanel::InventoryPanel (WidgetContext &context, std::string const &name)
     m_inventory_owner_ship = NULL;
     m_controls_panel = NULL;
 
-    m_game_tip_data = Parse::DataFile::Load("resources/game_tip.data");
+    m_game_tip_data = Parse::DataFile::Load("fs://game_tip.data");
     // TODO: maybe check if the load failed if so, put an error message in the tip data
 
     // a vertical layout to hold the sublayouts

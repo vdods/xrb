@@ -466,16 +466,9 @@ void Gl::DumpAtlases (std::string const &path_prefix) const
         Texture *dump = NULL;
         while ((dump = m_atlas[i]->Dump(mipmap_level)) != NULL)
         {
-            std::string dump_path;
-            try {
-                dump_path =
-                    Singleton::FileSystem().OsPath(
-                        path_prefix + FORMAT('.' << std::setw(2) << std::setfill('0') << i << '.' << std::setw(2) << std::setfill('0') << mipmap_level << ".png"),
-                        FileSystem::WRITABLE);
-            } catch (Exception const &e) {
-                std::cerr << "\terror: " << e.what() << std::endl;
-                break;
-            }
+            std::string dump_path(
+                FORMAT(path_prefix << '.' << std::setw(2) << std::setfill('0') << i << '.' <<
+                       std::setw(2) << std::setfill('0') << mipmap_level << ".png"));
             Pal::Status status = dump->Save(dump_path);
             if (status == Pal::SUCCESS)
                 std::cerr << "\tsuccessfully dumped ";
@@ -649,7 +642,7 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
                 // the atlas may not have had room, so check it
                 if (retval != NULL)
                 {
-                    std::cerr << "Gl atlas packing efficiency: " << 100 * UsedTextureByteCount() / AllocatedTextureByteCount() << '%' << std::endl;
+//                     std::cerr << "Gl atlas packing efficiency: " << 100 * UsedTextureByteCount() / AllocatedTextureByteCount() << '%' << std::endl;
                     return retval;
                 }
             }
