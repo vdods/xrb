@@ -96,7 +96,7 @@ int main (int argc, char **argv)
             There's nothing to worry about.  Trust me.</li>
         </ul>
     @code */
-    Singleton::Initialize(SDLPal::Create, "none");
+    Singleton::Initialize(SDLPal::Create);
 
     /* @endcode
     Initialize the platform abstraction layer (Pal).  Then set the window caption.

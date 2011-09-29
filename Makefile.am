@@ -242,6 +242,7 @@ lib_libxrb_la_SOURCES = \
     lib/system/xrb_event.cpp \
     lib/system/xrb_eventhandler.cpp \
     lib/system/xrb_eventqueue.cpp \
+    lib/system/xrb_filesystem.cpp \
     lib/system/xrb_framehandler.cpp \
     lib/system/xrb_resourcelibrary.cpp \
     lib/system/xrb_signalhandler.cpp \
@@ -371,6 +372,7 @@ include_HEADERS = \
     lib/system/xrb_event.hpp \
     lib/system/xrb_eventhandler.hpp \
     lib/system/xrb_eventqueue.hpp \
+    lib/system/xrb_filesystem.hpp \
     lib/system/xrb_framehandler.hpp \
     lib/system/xrb_pal.hpp \
     lib/system/xrb_resourcelibrary.hpp \

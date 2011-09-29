@@ -35,6 +35,8 @@ int main (int argc, char **argv)
     std::cerr << "\nmain();" << std::endl;
 
     {
+        // initialize the singletons (except for the Gl singleton, which is done by Screen)
+        Singleton::Initialize(SDLPal::Create);
         // read in the user's config file (video resolution, key binds, etc).
         g_config.Read(CONFIG_FILE_PATH);
 
@@ -51,7 +53,10 @@ int main (int argc, char **argv)
             return options.ParseSucceeded() ? 0 : 1;
         }
 
-        Singleton::Initialize(SDLPal::Create, options.KeyMapName().c_str());
+        // restart the KeyMap singleton based on the config's keymap name
+        Singleton::ReinitializeKeyMap(options.KeyMapName().c_str());
+//         // set the GlTextureAtlas size based on the config values
+//         Singleton::Pal().GlTextureAtlasSize(g_config.GlTextureAtlasSize());
 
         // register on-exit function, which will be called after main() has returned.
         atexit(CleanUp);

@@ -88,7 +88,7 @@ int main (int argc, char **argv)
     std::cerr << "main();" << std::endl;
 
     // Initialize the game engine singleton facilities.
-    Singleton::Initialize(SDLPal::Create, "none");
+    Singleton::Initialize(SDLPal::Create);
     // Initialize the platform abstraction layer (Pal).
     if (Singleton::Pal().Initialize() != Pal::SUCCESS)
         return 1;

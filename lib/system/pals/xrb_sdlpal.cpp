@@ -12,11 +12,15 @@
 
 #if XRB_PLATFORM == XRB_PLATFORM_SDL
 
+#include <dirent.h> // for opendir (this is a POSIX call, so is not windows-compatible)
+#include <fstream>
+
 #include "png.h"
 #include "ft2build.h"  // the freetype stuff has to be included after png.h,
 #include FT_FREETYPE_H // otherwise a very strange compile error occurs.
 #include "xrb_asciifont.hpp"
 #include "xrb_event.hpp"
+#include "xrb_filesystem.hpp"
 #include "xrb_gl.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_inputstate.hpp"
@@ -347,6 +351,14 @@ void SDLPal::Shutdown ()
     SDL_Quit();
 }
 
+Xrb::FileSystem *SDLPal::CreateFileSystem ()
+{
+    Xrb::FileSystem *retval = new Xrb::FileSystem();
+    retval->AddDirectory(".", Xrb::FileSystem::WRITABLE, "config file directory");
+    retval->AddDirectory("resources", Xrb::FileSystem::READ_ONLY, "default resources directory");
+    return retval;
+}
+
 Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen)
 {
     std::cerr << "SDLPal::InitializeVideo();" << std::endl;
@@ -575,12 +587,40 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
     return retval;
 }
 
+bool SDLPal::FileExists (char const *file_id)
+{
+    ASSERT1(file_id != NULL);
+    std::ifstream stream;
+    stream.open(file_id);
+    return stream.is_open();
+}
+
+bool SDLPal::DirectoryExists (char const *directory_id)
+{
+    ASSERT1(directory_id != NULL);
+    DIR *dir = opendir(directory_id);
+    if (dir == NULL)
+        return false;
+    else
+    {
+        closedir(dir);
+        return true;
+    }
+}
+
 Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 {
-//     std::cerr << "SDLPal::LoadImage(\"" << image_path << "\");" << std::endl;
-
     ASSERT1(image_path != NULL);
+    std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); ... ";
 
+    std::string image_os_path;
+    try {
+        image_os_path = Xrb::Singleton::FileSystem().OsPath(image_path, Xrb::FileSystem::READ_ONLY);
+    } catch (Xrb::Exception const &e) {
+        std::cerr << e.what() << std::endl;
+        return NULL;
+    }
+    
     // the code in this function is based on the code from example.c
     // in the libpng documentation.
 
@@ -589,9 +629,9 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     unsigned int sig_read = 0;
     FILE *fp;
 
-    if ((fp = fopen(image_path, "rb")) == NULL)
+    if ((fp = fopen(image_os_path.c_str(), "rb")) == NULL)
     {
-        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error opening file" << std::endl;
+        std::cerr << "could not open file" << std::endl;
         return NULL;
     }
 
@@ -599,7 +639,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (png_ptr == NULL)
     {
         fclose(fp);
-        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error reading PNG file" << std::endl;
+        std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -607,7 +647,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (info_ptr == NULL)
     {
         fclose(fp);
-        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error reading PNG file" << std::endl;
+        std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -616,7 +656,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     {
         fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-        std::cerr << "SDLPal::LoadImage(\"" << image_path << "\"); error reading PNG file" << std::endl;
+        std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
 
@@ -655,16 +695,26 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     // now we're done with the png stuff
     png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
     delete[] row_pointers;
+
+    std::cerr << "success" << std::endl;
+    
     // return the Texture we fought so hard to obtain.
     return texture;
 }
 
 Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &texture)
 {
-//     std::cerr << "SDLPal::SaveImage(\"" << image_path << "\");" << std::endl;
-
     ASSERT1(image_path != NULL);
+    std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); ... ";
 
+    std::string image_os_path;
+    try {
+        image_os_path = Xrb::Singleton::FileSystem().OsPath(image_path, Xrb::FileSystem::READ_ONLY);
+    } catch (Xrb::Exception const &e) {
+        std::cerr << e.what() << std::endl;
+        return FAILURE;
+    }
+    
     // the code in this function is based on the code from example.c
     // in the libpng documentation.
 
@@ -672,17 +722,17 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     png_structp png_ptr;
     png_infop info_ptr;
 
-    fp = fopen(image_path, "wb");
+    fp = fopen(image_os_path.c_str(), "wb");
     if (fp == NULL)
     {
-        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error opening file" << std::endl;
+        std::cerr << "could not open file" << std::endl;
         return FAILURE;
     }
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (png_ptr == NULL)
     {
-        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error in PNG creation" << std::endl;
+        std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
         return FAILURE;
     }
@@ -690,7 +740,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == NULL)
     {
-        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error in PNG creation" << std::endl;
+        std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
         png_destroy_write_struct(&png_ptr,  png_infopp_NULL);
         return FAILURE;
@@ -698,7 +748,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        std::cerr << "SDLPal::SaveImage(\"" << image_path << "\"); error in PNG creation" << std::endl;
+        std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return FAILURE;
@@ -731,17 +781,21 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     png_write_end(png_ptr, info_ptr);
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
+
+    std::cerr << "success" << std::endl;
+    
     return SUCCESS;
 }
 
 // font-loading helper functions
 namespace {
 
-// container to make dealing with FT_FaceRec_ easier
+// container to make dealing with FT_FaceRec_ easier.
 class FontFace
 {
 public:
 
+    // FS path
     FontFace (std::string const &path, FT_FaceRec_ *face)
         :
         m_path(path),
@@ -805,7 +859,7 @@ private:
 
 Xrb::Uint32 UsedTextureArea (
     Xrb::ScreenCoordVector2 const &texture_size,
-    Xrb::AsciiFont::GlyphSpecification *const *const sorted_glyph_specification)
+    Xrb::AsciiFont::GlyphSpecification *const *sorted_glyph_specification)
 {
     ASSERT1(Xrb::Math::IsAPowerOf2(texture_size[Xrb::Dim::X]));
     ASSERT1(Xrb::Math::IsAPowerOf2(texture_size[Xrb::Dim::Y]));
@@ -861,8 +915,7 @@ Xrb::Uint32 UsedTextureArea (
         return 0;
 }
 
-Xrb::ScreenCoordVector2 FindSmallestFittingTextureSize (
-    Xrb::AsciiFont::GlyphSpecification *const *const sorted_glyph_specification)
+Xrb::ScreenCoordVector2 FindSmallestFittingTextureSize (Xrb::AsciiFont::GlyphSpecification *const *sorted_glyph_specification)
 {
     GLint max_texture_size;
     // TODO: replace with an accessor to the current video options
@@ -935,15 +988,25 @@ Xrb::Texture *GenerateTexture (
 Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_height)
 {
     Xrb::AsciiFont *retval = NULL;
-
+/*
     // first check if this font and size are cached on disk
     retval = Xrb::AsciiFont::CreateFromCache(font_path, pixel_height);
     if (retval != NULL)
         return retval;
 
     // if the font wasn't cached, then we have to create it using the freetype lib.
+*/
 
-    FontFace *font_face = FontFace::Create(font_path, m_ft_library);
+    std::string font_os_path;
+    try {
+        font_os_path = Xrb::Singleton::FileSystem().OsPath(font_path, Xrb::FileSystem::READ_ONLY);
+    } catch (Xrb::Exception const &e) {
+        std::cerr << e.what() << std::endl;
+        return NULL;
+    }
+
+    // load the font using the freetype lib.
+    FontFace *font_face = FontFace::Create(font_os_path, m_ft_library);
     if (font_face == NULL)
         return retval;
 
@@ -1043,8 +1106,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
         Xrb::AsciiFont::GlyphSpecification::SortByWidthFirst);
 
     // find the smallest texture size that will fit all the glyphs
-    Xrb::ScreenCoordVector2 smallest_fitting_texture_size =
-        FindSmallestFittingTextureSize(sorted_glyph_specification);
+    Xrb::ScreenCoordVector2 smallest_fitting_texture_size = FindSmallestFittingTextureSize(sorted_glyph_specification);
     ASSERT1(smallest_fitting_texture_size != Xrb::ScreenCoordVector2::ms_zero);
 
     // generate the font texture using the calculated size
@@ -1054,7 +1116,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
 
     // create the actual Font instance
     retval = Xrb::AsciiFont::Create(
-        font_path,
+        font_os_path,
         pixel_height,
         has_kerning,
         baseline_height,

@@ -16,8 +16,7 @@
 #include <exception>
 #include <string>
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Exception : public std::exception
 {
@@ -28,11 +27,39 @@ public:
 
     virtual const char *what () const throw() { return m_description.c_str(); }
 
+    std::string const &Description () const throw() { return m_description; }
+
 protected:
 
     std::string m_description;
 }; // end of class Exception
 
-} // end of namespace Xrb
+class FileException : public Exception
+{
+public:
+
+    // path gives the path of the current operation.
+    FileException (std::string const &path, std::string const &description) throw()
+        :
+        Exception(description + " (path = \"" + path + "\")")
+    { }
+    virtual ~FileException () throw() { }
+
+    std::string const &Path () const throw() { return m_path; }
+
+protected:
+
+    std::string m_path;
+}; // end of class FileException
+
+class FileSystemException : public FileException
+{
+public:
+
+    FileSystemException (std::string const &path, std::string const &description) throw() : FileException(path, description) { }
+    virtual ~FileSystemException () throw() { }
+}; // end of class FileSystemException
+
+}; // end of namespace Xrb
 
 #endif // !defined(_XRB_EXCEPTION_HPP_)

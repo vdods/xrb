@@ -73,6 +73,7 @@ private:
 #include <stdlib.h>
 
 #include "xrb_emptystring.hpp"
+#include "xrb_filesystem.hpp"
 #include "xrb_parse_datafile_value.hpp"
 #include "xrb_parse_util.hpp"
 
@@ -86,12 +87,19 @@ bool Scanner::Open (std::string const &input_path)
     ASSERT1(!m_filoc.IsValid());
     ASSERT1(m_string_literal == NULL);
 
-    m_input.open(input_path.c_str());
+    std::string input_os_path;
+    try {
+        input_os_path = Singleton::FileSystem().OsPath(input_path, FileSystem::READ_ONLY);
+    } catch (Exception const &e) {
+        return false; // TODO: better error handling
+    }
+
+    m_input.open(input_os_path.c_str());
     m_input.unsetf(std::ios_base::skipws);
     if (m_input.is_open())
     {
         IstreamIterator(std::istream_iterator<char>(m_input));
-        m_filoc.SetFilename(input_path);
+        m_filoc.SetFilename(input_os_path);
         m_filoc.SetLineNumber(1);
     }
     else
@@ -281,7 +289,7 @@ void Scanner::IncrementLineNumber (Uint32 by_value)
     %target.cpp {
         // check if it matches any keywords
         std::string lowercase_text(accepted_string);
-        Util::MakeLowercase(&lowercase_text);
+        Util::MakeLowercase(lowercase_text);
         if (lowercase_text == "true")
             return Parser::Token(Parser::Terminal::BOOLEAN, new Boolean(true));
         else if (lowercase_text == "false")

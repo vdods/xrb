@@ -520,7 +520,7 @@ int main (int argc, char **argv)
     std::cerr << "main();" << std::endl;
 
     // Initialize engine singletons.
-    Singleton::Initialize(SDLPal::Create, "none");
+    Singleton::Initialize(SDLPal::Create);
     // Initialize the Pal.
     if (Singleton::Pal().Initialize() != Pal::SUCCESS)
         return 1;

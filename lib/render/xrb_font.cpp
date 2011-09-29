@@ -10,6 +10,8 @@
 
 #include "xrb_font.hpp"
 
+#include "xrb_asciifont.hpp"
+#include "xrb_filesystem.hpp"
 #include "xrb_math.hpp"
 #include "xrb_pal.hpp"
 #include "xrb_rendercontext.hpp"
@@ -75,7 +77,25 @@ Font *Font::Create (ResourceLoadParameters const &p)
         return NULL;
     }
 
-    return Singleton::Pal().LoadFont(load_parameters.Path().c_str(), load_parameters.PixelHeight());
+    // attempt to load the font from cached data.
+    // NOTE: technically Font should not know about AsciiFont, but this will do until it becomes a problem
+    {
+        AsciiFont *cached_font = NULL;
+        // first check if this font and size are cached on disk
+        cached_font = AsciiFont::CreateFromCache(load_parameters.Path(), load_parameters.PixelHeight());
+        if (cached_font != NULL)
+            return cached_font;
+    }
+
+    // filesystem search path lookup
+    std::string os_path;
+    try {
+        os_path = Singleton::FileSystem().OsPath(load_parameters.Path(), FileSystem::READ_ONLY);
+        return Singleton::Pal().LoadFont(os_path.c_str(), load_parameters.PixelHeight());
+    } catch (FileSystemException const &e) {
+        std::cerr << "Font::Create(); error: " << e.what() << std::endl;
+        return NULL;
+    }
 }
 
 ScreenCoordRect Font::StringRect (char const *string) const

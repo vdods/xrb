@@ -18,8 +18,7 @@
 #include "xrb_font.hpp"
 #include "xrb_screencoord.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class GlTexture;
 class RenderContext;
@@ -35,12 +34,8 @@ class AsciiFont : public Font
 {
 public:
 
-    /** @brief Destructor.  Deletes the gl texture.
-      */
-    virtual ~AsciiFont ()
-    {
-        Delete(m_gltexture);
-    }
+    /// Deletes the gl texture.
+    virtual ~AsciiFont ();
 
     // ///////////////////////////////////////////////////////////////////////
     // font metrics and font bitmap rendering stuff
@@ -91,9 +86,7 @@ public:
       * @param font_face_path The path of the font to load.
       * @param pixel_height The maximum height, in pixels, of the glyphs to render.
       */
-    static AsciiFont *CreateFromCache (
-        std::string const &font_face_path,
-        ScreenCoord pixel_height);
+    static AsciiFont *CreateFromCache (std::string const &font_face_path, ScreenCoord pixel_height);
 
     /** This is the means to construct a AsciiFont object using the font data
       * provided.  Using this class by dynamically allocated instances is

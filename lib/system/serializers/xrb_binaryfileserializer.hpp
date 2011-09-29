@@ -24,10 +24,10 @@ namespace Xrb {
 /// @details Construction of a BinaryFileSerializer instance is what opens a file,
 /// destruction is what closes it.  Exceptions are thrown to indicate error (see @ref Serializer ).
 ///
-/// Endianness is handled in the following way.  When opening a file to write,
-/// the first byte is automatically written to indicate the endianness of the
-/// ensuing data.  0xFF and 0x00 indicate little and big endian (the values
-/// written by Write<bool>(true) and Write<bool>(false) respectively).
+/// Endianness is handled in the following way.  When opening a file to write, the
+/// first byte is automatically written to indicate the endianness of the ensuing 
+/// data.  0xFF and 0x00 indicate little and big endian (the values written by 
+/// @code Write<bool>(true) @endcode and @code Write<bool>(false) @endcode respectively).
 ///
 /// All writes are done in the endianness of the machine doing the writing.
 /// The reads are what do endian-switching when necessary.  This is easier
@@ -38,6 +38,7 @@ class BinaryFileSerializer : public Serializer
 {
 public:
 
+    /// Attempts to open the given file (as an OS path) using the given IODirection.
     BinaryFileSerializer (std::string const &path, IODirection io_direction) throw(Exception);
     virtual ~BinaryFileSerializer () throw();
 

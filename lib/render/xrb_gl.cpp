@@ -13,6 +13,7 @@
 #include <iomanip>
 
 #include "xrb_color.hpp"
+#include "xrb_filesystem.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_gltextureatlas.hpp"
 #include "xrb_math.hpp"
@@ -465,16 +466,21 @@ void Gl::DumpAtlases (std::string const &path_prefix) const
         Texture *dump = NULL;
         while ((dump = m_atlas[i]->Dump(mipmap_level)) != NULL)
         {
-            std::string dump_path(
-                path_prefix +
-                FORMAT('.' <<
-                       std::setw(2) << std::setfill('0') << i << '.' <<
-                       std::setw(2) << std::setfill('0') << mipmap_level << ".png"));
+            std::string dump_path;
+            try {
+                dump_path =
+                    Singleton::FileSystem().OsPath(
+                        path_prefix + FORMAT('.' << std::setw(2) << std::setfill('0') << i << '.' << std::setw(2) << std::setfill('0') << mipmap_level << ".png"),
+                        FileSystem::WRITABLE);
+            } catch (Exception const &e) {
+                std::cerr << "\terror: " << e.what() << std::endl;
+                break;
+            }
             Pal::Status status = dump->Save(dump_path);
             if (status == Pal::SUCCESS)
-                std::cerr << "    successfully dumped ";
+                std::cerr << "\tsuccessfully dumped ";
             else
-                std::cerr << "    FAILURE while dumping ";
+                std::cerr << "\tFAILURE while dumping ";
             std::cerr << '"' << dump_path << "\" (atlas " << i << ", mipmap level " << mipmap_level << ')' << std::endl;
             delete dump;
             ++mipmap_level;

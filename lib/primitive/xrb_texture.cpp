@@ -12,6 +12,7 @@
 
 #include <string.h>
 
+#include "xrb_filesystem.hpp"
 #include "xrb_math.hpp"
 #include "xrb_pal.hpp"
 
@@ -25,7 +26,13 @@ Texture::~Texture ()
 
 Texture *Texture::Create (std::string const &path)
 {
-    return Singleton::Pal().LoadImage(path.c_str());
+    std::string os_path;
+    try {
+        os_path = Singleton::FileSystem().OsPath(path, FileSystem::READ_ONLY);
+        return Singleton::Pal().LoadImage(os_path.c_str());
+    } catch (Exception const &e) {
+        return NULL;
+    }
 }
 
 Texture *Texture::Create (ScreenCoordVector2 const &size, InitialState initial_state)

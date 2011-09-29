@@ -35,6 +35,8 @@ public:
     virtual Status Initialize ();
     virtual void Shutdown ();
 
+    virtual Xrb::FileSystem *CreateFileSystem ();
+    
     virtual Status InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen);
     virtual void ShutdownVideo ();
 
@@ -51,6 +53,9 @@ public:
 
     virtual Xrb::Event *PollEvent (Xrb::Screen const *screen, Xrb::Float time);
 
+    virtual bool FileExists (char const *file_id);
+    virtual bool DirectoryExists (char const *directory_id);
+    
     virtual Xrb::Texture *LoadImage (char const *image_path);
     virtual Status SaveImage (char const *image_path, Xrb::Texture const &texture);
 

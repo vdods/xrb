@@ -11,6 +11,7 @@
 #include "xrb_binaryfileserializer.hpp"
 
 #include "xrb_endian.hpp"
+#include "xrb_filesystem.hpp"
 
 namespace Xrb {
 
@@ -33,7 +34,8 @@ BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection
         if (m_is_writable)
             mode |= std::ios_base::out;
         // TODO: add option to truncate file contents (std::ios_base::trunc)
-        m_stream.open(path.c_str(), mode);
+        std::string os_path(Singleton::FileSystem().OsPath(path, m_is_writable));
+        m_stream.open(os_path.c_str(), mode);
     } catch (std::ios_base::failure const &f) {
         delete &m_stream; // throwing during construction causes this object to go out of scope, so m_stream is also.
         throw Exception(FORMAT("error while opening file for " <<

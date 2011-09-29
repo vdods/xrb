@@ -15,10 +15,10 @@
 
 #include "xrb_screencoord.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Event;
+class FileSystem;
 class Font;
 class Screen;
 class Texture;
@@ -38,6 +38,10 @@ public:
     // for post-video-mode shutdown.
     virtual void Shutdown () = 0;
 
+    // should return an instance of FileSystem which has at least one directory
+    // in its search path (i.e. FileSystem::IsEmpty() returns false).
+    virtual FileSystem *CreateFileSystem () = 0;
+    
     virtual Status InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_depth, bool fullscreen) = 0;
     virtual void ShutdownVideo () = 0;
 
@@ -64,14 +68,21 @@ public:
     // appropriate Xrb::Event (it will be deleted by XRB).
     virtual Event *PollEvent (Screen const *screen, Float time) = 0;
 
+    // returns true iff the specified file exists (OS path).
+    virtual bool FileExists (char const *file_id) = 0;
+    // returns true iff the specified directory exists (OS path).
+    virtual bool DirectoryExists (char const *directory_id) = 0;
+    
     // should return NULL if the load failed.  the pixel data should be loaded
     // in right-handed coordinates (i.e. y=0 is at the bottom and goes up the screen)
+    // image_path is an OS path.
     virtual Texture *LoadImage (char const *image_path) = 0;
     // return value should indicate status.  the pixel data should be loaded
-    // in right-handed coordinates (i.e. y=0 is at the bottom and goes up the screen)
+    // in right-handed coordinates (i.e. y=0 is at the bottom and goes up the screen).
+    // image_path is an OS path.
     virtual Status SaveImage (char const *image_path, Texture const &texture) = 0;
 
-    // should return NULL if the load failed
+    // should return NULL if the load failed.  font_path is an OS path.
     virtual Font *LoadFont (char const *font_path, ScreenCoord pixel_height) = 0;
 
     // returns the size for each new GlTextureAtlas.  if either of the dimensions

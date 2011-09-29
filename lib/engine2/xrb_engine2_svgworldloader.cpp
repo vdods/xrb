@@ -20,6 +20,7 @@
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
+#include "xrb_filesystem.hpp"
 #include "xrb_pal.hpp"
 #include "xrb_util.hpp"
 
@@ -48,12 +49,13 @@ public:
     ObjectLayer *m_object_layer;
     Uint32 m_stage_count;
 
-    LoadSvgIntoWorldContext (std::string const &svg_path,
-                             World &world,
-                             Float current_time,
-                             Uint32 gltexture_flags,
-                             Uint32 stage,
-                             std::string const &additional_stageable_attribute_name_prefix)
+    LoadSvgIntoWorldContext (
+        std::string const &svg_path,
+        World &world,
+        Float current_time,
+        Uint32 gltexture_flags,
+        Uint32 stage,
+        std::string const &additional_stageable_attribute_name_prefix)
         :
         m_svg_path(svg_path),
         m_world(world),
@@ -70,10 +72,11 @@ public:
     { }
 }; // end of struct LoadSvgIntoWorldContext
 
-void StageProcessAttributes (Element &element,
-                             Uint32 stage,
-                             Uint32 stage_count,
-                             std::string const &additional_stageable_attribute_name_prefix)
+void StageProcessAttributes (
+    Element &element,
+    Uint32 stage,
+    Uint32 stage_count,
+    std::string const &additional_stageable_attribute_name_prefix)
 {
     // if stage processing is disabled (stage == 0), do nothing
     if (stage == 0)
@@ -81,7 +84,7 @@ void StageProcessAttributes (Element &element,
 
     // if stage processing is enabled, check that stage is a valid number
     if (stage > stage_count)
-        THROW_STRING("stage value exceeds stage_count value");
+        throw Exception("stage value exceeds stage_count value");
 
     std::set<std::string> stageable_attribute_name_prefixes;
     stageable_attribute_name_prefixes.insert("xrb_");
@@ -124,7 +127,7 @@ void StageProcessAttributes (Element &element,
                     ++actual_stage_count;
 
             if (actual_stage_count != stage_count)
-                THROW_STRING("element at " << element.m_filoc << ", attribute name '" << attribute_name << "': number of backslash-delimited values differs from value of xrb_stage_count");
+                throw Exception(FORMAT("element at " << element.m_filoc << ", attribute name '" << attribute_name << "': number of backslash-delimited values differs from value of xrb_stage_count"));
 
             Uint32 s = stage;
             while (s-- > 0)
@@ -137,7 +140,7 @@ void StageProcessAttributes (Element &element,
     }
 }
 
-void StageProcessAttributes (LoadSvgIntoWorldContext &context, Element &element) throw(std::string)
+void StageProcessAttributes (LoadSvgIntoWorldContext &context, Element &element) throw(Exception)
 {
     StageProcessAttributes(element, context.m_stage, context.m_stage_count, context.m_additional_stageable_attribute_name_prefix);
 }
@@ -223,16 +226,17 @@ std::string const &GetRequiredAttributeOrThrow (
     if (!filoc_string.empty())
         filoc_string = " (at " + filoc_string + ")";
     if (!element.HasAttribute(attribute_name))
-        THROW_STRING("<" << element.m_name << ">" << filoc_string << " is missing attribute '" << attribute_name << "'" << (!explanation.empty() ? " (" + explanation + ")" : ""));
+        throw Exception(FORMAT("<" << element.m_name << ">" << filoc_string << " is missing attribute '" << attribute_name << "'" << (!explanation.empty() ? " (" + explanation + ")" : "")));
     return element.AttributeValue(attribute_name);
 }
 
-void ProcessImage (LoadSvgIntoWorldContext &context,
-                   FloatMatrix2 const &change_of_basis,
-                   FloatMatrix2 const &bounding_box_transform,
-                   Float bounding_box_half_side_length,
-                   Uint32 image_index,
-                   Element &image)
+void ProcessImage (
+    LoadSvgIntoWorldContext &context,
+    FloatMatrix2 const &change_of_basis,
+    FloatMatrix2 const &bounding_box_transform,
+    Float bounding_box_half_side_length,
+    Uint32 image_index,
+    Element &image)
 {
     ASSERT1(context.m_document != NULL);
     ASSERT1(context.m_svg != NULL);
@@ -268,7 +272,7 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
 
         // allow a small variance in the size of the image, but it should be square
         if (Abs(width - height) > 0.01f)
-            THROW_STRING("'width' and 'height' attributes for <image id='" << image_id << "'> are not equal but must be");
+            throw Exception(FORMAT("'width' and 'height' attributes for <image id='" << image_id << "'> are not equal but must be"));
     //             // take the average of them just for good measure
     //             Float square_size = 0.5f * (width + height);
 
@@ -312,10 +316,10 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
             FloatTransform2 dummy(true); // post-translate, although FitMatrix2 sets this anyway
             Float angle_variance = dummy.FitMatrix2(object_transform);
             if (angle_variance > 0.01f)
-                THROW_STRING("skew transformation detected (angle variance = " << angle_variance << "); no skew transformation allowed, because then the sprite angle is undefined");
+                throw Exception(FORMAT("skew transformation detected (angle variance = " << angle_variance << "); no skew transformation allowed, because then the sprite angle is undefined"));
         }
         else
-            THROW_STRING("malformed 'transform' attribute in <image id='" << image_id << "'>; must be of form 'translate(x,y)' or 'matrix(a,b,c,d,x,y)'");
+            throw Exception(FORMAT("malformed 'transform' attribute in <image id='" << image_id << "'>; must be of form 'translate(x,y)' or 'matrix(a,b,c,d,x,y)'"));
 
         // determine the total transformation
         FloatTransform2 transform(FloatTransform2::ms_identity);
@@ -331,7 +335,7 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
             Float angle_variance = transform.FitMatrix2(m);
             if (angle_variance > 0.01f)
             {
-                THROW_STRING("skew transformation detected (angle variance = " << angle_variance << "); no skew transformation allowed, because then the sprite angle is undefined");
+                throw Exception(FORMAT("skew transformation detected (angle variance = " << angle_variance << "); no skew transformation allowed, because then the sprite angle is undefined"));
             }
         }
 
@@ -342,7 +346,7 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
             transform.Translation()[Dim::Y] < -bounding_box_half_side_length ||
             transform.Translation()[Dim::Y] >  bounding_box_half_side_length)
         {
-            THROW_STRING("<image> center lies outside the bounding box for this layer");
+            throw Exception("<image> center lies outside the bounding box for this layer");
         }
 
         // create the Object
@@ -357,7 +361,7 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
         if (object == NULL)
             object = Sprite::Create(image_path, context.m_gltexture_flags);
         if (object == NULL)
-            THROW_STRING("failed to load image \"" << image_path << "\"");
+            throw Exception(FORMAT("failed to load image \"" << image_path << "\""));
         ASSERT1(object->GetEntity() == NULL && "no Entity allowed at this point");
 
         // set the transform
@@ -444,15 +448,15 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
         Element const *bounding_box = NULL;
         context.m_g->FirstElement(bounding_box, "rect", "id", true, bounding_box_id);
         if (bounding_box == NULL)
-            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; must specify the id of a <rect> element in this layer");
+            throw Exception(FORMAT("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; must specify the id of a <rect> element in this layer"));
         if (bounding_box->HasAttribute("transform"))
-            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; cannot have a 'transform' attribute");
+            throw Exception(FORMAT("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; cannot have a 'transform' attribute"));
         Float bounding_box_width = Util::TextToFloat(GetRequiredAttributeOrThrow(*bounding_box, "width").c_str());
         Float bounding_box_height = Util::TextToFloat(GetRequiredAttributeOrThrow(*bounding_box, "height").c_str());
 
         // ensure bounding box is square
         if (Abs(bounding_box_width - bounding_box_height) > 0.01f)
-            THROW_STRING("'width' and 'height' attributes for bounding box <rect id='" << bounding_box_id << "'> are not equal but must be");
+            throw Exception(FORMAT("'width' and 'height' attributes for bounding box <rect id='" << bounding_box_id << "'> are not equal but must be"));
         // take the average of them just for good measure
         Float bounding_box_side_length = 0.5f * (bounding_box_width + bounding_box_height);
         Float bounding_box_half_side_length = 0.5f * bounding_box_side_length;
@@ -524,14 +528,14 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
     }
 }
 
-void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
+void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(Exception)
 {
     DomNode *root = NULL;
 
     Parser parser;
-    bool open_file_success = parser.OpenFile(context.m_svg_path);
+    bool open_file_success = parser.OpenFile(Singleton::FileSystem().OsPath(context.m_svg_path, FileSystem::READ_ONLY));
     if (!open_file_success)
-        THROW_STRING("failure opening file");
+        throw Exception("failure opening file");
 
     parser.WarningAndErrorLogStream(&std::cerr);
     Uint32 start_time = Singleton::Pal().CurrentTime();
@@ -539,7 +543,7 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
     Uint32 end_time = Singleton::Pal().CurrentTime();
     std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); parse time = " << end_time - start_time << " ms" << std::endl;
     if (parser_return_code != Parser::PRC_SUCCESS)
-        THROW_STRING("general parse error in file");
+        throw Exception("general parse error in file");
 
     start_time = Singleton::Pal().CurrentTime();
     ASSERT1(root != NULL);
@@ -550,23 +554,23 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
     Element *svg = NULL;
     context.m_document->FirstElement(svg, "svg");
     if (svg == NULL) // if no <svg> element, error.
-        THROW_STRING("no <svg> tag -- probably not an svg document");
+        throw Exception("no <svg> tag -- probably not an svg document");
     context.m_svg = svg;
 
     // validation of stage processing, if enabled
     if (context.m_stage > 0)
     {
         if (!context.m_svg->HasAttribute("xrb_stage_count"))
-            THROW_STRING("stage processing is enabled, but the 'xrb_stage_count' attribute is missing from the <svg> element");
+            throw Exception("stage processing is enabled, but the 'xrb_stage_count' attribute is missing from the <svg> element");
 
         std::string const &stage_count_string = context.m_svg->AttributeValue("xrb_stage_count");
         if (!stage_count_string.empty() && stage_count_string[0] == '\\')
-            THROW_STRING("the 'xrb_stage_count' attribute must be numeric; in particular, it may not begin with a backslash");
+            throw Exception("the 'xrb_stage_count' attribute must be numeric; in particular, it may not begin with a backslash");
 
         context.m_stage_count = Util::TextToUint<Uint32>(context.m_svg->AttributeValue("xrb_stage_count").c_str());
 
         if (context.m_stage > context.m_stage_count)
-            THROW_STRING("requested stage exceeds value of 'xrb_stage_count' attribute");
+            throw Exception("requested stage exceeds value of 'xrb_stage_count' attribute");
     }
 
     // exceptions thrown in this block produce non-critical errors, hence the try/catch
@@ -597,21 +601,21 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
     Delete(root);
 }
 
-Uint32 ParseSvgStageCount (std::string const &svg_path) throw(std::string)
+Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception)
 {
     Parser parser;
 //     parser.DebugSpew(true);
     bool open_file_success = parser.OpenFile(svg_path);
     if (!open_file_success)
-        THROW_STRING("failure opening file");
+        throw Exception("failure opening file");
 
     parser.WarningAndErrorLogStream(&std::cerr);
     Element *root = parser.ParseOnlyRootElement();
     if (root == NULL)
-        THROW_STRING("general parse error in file");
+        throw Exception("general parse error in file");
 
     if (root->m_name != "svg")
-        THROW_STRING("no <svg tag -- probably not an svg document");
+        throw Exception("no <svg tag -- probably not an svg document");
 
     Uint32 stage_count = 0;
     if (root->HasAttribute("xrb_stage_count"))
@@ -620,12 +624,13 @@ Uint32 ParseSvgStageCount (std::string const &svg_path) throw(std::string)
     return stage_count;
 }
 
-void LoadSvgIntoWorld (std::string const &svg_path,
-                       World &world,
-                       Float current_time,
-                       Uint32 gltexture_flags,
-                       Uint32 stage,
-                       std::string const &additional_stageable_attribute_name_prefix) throw(std::string)
+void LoadSvgIntoWorld (
+    std::string const &svg_path,
+    World &world,
+    Float current_time,
+    Uint32 gltexture_flags,
+    Uint32 stage,
+    std::string const &additional_stageable_attribute_name_prefix) throw(Exception)
 {
     LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags, stage, additional_stageable_attribute_name_prefix);
     LoadSvgIntoWorld(context);

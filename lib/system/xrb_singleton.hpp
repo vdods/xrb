@@ -19,6 +19,7 @@
 
 namespace Xrb {
 
+class FileSystem;
 class Gl;
 class InputState;
 class KeyMap;
@@ -27,17 +28,19 @@ class ResourceLibrary;
 
 typedef Pal *(*PalFactory)();
 
-/** Contains functions Initialize and Shutdown which should be the first and
-  * last things done, respectively, by the @c main function.  The singleton
-  * objects are set up and shut down by these functions.  The singletons can
-  * then be accessed via calls to the respective accessor functions.
-  * @brief Controls the singleton objects which can be thought of as devices.
-  */
+/// @brief Controls the singleton objects which can be thought of as devices.
+/// @details Contains functions Initialize and Shutdown which should be the first and
+/// last things done, respectively, by the @c main function.  The singleton
+/// objects are set up and shut down by these functions.  The singletons can
+/// then be accessed via calls to the respective accessor functions.
 namespace Singleton {
 
+    /// FileSystem singleton -- controls the search path for platform-abstracted
+    /// file/directory organization and provides means to "mod" resources.
+    extern Xrb::FileSystem const *g_file_system;
     /// KeyBind singleton -- this handles keyboard input (and mouse buttons too).
     /// @note Not for use anywhere outside of the Singleton namespace.
-    extern Xrb::InputState *g_inputstate;
+    extern Xrb::InputState *g_input_state;
     /// KeyMap singleton -- for alternate keyboard layouts in WIN32 (necessary
     /// due to WIN32 SDL's lack of support for alternate keyboard layouts).
     /// @note Not for use anywhere outside of the Singleton namespace.
@@ -52,6 +55,12 @@ namespace Singleton {
     /// @note Not for use anywhere outside of the Singleton namespace.
     extern Xrb::Gl *g_gl;
 
+    /// Returns the FileSystem singleton.
+    inline Xrb::FileSystem const &FileSystem ()
+    {
+        ASSERT1(g_file_system != NULL && "FileSystem singleton not initialized");
+        return *g_file_system;
+    }
     /// Returns the Gl singleton.
     inline Xrb::Gl &Gl ()
     {
@@ -61,8 +70,8 @@ namespace Singleton {
     /// Returns the InputState singleton.
     inline Xrb::InputState &InputState ()
     {
-        ASSERT1(g_inputstate != NULL && "InputState singleton not initialized");
-        return *g_inputstate;
+        ASSERT1(g_input_state != NULL && "InputState singleton not initialized");
+        return *g_input_state;
     }
     /// Returns the KeyMap singleton.
     inline Xrb::KeyMap const &KeyMap ()
@@ -83,48 +92,30 @@ namespace Singleton {
         return *g_resource_library;
     }
 
-    /** This should be the first thing done, because other systems require
-      * the usage of the singleton objects.  If this function is not called
-      * before other systems activate, the singleton object accessors will
-      * assert.
-      *
-      * @c key_map_name can be specified to perform key mapping to supplement
-      * the windows-version-of-SDL's lack of alternate keyboard layout support
-      * (e.g. Dvorak).  This is not necessary in Unix (it is currently unknown
-      * if it is necessary for Mac OS).
-      *
-      * @brief Initializes the singleton objects.
-      * @param CreatePal Specifies the platform-specific factory function
-      *                  for creating an instance of Pal.  The returned
-      *                  object will be deleted during Shutdown.
-      * @param key_map_name Specifies the name of the KeyMap to use.  Must
-      *                     not be @c NULL.  See @ref KeyMap::Create for valid
-      *                     arguments.
-      */
-    void Initialize (PalFactory CreatePal, char const *key_map_name);
-    /** This should be the last thing done, so that proper cleanup is
-      * performed for the singleton objects.
-      * @brief Shuts down the singleton objects.
-      */
+    /// @brief Initializes the singleton objects.
+    /// @param CreatePal Specifies the platform-specific factory function for creating an
+    /// instance of Pal.  The returned object will be deleted during Shutdown.
+    /// @details This should be the first thing done, because other systems require
+    /// the usage of the singleton objects.  If this function is not called
+    /// before other systems activate, the singleton object accessors will
+    /// assert.
+    void Initialize (PalFactory CreatePal);
+    /// @brief Shuts down the singleton objects.
+    /// @details This should be the last thing done, so that proper cleanup is performed for the singleton objects.
     void Shutdown ();
 
-    /** This is useful if the ResourceLibrary is necessary to load a file
-      * which is used to determine how to initialize the other singletons.
-      *
-      * Initialize() should still be called later to initialize the other singletons.
-      * This function should not be called if Initialize() has already been called.
-      *
-      * @brief Initialize only the ResourceLibrary singleton.
-      */
-    void InitializeResourceLibrary ();
-
-    /** This is done automatically by Screen.
-      * @brief Initializes the openGL-controlling singleton.
-      */
+    /// @brief Reinitialize the KeyMap singleton using the given keymap name.
+    /// @param key_map_name Specifies the name of the KeyMap to use.  Must not be @c NULL.  See @ref KeyMap::Create for valid arguments.
+    /// @details Useful when the keymap name comes from a config file and therefore has to be changed.  @c key_map_name can be specified
+    /// to perform key mapping to supplement the windows-version-of-SDL's lack of alternate keyboard layout support (e.g. Dvorak).
+    /// This is not necessary in Unix (it is currently unknown if it is necessary for Mac OS).
+    void ReinitializeKeyMap (char const *key_map_name);
+    
+    /// @brief Initializes the openGL-controlling singleton.
+    /// @details This is done automatically by Screen.
     void InitializeGl ();
-    /** This is done automatically by Screen.
-      * @brief Shuts down the openGL-controlling singleton.
-      */
+    /// @brief Shuts down the openGL-controlling singleton.
+    /// @details This is done automatically by Screen.
     void ShutdownGl ();
 
 } // end of namespace Singleton

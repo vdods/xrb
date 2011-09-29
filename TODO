@@ -206,9 +206,14 @@ BUGS:
   texture atlases, efficiency should be 100%)
 - screenshots add an alpha channel -- remove alpha channel and make PNG files without alpha.
   this may require adding support for RGB textures.
-- there's a bug in the cycle truncation of xrb_animation, the 2nd assert near line 223 gets hit (floating point roundoff) 
+- there's a bug in the cycle truncation of xrb_animation, the 2nd assert near line 223 gets hit (floating point roundoff)
+  fix this by storing game times in milliseconds as Uint32 (or possibly Uint64?) this wraps every 49 days (or something like that),
+  but frame_dt will still be Float.  if Uint64 is not supported, could do it "by hand" using two Uint32s.
 
 TODO:
+- change the "missing" animation into a two-frame animation
+- write As<WhateverType> method in ResourceLoadParameters to do the casting.
+- use exceptions in parser/scanner
 - possibly rename Parse::DataFile::Structure to Map
 - black-outlined fonts
 - split Label into TextLabel and PictureLabel (maybe can't do this because of Button)

@@ -10,7 +10,9 @@
 
 #include "xrb.hpp" // xrb_singleton.hpp is included here
 
+#include "xrb_filesystem.hpp"
 #include "xrb_gl.hpp"
+#include "xrb_indentformatter.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
 #include "xrb_keymap.hpp"
@@ -20,32 +22,45 @@
 namespace Xrb {
 namespace Singleton {
 
-Xrb::InputState *g_inputstate = NULL;
+Xrb::FileSystem const *g_file_system = NULL;
+Xrb::InputState *g_input_state = NULL;
 Xrb::KeyMap const *g_key_map = NULL;
 Xrb::Pal *g_pal = NULL;
 Xrb::ResourceLibrary *g_resource_library = NULL;
 Xrb::Gl *g_gl = NULL;
 
-void Initialize (PalFactory CreatePal, char const *const key_map_name)
+void Initialize (PalFactory CreatePal)
 {
-    ASSERT1(key_map_name != NULL);
+    IndentFormatter formatter(std::cerr, "\t");
+    
+    formatter << "Singleton::Initialize();\n";
+    formatter.Indent();
+    formatter << "sizeof(bool) = " << sizeof(bool) << '\n';
 
-    std::cerr << "Singleton::Initialize();" << std::endl;
-    std::cerr << "\tsizeof(bool) = " << sizeof(bool) << std::endl;
-
+    ASSERT0(g_file_system == NULL);
     ASSERT0(g_pal == NULL);
-    ASSERT0(g_inputstate == NULL);
+    ASSERT0(g_input_state == NULL);
     ASSERT0(g_key_map == NULL);
 
     g_pal = CreatePal();
-    g_inputstate = new Xrb::InputState();
-    g_key_map = Xrb::KeyMap::Create(key_map_name);
+    ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
+    
+    g_file_system = g_pal->CreateFileSystem();
+    ASSERT0(g_file_system != NULL && "CreateFileSystem returned NULL");
+    ASSERT0(!g_file_system->IsEmpty() && "FileSystem search path is empty");
+    formatter << "FileSystem search path:\n";
+    formatter.Indent();
+    formatter << g_file_system->AsVerboseString() << '\n';
+    formatter.Unindent();
+    
+    g_input_state = new Xrb::InputState();
+    
+    g_key_map = Xrb::KeyMap::Create("default"); // can be reinitialized later with ReinitializeKeyMap
+    
     if (g_resource_library == NULL)
         g_resource_library = new Xrb::ResourceLibrary();
 
-    ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
-//     std::cerr << "\tattempting to use KeyMap \"" << key_map_name << "\", got \"" << g_key_map->Name() << '"' << std::endl;
-    ASSERT0(g_inputstate != NULL && "failed to create InputState");
+    ASSERT0(g_input_state != NULL && "failed to create InputState");
     ASSERT0(g_key_map != NULL && "failed to create KeyMap");
     ASSERT0(g_resource_library != NULL && "failed to create ResourceLibrary");
 }
@@ -53,7 +68,8 @@ void Initialize (PalFactory CreatePal, char const *const key_map_name)
 void Shutdown ()
 {
     ASSERT0(g_pal != NULL);
-    ASSERT0(g_inputstate != NULL);
+    ASSERT0(g_file_system != NULL);
+    ASSERT0(g_input_state != NULL);
     ASSERT0(g_key_map != NULL);
     ASSERT0(g_resource_library != NULL);
 
@@ -63,17 +79,20 @@ void Shutdown ()
 
     // shutdown in reverse order as init
 
-    DeleteAndNullify(g_inputstate);
+    DeleteAndNullify(g_input_state);
     DeleteAndNullify(g_resource_library);
     DeleteAndNullify(g_key_map);
+    DeleteAndNullify(g_file_system); // should happen after deleting the resource library.
     DeleteAndNullify(g_pal);
 }
 
-void InitializeResourceLibrary ()
+void ReinitializeKeyMap (char const *key_map_name)
 {
-    ASSERT0(g_resource_library == NULL);
-    g_resource_library = new Xrb::ResourceLibrary();
-    ASSERT0(g_resource_library != NULL && "failed to create ResourceLibrary");
+    ASSERT0(g_key_map != NULL && "KeyMap must already be initialized");
+    DeleteAndNullify(g_key_map);
+    g_key_map = Xrb::KeyMap::Create(key_map_name);
+//     std::cerr << "ReinitializeKeyMap(); attempting to use KeyMap \"" << key_map_name << "\", got \"" << g_key_map->Name() << '"' << std::endl;
+    ASSERT0(g_key_map != NULL && "failed to create KeyMap");
 }
 
 void InitializeGl ()

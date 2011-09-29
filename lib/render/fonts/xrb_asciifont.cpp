@@ -13,7 +13,7 @@
 #include <sstream>
 
 #include "xrb_binaryfileserializer.hpp"
-#include "xrb_exception.hpp"
+#include "xrb_filesystem.hpp"
 #include "xrb_gl.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_pal.hpp"
@@ -46,9 +46,7 @@ void AsciiFont::GlyphSpecification::Write (Serializer &serializer) const
     serializer.WriteAggregate<ScreenCoordVector2>(m_texture_coordinates);
 }
 
-int AsciiFont::GlyphSpecification::SortByWidthFirst (
-    void const *const left_operand,
-    void const *const right_operand)
+int AsciiFont::GlyphSpecification::SortByWidthFirst (void const *left_operand, void const *right_operand)
 {
     GlyphSpecification const *left_glyph =
         *static_cast<GlyphSpecification const *const *>(left_operand);
@@ -68,24 +66,32 @@ int AsciiFont::GlyphSpecification::SortByWidthFirst (
 // AsciiFont
 // ///////////////////////////////////////////////////////////////////////////
 
-AsciiFont *AsciiFont::CreateFromCache (
-    std::string const &font_face_path,
-    ScreenCoord pixel_height)
+AsciiFont::~AsciiFont ()
+{
+    Delete(m_gltexture);
+}
+
+AsciiFont *AsciiFont::CreateFromCache (std::string const &font_face_path, ScreenCoord pixel_height)
 {
     AsciiFont *retval = NULL;
+    Texture *texture = NULL;
+    try {
+        std::string font_metadata_path(
+            Singleton::FileSystem().OsPath(
+                FORMAT(font_face_path << '.' << pixel_height << ".data"),
+                FileSystem::READ_ONLY));
+        std::string font_bitmap_path(
+            Singleton::FileSystem().OsPath(
+                FORMAT(font_face_path << '.' << pixel_height << ".png"),
+                FileSystem::READ_ONLY));
+        
+        // check for the appropriate font bitmap file
+        texture = Singleton::Pal().LoadImage(font_bitmap_path.c_str());
+        // if the file doesn't exist or can't be opened or loaded, get out of here
+        if (texture == NULL)
+            return retval;
 
-    std::string font_metadata_path(FORMAT(font_face_path << '.' << pixel_height << ".data"));
-    std::string font_bitmap_path(FORMAT(font_face_path << '.' << pixel_height << ".png"));
-
-    // check for the appropriate font bitmap file
-    Texture *texture = Singleton::Pal().LoadImage(font_bitmap_path.c_str());
-    // if the file doesn't exist or can't be opened or loaded, get out of here
-    if (texture == NULL)
-        return retval;
-
-    // check for the appropriate font metadata file
-    try
-    {
+        // check for the appropriate font metadata file
         BinaryFileSerializer serializer(font_metadata_path, IOD_READ);
 
         // now try to read the font metadata
@@ -100,17 +106,17 @@ AsciiFont *AsciiFont::CreateFromCache (
         serializer.Read<Uint32>(rendered_glyph_count);
 
         if (rendered_glyph_count != ms_rendered_glyph_count)
-            throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); glyph count mismatch (got " << rendered_glyph_count << ", expected " << ms_rendered_glyph_count << ") -- delete the associated cache files"));
+            throw Exception(FORMAT("glyph count mismatch (got " << rendered_glyph_count << ", expected " << ms_rendered_glyph_count << ") -- delete the associated cache files"));
 
         for (Uint32 i = 0; i < ms_rendered_glyph_count; ++i)
             retval->m_glyph_specification[i].Read(serializer);
         serializer.ReadArray<FontCoord>(retval->m_kern_pair_26_6, LENGTHOF(retval->m_kern_pair_26_6));
 
         if (hash != retval->Hash())
-            throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); invalid font metadata -- delete the associated cache files"));
+            throw Exception(FORMAT("invalid font metadata -- delete the associated cache files"));
 
         if (!serializer.IsAtEnd())
-            throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); font metadata file is too long -- delete the associated cache files"));
+            throw Exception(FORMAT("font metadata file is too long -- delete the associated cache files"));
 
         // use a separate atlas for the font bitmap, so the texture coordinates
         // are easy to deal with (the fact that each font has its own atlas won't
@@ -118,16 +124,17 @@ AsciiFont *AsciiFont::CreateFromCache (
         // particular screen).
         retval->m_gltexture = GlTexture::Create(*texture, GlTexture::USES_SEPARATE_ATLAS|GlTexture::MIPMAPS_DISABLED|GlTexture::USES_FILTER_NEAREST);
         ASSERT1(retval->m_gltexture != NULL);
+        Delete(texture);
 
-        std::cerr << "AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); loaded cached font data" << std::endl;
+        std::cerr << "AsciiFont::CreateFromCache(\"" << font_face_path << "\", " << pixel_height << "); loaded cached font data" << std::endl;
+
     }
-    catch (Exception &e)
+    catch (Exception const &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "AsciiFont::CreateFromCache(\"" << font_face_path << "\", " << pixel_height << "); error: " << e.what() << std::endl;
+        DeleteAndNullify(texture);
         DeleteAndNullify(retval);
     }
-
-    Delete(texture);
     return retval;
 }
 
@@ -162,13 +169,10 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
 {
     ASSERT1(font_texture != NULL);
 
-    std::string font_metadata_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".data"));
-    std::string font_bitmap_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".png"));
-
-    // write the font metadata out to disk
-    try
-    {
-        std::cerr << "AsciiFont::Create(\"" << FontFacePath() << "\", " << PixelHeight() << "); ";
+    // cache the font data
+    try {
+        std::cerr << "AsciiFont::CacheToDisk(); path = \"" << FontFacePath() << "\", pixel_height = " << PixelHeight() << " ... ";
+        std::string font_metadata_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".data"));
 
         BinaryFileSerializer serializer(font_metadata_path, IOD_WRITE);
 
@@ -181,20 +185,26 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
         serializer.WriteArray<FontCoord>(m_kern_pair_26_6, LENGTHOF(m_kern_pair_26_6));
 
         std::cerr << "cached font data" << std::endl;
+    } catch (Exception const &e) {
+        std::cerr << "error caching font data: " << e.what() << std::endl;
+        return false;
+    }
 
-        // continue on to write the font bitmap
+    // cache the font bitmap
+    try {
+        std::cerr << "AsciiFont::CacheToDisk(); path = \"" << FontFacePath() << "\", pixel_height = " << PixelHeight() << " ... ";
+        std::string font_bitmap_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".png"));
 
-        std::cerr << "AsciiFont::Create(\"" << FontFacePath() << "\", " << PixelHeight() << "); ";
         bool success = font_texture->Save(font_bitmap_path) == Pal::SUCCESS;
         if (success)
             std::cerr << "cached font bitmap" << std::endl;
         else
-            std::cerr << "error caching font bitmap file" << std::endl;
+            std::cerr << "error caching font bitmap" << std::endl;
         return success;
     }
     catch (Exception &e)
     {
-        std::cerr << "error caching font data (" << e.what() << ')' << std::endl;
+        std::cerr << "error caching font bitmap: " << e.what() << std::endl;
         return false;
     }
 }

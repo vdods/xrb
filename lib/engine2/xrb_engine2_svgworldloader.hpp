@@ -16,6 +16,7 @@
 #include <string>
 
 #include "xrb_emptystring.hpp"
+#include "xrb_exception.hpp"
 
 /*
 
@@ -114,23 +115,25 @@ namespace Engine2 {
 class World;
 
 // for stage-processing the attributes of an XML element.
-void StageProcessAttributes (Lvd::Xml::Element &element,
-                             Uint32 stage,
-                             Uint32 stage_count,
-                             std::string const &additional_stageable_attribute_name_prefix = g_empty_string);
+void StageProcessAttributes (
+    Lvd::Xml::Element &element,
+    Uint32 stage,
+    Uint32 stage_count,
+    std::string const &additional_stageable_attribute_name_prefix = g_empty_string);
 // returns the xrb_stage_count attribute value of the root <svg> element (a positive number), or
 // 0 if this value is invalid or if the attribute is not present.
-Uint32 ParseSvgStageCount (std::string const &svg_path) throw(std::string);
+Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception);
 // loads the given svg file into the specified world.  if stage is 0, then no stage processing is
 // done (i.e. backslash-delimited values will not be parsed and will be taken as literal strings).
 // if stage is a positive value, that stage number will be loaded, and backslash-delimited values
 // will be parsed as described above.
-void LoadSvgIntoWorld (std::string const &svg_path,
-                       World &world,
-                       Float current_time,
-                       Uint32 gltexture_flags,
-                       Uint32 stage = 0,
-                       std::string const &additional_stageable_attribute_name_prefix = g_empty_string) throw(std::string);
+void LoadSvgIntoWorld (
+    std::string const &svg_path,
+    World &world,
+    Float current_time,
+    Uint32 gltexture_flags,
+    Uint32 stage = 0,
+    std::string const &additional_stageable_attribute_name_prefix = g_empty_string) throw(Exception);
 
 } // end of namespace Engine2
 } // end of namespace Xrb
