@@ -14,7 +14,7 @@
 
 #include "xrb_gltexture.hpp"
 #include "xrb_math.hpp"
-#include "xrb_parse_datafile_parser.hpp"
+#include "xrb_parse_datafile.hpp"
 #include "xrb_parse_datafile_value.hpp"
 #include "xrb_util.hpp"
 
@@ -33,14 +33,19 @@ std::string Animation::Sequence::LoadParameters::ResourceName () const
 
 bool Animation::Sequence::LoadParameters::IsLessThan (ResourceLoadParameters const &p) const
 {
-    LoadParameters const &rhs = *DStaticCast<LoadParameters const *>(&p);
+    LoadParameters const &rhs = p.As<LoadParameters>();
     return m_path.compare(rhs.m_path) < 0;
+}
+
+bool Animation::Sequence::LoadParameters::IsFallback () const
+{
+    return m_path == "internal://missing";
 }
 
 void Animation::Sequence::LoadParameters::Fallback ()
 {
-    // an empty path indicates the "missing" animation should be loaded.
-    m_path.clear();
+    // sentinel value for the internal (non-filesystem based) "missing" animation
+    m_path = "internal://missing";
 }
 
 void Animation::Sequence::LoadParameters::Print (std::ostream &stream) const
@@ -81,79 +86,71 @@ Animation::Sequence::~Sequence ()
 
 Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &p)
 {
-    LoadParameters const &load_parameters = *DStaticCast<LoadParameters const *>(&p);
+    LoadParameters const &load_parameters = p.As<LoadParameters>();
 
-    // an empty path indicates that the "missing" animation should be created.
-    if (load_parameters.Path().empty())
+    // the "missing" animation is a two-frame animation consisting of "internal://missing" and "internal://missing_alternate".
+    if (load_parameters.Path() == "internal://missing")
     {
         // create a 1-frame animation using the "missing" texture
-        Sequence *retval = new Sequence(1, CYCLE_FORWARD, 1.0f);
-        retval->m_frame[0] = GlTexture::LoadMissing();
+        Sequence *retval = new Sequence(2, CYCLE_FORWARD, 0.5f);
+        retval->m_frame[0] = GlTexture::Load("internal://missing");
+        retval->m_frame[1] = GlTexture::Load("internal://missing_alternate");
         return retval;
     }
 
     // otherwise try to load and parse the animation descriptor file
-    DataFile::Parser parser;
-    DataFile::Parser::ReturnCode return_code = parser.Parse(load_parameters.Path());
-    if (return_code == DataFile::Parser::RC_SUCCESS)
+    Resource<DataFile::Structure> root(Parse::DataFile::Load(load_parameters.Path()));
+    ASSERT1(root.IsValid());
+    if (root.LoadParameters().IsFallback())
     {
-        DataFile::Structure const *root = parser.AcceptedStructure();
-        try
+        load_parameters.SetErrorMessage("error while loading/parsing animation descriptor file");
+        return NULL;
+    }
+
+    try
+    {
+        std::string default_type_string;
+        try { default_type_string = root->PathElementString("|default_type"); } catch (...) { }
+        AnimationType default_type = AT_COUNT;
+        // if not specified, the default AnimationType is CYCLE_FORWARD
+        Util::MakeUppercase(default_type_string);
+        if (default_type_string == "")
+            default_type = CYCLE_FORWARD;
+        for (Uint32 i = 0; i < AT_COUNT; ++i)
         {
-            std::string default_type_string;
-            try { default_type_string = root->PathElementString("|default_type"); } catch (...) { }
-            AnimationType default_type = AT_COUNT;
-            // if not specified, the default AnimationType is CYCLE_FORWARD
-            Util::MakeUppercase(default_type_string);
-            if (default_type_string == "")
-                default_type = CYCLE_FORWARD;
+            if (default_type_string == ms_animation_type_string[i])
+            {
+                default_type = AnimationType(i);
+                break;
+            }
+        }
+        if (default_type == AT_COUNT) // if nothing was assigned so far, it's an error
+        {
+            std::string acceptable_values;
             for (Uint32 i = 0; i < AT_COUNT; ++i)
-            {
-                if (default_type_string == ms_animation_type_string[i])
-                {
-                    default_type = AnimationType(i);
-                    break;
-                }
-            }
-            if (default_type == AT_COUNT) // if nothing was assigned so far, it's an error
-            {
-                std::string acceptable_values;
-                for (Uint32 i = 0; i < AT_COUNT; ++i)
-                    acceptable_values += " \"" + ms_animation_type_string[i] + "\"";
-                THROW_STRING("invalid default_type value \"" << default_type_string << "\" (acceptable values are" << acceptable_values << ")");
-            }
-
-            Float default_duration = 1.0f; // the value is 1 if left unspecified
-            try { default_duration = root->PathElementFloaty("|default_duration"); } catch (...) { }
-            if (default_duration <= 0.0f)
-                THROW_STRING("invalid default_duration value " << default_duration << " (must be positive)");
-
-            std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); default_type = " << ms_animation_type_string[default_type] << ", default_duration = " << default_duration << std::endl;
-
-            DataFile::Array const *frames = root->PathElementArray("|frames");
-            Sequence *retval = new Sequence(frames->ElementCount(), default_type, default_duration);
-            for (Uint32 i = 0; i < retval->Length(); ++i)
-                retval->m_frame[i] = GlTexture::Load(frames->StringElement(i), load_parameters.GlTextureFlags());
-            return retval;
+                acceptable_values += " \"" + ms_animation_type_string[i] + "\"";
+            THROW_STRING("invalid default_type value \"" << default_type_string << "\" (acceptable values are" << acceptable_values << ")");
         }
-        catch (std::string const &e)
-        {
-            std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); error \"" << e << '"' << std::endl;
-        }
+
+        Float default_duration = 1.0f; // the value is 1 if left unspecified
+        try { default_duration = root->PathElementFloaty("|default_duration"); } catch (...) { }
+        if (default_duration <= 0.0f)
+            THROW_STRING("invalid default_duration value " << default_duration << " (must be positive)");
+
+        std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); default_type = " << ms_animation_type_string[default_type] << ", default_duration = " << default_duration << std::endl;
+
+        DataFile::Array const *frames = root->PathElementArray("|frames");
+        Sequence *retval = new Sequence(frames->ElementCount(), default_type, default_duration);
+        for (Uint32 i = 0; i < retval->Length(); ++i)
+            retval->m_frame[i] = GlTexture::Load(frames->StringElement(i), load_parameters.GlTextureFlags());
+        return retval;
     }
-    else
+    catch (std::string const &e)
     {
-        std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); error ";
-        switch (return_code)
-        {
-            case DataFile::Parser::RC_INVALID_FILENAME:     std::cerr << "RC_INVALID_FILENAME" << std::endl; break;
-            case DataFile::Parser::RC_FILE_OPEN_FAILURE:    std::cerr << "RC_FILE_OPEN_FAILURE" << std::endl; break;
-            case DataFile::Parser::RC_PARSE_ERROR:          std::cerr << "RC_PARSE_ERROR" << std::endl; break;
-            case DataFile::Parser::RC_ERRORS_ENCOUNTERED:   std::cerr << "RC_ERRORS_ENCOUNTERED" << std::endl; break;
-            default: ASSERT1(false && "unhandled DataFile::Parser::ReturnCode"); break;
-        }
+//         std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); error \"" << e << '"' << std::endl;
+        load_parameters.SetErrorMessage(e);
+        return NULL;
     }
-    return NULL;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -15,8 +15,7 @@
 
 #include <string>
 
-namespace Xrb
-{
+namespace Xrb {
 
 // this class is used for articulating parameters to the load function
 // for a Resource (e.g. filesystem path).  subclass it and be happy.
@@ -34,6 +33,9 @@ public:
     // ResourceName(), so that it's reasonable to do dynamic casting
     // inside the method.
     virtual bool IsLessThan (ResourceLoadParameters const &p) const = 0;
+    // should return true iff this ResourceLoadParameters indicates to load
+    // using the "fallback" parameters.
+    virtual bool IsFallback () const = 0;
     // hook for fallback behavior -- if LoadFunction fails (see
     // ResourceLibrary::Load<>), then this method will be called on the
     // ResourceLoadParameters instance, and then LoadFunction will be
@@ -43,6 +45,18 @@ public:
     // for console spew.  should print all on one line, no trailing newline.
     virtual void Print (std::ostream &stream) const = 0;
 
+    // returns the current error message (defaults to the empty string).
+    std::string const &ErrorMessage () const { return m_error_message; }
+    // the error message is a way for the resource loading code to indicate the cause of error
+    void SetErrorMessage (std::string const &error_message) const { m_error_message = error_message; }
+    
+    // convenience function for casting up
+    template <typename T>
+    T const &As () const { return dynamic_cast<T const &>(*this); }
+    // convenience function for casting up
+    template <typename T>
+    T &As () { return dynamic_cast<T &>(*this); }
+    
     // for use in sorting ResourceLoadParameters instances
     struct LessThan
     {
@@ -62,6 +76,10 @@ public:
                 return left->IsLessThan(*right);
         }
     }; // end of struct ResourceLoadParameters::LessThan
+
+private:
+
+    mutable std::string m_error_message;
 }; // end of class ResourceLoadParameters
 
 } // end of namespace Xrb

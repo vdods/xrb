@@ -88,6 +88,7 @@ public:
 
         virtual std::string ResourceName () const;
         virtual bool IsLessThan (ResourceLoadParameters const &p) const;
+        virtual bool IsFallback () const;
         virtual void Fallback ();
         virtual void Print (std::ostream &stream) const;
 
@@ -103,7 +104,7 @@ public:
     }
     static Resource<Font> LoadMissing ()
     {
-        LoadParameters *load_parameters = new LoadParameters("", 10); // arbitrary
+        LoadParameters *load_parameters = new LoadParameters("", 10); // arbitrary, since Fallback changes this.
         load_parameters->Fallback();
         return Singleton::ResourceLibrary().Load<Font>(Font::Create, load_parameters);
     }

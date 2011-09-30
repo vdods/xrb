@@ -985,6 +985,9 @@ bool World::StateIntro (StateMachineInput input)
         case IN_PLAYER_SHIP_DIED:
             TRANSITION_TO(StateCheckLivesRemaining);
             return true;
+
+        case IN_BEGIN_WAVE:
+            return true; // ignore, intro not finished.
     }
     return false;
 }

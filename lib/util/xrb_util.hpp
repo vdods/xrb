@@ -18,13 +18,10 @@
 
 #include "xrb_enums.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-/** These functions are more or less for convenience, and don't provide any
-  * significant algorithmic computation.
-  * @brief Contains various utility functions.
-  */
+/// @brief Contains various utility functions.
+/// @details These functions are more or less for convenience, and don't provide any significant algorithmic computation.
 namespace Util
 {
     /// Find and replace all instances of @c string_to_replace inside @c string, using @c string_to_replace_with.
@@ -37,16 +34,8 @@ namespace Util
     std::string StringPrintf (char const *format, ...);
     /// Performs printf into the provided STL string.
     void StringPrintf (std::string *string, char const *format, ...);
-    /*
-    void StringCopy (
-        char *destination,
-        char const *source,
-        Uint32 destination_size);
-    */
-    /** The returned string is a NULL-terminated ASCII string, of exactly
-      * the length of @c string_to_duplicate.
-      * @brief Returns a newly allocated copy of the given string.
-      */
+    /// @brief Returns a newly allocated copy of the given string.
+    /// The returned string is a NULL-terminated ASCII string, of exactly the length of @c string_to_duplicate.
     char *StringDuplicate (char const *string_to_duplicate);
     /// If c is an uppercase letter, returns it in lowercase, otherwise returns c.
     char Lowercase (char c);
@@ -63,6 +52,11 @@ namespace Util
     /// Returns the ASCII code of the given character as it would be interpreted with the SHIFT key held down.
     char ShiftedAscii (char c);
 
+    /// Returns true iff @c c is within the string "0123456789ABCDEFabcdef".
+    bool IsHexDigit (char c);
+    /// Returns the value, 0-15, of this character if interpreted as a hex digit (0 if not a hex digit).
+    Uint32 HexValue (char c);
+    
     /** @brief Returns true iff the given character needs to be escaped to be
       *        properly represented in a C-style character literal.
       */

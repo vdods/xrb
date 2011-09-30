@@ -907,7 +907,7 @@ void PlayerShip::Die (
     {
         ASSERT1(OwnerObject() != NULL);
         ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
-        std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters<GlTexture::LoadParameters>().Path();
+        std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters().As<GlTexture::LoadParameters>().Path();
 
         // the "explosion" sprite will be the same as the ship, as if the ship's soul is being liberated
         {

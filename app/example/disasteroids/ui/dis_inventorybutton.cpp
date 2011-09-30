@@ -23,6 +23,9 @@ InventoryButton::InventoryButton (ItemType item_type, WidgetContext &context, st
     :
     Button(ButtonTexture(item_type), context, name),
     m_item_type(item_type),
+    m_is_equipped(false),
+    m_owned_upgrade_level(Uint8(-1)),
+    m_is_affordable(false),
     m_sender_attempt_to_upgrade_item(this),
     m_sender_equip_item(this),
     m_sender_show_price(this),

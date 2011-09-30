@@ -13,6 +13,7 @@
 
 #include "xrb.hpp"
 
+#include "xrb_parse_datafile_parser.hpp"
 #include "xrb_resourcelibrary.hpp"
 #include "xrb_resourceloadparameters.hpp"
 
@@ -34,10 +35,11 @@ public:
     virtual std::string ResourceName () const { return "Xrb::Parse::DataFile::Structure"; }
     virtual bool IsLessThan (ResourceLoadParameters const &p) const
     {
-        LoadParameters const &load_parameters = *DStaticCast<LoadParameters const *>(&p);
+        LoadParameters const &load_parameters = p.As<LoadParameters>();
         return m_path < load_parameters.Path();
     }
-    virtual void Fallback () { m_path.clear(); }
+    virtual bool IsFallback () const { return m_path == "internal://missing"; }
+    virtual void Fallback () { m_path = "internal://missing"; }
     virtual void Print (std::ostream &stream) const
     {
         stream << "path = \"" << m_path << '"';
@@ -49,7 +51,8 @@ private:
 }; // end of class LoadParameters
 
 /// Wrapper for loading and parsing a file, so you don't have to touch DataFile::Parser.
-Structure *ParseDataFileIntoStructure (std::string const &path);
+/// If return_code is not NULL, the return code of the call to Parse will be stored there.
+Structure *ParseDataFileIntoStructure (std::string const &path, DataFile::Parser::ReturnCode *return_code = NULL);
 /// For use in Parse::DataFile::Load only, unless you know what you're doing.
 Structure *ParseDataFileIntoStructure (ResourceLoadParameters const &p);
 

@@ -67,16 +67,7 @@ void StringPrintf (std::string *const string, char const *const format, ...)
 
     *string = buffer;
 }
-/*
-void Util::StringCopy (char *destination, char const *source, Uint32 destination_size)
-{
-    ASSERT1(destination != NULL);
-    ASSERT1(source != NULL);
 
-    strncpy(destination, source, destination_size);
-    destination[destination_size-1] = '\0';
-}
-*/
 char *Util::StringDuplicate (char const *string_to_duplicate)
 {
     ASSERT1(string_to_duplicate != NULL);
@@ -156,6 +147,26 @@ char Util::ShiftedAscii (char c)
     };
 
     return (c >= 0) ? ascii_to_shifted_ascii[(Uint32)c] : '\0';
+}
+
+bool Util::IsHexDigit (char c)
+{
+    return (c >= '0' && c <= '9')
+           ||
+           (c >= 'A' && c <= 'F')
+           ||
+           (c >= 'a' && c <= 'f');
+}
+
+Uint32 Util::HexValue (char c)
+{
+    c = Uppercase(c);
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    else if (c >= 'A' && c <= 'F')
+        return c - 'A' + 0xA;
+    else
+        return 0;
 }
 
 bool Util::CharacterLiteralCharNeedsEscaping (char c)

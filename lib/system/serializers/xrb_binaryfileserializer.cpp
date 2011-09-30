@@ -44,6 +44,7 @@ BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection
                                (m_is_writable ? "writing" : "")));
     }
 
+    m_file_endianness = Endianness::OF_TARGET;
     switch (io_direction)
     {
         case IOD_READ:

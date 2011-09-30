@@ -40,7 +40,7 @@ std::string Font::LoadParameters::ResourceName () const
 
 bool Font::LoadParameters::IsLessThan (ResourceLoadParameters const &p) const
 {
-    LoadParameters const &rhs = *DStaticCast<LoadParameters const *>(&p);
+    LoadParameters const &rhs = p.As<LoadParameters>();
     int comparison = m_path.compare(rhs.m_path);
     if (comparison < 0)
         return true;
@@ -48,6 +48,11 @@ bool Font::LoadParameters::IsLessThan (ResourceLoadParameters const &p) const
         return false;
     else
         return m_pixel_height < rhs.m_pixel_height;
+}
+
+bool Font::LoadParameters::IsFallback () const
+{
+    return m_path.empty();
 }
 
 void Font::LoadParameters::Fallback ()
@@ -68,7 +73,7 @@ void Font::LoadParameters::Print (std::ostream &stream) const
 
 Font *Font::Create (ResourceLoadParameters const &p)
 {
-    LoadParameters const &load_parameters = *DStaticCast<LoadParameters const *>(&p);
+    LoadParameters const &load_parameters = p.As<LoadParameters>();
 
     // an empty path indicates to load the "missing" font.
     if (load_parameters.Path().empty())

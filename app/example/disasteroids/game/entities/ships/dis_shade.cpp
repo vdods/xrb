@@ -388,7 +388,7 @@ void Shade::Teleport (Float time, Float frame_dt)
         // spawn a teleportation effect (the shade will appear to shrink to a point and disappear)
         {
             ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
-            std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters<GlTexture::LoadParameters>().Path();
+            std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters().As<GlTexture::LoadParameters>().Path();
             Explosion *shrinking_effect =
                 SpawnExplosion(
                     GetObjectLayer(),

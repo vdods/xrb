@@ -125,7 +125,7 @@ void Sprite::WriteClassSpecific (Serializer &serializer) const
     ASSERT1(m_gltexture.IsValid());
 
     // write out the guts
-    serializer.WriteAggregate<std::string>(m_gltexture.LoadParameters<GlTexture::LoadParameters>().Path());
+    serializer.WriteAggregate<std::string>(m_gltexture.LoadParameters().As<GlTexture::LoadParameters>().Path());
     serializer.Write<bool>(m_is_round);
     serializer.WriteAggregate<FloatVector2>(m_physical_size_ratios);
 }

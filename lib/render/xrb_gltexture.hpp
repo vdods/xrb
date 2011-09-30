@@ -46,6 +46,9 @@ public:
     {
     public:
 
+        // specifying "internal://missing" will give the internally generated "missing" texture.
+        // specifying "internal://#RRGGBB" (where RRGGBB is a hex code) will give an opaque 1x1 texture of the given color.
+        // specifying "internal://#RRGGBBAA" (where RRGGBBAA is a hex code) will give a 1x1 texture of the given color with alpha.
         LoadParameters (std::string const &path, Uint32 flags = NONE);
 
         std::string const &Path () const { return m_path; }
@@ -56,6 +59,7 @@ public:
 
         virtual std::string ResourceName () const;
         virtual bool IsLessThan (ResourceLoadParameters const &p) const;
+        virtual bool IsFallback () const;
         virtual void Fallback ();
         virtual void Print (std::ostream &stream) const;
 
@@ -82,7 +86,7 @@ public:
     }
     static Resource<GlTexture> LoadMissing ()
     {
-        LoadParameters *load_parameters = new LoadParameters("");
+        LoadParameters *load_parameters = new LoadParameters(""); // arbitrary, since Fallback changes this.
         load_parameters->Fallback();
         return Singleton::ResourceLibrary().Load<GlTexture>(GlTexture::Create, load_parameters);
     }

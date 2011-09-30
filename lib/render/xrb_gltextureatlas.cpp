@@ -272,7 +272,8 @@ GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32
 void GlTextureAtlas::UnplaceTexture (GlTexture const &gltexture)
 {
     ASSERT1(&gltexture.Atlas() == this);
-    ASSERT1(m_placed_gltexture_set.find(&gltexture) != m_placed_gltexture_set.end());
+    PlacedGlTextureSet::iterator it = m_placed_gltexture_set.find(&gltexture);
+    ASSERT1(it != m_placed_gltexture_set.end());
     m_placed_gltexture_set.erase(&gltexture);
     // update the used texture byte count
     ASSERT1(m_used_texture_byte_count >= CountTextureBytes(gltexture.Size()));
@@ -372,7 +373,7 @@ ScreenCoordVector2 GlTextureAtlas::MinimumSpaceBetween (GlTexture const &gltextu
     ScreenCoordVector2 retval;
     for (Uint32 i = 0; i < 2; ++i)
     {
-        ScreenCoord big = gltexture.Size()[i];
+        ScreenCoord big = Max(gltexture.Size()[i], 1); // because a 1x1 is actually 0x0
         ScreenCoord small = texture.Size()[i];
         if (big < small)
         {
@@ -677,8 +678,8 @@ bool GlTextureAtlas::GlTextureOrder::operator () (GlTexture const *left, GlTextu
     if (left->TextureCoordinateArray()[1] > right->TextureCoordinateArray()[1])
         return false;
 
-    // at this point, they have the same size and texture coord centers, so consider them equal
-    return false;
+    // at this point, they have the same size and texture coord centers, so distinguish them by pointer value
+    return left < right;
 }
 
 } // end of namespace Xrb

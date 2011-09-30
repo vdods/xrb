@@ -49,6 +49,7 @@ public:
         {
         public:
 
+            // specifying "internal://missing" will give the internally generated "missing" animation sequence.
             LoadParameters (std::string const &path, Uint32 gltexture_flags)
                 :
                 m_path(path),
@@ -60,6 +61,7 @@ public:
 
             virtual std::string ResourceName () const;
             virtual bool IsLessThan (ResourceLoadParameters const &p) const;
+            virtual bool IsFallback () const;
             virtual void Fallback ();
             virtual void Print (std::ostream &stream) const;
 
@@ -79,7 +81,7 @@ public:
         }
         static Resource<Sequence> LoadMissing ()
         {
-            LoadParameters *load_parameters = new LoadParameters("", 0); // 0 = GlTexture::NONE
+            LoadParameters *load_parameters = new LoadParameters("", 0); // arbitrary, since Fallback changes this.
             load_parameters->Fallback();
             return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, load_parameters);
         }

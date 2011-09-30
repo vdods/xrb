@@ -114,6 +114,8 @@ private:
 
         ResourceLoadParameters const &LoadParameters () const { return m_load_parameters; }
 
+        Uint32 ReferenceCount () const { return m_reference_count; }
+
         void IncrementReferenceCount ()
         {
             ASSERT1(m_reference_count < UINT32_UPPER_BOUND);
@@ -125,8 +127,8 @@ private:
             --m_reference_count;
             if (m_reference_count == 0)
             {
-                m_library.Unload(m_load_parameters);
                 DeleteData();
+                m_library.Unload(m_load_parameters);
                 return true;
             }
             else
@@ -331,27 +333,25 @@ public:
         return m_instance->Data();
     }
 
-    /** An invalid Resource can't be dereferenced or accessed for its
-      * path or load parameter.
-      * @brief Returns true iff this Resource is referencing data.
-      */
+    /// @brief Returns true iff this Resource is referencing data.
+    /// @details An invalid Resource can't be dereferenced or accessed for its load parameters.
     bool IsValid () const
     {
         return m_instance != NULL;
     }
-    /** Asserts if this Resource is invalid or if the requested template type
-      * doesn't match reality.
-      * @brief Returns the ResourceLoadParameters used to create this Resource.
-      */
-    template <typename ResourceLoadParametersSubclass>
-    ResourceLoadParametersSubclass const &LoadParameters () const
+    /// Returns the reference count if IsValid() returns true, otherwise 0.
+    Uint32 ReferenceCount () const
     {
-        return *DStaticCast<ResourceLoadParametersSubclass const *>(&m_instance->LoadParameters());
+        return m_instance != NULL ? m_instance->ReferenceCount() : 0;
+    }
+    /// Returns the ResourceLoadParameters used to create this Resource.
+    ResourceLoadParameters const &LoadParameters () const
+    {
+        ASSERT1(m_instance != NULL);
+        return m_instance->LoadParameters();
     }
 
-    /** @brief Explicitly causes the reference count to decrement, causing
-      *        this Resource to become invalid.
-      */
+    /// Explicitly causes the reference count to decrement, causing this Resource to become invalid.
     void Release ()
     {
         if (m_instance != NULL)
@@ -406,7 +406,7 @@ Resource<T> ResourceLibrary::Load (
         {
             std::cerr << "ResourceLibrary * FAILURE while loading " << load_parameters->ResourceName() << ": ";
             load_parameters->Print(std::cerr);
-            std::cerr << " -- falling back" << std::endl;
+            std::cerr << " -- error message: " << load_parameters->ErrorMessage() << " -- falling back" << std::endl;
 
             load_parameters->Fallback();
 
@@ -428,14 +428,15 @@ Resource<T> ResourceLibrary::Load (
                 return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
             }
 
-            // otherwise, call CreationFunction with the fallen-back load parameters
+            // otherwise, clear the error message and call CreationFunction with the fallen-back load parameters
+            load_parameters->SetErrorMessage("");
             data = CreationFunction(*load_parameters);
 
             if (data == NULL)
             {
                 std::cerr << "ResourceLibrary * FAILURE while fallback-loading " << load_parameters->ResourceName() << ": ";
                 load_parameters->Print(std::cerr);
-                std::cerr << std::endl;
+                std::cerr << " -- error message: " << load_parameters->ErrorMessage() << std::endl;
 
                 ASSERT0(false && "the fallback load should not fail");
             }

@@ -181,7 +181,7 @@ void Polygon::Write (
         serializer.Write<Uint32>(m_vertex_array[i].m_model_coordinate - compound_vertex_array);
         serializer.WriteAggregate<FloatVector2>(m_vertex_array[i].m_texture_coordinate);
     }
-    serializer.WriteAggregate<std::string>(m_texture.LoadParameters<GlTexture::LoadParameters>().Path());
+    serializer.WriteAggregate<std::string>(m_texture.LoadParameters().As<GlTexture::LoadParameters>().Path());
 }
 
 } // end of namespace Engine2

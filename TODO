@@ -211,25 +211,11 @@ BUGS:
   but frame_dt will still be Float.  if Uint64 is not supported, could do it "by hand" using two Uint32s.
 
 TODO:
-- add "open" methods to FileSystem which return FILE* or ostream or istream to hide the annoying OsPath calls.
-- change the "missing" animation into a two-frame animation
-- write As<WhateverType> method in ResourceLoadParameters to do the casting.
+- add "open" methods to FileSystem which return ostream or istream to hide the annoying OsPath calls.
 - use exceptions in parser/scanner
 - possibly rename Parse::DataFile::Structure to Map
 - black-outlined fonts
 - split Label into TextLabel and PictureLabel (maybe can't do this because of Button)
-- add "custom types" to WidgetSkin, so that particular apps can specify their own
-  texture types and fonts, etc, and it doesn't all need to be done by hand.  probably do this
-  by changing the WidgetSkin type enums into strings.
-- filesystem design:
-  abstract API (so that this can be effectively used by iPhone port):
-  * open path (for reading or writing, or both, model this on std file io)
-  particular implementations:
-    STD:
-    * add path (in a layering manner)
-    * get path list (supplying delimiter)
-    iPhone
-    * print message indicating the Documents and Cache directories (?)
 - turn /** */ style doxygen comments into /// (except in e.g. lesson##).  possibly move doxygen
   comments from hpp files to cpp, so hpp are more clean.
 - default GlTexture flags specified in the PAL or something.  make sure to take care of
@@ -246,16 +232,15 @@ TODO:
 - change all texture sizes to Uint32 (?) and in general, all sizes that can't be negative
 - make automatic validation in Dis::Config -- function for validating stuff,
   message for when it fails.  reset to default value if failed
-- look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
+- look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object (this
+  probably can't be done because at certain times you can't add/remove entities -- e.g. during the Think
+  loop, since it would screw up the iteration).
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 - see if more culling can happen in DrawObjectCollector::operator ().  specifically
   per-object view-radius checking.  this will require the object coordinates to be
   wrapped/contained before collecting.  this wrapping/containment may already be happening.
 - replace GLTextureAtlas sizes with Uint32Vector2 values
-- way to address built-in resources such as the opaque white texture, the missing texture, etc.
-  maybe via some escape sequence that can't be in a real path, such as //
 - need to be able to specify quadtree depths for all quadtrees in all cases.
-- there is a problem in lesson03 with IsOdd<T> assuming Float type when it shouldn't be.
 - use exponential for zoom factors (i.e. so that all real numbers are valid and there's
   no need to worry about divide by zero).  maybe use base 2?
 - use numeric_limits<float>::infinity() in next think time and such (see <limits>)
@@ -267,14 +252,10 @@ TODO:
 - it might be useful to re-implement SDL_ActiveEvent
 - high framerates cause the impact damage to be too high in disasteroids (or maybe the impact
   damage is too low in low framerates)
-- make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
 - get rid of widget min/max size enabled flags, and just use the
   sizes (no min size = 0, no max size = (uint)-1)
-- create consistent way to set z depth for non-transparent stuff so they're
-  actually unique z depth values for each object.  maybe encode some sort
-  of unique index into the least significant bits of the depth Float.
 - have the application automatically change current working directory to
   the path of the executable (argv[0]).
 - change Engine2::Compound to Engine2::Model ?
@@ -314,54 +295,27 @@ TODO:
   screen-relative moving is unnecessary.
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
 - rename all enums to have prefixes (where appropriate)
-- drawing functions should all just push the modelview matrix, not load
-  the identity (except for top-level ones like Screen and such).
-- compound editing operations: delete vertices, delete polygons, flip polygons,
-  flip objects, unweld polygon vertices, clone polygons, splitting polygons
 - for static Create type functions for subclassable classes, see if the
   function can be templatized so that each subclass doesn't have to make
   a function that is identical except for the "new Blah" part.
-- when the Action system is written, go into MapEditor2::WorldView and
-  convert everything to that, and get rid of locally tracking
-  m_selected_entity_count and friends.
 - possibly make a Math::Radian namespace to contain properly typed
   versions of the trig functions which take radian angles.
-- for overridable Widget methods, make it so that subclasses don't
-  have to call anything to maintain widget functionality.
-- add DeleteSelf to Widget baseclass as a means for scheduling itself
-  for deletion.
 - add HandleEnabled and HandleDisabled to Widget ?
 - add HandleHidden and HandleShown to Widget ?
 - verify that when a mouse-grabbed widget is deleted, it un-mouse-grabs
 - verify that focusing a widget contained in a widget with m_accepts_focus
   set to false will not change the focus line.
-- change the names of the vertex/compound selection functions in
-  MapEditor2::ObjectLayer to indicate they only operate within the
-  scope of the object selection set.
 - verify that the operator overloads for math constructs (e.g. Vector)
   work when "using namespace Xrb" is not used.
-- think about MapEditor2::MainWidget and if the Widget's main widget
-  functionality should be renamed.
 - add modal widget frame/content margins (maybe just make it so that
   setting a main widget puts stuff inside the content margins)
-- make the content margins based at the edge of the widget, instead
-  of the frame margins.
 - add type-specific range checking for WidgetSkin properties.
 - remember the C++ typeid/type_info stuff.
-- think up a way to draw entity metrics which show if an entity
-  applies and reacts to gravity.
-- density might apply to selection sets (i.e. scaling the relative density)
-- density is a little wacky -- fix it.
-- do real entity area computation for density and other calculations.
-- make the view grid display set units, rather than fractions of
-  the size of the object layers.
 - improve the text-editing control of LineEdit (e.g. ctrl+backspace,
   point-and-click cursor positioning, text selection, etc).
 - the resource instance should store the function that was created
   to create the resource data so that full correctness can be
   achieved.
-- GL singleton should have checks to see if it's been initialized
-  so when gl calls fail mysteriously, it's obvious what happened.
 - hide the defer-parent-update SetSizeProperty* versions and make public
   versions of each without that parameter.
 - support for bit depths besides 32
@@ -374,14 +328,7 @@ TODO:
 - move keyboard shortcuts into 'actions' similar to QT, which menu items
   and normal functions can use.
 - tabbed widget layout
-- use idea of 'render' or 'focus' object layer instead of 'main'
-  object layer in world so that the nomenclature of the stuff in
-  MapEditorWorld is a little more clear
-- for accessors that return a member pointer, think about which ones
-  should be made into "Blah const *"
 - make a handy Util function which does quantizing
-- add a 'time type' which allows changing of what data type actually
-  stores times (i.e. ints or floats, etc)
 - look into normal mapping to give lighting effects
 - add smart usage of newline indexed data in Label, so that it could
   be used for very large texts
