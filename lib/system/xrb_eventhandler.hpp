@@ -13,6 +13,8 @@
 
 #include "xrb.hpp"
 
+#include "xrb_time.hpp"
+
 namespace Xrb {
 
 class Event;
@@ -48,15 +50,11 @@ public:
     bool IsBlockingEvents () const { return m_is_blocking_events; }
     /// @brief Returns the time of the most-recently processed Event.
     /// @details Returns 0 if no event has been processed.
-    Float MostRecentEventTime () const { return Max(m_most_recent_event_time, 0.0f); }
+    Time MostRecentEventTime () const { return m_most_recent_event_time; }
     /// @brief Returns time of the event currently being processed.
     /// @details This function may only be called from within HandleEvent, since it would
     /// be meaningless anywhere else.  Calling it elsewhere will cause an assert.
-    Float EventTime () const { ASSERT1(m_event_dt >= 0.0); return m_current_event_time; }
-    /// @brief Returns the time delta since the most recently processed event.
-    /// @details This function may only be called from within HandleEvent, since it would
-    /// be meaningless anywhere else.  Calling it elsewhere will cause an assert.
-    Float EventDT () const { ASSERT1(m_event_dt >= 0.0); return m_event_dt; }
+    Time EventTime () const { ASSERT1(m_allow_event_time_access); return m_current_event_time; }
 
     /// @brief Sets the event blocking property of this EventHandler.
     /// @details If true, ProcessEvent will immediately return false, otherwise the normal event handling will be done.
@@ -82,11 +80,11 @@ private:
     // indicates if this event handler is blocking events or not
     bool m_is_blocking_events;
     // the event time for the most recently processed event
-    Float m_most_recent_event_time;
+    Time m_most_recent_event_time;
     // the current event time
-    Float m_current_event_time;
-    // the delta between the last event time and the current frame time
-    Float m_event_dt;
+    Time m_current_event_time;
+    // indicates if EventTime() can be called or not.
+    bool m_allow_event_time_access;
 }; // end of class EventHandler
 
 } // end of namespace Xrb

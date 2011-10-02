@@ -17,71 +17,60 @@
 #include "xrb_eventhandler.hpp"
 #include "xrb_framehandler.hpp"
 #include "xrb_input_events.hpp"
+#include "xrb_time.hpp"
 
 namespace Xrb {
 
-/** Key repeat events are generated to get the effect of holding a key down
-  * while typing, simulating many keystrokes of the same key very quickly.
-  *
-  * Keyboard events are processed by this class, and a series of
-  * EventKeyRepeat events are queued up when HandleFrame is called
-  * to indicate each iteration of the game loop.
-  *
-  * @brief Processes keyboard events and produces key repeat events.
-  */
+/// @brief Processes keyboard events and produces key repeat events.
+/// @details Key repeat events are generated to get the effect of holding a key down
+/// while typing, simulating many keystrokes of the same key very quickly.
+///
+/// Keyboard events are processed by this class, and a series of
+/// EventKeyRepeat events are queued up when HandleFrame is called
+/// to indicate each iteration of the game loop.
 class KeyRepeater : public EventHandler, public FrameHandler
 {
 public:
 
-    /** The default values for @c repeat_delay and @c repeat_period seem to
-      * be the most common values (that I've seen at least).  25 millisecond
-      * delay, and then 30 events per second.
-      * @brief Constructs a KeyRepeater with the given properties.
-      * @param repeat_delay The time that must elapse after a key is pressed
-      *                     before key repeat events are generated.
-      * @param repeat_period The time between successive key repeat events.
-      */
-    KeyRepeater (Float repeat_delay = 0.25, Float repeat_period = 0.033);
-    /** @brief Destructor.
-      */
+    /// @brief Constructs a KeyRepeater with the given properties.
+    /// @param repeat_delay The time that must elapse after a key is pressed
+    ///                     before key repeat events are generated.
+    /// @param repeat_period The time between successive key repeat events.
+    /// @details The default values for @c repeat_delay and @c repeat_period seem to
+    /// be the most common values (that I've seen at least).  25 millisecond
+    /// delay, and then 30 events per second.
+    KeyRepeater (Time::Delta repeat_delay = 0.25f, Time::Delta repeat_period = 0.033f);
     ~KeyRepeater ();
 
-    /** HandleFrame generates the key repeat events and queues them
-      * so they can be later removed and put in the main EventQueue.  This
-      * accessor is used when generating the key repeat events, indicating
-      * one of the conditions to stop generating key repeat events during
-      * this HandleFrame.
-      * @brief Returns true iff the key repeat event queue is full.
-      */
+    /// @brief Returns true iff the key repeat event queue is full.
+    /// @details HandleFrame generates the key repeat events and queues them
+    /// so they can be later removed and put in the main EventQueue.  This
+    /// accessor is used when generating the key repeat events, indicating
+    /// one of the conditions to stop generating key repeat events during
+    /// this HandleFrame.
     bool IsEventQueueFull () const { return m_key_event_queue.IsFull(); }
-    /** HandleFrame generates the key repeat events and queues them
-      * so they can be later removed and put in the main EventQueue.  This
-      * accessor is used when emptying the queue of key repeat events and
-      * putting them into the main EventQueue.
-      * @brief Returns true iff the key repeat event queue is empty.
-      */
+    /// @brief Returns true iff the key repeat event queue is empty.
+    /// @details HandleFrame generates the key repeat events and queues them
+    /// so they can be later removed and put in the main EventQueue.  This
+    /// accessor is used when emptying the queue of key repeat events and
+    /// putting them into the main EventQueue.
     bool IsEventQueueEmpty () const { return m_key_event_queue.IsEmpty(); }
 
-    /** The dequeued events should be enqueued into the main EventQueue.
-      * @brief Dequeues a single key repeat event.
-      */
+    /// @brief Dequeues a single key repeat event.
+    /// @details The dequeued events should be enqueued into the main EventQueue.
     EventKeyRepeat *DequeueEvent ();
 
 protected:
 
-    /** @brief Does time-based generation of key repeat events, based on
-      *        the current state of the most recently pressed key.
-      */
+    /// @brief Does time-based generation of key repeat events, based on the current state of the most recently pressed key.
     virtual void HandleFrame ();
-    /** Performs the necessary tracking for most recently pressed key
-      * and timings and such.
-      * @brief Processes key events.
-      */
+    /// @brief Processes key events.
+    /// @details Performs the necessary tracking for most recently pressed key and timings and such.
     virtual bool HandleEvent (Event const &e);
 
 private:
 
-    void GenerateKeyEvents (Float time);
+    void GenerateKeyEvents (Time time);
 
     enum
     {
@@ -95,12 +84,12 @@ private:
     // which is still currently held down
     EventKeyDown m_current_key_event;
     // delay before key repeating starts
-    Float m_repeat_delay;
+    Time::Delta m_repeat_delay;
     // period of repeat cycle (time between each additional key event
     // to be generated once key repeating has engaged)
-    Float m_repeat_period;
+    Time::Delta m_repeat_period;
     // the earliest time that a repeat event can be generated
-    Float m_next_repeat_time;
+    Time m_next_repeat_time;
     // circular queue of buffered key events
     CircularQueue<EventKeyRepeat *, DEFAULT_KEY_EVENT_BUFFER_SIZE> m_key_event_queue;
 }; // end of class KeyRepeater

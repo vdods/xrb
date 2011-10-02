@@ -17,8 +17,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class HealthTrigger : public Entity
 {
@@ -35,12 +34,12 @@ public:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
-    inline Float HealthDeltaRate () const { return m_health_delta_rate; }
+    Float HealthDeltaRate () const { return m_health_delta_rate; }
 
-    inline void SetHealthDeltaRate (Float health_delta_rate) { m_health_delta_rate = health_delta_rate; }
+    void SetHealthDeltaRate (Float health_delta_rate) { m_health_delta_rate = health_delta_rate; }
             
 private:
 

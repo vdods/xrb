@@ -17,6 +17,7 @@
 
 #include "xrb_emptystring.hpp"
 #include "xrb_exception.hpp"
+#include "xrb_time.hpp"
 
 /*
 
@@ -130,7 +131,7 @@ Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception);
 void LoadSvgIntoWorld (
     std::string const &svg_path,
     World &world,
-    Float current_time,
+    Time current_time,
     Uint32 gltexture_flags,
     Uint32 stage = 0,
     std::string const &additional_stageable_attribute_name_prefix = g_empty_string) throw(Exception);

@@ -50,13 +50,13 @@ widget, arcade-style.
 
 */
 
-namespace Xrb
-{
+namespace Xrb {
+    
 class Screen;
+
 }
 
-namespace Dis
-{
+namespace Dis {
 
 class GameWidget;
 class TitleScreenWidget;
@@ -110,7 +110,7 @@ private:
     // than this, Singleton::Pal().Sleep will be used to sleep the process).
     Float m_maximum_framerate;
     // current real time
-    Float m_real_time;
+    Time m_real_time;
 
     // contains start-game, controls and quit buttons
     TitleScreenWidget *m_title_screen_widget;
@@ -126,7 +126,7 @@ private:
     // the game world itself (i.e. the "document" in the "doc/view" paradigm)
     World *m_game_world;
     // stores the game world time
-    Float m_game_time;
+    Time m_game_time;
     // high scores
     HighScores m_high_scores;
     // saved score for while the high score name dialog is up

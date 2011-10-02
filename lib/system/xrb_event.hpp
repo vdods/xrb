@@ -16,49 +16,44 @@
 #include "xrb_key.hpp"
 #include "xrb_screencoord.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-/** Events are generated to indicate when certain events have happened,
-  * such as a key stroke, mouse motion, etc.  The Event object itself
-  * carries all the information about the event as well.  Events are processed
-  * by subclasses of EventHandler, in their overridden
-  * @ref Xrb::EventHandler::HandleEvent methods.
-  *
-  * Events are generally created in the game loop, though they are also
-  * produced elsewhere ( e.g. in @ref Xrb::Widget::InternalProcessMouseEvent ).
-  * The most important concept is that the event handler should never delete
-  * the event itself.  This restriction is made so that the event pointer
-  * points to valid memory for the entire scope of all HandleEvent
-  * calls (specifically referring to the recursive event handling of the
-  * widget hierarchy), only being deleted when execution gets back to the
-  * scope at which the event was created (e.g. the game loop).
-  *
-  * Events contain a timestamp, which is usually the time at which they were
-  * generated.  This is necessary for purposes of proper ordering for events
-  * queued in EventQueue.  For events being queued in EventQueue, the event
-  * may be constructed with a time in the future.  This has the intuitive
-  * function of scheduling the event to be processed at (no earlier than) that
-  * future time.
-  *
-  * Events processed by EventHandler must be processed in chronological order.
-  * Care must be used, when constructing events, to supply the correct
-  * timestamp.  ---- It is planned that a GameLoop class will be made, which
-  * will handle all tracking of the "current time", and all necessary queries
-  * for the current time will be made to the GameLoop class, so that it doesn't
-  * need to be derived from some other object (like a FrameHandler).
-  *
-  * @brief Baseclass for events.
-  */
+/// @brief Baseclass for all event types.
+/// @details Events are generated to indicate when certain events have happened,
+/// such as a key stroke, mouse motion, etc.  The Event object itself
+/// carries all the information about the event as well.  Events are processed
+/// by subclasses of EventHandler, in their overridden
+/// @ref Xrb::EventHandler::HandleEvent methods.
+///
+/// Events are generally created in the game loop, though they are also
+/// produced elsewhere ( e.g. in @ref Xrb::Widget::InternalProcessMouseEvent ).
+/// The most important concept is that the event handler should never delete
+/// the event itself.  This restriction is made so that the event pointer
+/// points to valid memory for the entire scope of all HandleEvent
+/// calls (specifically referring to the recursive event handling of the
+/// widget hierarchy), only being deleted when execution gets back to the
+/// scope at which the event was created (e.g. the game loop).
+///
+/// Events contain a timestamp, which is usually the time at which they were
+/// generated.  This is necessary for purposes of proper ordering for events
+/// queued in EventQueue.  For events being queued in EventQueue, the event
+/// may be constructed with a time in the future.  This has the intuitive
+/// function of scheduling the event to be processed at (no earlier than) that
+/// future time.
+///
+/// Events processed by EventHandler must be processed in chronological order.
+/// Care must be used, when constructing events, to supply the correct
+/// timestamp.  ---- It is planned that a GameLoop class will be made, which
+/// will handle all tracking of the "current time", and all necessary queries
+/// for the current time will be made to the GameLoop class, so that it doesn't
+/// need to be derived from some other object (like a FrameHandler).
 class Event
 {
 public:
 
-    /** These enum values are used for real-time type information, used mainly
-      * for determining what specific event handler function should be used
-      * to process the event.
-      * @brief Enumeration for all Event subclasses.
-      */
+    /// @brief Enumeration for all Event subclasses.
+    /// These enum values are used for real-time type information, used mainly for determining
+    /// what specific event handler function should be used to process the event.
     enum EventType
     {
         DUMMY = 0,
@@ -90,99 +85,74 @@ public:
         CUSTOM
     }; // end of enum Event::EventType
 
-    /** It should be noted that EventHandler checks that the events it
-      * processes have non-descending timestamps.  Processing an event
-      * with a time less than the most recently processed will cause an
-      * assert.
-      * @brief Construct an event with the given timestamp and event_type.
-      */
-    inline Event (Float time, EventType event_type)
+    /// @brief Construct an event with the given timestamp and event_type.
+    /// @details It should be noted that EventHandler checks that the events it
+    /// processes have non-descending timestamps.  Processing an event
+    /// with a time less than the most recently processed will cause an assert.
+    Event (Time time, EventType event_type)
+        :
+        m_time(time)
     {
-        ASSERT1(time >= 0.0);
-        m_time = time;
+        ASSERT1(m_time >= Time::ms_beginning_of);
         m_event_type = event_type;
         m_id = 0;
         m_is_scheduled_for_deletion = false;
     }
-    /** Pure virtual.  No other pure virtual functions exist in Event,
-      * so the destructor must be pure virtual in order to make Event
-      * pure virtual.  A non-subclassed Event cannot be created.
-      * @brief Destructor.
-      */
+    /// @brief Destructor.
+    /// Pure virtual.  No other pure virtual functions exist in Event, so the destructor must be
+    /// pure virtual in order to make Event pure virtual.  A non-subclassed Event cannot be created.
     virtual ~Event () = 0;
 
-    /** @brief Returns the textual representation of the event type.
-      */
+    /// Returns the textual representation of the event type.
     static std::string const &Name (EventType event_type);
-    /** @brief Returns the event's timestamp.
-      */
-    inline Float Time () const { return m_time; }
-    /** @brief Returns the event's type.
-      */
-    inline EventType GetEventType () const { return m_event_type; }
-    /** This is used by EventQueue.  You should not need to use it.
-      * @brief Returns the ID of the event.
-      */
-    inline Uint32 ID () const { return m_id; }
-    /** Events that have been scheduled to be deleted should never be
-      * processed.
-      * @brief Returns true iff the EventQueue has scheduled this event to
-      * be deleted.
-      */
-    inline bool IsScheduledForDeletion () const { return m_is_scheduled_for_deletion; }
-    /** Input event subclasses (key/mouse/joy) will override this function to
-      * return true.
-      * @brief Returns true iff this is an input event (key/mouse/joy).
-      */
+    /// Returns the event's timestamp.
+    Time GetTime () const { return m_time; }
+    /// Returns the event's type.
+    EventType GetEventType () const { return m_event_type; }
+    /// @brief Returns the ID of the event.
+    /// @details This is used by EventQueue.  You should not need to use it.
+    Uint32 ID () const { return m_id; }
+    /// @brief Returns true iff the EventQueue has scheduled this event to be deleted.
+    /// @details Events that have been scheduled to be deleted should never be processed.
+    bool IsScheduledForDeletion () const { return m_is_scheduled_for_deletion; }
+    /// @brief Returns true iff this is an input event (key/mouse/joy).
+    /// @details Input event subclasses (key/mouse/joy) will override this function to return true.
     virtual bool IsInputEvent () const { return false; }
-    /** Keyboard event subclasses will override this function to return true.
-      * @brief Returns true iff this is a keyboard event.
-      */
+    /// @brief Returns true iff this is a keyboard event.
+    /// @details Keyboard event subclasses will override this function to return true.
     virtual bool IsKeyEvent () const { return false; }
-    /** Mouse event subclasses will override this function to return true.
-      * @brief Returns true iff this is a mouse event.
-      */
+    /// @brief Returns true iff this is a mouse event.
+    /// @details Mouse event subclasses will override this function to return true.
     virtual bool IsMouseEvent () const { return false; }
-    /** Mouse button event subclasses will override this function to return
-      * true.
-      * @brief Returns true iff this is a mouse button event.
-      */
+    /// @brief Returns true iff this is a mouse button event.
+    /// @details Mouse button event subclasses will override this function to return true.
     virtual bool IsMouseButtonEvent () const { return false; }
-    /** Mouse motion event subclasses will override this function to return
-      * true.
-      * @brief Returns true iff this is a mouse motion event.
-      */
+    /// @brief Returns true iff this is a mouse motion event.
+    /// @details Mouse motion event subclasses will override this function to return true.
     virtual bool IsMouseMotionEvent () const { return false; }
-    /** Pinch event subclasses will override this function to return true.
-      * @brief Returns true iff this is a pinch event.
-      */
+    /// @brief Returns true iff this is a pinch event.
+    /// @details Pinch event subclasses will override this function to return true.
     virtual bool IsPinchEvent () const { return false; }
-    /** Pinch motion event subclasses will override this function to return
-      * true.
-      * @brief Returns true iff this is a pinch motion event.
-      */
+    /// @brief Returns true iff this is a pinch motion event.
+    /// @details Pinch motion event subclasses will override this function to return true.
     virtual bool IsPinchMotionEvent () const { return false; }
-    /** Rotate event subclasses will override this function to return true.
-      * @brief Returns true iff this is a rotate event.
-      */
+    /// @brief Returns true iff this is a rotate event.
+    /// @details Rotate event subclasses will override this function to return true.
     virtual bool IsRotateEvent () const { return false; }
-    /** Rotate motion event subclasses will override this function to return
-      * true.
-      * @brief Returns true iff this is a rotate motion event.
-      */
+    /// @brief Returns true iff this is a rotate motion event.
+    /// @details Rotate motion event subclasses will override this function to return true.
     virtual bool IsRotateMotionEvent () const { return false; }
-    /** Joy event subclasses will override this function to return true.
-      * @brief Returns true iff this is a joy event.
-      */
+    /// @brief Returns true iff this is a joy event.
+    /// @details Joy event subclasses will override this function to return true.
     virtual bool IsJoyEvent () const { return false; }
 
 private:
 
-    inline void SetID (Uint32 id) const { m_id = id; }
+    void SetID (Uint32 id) const { m_id = id; }
 
-    inline void ScheduleForDeletion () const { m_is_scheduled_for_deletion = true; }
+    void ScheduleForDeletion () const { m_is_scheduled_for_deletion = true; }
 
-    Float m_time;
+    Time m_time;
     EventType m_event_type;
     mutable Uint32 m_id;
     mutable bool m_is_scheduled_for_deletion;
@@ -190,53 +160,43 @@ private:
     friend class EventQueue;
 }; // end of class Event
 
-/** There is no built-in facility for sending this event to StateMachine --
-  * a StateMachine isn't an EventHandler, so you must inherit EventHandler
-  * manually, and provide the necessary code in HandleEvent().
-  * @brief Event for asynchronously sending input to state machines.
-  */
+/// @brief Event for asynchronously sending input to state machines.
+/// @details There is no built-in facility for sending this event to StateMachine -- a StateMachine isn't
+/// an EventHandler, so you must inherit EventHandler manually, and provide the necessary code in HandleEvent().
 class EventStateMachineInput : public Event
 {
 public:
 
-    /** @brief Constructs an EventStateMachineInput.
-      */
-    EventStateMachineInput (StateMachineInput input, Float time)
+    EventStateMachineInput (StateMachineInput input, Time time)
         :
         Event(time, STATE_MACHINE_INPUT),
         m_input(input)
     { }
 
-    inline StateMachineInput GetInput () const { return m_input; }
+    StateMachineInput GetInput () const { return m_input; }
 
 private:
 
     StateMachineInput const m_input;
 }; // end of class EventStateMachineInput
 
-/** For events not forseen by XuqRijBuh, EventCustom provides a baseclass
-  * from which custom events can be derived.  Widget provides a special
-  * overridable function for handling custom events.
-  * @brief Abstract baseclass for custom events.
-  */
+/// @brief Abstract baseclass for custom events.
+/// @details For events not forseen by XuqRijBuh, EventCustom provides a baseclass from which custom events can
+/// be derived.  Widget provides a special overridable function for handling custom events.
 class EventCustom : public Event
 {
 public:
 
     typedef Uint16 CustomType;
 
-    /** @brief Constructs an EventCustom.
-      */
-    EventCustom (CustomType custom_type, Float time)
+    EventCustom (CustomType custom_type, Time time)
         :
         Event(time, CUSTOM),
         m_custom_type(custom_type)
     { }
-    /** @brief Pure virtual destructor.
-      */
     virtual ~EventCustom () = 0;
 
-    inline CustomType GetCustomType () const { return m_custom_type; }
+    CustomType GetCustomType () const { return m_custom_type; }
 
 private:
 
@@ -245,14 +205,12 @@ private:
 
 /// @cond IGNORE_THIS
 // skip documenting this class
-/** Ignore it.
-  * @brief An event subclass that is only used by EventQueue.
-  */
+/// @brief An event subclass that is only used by EventQueue.  Ignore this (you should not see this in the docs).
 class EventDummy : public Event
 {
 private:
 
-    EventDummy (Float time) : Event(time, DUMMY) { }
+    EventDummy (Time time) : Event(time, DUMMY) { }
     ~EventDummy () { }
 
     friend class EventQueue;

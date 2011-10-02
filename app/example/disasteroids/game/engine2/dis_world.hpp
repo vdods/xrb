@@ -149,7 +149,7 @@ private:
     bool StateOutro (StateMachineInput);
     bool StateEndGame (StateMachineInput);
 
-    void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
+    void ScheduleStateMachineInput (StateMachineInput input, Time::Delta time_delay);
     void CancelScheduledStateMachineInput ();
 
     StateMachine<World> m_state_machine;
@@ -161,7 +161,7 @@ private:
     void ProcessWaveIntermissionGameplayLogic ();
     void ProcessCommonGameplayLogic ();
 
-    void BeginWave ();
+    void AdvanceWaveState ();
 
     void EndGame ();
     void EndIntro ();
@@ -170,12 +170,8 @@ private:
     void SetIsAlertWave (bool is_alert_wave);
 
     Asteroid *SpawnAsteroidOutOfView ();
-    EnemyShip *SpawnEnemyShipOutOfView (
-        EntityType enemy_ship_type,
-        Uint8 enemy_level);
-    bool IsAreaNotVisibleAndNotOverlappingAnyEntities (
-        FloatVector2 const &translation,
-        Float scale_factor);
+    EnemyShip *SpawnEnemyShipOutOfView (EntityType enemy_ship_type, Uint8 enemy_level);
+    bool IsAreaNotVisibleAndNotOverlappingAnyEntities (FloatVector2 const &translation, Float scale_factor);
 
     void CreateAndPopulateSuperforegroundObjectLayer ();
     void CreateAndPopulateForegroundObjectLayer ();
@@ -196,11 +192,10 @@ private:
 
     Uint32 m_asteroid_count;
     Float m_asteroid_mass;
-    Float m_next_asteroid_spawn_time;
     Uint8 m_asteroid_mineral_level;
-    Float m_next_asteroid_mineral_level_time;
+    Time m_next_asteroid_mineral_level_time;
     Uint8 m_asteroid_mineral_content_level;
-    Float m_next_asteroid_mineral_content_level_time;
+    Time m_next_asteroid_mineral_content_level_time;
     Float m_destroyed_asteroid_area_left_before_spawning_option_powerup;
 
     Uint32 m_current_wave_index;
@@ -224,7 +219,7 @@ private:
     SignalSender0 m_internal_sender_begin_game_over;
     SignalSender0 m_internal_sender_begin_outro;
 
-    SignalReceiver0 m_internal_receiver_begin_wave;
+    SignalReceiver0 m_internal_receiver_advance_wave_state;
     SignalReceiver0 m_internal_receiver_end_game;
     SignalReceiver0 m_internal_receiver_end_intro;
     SignalReceiver0 m_internal_receiver_end_outro;

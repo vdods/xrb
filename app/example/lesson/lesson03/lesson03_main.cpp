@@ -616,8 +616,8 @@ int main (int argc, char **argv)
         screen->SetMainWidget(main_widget);
 
         // These values will be used below in the framerate control code.
-        Float current_real_time = 0.0f;
-        Float next_real_time = 0.0f;
+        Time current_real_time = Time::ms_beginning_of;
+        Time next_real_time = Time::ms_beginning_of;
         // Run the game loop until the Screen no longer has the will to live.
         while (!screen->IsQuitRequested())
         {
@@ -628,11 +628,11 @@ int main (int argc, char **argv)
             long to sleep to attempt to achieve the exact desired framerate.
             @code */
             // Retrieve the current real time in seconds as a Float.
-            current_real_time = 0.001f * Singleton::Pal().CurrentTime();
+            current_real_time = Singleton::Pal().CurrentTime();
             // figure out how much time to sleep before processing the next frame
-            Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - current_real_time)));
+            Time::Delta seconds_to_sleep = Max(0.0f, next_real_time - current_real_time);
             // Delay for the calculated number of milliseconds.
-            Singleton::Pal().Sleep(milliseconds_to_sleep);
+            Singleton::Pal().Sleep(seconds_to_sleep);
             // Calculate the desired next game loop time (which should never
             // fall below current_real_time.
             next_real_time = Max(current_real_time, next_real_time + 1.0f / g_desired_framerate);

@@ -45,13 +45,13 @@ public:
     virtual void GrabInput ();
     virtual void ReleaseInput ();
 
-    virtual Xrb::Uint32 CurrentTime ();
+    virtual Xrb::Time CurrentTime ();
 
-    virtual void Sleep (Xrb::Uint32 milliseconds_to_sleep);
+    virtual void Sleep (Xrb::Time::Delta seconds_to_sleep);
 
     virtual void FinishFrame ();
 
-    virtual Xrb::Event *PollEvent (Xrb::Screen const *screen, Xrb::Float time);
+    virtual Xrb::Event *PollEvent (Xrb::Screen const *screen, Xrb::Time time);
 
     virtual bool FileExists (char const *file_id);
     virtual bool DirectoryExists (char const *directory_id);

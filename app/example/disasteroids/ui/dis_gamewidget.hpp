@@ -48,13 +48,13 @@ public:
 
     SignalSender0 const *SenderQuitGame ();
 
-    inline WorldView *GetWorldView () { return m_world_view; }
+    WorldView *GetWorldView () { return m_world_view; }
 
     void SetPlayerShip (PlayerShip *player_ship);
 
-    void SetWorldFrameTime (Uint32 world_frame_time);
-    void SetGUIFrameTime (Uint32 gui_frame_time);
-    void SetRenderFrameTime (Uint32 render_frame_time);
+    void SetWorldFrameDT (Time::Delta world_frame_dt);
+    void SetGUIFrameDT (Time::Delta gui_frame_dt);
+    void SetRenderFrameDT (Time::Delta render_frame_dt);
     void SetEntityCount (Uint32 entity_count);
     void SetBindTextureCallCount (Uint32 bind_texture_call_count);
     void SetBindTextureCallHitPercent (Uint32 bind_texture_call_hit_percent);
@@ -86,9 +86,9 @@ private:
 
     // debug info layout and value labels
     Layout *m_debug_info_layout;
-    ValueLabel<Uint32> *m_world_frame_time_label;
-    ValueLabel<Uint32> *m_gui_frame_time_label;
-    ValueLabel<Uint32> *m_render_frame_time_label;
+    ValueLabel<Time::Delta> *m_world_frame_dt_label;
+    ValueLabel<Time::Delta> *m_gui_frame_dt_label;
+    ValueLabel<Time::Delta> *m_render_frame_dt_label;
     ValueLabel<Uint32> *m_entity_count_label;
     ValueLabel<Uint32> *m_bind_texture_call_count_label;
     ValueLabel<Uint32> *m_bind_texture_call_hit_percent_label;

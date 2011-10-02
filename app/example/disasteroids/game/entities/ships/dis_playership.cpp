@@ -31,9 +31,9 @@ Float const PlayerShip::ms_difficulty_protection_factor[DL_COUNT] = { 3.0f, 2.33
 Float const PlayerShip::ms_max_stoke = 4.0f;
 Float const PlayerShip::ms_emp_disable_time_factor = 30.0f;
 Float const PlayerShip::ms_emp_blast_radius = 400.0f;
-Float const PlayerShip::ms_attack_boost_duration = 10.0f;
-Float const PlayerShip::ms_defense_boost_duration = 10.0f;
-Float const PlayerShip::ms_time_stretch_duration = 5.0f;
+Time::Delta const PlayerShip::ms_attack_boost_duration = 10.0f;
+Time::Delta const PlayerShip::ms_defense_boost_duration = 10.0f;
+Time::Delta const PlayerShip::ms_time_stretch_duration = 5.0f;
 Float const PlayerShip::ms_max_angular_velocity = 720.0f;
 Float const PlayerShip::ms_ship_radius = 11.0f;
 Float const PlayerShip::ms_baseline_mass = 100.0f;
@@ -569,7 +569,7 @@ void PlayerShip::IncrementOptionInventory ()
     m_sender_option_inventory_changed.Signal(m_option_inventory);
 }
 
-void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
+void PlayerShip::ActivateOption (KeyInputAction option, Time current_time)
 {
     ASSERT1(option >= INPUT__ACTIVATE_OPTION__LOWEST && option <= INPUT__ACTIVATE_OPTION__HIGHEST);
 
@@ -641,7 +641,7 @@ void PlayerShip::SelectPreviousOption ()
         m_selected_option = KeyInputAction(Sint32(m_selected_option)-1);
 }
 
-void PlayerShip::Think (Float time, Float frame_dt)
+void PlayerShip::Think (Time time, Time::Delta frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -681,7 +681,7 @@ void PlayerShip::Think (Float time, Float frame_dt)
         AimShipAtReticleCoordinates(frame_dt);
 
         // update the stoke O meter (exponential decay, with a lower limit of 1.0)
-        static Float const s_stoke_halflife = 2.0f;
+        static Time::Delta const s_stoke_halflife = 2.0f;
         SetStoke(Max(1.0f, m_stoke * Math::Pow(0.5f, frame_dt / s_stoke_halflife)));
 
         // figure out which weapon to use.
@@ -827,8 +827,8 @@ bool PlayerShip::Damage (
     FloatVector2 const &damage_normal,
     Float damage_force,
     DamageType damage_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     Float temp_damage_taken = 0.0f;
 
@@ -890,8 +890,8 @@ void PlayerShip::Die (
     FloatVector2 const &kill_normal,
     Float kill_force,
     DamageType kill_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     GetWorld()->RecordDestroyedPlayerShip(this);
 
@@ -1003,7 +1003,7 @@ void PlayerShip::SetAuxiliaryWeaponType (ItemType auxiliary_weapon_type)
     }
 }
 
-bool PlayerShip::TakePowerup (Powerup *powerup, Float time, Float frame_dt)
+bool PlayerShip::TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt)
 {
     ASSERT1(powerup != NULL);
 

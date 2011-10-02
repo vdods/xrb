@@ -89,15 +89,15 @@ private:
     void BeginGameOver ();
     void BeginOutro ();
 
-    void InitiateZoom (Float starting_zoom_factor, Float ending_zoom_factor, Float zoom_duration, bool signal_alert_zoom_done);
-    void ProcessZoom (Float frame_dt);
+    void InitiateZoom (Float starting_zoom_factor, Float ending_zoom_factor, Time::Delta zoom_duration, bool signal_alert_zoom_done);
+    void ProcessZoom (Time::Delta frame_dt);
 
-    void InitiateSpin (Float starting_spin_rate, Float ending_spin_rate, Float spin_duration);
-    void ProcessSpin (Float frame_dt);
+    void InitiateSpin (Float starting_spin_rate, Float ending_spin_rate, Time::Delta spin_duration);
+    void ProcessSpin (Time::Delta frame_dt);
 
     // a fade coefficient of 0 is faded to black, while 1 is not faded.
-    void InitiateFade (Float starting_fade_coefficient, Float ending_fade_coefficient, Float fade_duration);
-    void ProcessFade (Float frame_dt);
+    void InitiateFade (Float starting_fade_coefficient, Float ending_fade_coefficient, Time::Delta fade_duration);
+    void ProcessFade (Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // begin state machine stuff
@@ -122,7 +122,7 @@ private:
     bool StateOutro (StateMachineInput);
     bool StatePostOutro (StateMachineInput);
 
-    void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
+    void ScheduleStateMachineInput (StateMachineInput input, Time::Delta time_delay);
     void CancelScheduledStateMachineInput ();
 
     StateMachine<WorldView> m_state_machine;
@@ -138,27 +138,27 @@ private:
     static Float const ms_zoom_factor_alert_wave;
     static Float const ms_zoom_factor_outro_end;
 
-    static Float const ms_intro_duration;
-    static Float const ms_non_alert_wave_zoom_duration;
-    static Float const ms_alert_wave_zoom_duration;
-    static Float const ms_outro_duration;
+    static Time::Delta const ms_intro_duration;
+    static Time::Delta const ms_non_alert_wave_zoom_duration;
+    static Time::Delta const ms_alert_wave_zoom_duration;
+    static Time::Delta const ms_outro_duration;
 
     // ///////////////////////////////////////////////////////////////////////
     // intro/outro vars
 
-    Float m_zoom_time_total;
-    Float m_zoom_time_left;
+    Time::Delta m_zoom_time_total;
+    Time::Delta m_zoom_time_left;
     Float m_zoom_factor_begin;
     Float m_zoom_factor_end;
     bool m_signal_alert_zoom_done;
 
-    Float m_spin_time_total;
-    Float m_spin_time_left;
+    Time::Delta m_spin_time_total;
+    Time::Delta m_spin_time_left;
     Float m_spin_rate_begin;
     Float m_spin_rate_end;
 
-    Float m_fade_time_total;
-    Float m_fade_time_left;
+    Time::Delta m_fade_time_total;
+    Time::Delta m_fade_time_left;
     // a fade coefficient of 0 is faded to black, while 1 is not faded.
     Float m_fade_coefficient_begin;
     Float m_fade_coefficient_end;

@@ -67,14 +67,14 @@ private:
     // than this, Singleton::Pal().Sleep will be used to sleep the process).
     Float m_maximum_framerate;
     // current real time
-    Float m_real_time;
+    Time m_real_time;
 
 //     // contains the WorldViewWidget which displays the game world
 //     GameWidget *m_game_widget;
     // the world itself (i.e. the "document" in the "doc/view" paradigm)
     Engine2::World *m_world;
     // stores the game world time
-    Float m_game_time;
+    Time m_game_time;
 }; // end of class Master
 
 } // end of namespace Bm

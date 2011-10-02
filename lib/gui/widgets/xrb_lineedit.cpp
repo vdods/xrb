@@ -38,7 +38,7 @@ LineEdit::LineEdit (Uint32 character_limit, WidgetContext &context, std::string 
     m_does_cursor_overwrite = false;
     m_is_cursor_visible = false;
     m_cursor_blink_period = 0.5f;
-    m_next_cursor_blink_time = 0.0f;
+    m_next_cursor_blink_time = Time::ms_beginning_of;
     m_character_filter = CharacterFilter(CharacterFilter::DENY, "");
     m_is_read_only = false;
 

@@ -64,7 +64,7 @@ class TractorBeam;
 
 Asteroid *SpawnAsteroid (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float mass,
@@ -74,33 +74,33 @@ Asteroid *SpawnAsteroid (
 
 Ballistic *SpawnSmartBallistic (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float mass,
     FloatVector2 const &velocity,
     Float impact_damage,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     Uint8 weapon_level,
     EntityReference<Entity> const &owner);
 
 Ballistic *SpawnDumbBallistic (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float mass,
     FloatVector2 const &velocity,
     Float impact_damage,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     Uint8 weapon_level,
     EntityReference<Entity> const &owner);
 
 Grenade *SpawnGrenade (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     FloatVector2 const &velocity,
@@ -114,14 +114,14 @@ Grenade *SpawnGrenade (
 
 Missile *SpawnMissile (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float angle,
     FloatVector2 const &velocity,
     MissileLauncher *owner_missile_launcher,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     Float damage_to_inflict,
     Float damage_radius,
     Float explosion_radius,
@@ -132,13 +132,13 @@ Missile *SpawnMissile (
 
 GuidedMissile *SpawnGuidedMissile (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float angle,
     FloatVector2 const &velocity,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     Float damage_to_inflict,
     Float damage_radius,
     Float explosion_radius,
@@ -150,7 +150,7 @@ GuidedMissile *SpawnGuidedMissile (
 Powerup *SpawnPowerup (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float mass,
@@ -160,7 +160,7 @@ Powerup *SpawnPowerup (
 Powerup *SpawnPowerup (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     Float mass,
@@ -172,29 +172,29 @@ Powerup *SpawnPowerup (
 Explosion *SpawnExplosion (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float angle,
     Float initial_size,
     Float final_size,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     EntityType entity_type,
     Engine2::Circle::CollisionType collision_type);
 
 DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float damage_amount,
     Float damage_radius,
     Float initial_size,
     Float explosion_radius,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     EntityReference<Entity> const &owner);
 
 // NoDamageExplosion is used for exactly that, but also the ship death sequence
@@ -202,47 +202,47 @@ DamageExplosion *SpawnDamageExplosion (
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float initial_size,
     Float final_size,
-    Float time_to_live,
-    Float time_at_birth);
+    Time::Delta time_to_live,
+    Time time_at_birth);
 
 EMPExplosion *SpawnEMPExplosion (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float disable_time_factor,
     Float initial_size,
     Float final_size,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     EntityReference<Entity> const &owner);
 
 Fireball *SpawnFireball (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float starting_damage,
     Float potential_damage,
     Float initial_size,
     Float final_size,
-    Float time_to_live,
-    Float time_at_birth,
+    Time::Delta time_to_live,
+    Time time_at_birth,
     EntityReference<Entity> const &owner);
 
 LaserBeam *SpawnLaserBeam (Engine2::ObjectLayer *object_layer);
 
-LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, Float current_time);
+LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, Time current_time);
 
 void SpawnSplashImpactEffect (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &location,
     FloatVector2 const &direction,
     FloatVector2 const &base_velocity,
@@ -250,33 +250,33 @@ void SpawnSplashImpactEffect (
     Float seed_radius,
     Uint32 particle_count,
     Float particle_spread_angle,
-    Float particle_time_to_live,
+    Time::Delta particle_time_to_live,
     Float particle_speed_proportion);
 
 void SpawnGaussGunTrail (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &trail_start,
     FloatVector2 trail_direction,
     FloatVector2 const &trail_velocity,
     Float segment_width,
     Float segment_length,
     Uint32 segment_count,
-    Float time_to_live,
-    Float time_at_birth);
+    Time::Delta time_to_live,
+    Time time_at_birth);
 
 TractorBeam *SpawnTractorBeam (Engine2::ObjectLayer *object_layer);
 
-ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer, Float current_time);
+ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer, Time current_time);
 
-LightningEffect *SpawnLightningEffect (Engine2::ObjectLayer *object_layer, Float current_time);
+LightningEffect *SpawnLightningEffect (Engine2::ObjectLayer *object_layer, Time current_time);
 
 ReticleEffect *SpawnReticleEffect (Engine2::ObjectLayer *object_layer, Color const &color_mask);
 
 HealthTrigger *SpawnHealthTrigger (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     FloatVector2 const &velocity,
@@ -287,48 +287,48 @@ HealthTrigger *SpawnHealthTrigger (
 
 Solitary *SpawnSolitary (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity);
 
 Interloper *SpawnInterloper (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Shade *SpawnShade (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Revulsion *SpawnRevulsion (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Devourment *SpawnDevourment (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Demi *SpawnDemi (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 EnemyShip *SpawnEnemyShip (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     EntityType enemy_type,
@@ -336,7 +336,7 @@ EnemyShip *SpawnEnemyShip (
 
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     Engine2::ObjectLayer *object_layer,
-    Float current_time,
+    Time current_time,
     FloatVector2 const &translation,
     Float scale_factor,
     FloatVector2 const &velocity,

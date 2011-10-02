@@ -282,12 +282,19 @@ namespace Math
     {
         return floorf(x + 0.5f);
     }
-    /** @brief Sign-preserving floating-point modulo operation "x % y"
+    /** @brief Floating-point remainder operation "x % y"
       * @note See the man page for remainderf.
+      */
+    inline Float Remainder (Float x, Float y)
+    {
+        return remainderf(x, y);
+    }
+    /** @brief Sign-preserving floating-point modulo operation "x % y"
+      * @note See the man page for fmodf.
       */
     inline Float Mod (Float x, Float y)
     {
-        return remainderf(x, y);
+        return fmodf(x, y);
     }
 } // end of namespace Math
 

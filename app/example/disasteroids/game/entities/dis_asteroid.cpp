@@ -57,14 +57,11 @@ Uint8 const Asteroid::ms_mineral_distribution_lookup_table
 Uint8 const Asteroid::ms_number_of_fragments_to_spawn = 5;
 Float const Asteroid::ms_minimum_breakup_mass = 40.0f;
 Float const Asteroid::ms_decay_radius = 5.0f;
-Float const Asteroid::ms_decay_delay = 10.0f;
-Float const Asteroid::ms_decay_time = 2.0f;
+Time::Delta const Asteroid::ms_decay_delay = 10.0f;
+// Time::Delta const Asteroid::ms_decay_duration = 2.0f;
 Float const Asteroid::ms_health_factor = 0.2f;
 
-Asteroid::Asteroid (
-    Float const mass,
-    Float const mineral_content,
-    bool const is_a_secondary_asteroid)
+Asteroid::Asteroid (Float mass, Float mineral_content, bool is_a_secondary_asteroid)
     :
     Mortal(
         ms_health_factor * mass,
@@ -74,13 +71,13 @@ Asteroid::Asteroid (
 {
     m_is_a_secondary_asteroid = is_a_secondary_asteroid;
     m_delete_upon_next_think = false;
-    m_time_at_decay_start = -1.0f;
+    m_time_at_decay_start = Time::ms_invalid;
     m_mineral_content_byte = MineralContentByte(mineral_content);
     SetStrength(D_EXPLOSION);
     SetImmunity(D_FIRE|D_EMP);
 }
 
-void Asteroid::Think (Float const time, Float const frame_dt)
+void Asteroid::Think (Time time, Time::Delta frame_dt)
 {
     // we don't bother calling Mortal::Think here because the think time is so
     // high, and we don't want to change it so all asteroids Think every frame.
@@ -108,12 +105,12 @@ void Asteroid::Think (Float const time, Float const frame_dt)
 }
 
 void Asteroid::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
 
@@ -143,8 +140,8 @@ void Asteroid::Die (
     FloatVector2 const &kill_normal,
     Float kill_force,
     DamageType kill_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     SpawnNoDamageExplosion(
         GetObjectLayer(),

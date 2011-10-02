@@ -46,7 +46,8 @@ Master::Master (Screen *screen)
     ASSERT1(m_screen->OwnerEventQueue() != NULL);
     m_minimum_framerate = 20.0f;
     m_maximum_framerate = 60.0f;
-    m_real_time = 0.0f;
+    m_real_time = Time::ms_beginning_of;
+    m_game_time = Time::ms_beginning_of;
 
 //     m_game_widget = NULL;
     m_world = NULL;
@@ -262,7 +263,7 @@ void Master::Run ()
 //     // set it as the main widget
 //     m_screen->SetMainWidget(m_game_widget);
     // reset the game time
-    m_game_time = 0.0f;
+    m_game_time = Time::ms_beginning_of;
 
 
 
@@ -272,16 +273,16 @@ void Master::Run ()
 
 
 
-    m_real_time = 0.0f;
-    Float previous_real_time = 0.0f;
-    Float next_real_time = 0.0f;
-    Float game_time_delta;
+    m_real_time = Time::ms_beginning_of;
+    Time previous_real_time = Time::ms_beginning_of;
+    Time next_real_time = Time::ms_beginning_of;
+    Time::Delta game_time_delta;
     while (!m_screen->IsQuitRequested())
     {
         // figure out how much time to sleep before processing the next frame
-        m_real_time = 0.001f * Singleton::Pal().CurrentTime();
-        Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - m_real_time)));
-        Singleton::Pal().Sleep(milliseconds_to_sleep);
+        m_real_time = Singleton::Pal().CurrentTime();
+        Time::Delta seconds_to_sleep = Max(0.0f, next_real_time - m_real_time);
+        Singleton::Pal().Sleep(seconds_to_sleep);
         next_real_time += 1.0f / m_maximum_framerate;
 
 //         // process the Master event queue
@@ -328,44 +329,44 @@ void Master::Run ()
         // dequeue and process any key repeat events generated
         ProcessKeyRepeatEvents();
 
-        // these will store the millisecond durations for various processes
-        Uint32 world_frame_time = 0;
-        Uint32 gui_frame_time = 0;
-        Uint32 render_frame_time = 0;
+        // these will store the durations for various processes
+        Time::Delta world_frame_dt = 0;
+        Time::Delta gui_frame_dt = 0;
+        Time::Delta render_frame_dt = 0;
 
         // world frame
         if (m_world != NULL)
         {
-            Uint32 world_frame_start_time = Singleton::Pal().CurrentTime();
+            Time world_frame_start_time = Singleton::Pal().CurrentTime();
             //m_world->ProcessFrame(m_game_time);
-            world_frame_time = Singleton::Pal().CurrentTime() - world_frame_start_time;
+            world_frame_dt = Singleton::Pal().CurrentTime() - world_frame_start_time;
         }
 
         // gui frame
         {
-            Uint32 gui_frame_start_time = Singleton::Pal().CurrentTime();
+            Time gui_frame_start_time = Singleton::Pal().CurrentTime();
             // process events from the gui event queue
             m_screen->OwnerEventQueue()->ProcessFrame(m_real_time);
             // frame computations for the UI/view system
             m_screen->ProcessFrame(m_real_time);
             // process events from the gui event queue again
             m_screen->OwnerEventQueue()->ProcessFrame(m_real_time);
-            gui_frame_time = Singleton::Pal().CurrentTime() - gui_frame_start_time;
+            gui_frame_dt = Singleton::Pal().CurrentTime() - gui_frame_start_time;
         }
 
         // rendering
         {
-            Uint32 render_frame_start_time = Singleton::Pal().CurrentTime();
+            Time render_frame_start_time = Singleton::Pal().CurrentTime();
             m_screen->Draw(m_real_time);
-            render_frame_time = Singleton::Pal().CurrentTime() - render_frame_start_time;
+            render_frame_dt = Singleton::Pal().CurrentTime() - render_frame_start_time;
         }
 
         // set the (previous) game loop's process durations
 //         if (m_game_widget != NULL)
 //         {
-//             m_game_widget->SetWorldFrameTime(world_frame_time);
-//             m_game_widget->SetGUIFrameTime(gui_frame_time);
-//             m_game_widget->SetRenderFrameTime(render_frame_time);
+//             m_game_widget->SetWorldFrameDT(world_frame_dt);
+//             m_game_widget->SetGUIFrameDT(gui_frame_dt);
+//             m_game_widget->SetRenderFrameDT(render_frame_dt);
 //             m_game_widget->SetEntityCount(m_world->EntityCount());
 //         }
     }

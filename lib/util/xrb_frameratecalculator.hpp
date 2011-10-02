@@ -14,49 +14,36 @@
 #include "xrb.hpp"
 
 #include "xrb_circularqueue.hpp"
+#include "xrb_time.hpp"
 
-namespace Xrb
-{
-
-/** The default queue size is 32, providing a more or less instantaneous
-  * framerate (unless frames are being rendered very slowly).
-  * @brief A circular queue storing frame durations in order to calculate
-  *        framerates.
-  */
+namespace Xrb {
+    
+/// @brief A circular queue storing frame durations in order to calculate framerates.
+/// @details The default queue size is 32, providing a more or less instantaneous framerate
+/// (unless frames are being rendered very slowly).
 class FramerateCalculator
 {
 public:
 
-    /** The time unit conversion ratio is simply multiplied into the
-      * calculated framerate before returning it, in Framerate.
-      * @brief Constructs a framerate calculator with the given time
-      *        unit conversion ratio.
-      */
+    /// @brief Constructs a framerate calculator with the given time unit conversion ratio.
+    /// @details The time unit conversion ratio is simply multiplied into the calculated framerate before returning it, in Framerate.
     FramerateCalculator (Float time_unit_conversion_ratio = 1.0);
-    /** @brief Destructor.  Boring.
-      */
     ~FramerateCalculator () { }
 
-    /** @brief Records the duration of a new frame.
-      */
-    void AddFrameTime (Float frame_time);
+    /// Records the duration of a new frame.
+    void AddFrameTime (Time frame_time);
 
-    /** @brief Calculates and returns the current framerate, multiplied by
-      *        the time unit conversion ratio.
-      */
+    /// Calculates and returns the current framerate, multiplied by the time unit conversion ratio.
     Float Framerate () const;
 
 private:
 
-    enum
-    {
-        FRAME_COUNT = 32
-    };
+    enum { FRAME_COUNT = 32 };
 
-    // the circular queue which stores the frame times
-    CircularQueue<Float, FRAME_COUNT> m_frame_queue;
-    // the last frame time (to compute frame deltas)
-    Float m_last_frame_time;
+    // the circular queue which stores the frame time deltas
+    CircularQueue<Time::Delta, FRAME_COUNT> m_frame_dt_queue;
+    // the last frame time (to compute frame time deltas)
+    Time m_last_frame_time;
     // time conversion ratio (from input units to output units)
     Float m_time_unit_conversion_ratio;
 }; // end of class FramerateCalculator

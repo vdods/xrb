@@ -25,8 +25,7 @@ class Entity;
 } // end of namespace Engine2
 } // end of namespace Xrb
 
-namespace Dis
-{
+namespace Dis {
 
 class PhysicsHandler : public Engine2::Circle::PhysicsHandler
 {

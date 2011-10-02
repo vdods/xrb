@@ -14,11 +14,11 @@
 
 namespace Xrb {
 
-KeyRepeater::KeyRepeater (Float repeat_delay, Float repeat_period)
+KeyRepeater::KeyRepeater (Time::Delta repeat_delay, Time::Delta repeat_period)
     :
     EventHandler(NULL),
     FrameHandler(),
-    m_current_key_event(Key::NONE, Key::MOD_NONE, 0.0f)
+    m_current_key_event(Key::NONE, Key::MOD_NONE, Time::ms_beginning_of)
 {
     ASSERT1(repeat_delay > 0.0);
     ASSERT1(repeat_period > 0.0);
@@ -50,7 +50,7 @@ bool KeyRepeater::HandleEvent (Event const &e)
     if (e.IsKeyEvent())
     {
         // generate key events from the current state
-        GenerateKeyEvents(e.Time());
+        GenerateKeyEvents(e.GetTime());
 
         EventKey const &key_event = dynamic_cast<EventKey const &>(e);
         if (key_event.IsKeyDownEvent() && Key::IsKeyRepeatable(key_event.KeyCode()))
@@ -59,7 +59,7 @@ bool KeyRepeater::HandleEvent (Event const &e)
             // use this key as the current key event
             m_current_key_event = key_down_event;
             m_is_current_key_event_active = true;
-            m_next_repeat_time = key_down_event.Time() + m_repeat_delay;
+            m_next_repeat_time = key_down_event.GetTime() + m_repeat_delay;
 
             // the event was used
             return true;
@@ -80,7 +80,7 @@ bool KeyRepeater::HandleEvent (Event const &e)
     return false;
 }
 
-void KeyRepeater::GenerateKeyEvents (Float time)
+void KeyRepeater::GenerateKeyEvents (Time time)
 {
     // early out if there's no key being held down
     if (!m_is_current_key_event_active)

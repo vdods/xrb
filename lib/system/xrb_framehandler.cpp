@@ -10,12 +10,11 @@
 
 #include "xrb_framehandler.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 FrameHandler::FrameHandler ()
 {
-    m_most_recent_time = -1.0f;
+    m_most_recent_frame_time = Time::ms_beginning_of;
     m_frame_dt = 0.0f;
     m_lock = 0;
     m_frame_count = 0;
@@ -26,37 +25,35 @@ FrameHandler::~FrameHandler ()
     ASSERT1(m_lock == 0 && "Do not delete a FrameHandler while processing a frame");
 }
 
-void FrameHandler::ProcessFrame (Float const time)
+void FrameHandler::ProcessFrame (Time frame_time)
 {
     // start the frame
-    StartFrame(time);
+    StartFrame(frame_time);
     // call the Float guts of the frame handler, supplied by the derived class
     HandleFrame();
     // end the frame
     EndFrame();
 }
 
-void FrameHandler::StartFrame (Float const time)
+void FrameHandler::StartFrame (Time frame_time)
 {
-    ASSERT1(time >= 0.0f);
-    ASSERT1(time >= m_most_recent_time);
+    ASSERT1(frame_time >= Time::ms_beginning_of);
+    ASSERT1(frame_time >= m_most_recent_frame_time && "time should be nondecreasing");
 
     // only start the frame if the lock is unused
     if (m_lock == 0)
     {
-        // if this is the first frame, init the previous frame time
-        if (m_most_recent_time == -1.0f)
-            m_most_recent_time = time;
+        // if this is the first frame, init the previous frame time.
+        if (m_most_recent_frame_time == Time::ms_beginning_of)
+            m_most_recent_frame_time = frame_time;
 
-        // calculate dt
-        ASSERT1(time >= m_most_recent_time);
-        m_frame_dt = time - m_most_recent_time;
-
+        // calculate dt -- dt can be zero.
+        m_frame_dt = frame_time - m_most_recent_frame_time;
         // store the most recent time
-        m_most_recent_time = time;
+        m_most_recent_frame_time = frame_time;
     }
 
-    // assert if there will be overflow
+    // assert if there will be overflow (this is practically impossible)
     ASSERT1(m_lock < UINT32_UPPER_BOUND);
     // increment the lock's usage
     ++m_lock;

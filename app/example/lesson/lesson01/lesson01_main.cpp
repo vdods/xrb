@@ -332,20 +332,18 @@ int main (int argc, char **argv)
         while (!screen->IsQuitRequested())
         {
             /* @endcode
-            Sleep for 33 milliseconds so we don't suck up too much CPU time.
-            This will result in limiting the game loop framerate to about 30
-            frames per second (because there is one screen-rendering per game
-            loop iteration).
+            Sleep for 1/30 seconds so we don't suck up too much CPU time. This will
+            result in limiting the game loop framerate to about 30 frames per second
+            (because there is one screen-rendering per game loop iteration).
             @code */
-            Singleton::Pal().Sleep(33);
+            Singleton::Pal().Sleep(1.0f / 30.0f);
             /* @endcode
             Certain facilities of the game engine require the current time.
-            This value should be represented as a Float (notice the
-            capitalization), and should measure the number of seconds since
-            the application started.  Singleton::Pal().CurrentTime() returns the number of
-            milliseconds since the app started, so take one thousandth of that.
+            This value should have type Time, and should measure the number of seconds
+            since the application started.  Singleton::Pal().CurrentTime() returns
+            this value.
             @code */
-            Float time = 0.001f * Singleton::Pal().CurrentTime();
+            Time time = Singleton::Pal().CurrentTime();
             /* @endcode
             This loop sucks up all pending events, produces Xrb::Event objects
             out of them, and craps them onto the top of the widget hierarchy (the

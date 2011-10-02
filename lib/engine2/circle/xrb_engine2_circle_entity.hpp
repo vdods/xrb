@@ -16,6 +16,7 @@
 #include "xrb_engine2_circle_types.hpp"
 #include "xrb_engine2_entity.hpp"
 #include "xrb_polynomial.hpp"
+#include "xrb_time.hpp"
 
 namespace Xrb {
 namespace Engine2 {
@@ -39,7 +40,7 @@ public:
     PhysicsHandler const *GetPhysicsHandler () const;
     PhysicsHandler *GetPhysicsHandler ();
 
-    Float NextTimeToThink () const { return m_next_time_to_think; }
+    Time NextTimeToThink () const { return m_next_time_to_think; }
     CollisionType GetCollisionType () const { return m_collision_type; }
     Float Elasticity () const { return m_elasticity; }
     Float Mass () const { return m_mass; }
@@ -55,16 +56,16 @@ public:
     // public modifiers
     // ///////////////////////////////////////////////////////////////////////
 
-    void SetNextTimeToThink (Float next_time_to_think)
+    void SetNextTimeToThink (Time next_time_to_think)
     {
         m_next_time_to_think = next_time_to_think;
     }
-    void SetElasticity (Float const elasticity)
+    void SetElasticity (Float elasticity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity));
         m_elasticity = (elasticity >= 0.0f) ? elasticity : 0.0f;
     }
-    void SetMass (Float const mass)
+    void SetMass (Float mass)
     {
         ASSERT1(mass > 0.0f);
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass));
@@ -76,7 +77,7 @@ public:
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
         m_velocity = velocity;
     }
-    void SetVelocityComponent (Uint32 const index, Float const value)
+    void SetVelocityComponent (Uint32 index, Float value)
     {
         ASSERT1(index <= 1);
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(value));
@@ -94,7 +95,7 @@ public:
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]));
         m_force = force;
     }
-    void SetAngularVelocity (Float const angular_velocity)
+    void SetAngularVelocity (Float angular_velocity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity));
         m_angular_velocity = angular_velocity;
@@ -175,7 +176,7 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual void Think (Float time, Float frame_dt)
+    virtual void Think (Time time, Time::Delta frame_dt)
     {
         // if this Think method is not overridden, then don't Think often.
         SetNextTimeToThink(time + 10000.0f);
@@ -189,8 +190,8 @@ public:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt)
+        Time time,
+        Time::Delta frame_dt)
     { }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -202,9 +203,9 @@ public:
 
 protected:
 
-    // does the calculation to see if/when the given entity will collide
-    // with this one.
-    Float CollisionTime (Entity const *entity, Float lookahead_time) const;
+    // does the calculation to see if/when the given entity will collide with this one.
+    // returns the first collision time delta, not greater than lookahead_dt
+    Time::Delta CollisionTime (Entity const *entity, Time::Delta lookahead_dt) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // protected Entity interface methods
@@ -214,7 +215,7 @@ protected:
 
 private:
 
-    Float m_next_time_to_think;
+    Time m_next_time_to_think;
     // indicates the collision response which the geometry in this entity provides
     CollisionType const m_collision_type;
     // elasticity factor (nominally between 0.0 and 1.0)

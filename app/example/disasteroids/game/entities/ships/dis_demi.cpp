@@ -24,8 +24,7 @@ using namespace Xrb;
 
 #define THINK_STATE(x) &Demi::x
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 500000.0f, 700000.0f, 925000.0f, 1200000.0f };
@@ -35,27 +34,27 @@ Float const Demi::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 10000.0f, 14000.0f, 18
 Float const Demi::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 4.0f, 8.0f, 12.0f, 16.0f };
 Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const Demi::ms_weapon_fov[ENEMY_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
-Float const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 0.75f, 0.75f, 0.75f, 0.75f };
-Float const Demi::ms_spinning_attack_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Time::Delta const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 0.75f, 0.75f, 0.75f, 0.75f };
+Time::Delta const Demi::ms_spinning_attack_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 Float const Demi::ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
 Float const Demi::ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const Demi::ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Demi::ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
 Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 Float const Demi::ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT] = { 20.0f, 20.0f, 20.0f, 20.0f };
-Float const Demi::ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT] = { 7.0f, 7.0f, 7.0f, 7.0f };
-Float const Demi::ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
-Float const Demi::ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT] = { 0.15f, 0.15f, 0.15f, 0.15f };
-Float const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
-Float const Demi::ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
-Float const Demi::ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Time::Delta const Demi::ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT] = { 7.0f, 7.0f, 7.0f, 7.0f };
+Time::Delta const Demi::ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Time::Delta const Demi::ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT] = { 0.15f, 0.15f, 0.15f, 0.15f };
+Time::Delta const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Time::Delta const Demi::ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Time::Delta const Demi::ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 Float const Demi::ms_tractor_range[ENEMY_LEVEL_COUNT] = { 20000.0f, 20000.0f, 20000.0f, 20000.0f };
 Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 2000.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
 Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 200.0f, 210.0f, 220.0f, 230.0f };
 Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 350.0f, 360.0f, 370.0f, 380.0f };
-Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
+Time::Delta const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
 Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 20.0f, 20.0f, 20.0f, 20.0f };
 Float const Demi::ms_option_powerup_spawn_density_min[ENEMY_LEVEL_COUNT] = { 1.0f, 1.2f, 1.4f, 1.8f };
 Float const Demi::ms_option_powerup_spawn_density_max[ENEMY_LEVEL_COUNT] = { 1.6f, 1.8f, 2.2f, 2.7f };
@@ -216,7 +215,7 @@ Demi::~Demi ()
     Delete(m_aft_missile_launcher);
 }
 
-void Demi::Think (Float const time, Float const frame_dt)
+void Demi::Think (Time time, Time::Delta frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -356,8 +355,8 @@ void Demi::Die (
     FloatVector2 const &kill_normal,
     Float kill_force,
     DamageType kill_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     EnemyShip::Die(
         killer,
@@ -511,7 +510,7 @@ FloatVector2 Demi::MuzzleDirection (Weapon const *weapon) const
     }
 }
 
-bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
+bool Demi::TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt)
 {
     ASSERT1(powerup != NULL);
 
@@ -538,7 +537,7 @@ bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const fr
     return true;
 }
 
-void Demi::SetTarget (Mortal *const target)
+void Demi::SetTarget (Mortal *target)
 {
     if (target == NULL)
         m_target.Release();
@@ -560,7 +559,7 @@ void Demi::ResetInputs ()
     m_aft_weapon_secondary_input = 0;
 }
 
-void Demi::PickWanderDirection (Float const time, Float const frame_dt)
+void Demi::PickWanderDirection (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_target.IsValid());
 
@@ -578,7 +577,7 @@ void Demi::PickWanderDirection (Float const time, Float const frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Demi::Wander (Float const time, Float const frame_dt)
+void Demi::Wander (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_target.IsValid());
 
@@ -619,7 +618,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(PickWanderDirection);
 }
 
-void Demi::Stalk (Float const time, Float const frame_dt)
+void Demi::Stalk (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -715,7 +714,7 @@ void Demi::Stalk (Float const time, Float const frame_dt)
     ASSERT1(i < transition_count);
 }
 
-void Demi::PauseStart (Float const time, Float const frame_dt)
+void Demi::PauseStart (Time time, Time::Delta frame_dt)
 {
     m_start_time = time;
     m_think_state = THINK_STATE(PauseContinue);
@@ -723,7 +722,7 @@ void Demi::PauseStart (Float const time, Float const frame_dt)
     PickTractorThinkStates();
 }
 
-void Demi::PauseContinue (Float const time, Float const frame_dt)
+void Demi::PauseContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_pause_duration[EnemyLevel()])
     {
@@ -732,7 +731,7 @@ void Demi::PauseContinue (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::ChargeStart (Float const time, Float const frame_dt)
+void Demi::ChargeStart (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -754,7 +753,7 @@ void Demi::ChargeStart (Float const time, Float const frame_dt)
     ChargeAccelerate(time, frame_dt);
 }
 
-void Demi::ChargeAccelerate (Float const time, Float const frame_dt)
+void Demi::ChargeAccelerate (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + 1.0f)
     {
@@ -766,7 +765,7 @@ void Demi::ChargeAccelerate (Float const time, Float const frame_dt)
     MatchVelocity(m_charge_velocity, frame_dt, 10.0f * ms_engine_thrust[EnemyLevel()]);
 }
 
-void Demi::ChargeCoast (Float const time, Float const frame_dt)
+void Demi::ChargeCoast (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + 2.0f)
     {
@@ -786,7 +785,7 @@ void Demi::ChargeCoast (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::ChargeDecelerate (Float const time, Float const frame_dt)
+void Demi::ChargeDecelerate (Time time, Time::Delta frame_dt)
 {
     if (Speed() < 10.0f)
     {
@@ -798,7 +797,7 @@ void Demi::ChargeDecelerate (Float const time, Float const frame_dt)
     MatchVelocity(FloatVector2::ms_zero, frame_dt, 10.0f * ms_engine_thrust[EnemyLevel()]);
 }
 
-void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
+void Demi::GaussGunStartAim (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -835,7 +834,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     GaussGunContinueAim(time, frame_dt);
 }
 
-void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
+void Demi::GaussGunContinueAim (Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     ASSERT1(m_main_weapon == m_gauss_gun);
@@ -887,7 +886,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::GaussGunFire (Float const time, Float const frame_dt)
+void Demi::GaussGunFire (Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
@@ -906,7 +905,7 @@ void Demi::GaussGunFire (Float const time, Float const frame_dt)
     SetNextTimeToThink(time + 0.3f);
 }
 
-void Demi::FlameThrowSweepStart (Float const time, Float const frame_dt)
+void Demi::FlameThrowSweepStart (Time time, Time::Delta frame_dt)
 {
     m_main_weapon = m_flame_thrower;
 
@@ -921,7 +920,7 @@ void Demi::FlameThrowSweepStart (Float const time, Float const frame_dt)
     FlameThrowSweepContinue(time, frame_dt);
 }
 
-void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
+void Demi::FlameThrowSweepContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_flame_throw_sweep_duration[EnemyLevel()])
     {
@@ -937,7 +936,7 @@ void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::FlameThrowBlastStart (Float const time, Float const frame_dt)
+void Demi::FlameThrowBlastStart (Time time, Time::Delta frame_dt)
 {
     m_main_weapon = m_flame_thrower;
     m_port_weapon = m_port_flame_thrower;
@@ -955,7 +954,7 @@ void Demi::FlameThrowBlastStart (Float const time, Float const frame_dt)
     FlameThrowBlastContinue(time, frame_dt);
 }
 
-void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
+void Demi::FlameThrowBlastContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_flame_throw_blast_duration[EnemyLevel()])
     {
@@ -970,7 +969,7 @@ void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
     SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
+void Demi::MissileLaunchStart (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -992,7 +991,7 @@ void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
     MissileLaunchContinue(time, frame_dt);
 }
 
-void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
+void Demi::MissileLaunchContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_missile_launch_duration[EnemyLevel()])
     {
@@ -1006,7 +1005,7 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::InterloperSpawnBlastStart (Float const time, Float const frame_dt)
+void Demi::InterloperSpawnBlastStart (Time time, Time::Delta frame_dt)
 {
     m_aft_enemy_spawner->SetFireRateOverride(5.0f);
     m_aft_enemy_spawner->SetEnemySpawnType(ET_INTERLOPER);
@@ -1018,7 +1017,7 @@ void Demi::InterloperSpawnBlastStart (Float const time, Float const frame_dt)
     InterloperSpawnBlastContinue(time, frame_dt);
 }
 
-void Demi::InterloperSpawnBlastContinue (Float const time, Float const frame_dt)
+void Demi::InterloperSpawnBlastContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_enemy_spawn_blast_duration[EnemyLevel()])
     {
@@ -1030,7 +1029,7 @@ void Demi::InterloperSpawnBlastContinue (Float const time, Float const frame_dt)
     SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::ShadeSpawnBlastStart (Float const time, Float const frame_dt)
+void Demi::ShadeSpawnBlastStart (Time time, Time::Delta frame_dt)
 {
     m_aft_enemy_spawner->SetFireRateOverride(5.0f);
     m_aft_enemy_spawner->SetEnemySpawnType(ET_SHADE);
@@ -1042,7 +1041,7 @@ void Demi::ShadeSpawnBlastStart (Float const time, Float const frame_dt)
     ShadeSpawnBlastContinue(time, frame_dt);
 }
 
-void Demi::ShadeSpawnBlastContinue (Float const time, Float const frame_dt)
+void Demi::ShadeSpawnBlastContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_enemy_spawn_blast_duration[EnemyLevel()])
     {
@@ -1054,7 +1053,7 @@ void Demi::ShadeSpawnBlastContinue (Float const time, Float const frame_dt)
     SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::RevulsionSpawnBlastStart (Float const time, Float const frame_dt)
+void Demi::RevulsionSpawnBlastStart (Time time, Time::Delta frame_dt)
 {
     m_aft_enemy_spawner->SetFireRateOverride(5.0f);
     m_aft_enemy_spawner->SetEnemySpawnType(ET_REVULSION);
@@ -1066,7 +1065,7 @@ void Demi::RevulsionSpawnBlastStart (Float const time, Float const frame_dt)
     RevulsionSpawnBlastContinue(time, frame_dt);
 }
 
-void Demi::RevulsionSpawnBlastContinue (Float const time, Float const frame_dt)
+void Demi::RevulsionSpawnBlastContinue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_start_time + ms_enemy_spawn_blast_duration[EnemyLevel()])
     {
@@ -1078,7 +1077,7 @@ void Demi::RevulsionSpawnBlastContinue (Float const time, Float const frame_dt)
     SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::SpinningFlameThrow (Float const time, Float const frame_dt)
+void Demi::SpinningFlameThrow (Time time, Time::Delta frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = m_flame_thrower;
@@ -1094,7 +1093,7 @@ void Demi::SpinningFlameThrow (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningMissileLaunch (Float const time, Float const frame_dt)
+void Demi::SpinningMissileLaunch (Time time, Time::Delta frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = m_missile_launcher;
@@ -1110,7 +1109,7 @@ void Demi::SpinningMissileLaunch (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningGuidedMissileLaunch (Float const time, Float const frame_dt)
+void Demi::SpinningGuidedMissileLaunch (Time time, Time::Delta frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = m_missile_launcher;
@@ -1126,7 +1125,7 @@ void Demi::SpinningGuidedMissileLaunch (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningInterloperSpawn (Float const time, Float const frame_dt)
+void Demi::SpinningInterloperSpawn (Time time, Time::Delta frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = NULL;
@@ -1146,7 +1145,7 @@ void Demi::SpinningInterloperSpawn (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningShadeSpawn (Float const time, Float const frame_dt)
+void Demi::SpinningShadeSpawn (Time time, Time::Delta frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = NULL;
@@ -1166,7 +1165,7 @@ void Demi::SpinningShadeSpawn (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningRevulsionSpawn (Float const time, Float const frame_dt)
+void Demi::SpinningRevulsionSpawn (Time time, Time::Delta frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = NULL;
@@ -1186,7 +1185,7 @@ void Demi::SpinningRevulsionSpawn (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningAttackStart (Float const time, Float const frame_dt)
+void Demi::SpinningAttackStart (Time time, Time::Delta frame_dt)
 {
     // disable the tractor think functions
     m_port_tractor_think_state = NULL;
@@ -1201,7 +1200,7 @@ void Demi::SpinningAttackStart (Float const time, Float const frame_dt)
     SpinningAttackAccelerate(time, frame_dt);
 }
 
-void Demi::SpinningAttackAccelerate (Float const time, Float const frame_dt)
+void Demi::SpinningAttackAccelerate (Time time, Time::Delta frame_dt)
 {
     // if we're done accelerating the spin, transition to SpinningAttackFire
     ASSERT1(m_spin_acceleration_duration >= 0.0f);
@@ -1224,7 +1223,7 @@ void Demi::SpinningAttackAccelerate (Float const time, Float const frame_dt)
     SetAngularVelocity(AngularVelocity() + angular_acceleration * frame_dt);
 }
 
-void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
+void Demi::SpinningAttackFire (Time time, Time::Delta frame_dt)
 {
     // if we're done firing, start decelerating
     ASSERT1(m_spin_duration >= 0.0f);
@@ -1252,7 +1251,7 @@ void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
+void Demi::SpinningAttackDecelerate (Time time, Time::Delta frame_dt)
 {
     // if we're done decelerating the spin, we're done with this attack
     ASSERT1(m_spin_acceleration_duration >= 0.0f);
@@ -1274,7 +1273,7 @@ void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
     SetAngularVelocity(AngularVelocity() + angular_acceleration * frame_dt);
 }
 
-void Demi::TractorTargetCloserStart (Float const time, Float const frame_dt)
+void Demi::TractorTargetCloserStart (Time time, Time::Delta frame_dt)
 {
     // set the tractors' think states
     m_port_tractor_think_state = THINK_STATE(PortTractorPullTargetCloser);
@@ -1286,7 +1285,7 @@ void Demi::TractorTargetCloserStart (Float const time, Float const frame_dt)
     TractorTargetCloserContinue(time, frame_dt);
 }
 
-void Demi::TractorTargetCloserContinue (Float const time, Float const frame_dt)
+void Demi::TractorTargetCloserContinue (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -1304,7 +1303,7 @@ void Demi::TractorTargetCloserContinue (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
+void Demi::PortTractorDeflectStuff (Time time, Time::Delta frame_dt)
 {
     m_port_weapon = m_port_tractor;
 
@@ -1325,7 +1324,7 @@ void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
+void Demi::StarboardTractorDeflectStuff (Time time, Time::Delta frame_dt)
 {
     m_starboard_weapon = m_starboard_tractor;
 
@@ -1346,7 +1345,7 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
     }
 }
 
-void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
+void Demi::PortTractorPullTargetCloser (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
         return;
@@ -1359,7 +1358,7 @@ void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
     SetPortWeaponSecondaryInput(0);
 }
 
-void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame_dt)
+void Demi::StarboardTractorPullTargetCloser (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
         return;
@@ -1372,7 +1371,7 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
     SetStarboardWeaponSecondaryInput(0);
 }
 
-void Demi::PortTractorSuckUpPowerups (Float time, Float frame_dt)
+void Demi::PortTractorSuckUpPowerups (Time time, Time::Delta frame_dt)
 {
     m_port_weapon = m_port_tractor;
 
@@ -1393,7 +1392,7 @@ void Demi::PortTractorSuckUpPowerups (Float time, Float frame_dt)
     }
 }
 
-void Demi::StarboardTractorSuckUpPowerups (Float time, Float frame_dt)
+void Demi::StarboardTractorSuckUpPowerups (Time time, Time::Delta frame_dt)
 {
     m_starboard_weapon = m_starboard_tractor;
 
@@ -1414,7 +1413,7 @@ void Demi::StarboardTractorSuckUpPowerups (Float time, Float frame_dt)
     }
 }
 
-void Demi::PortTractorFlingStuffAtTarget (Float time, Float frame_dt)
+void Demi::PortTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
         return;
@@ -1440,7 +1439,7 @@ void Demi::PortTractorFlingStuffAtTarget (Float time, Float frame_dt)
     }
 }
 
-void Demi::StarboardTractorFlingStuffAtTarget (Float time, Float frame_dt)
+void Demi::StarboardTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
         return;
@@ -1504,7 +1503,7 @@ void Demi::PickTractorThinkStates ()
     }
 }
 
-void Demi::MatchVelocity (FloatVector2 const &velocity, Float frame_dt, Float max_thrust)
+void Demi::MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt, Float max_thrust)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
@@ -1527,8 +1526,8 @@ Entity *Demi::FindTractorTarget (
     TractorAction tractor_action,
     FloatVector2 const &muzzle_location,
     FloatVector2 const &muzzle_direction,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(tractor_action < TA_COUNT);
 
@@ -1562,8 +1561,8 @@ Entity *Demi::FindTractorTarget (
             case TA_DEFLECT:
                 {
                     // only target stuff that's about to collide with us (TODO: verify this works)
-                    Float collision_time = CollisionTime(entity, 2.0f);
-                    if (collision_time >= 0.0f)
+                    Time::Delta collision_dt = CollisionTime(entity, 2.0f);
+                    if (collision_dt >= 0.0f)
                     {
                         if (entity->IsExplosive() &&
                             entity->GetEntityType() != ET_ENEMY_MISSILE &&

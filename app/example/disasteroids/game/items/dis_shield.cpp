@@ -19,19 +19,19 @@ namespace Dis {
 Float const Shield::ms_power_consumption_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 15.0f, 22.0f, 30.0f };
 Float const Shield::ms_max_charged_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 60.0f, 90.0f, 120.0f };
 Float const Shield::ms_max_damage_dissipation[UPGRADE_LEVEL_COUNT] = { 4.0f, 8.0f, 16.0f, 32.0f };
-Float const Shield::ms_recharge_interval[UPGRADE_LEVEL_COUNT] = { 3.0f, 2.5f, 2.0f, 1.5f };
+Time::Delta const Shield::ms_recharge_interval[UPGRADE_LEVEL_COUNT] = { 3.0f, 2.5f, 2.0f, 1.5f };
 
 Float Shield::Damage (
-    Entity *const damager,
-    Entity *const damage_medium,
-    Float const damage_amount,
-    Float *const damage_amount_used,
+    Entity *damager,
+    Entity *damage_medium,
+    Float damage_amount,
+    Float *damage_amount_used,
     FloatVector2 const &damage_location,
     FloatVector2 const &damage_normal,
-    Float const damage_force,
-    Mortal::DamageType const damage_type,
-    Float const time,
-    Float const frame_dt)
+    Float damage_force,
+    Mortal::DamageType damage_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(damage_amount >= 0.0f);
     ASSERT1(m_charged_power >= 0.0f);
@@ -72,7 +72,7 @@ Float Shield::Damage (
     return adjusted_damage_amount;
 }
 
-Float Shield::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float Shield::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     Float max_power_that_can_be_recharged =
         frame_dt * ms_max_charged_power[UpgradeLevel()] /
@@ -84,7 +84,7 @@ Float Shield::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool def
         frame_dt * ms_power_consumption_rate[UpgradeLevel()];
 }
 
-bool Shield::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool Shield::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     ASSERT1(power >= 0.0f);
     ASSERT1(power <= PowerToBeUsedBasedOnInputs(attack_boost_is_enabled, defense_boost_is_enabled, time, frame_dt) + 0.001f);

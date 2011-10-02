@@ -138,8 +138,8 @@ int main (int argc, char **argv)
     now we'll just pause for 5 seconds.
     @code */
     {
-        std::cerr << "pausing for 5000 milliseconds..." << std::endl;
-        Singleton::Pal().Sleep(5000);
+        std::cerr << "pausing for 5 seconds..." << std::endl;
+        Singleton::Pal().Sleep(5.0f);
     }
 
     /* @endcode

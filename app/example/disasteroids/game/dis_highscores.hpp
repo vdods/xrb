@@ -20,19 +20,14 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Score
 {
 public:
 
     Score () { }
-    Score (
-        std::string const &name,
-        Uint32 points,
-        Uint32 wave_count,
-        time_t date)
+    Score (std::string const &name, Uint32 points, Uint32 wave_count, time_t date)
         :
         m_name(name),
         m_points(points),
@@ -41,11 +36,11 @@ public:
         m_hash(ComputeHash(name, points, wave_count, date))
     { }
 
-    inline std::string const &Name () const { return m_name; }
-    inline Uint32 Points () const { return m_points; }
-    inline Uint32 WaveCount () const { return m_wave_count; }
-    inline time_t Date () const { return m_date; }
-    inline Uint32 Hash () const { return m_hash; }
+    std::string const &Name () const { return m_name; }
+    Uint32 Points () const { return m_points; }
+    Uint32 WaveCount () const { return m_wave_count; }
+    time_t Date () const { return m_date; }
+    Uint32 Hash () const { return m_hash; }
 
 private:
 

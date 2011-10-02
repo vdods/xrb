@@ -228,6 +228,7 @@ lib_libxrb_la_SOURCES = \
     \
     lib/primitive/xrb_color.cpp \
     lib/primitive/xrb_texture.cpp \
+    lib/primitive/xrb_time.cpp \
     \
     lib/render/xrb_animation.cpp \
     lib/render/xrb_font.cpp \
@@ -357,6 +358,7 @@ include_HEADERS = \
     lib/primitive/xrb_ntuple.hpp \
     lib/primitive/xrb_rect.hpp \
     lib/primitive/xrb_texture.hpp \
+    lib/primitive/xrb_time.hpp \
     \
     lib/render/xrb_animation.hpp \
     lib/render/xrb_font.hpp \

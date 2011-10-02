@@ -103,35 +103,35 @@ GameWidget::GameWidget (World *world, WidgetContext &context)
             m_debug_info_layout->SetIsUsingZeroedFrameMargins(false);
             m_debug_info_layout->SetBackgroundStyle("black_half_opaque"); // see Dis::Master::Master()
 
-            m_world_frame_time_label =
-                new ValueLabel<Uint32>(
-                    "%u ms (world)",
-                    Util::TextToUint<Uint32>,
+            m_world_frame_dt_label =
+                new ValueLabel<Time::Delta>(
+                    "%0.3f s (world)",
+                    Util::TextToFloat,
                     context,
                     "world frame time label");
-            m_world_frame_time_label->SetIsHeightFixedToTextHeight(true);
-            m_world_frame_time_label->SetAlignment(Dim::X, RIGHT);
-            m_debug_info_layout->AttachChild(m_world_frame_time_label);
+            m_world_frame_dt_label->SetIsHeightFixedToTextHeight(true);
+            m_world_frame_dt_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_world_frame_dt_label);
 
-            m_gui_frame_time_label =
-                new ValueLabel<Uint32>(
-                    "%u ms (gui process)",
-                    Util::TextToUint<Uint32>,
+            m_gui_frame_dt_label =
+                new ValueLabel<Time::Delta>(
+                    "%0.3f s (gui process)",
+                    Util::TextToFloat,
                     context,
                     "gui frame time label");
-            m_gui_frame_time_label->SetIsHeightFixedToTextHeight(true);
-            m_gui_frame_time_label->SetAlignment(Dim::X, RIGHT);
-            m_debug_info_layout->AttachChild(m_gui_frame_time_label);
+            m_gui_frame_dt_label->SetIsHeightFixedToTextHeight(true);
+            m_gui_frame_dt_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_gui_frame_dt_label);
 
-            m_render_frame_time_label =
-                new ValueLabel<Uint32>(
-                    "%u ms (render)",
-                    Util::TextToUint<Uint32>,
+            m_render_frame_dt_label =
+                new ValueLabel<Time::Delta>(
+                    "%0.3f s (render)",
+                    Util::TextToFloat,
                     context,
                     "render frame time label");
-            m_render_frame_time_label->SetIsHeightFixedToTextHeight(true);
-            m_render_frame_time_label->SetAlignment(Dim::X, RIGHT);
-            m_debug_info_layout->AttachChild(m_render_frame_time_label);
+            m_render_frame_dt_label->SetIsHeightFixedToTextHeight(true);
+            m_render_frame_dt_label->SetAlignment(Dim::X, RIGHT);
+            m_debug_info_layout->AttachChild(m_render_frame_dt_label);
 
             m_entity_count_label =
                 new ValueLabel<Uint32>(
@@ -450,22 +450,22 @@ void GameWidget::SetPlayerShip (PlayerShip *player_ship)
     }
 }
 
-void GameWidget::SetWorldFrameTime (Uint32 world_frame_time)
+void GameWidget::SetWorldFrameDT (Time::Delta world_frame_dt)
 {
-    ASSERT1(m_world_frame_time_label != NULL);
-    m_world_frame_time_label->SetValue(world_frame_time);
+    ASSERT1(m_world_frame_dt_label != NULL);
+    m_world_frame_dt_label->SetValue(world_frame_dt);
 }
 
-void GameWidget::SetGUIFrameTime (Uint32 gui_frame_time)
+void GameWidget::SetGUIFrameDT (Time::Delta gui_frame_dt)
 {
-    ASSERT1(m_gui_frame_time_label != NULL);
-    m_gui_frame_time_label->SetValue(gui_frame_time);
+    ASSERT1(m_gui_frame_dt_label != NULL);
+    m_gui_frame_dt_label->SetValue(gui_frame_dt);
 }
 
-void GameWidget::SetRenderFrameTime (Uint32 render_frame_time)
+void GameWidget::SetRenderFrameDT (Time::Delta render_frame_dt)
 {
-    ASSERT1(m_render_frame_time_label != NULL);
-    m_render_frame_time_label->SetValue(render_frame_time);
+    ASSERT1(m_render_frame_dt_label != NULL);
+    m_render_frame_dt_label->SetValue(render_frame_dt);
 }
 
 void GameWidget::SetEntityCount (Uint32 entity_count)

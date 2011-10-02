@@ -16,6 +16,7 @@
 #include "xrb_engine2_circle_entity.hpp"
 #include "xrb_engine2_circle_types.hpp"
 #include "xrb_engine2_quadtree.hpp"
+#include "xrb_time.hpp"
 
 namespace Xrb {
 namespace Engine2 {
@@ -25,10 +26,7 @@ class CollisionQuadTree : public QuadTree
 {
 public:
 
-    CollisionQuadTree (
-        FloatVector2 const &center,
-        Float half_side_length,
-        Uint8 depth);
+    CollisionQuadTree (FloatVector2 const &center, Float half_side_length, Uint8 depth);
     virtual ~CollisionQuadTree () { }
 
     static CollisionQuadTree *Create (Float half_side_length, Uint8 depth);
@@ -54,10 +52,7 @@ public:
         AreaTraceList &area_trace_list,
         ObjectLayer const &object_layer) const;
 
-    void CollideEntity (
-        Entity *entity,
-        Float frame_dt,
-        CollisionPairList &collision_pair_list) const;
+    void CollideEntity (Entity *entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list) const;
 
 protected:
 
@@ -75,10 +70,7 @@ private:
     {
     public:
 
-        CollideEntityLoopFunctor (
-            Entity *entity,
-            Float frame_dt,
-            CollisionPairList &collision_pair_list)
+        CollideEntityLoopFunctor (Entity *entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list)
             :
             m_entity(entity),
             m_frame_dt(frame_dt),
@@ -88,7 +80,7 @@ private:
             ASSERT1(m_entity != NULL);
             ASSERT1(m_entity->OwnerObject() != NULL);
             ASSERT1(m_entity->GetObjectLayer() != NULL);
-            ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
+            ASSERT1(m_entity->GetCollisionType() != CT_NO_COLLISION);
         }
 
         // this is the business end of the functor, and is what actually
@@ -101,7 +93,7 @@ private:
     private:
 
         Entity *m_entity;
-        Float m_frame_dt;
+        Time::Delta m_frame_dt;
         CollisionPairList &m_collision_pair_list;
         ObjectLayer const &m_object_layer;
     }; // end of class CollisionQuadTree::CollideEntityLoopFunctor

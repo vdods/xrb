@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class GrenadeLauncher;
 class MissileLauncher;
@@ -46,8 +45,8 @@ public:
     }
     virtual ~Explosive () { }
 
-    inline Uint8 WeaponLevel () const { return m_weapon_level; }
-    inline bool HasDetonated () const { return m_has_detonated; }
+    Uint8 WeaponLevel () const { return m_weapon_level; }
+    bool HasDetonated () const { return m_has_detonated; }
     virtual bool IsExplosive () const { return true; }
 
     virtual void Collide (
@@ -55,8 +54,8 @@ public:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -64,16 +63,16 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
-        Float time,
-        Float frame_dt) = 0;
+        Time time,
+        Time::Delta frame_dt) = 0;
     virtual void Detonate (
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 protected:
 
@@ -118,8 +117,8 @@ public:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -127,16 +126,16 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Detonate (
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 private:
 
@@ -156,8 +155,8 @@ public:
 
     Missile (
         MissileLauncher *owner_missile_launcher,
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         Float damage_to_inflict,
         Float damage_radius,
         Float explosion_radius,
@@ -174,7 +173,7 @@ public:
         m_owner_missile_launcher = owner_missile_launcher;
     }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -182,27 +181,27 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Detonate (
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 protected:
 
     static Float const ms_acceleration[UPGRADE_LEVEL_COUNT];
 
-    Float m_time_to_live;
+    Time::Delta m_time_to_live;
 
 private:
 
     MissileLauncher *m_owner_missile_launcher;
-    Float const m_time_at_birth;
+    Time const m_time_at_birth;
     Float const m_damage_to_inflict;
     Float const m_damage_radius;
     Float const m_explosion_radius;
@@ -219,8 +218,8 @@ class GuidedMissile : public Missile
 public:
 
     GuidedMissile (
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         Float damage_to_inflict,
         Float damage_radius,
         Float explosion_radius,
@@ -243,11 +242,11 @@ public:
     {
         ASSERT1(entity_type == ET_GUIDED_MISSILE ||
                 entity_type == ET_GUIDED_ENEMY_MISSILE);
-        m_next_search_time = -1.0f;
+        m_next_search_time = Time::ms_negative_infinity;
     }
     virtual ~GuidedMissile () { }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
 
 protected:
 
@@ -255,12 +254,12 @@ protected:
 
 private:
 
-    void Search (Float time, Float frame_dt);
-    void Seek (Float time, Float frame_dt);
+    void Search (Time time, Time::Delta frame_dt);
+    void Seek (Time time, Time::Delta frame_dt);
 
     void AimAt (FloatVector2 const &position);
 
-    Float m_next_search_time;
+    Time m_next_search_time;
     EntityReference<Ship> m_target;
 }; // end of class GuidedMissile
 
@@ -273,8 +272,8 @@ class GuidedEnemyMissile : public GuidedMissile
 public:
 
     GuidedEnemyMissile (
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         Float damage_to_inflict,
         Float damage_radius,
         Float explosion_radius,

@@ -24,8 +24,7 @@ using namespace Xrb;
 
 #define THINK_STATE(x) &Shade::x
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Shade::ms_max_health[ENEMY_LEVEL_COUNT] = { 20.0f, 80.0f, 320.0f, 1280.0f };
 Float const Shade::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 9000.0f, 11000.0f, 14000.0f };
@@ -39,8 +38,8 @@ Float const Shade::ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT] = { 130.0f, 150.
 Float const Shade::ms_move_relative_velocity[ENEMY_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
 Float const Shade::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const Shade::ms_circling_speed[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 120.0f };
-Float const Shade::ms_in_crosshairs_teleport_time[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
-Float const Shade::ms_teleportation_duration[ENEMY_LEVEL_COUNT] = { 0.25f, 0.25f, 0.25f, 0.25f };
+Time::Delta const Shade::ms_in_crosshairs_teleport_delay[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Time::Delta const Shade::ms_teleportation_duration[ENEMY_LEVEL_COUNT] = { 0.25f, 0.25f, 0.25f, 0.25f };
 
 Shade::Shade (Uint8 enemy_level)
     :
@@ -64,7 +63,7 @@ Shade::~Shade ()
     Delete(m_weapon);
 }
 
-void Shade::Think (Float time, Float frame_dt)
+void Shade::Think (Time time, Time::Delta frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -139,7 +138,7 @@ void Shade::HandleNewOwnerObject ()
     OwnerObject()->ColorMask() = Color::ms_transparent_white;
 }
 
-void Shade::PickWanderDirection (Float time, Float frame_dt)
+void Shade::PickWanderDirection (Time time, Time::Delta frame_dt)
 {
     // update the next time to pick a wander direction
     m_next_whatever_time = time + 6.0f;
@@ -148,10 +147,10 @@ void Shade::PickWanderDirection (Float time, Float frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Shade::Wander (Float time, Float frame_dt)
+void Shade::Wander (Time time, Time::Delta frame_dt)
 {
     static Float const s_scan_radius = 200.0f;
-    static Float const s_collision_lookahead_time = 3.0f;
+    static Time::Delta const s_collision_lookahead_dt = 3.0f;
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
@@ -162,7 +161,7 @@ void Shade::Wander (Float time, Float frame_dt)
         false,
         area_trace_list);
     // check the area trace list for targets and collisions
-    Float collision_time = -1.0f;
+    Time::Delta collision_dt = -1.0f;
     Entity *collision_entity = NULL;
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
                                                   it_end = area_trace_list.end();
@@ -188,11 +187,11 @@ void Shade::Wander (Float time, Float frame_dt)
         // while, perform collision avoidance calculations
         else
         {
-            Float potential_collision_time = CollisionTime(entity, s_collision_lookahead_time);
-            if (potential_collision_time >= 0.0f &&
-                (collision_entity == NULL || potential_collision_time < collision_time))
+            Float potential_collision_dt = CollisionTime(entity, s_collision_lookahead_dt);
+            if (potential_collision_dt >= 0.0f &&
+                (collision_entity == NULL || potential_collision_dt < collision_dt))
             {
-                collision_time = potential_collision_time;
+                collision_dt = potential_collision_dt;
                 collision_entity = entity;
             }
         }
@@ -219,7 +218,7 @@ void Shade::Wander (Float time, Float frame_dt)
         m_think_state = THINK_STATE(PickWanderDirection);
 }
 
-void Shade::Stalk (Float time, Float frame_dt)
+void Shade::Stalk (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -240,7 +239,7 @@ void Shade::Stalk (Float time, Float frame_dt)
     // long enough, then teleport away
     if (distance_to_target < ms_alarm_distance[EnemyLevel()]
         ||
-        (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_time[EnemyLevel()]))
+        (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_delay[EnemyLevel()]))
     {
         m_saved_state = THINK_STATE(Stalk); // save the current state
         m_think_state = THINK_STATE(Teleport);
@@ -265,7 +264,7 @@ void Shade::Stalk (Float time, Float frame_dt)
 //     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Shade::MoveToAttackRange (Float time, Float frame_dt)
+void Shade::MoveToAttackRange (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -285,7 +284,7 @@ void Shade::MoveToAttackRange (Float time, Float frame_dt)
     // long enough, then teleport away
     if (distance_to_target < ms_alarm_distance[EnemyLevel()]
         ||
-        (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_time[EnemyLevel()]))
+        (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_delay[EnemyLevel()]))
     {
         m_saved_state = THINK_STATE(MoveToAttackRange); // save the current state
         m_think_state = THINK_STATE(Teleport);
@@ -340,7 +339,7 @@ void Shade::MoveToAttackRange (Float time, Float frame_dt)
     }
 }
 
-void Shade::Teleport (Float time, Float frame_dt)
+void Shade::Teleport (Time time, Time::Delta frame_dt)
 {
     ASSERT1(OwnerObject() != NULL);
 
@@ -462,7 +461,7 @@ void Shade::Teleport (Float time, Float frame_dt)
     m_next_whatever_time = time + ms_teleportation_duration[EnemyLevel()];
 }
 
-void Shade::RecoverAfterTeleporting (Float time, Float frame_dt)
+void Shade::RecoverAfterTeleporting (Time time, Time::Delta frame_dt)
 {
     if (time >= m_next_whatever_time)
     {
@@ -484,7 +483,7 @@ void Shade::RecoverAfterTeleporting (Float time, Float frame_dt)
     }
 }
 
-void Shade::ProcessInCrosshairsState (FloatVector2 const &target_position_delta, Float distance_to_target, Float current_time)
+void Shade::ProcessInCrosshairsState (FloatVector2 const &target_position_delta, Float distance_to_target, Time current_time)
 {
     // check if we're being aimed at by the target
     Float target_aim_angle_delta = Math::Arg(-target_position_delta) - m_target->Angle();
@@ -505,7 +504,7 @@ void Shade::ProcessInCrosshairsState (FloatVector2 const &target_position_delta,
         m_in_crosshairs = false;
 }
 
-void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+void Shade::MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
@@ -552,7 +551,7 @@ void Shade::AimWeaponAtTarget ()
         Polynomial::SolutionSet solution_set;
         poly.Solve(&solution_set, 0.001f);
 
-        Float T = -1.0f;
+        Float collision_dt = -1.0f;
         for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                                it_end = solution_set.end();
              it != it_end;
@@ -560,19 +559,19 @@ void Shade::AimWeaponAtTarget ()
         {
             if (*it >= 0.0f)
             {
-                T = *it;
+                collision_dt = *it;
                 break;
             }
         }
 
-        if (T <= 0.0f)
+        if (collision_dt <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach
             SetReticleCoordinates(m_target->Translation());
         }
         else
         {
-            FloatVector2 direction_to_aim((p + v*T + 0.5f*a*Sqr(T)) / (projectile_speed*T));
+            FloatVector2 direction_to_aim((p + v*collision_dt + 0.5f*a*Sqr(collision_dt)) / (projectile_speed*collision_dt));
             SetReticleCoordinates(Translation() + direction_to_aim.Normalization());
         }
         SetWeaponPrimaryInput(UINT8_UPPER_BOUND);

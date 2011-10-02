@@ -33,10 +33,10 @@ Float const WorldView::ms_zoom_factor_non_alert_wave = 0.00288f;
 Float const WorldView::ms_zoom_factor_alert_wave = 0.0018f;
 Float const WorldView::ms_zoom_factor_outro_end = 0.00024f;
 
-Float const WorldView::ms_intro_duration = 2.0f;
-Float const WorldView::ms_non_alert_wave_zoom_duration = 1.5f;
-Float const WorldView::ms_alert_wave_zoom_duration = 1.5f;
-Float const WorldView::ms_outro_duration = 2.0f;
+Time::Delta const WorldView::ms_intro_duration = 2.0f;
+Time::Delta const WorldView::ms_non_alert_wave_zoom_duration = 1.5f;
+Time::Delta const WorldView::ms_alert_wave_zoom_duration = 1.5f;
+Time::Delta const WorldView::ms_outro_duration = 2.0f;
 
 WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     :
@@ -112,7 +112,7 @@ WorldView::~WorldView ()
 {
 }
 
-void WorldView::SetPlayerShip (PlayerShip *const player_ship)
+void WorldView::SetPlayerShip (PlayerShip *player_ship)
 {
     if (m_player_ship != player_ship)
     {
@@ -263,7 +263,7 @@ void WorldView::HandleFrame ()
             FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * FrameDT()));
             bool is_view_recovering_this_frame;
             Float const max_view_center_delta = 2.4f / ZoomFactor();
-            static Float const s_time_to_recover = 0.5f;
+            static Time::Delta const s_recovery_duration = 0.5f;
             if (view_center_delta.Length() > max_view_center_delta * FrameDT())
             {
                 m_view_velocity += view_center_delta.Normalization() * max_view_center_delta * FrameDT();
@@ -290,7 +290,7 @@ void WorldView::HandleFrame ()
                 SetCenter(
                     m_calculated_view_center * (1.0f - m_recover_parameter) +
                     traveling_at * m_recover_parameter);
-                m_recover_parameter += FrameDT() / s_time_to_recover;
+                m_recover_parameter += FrameDT() / s_recovery_duration;
             }
             else
             {
@@ -598,10 +598,10 @@ void WorldView::BeginOutro ()
 }
 
 void WorldView::InitiateZoom (
-    Float const starting_zoom_factor,
-    Float const ending_zoom_factor,
-    Float const zoom_duration,
-    bool const signal_alert_zoom_done)
+    Float starting_zoom_factor,
+    Float ending_zoom_factor,
+    Time::Delta zoom_duration,
+    bool signal_alert_zoom_done)
 {
     ASSERT1(ending_zoom_factor > 0.0f);
     m_zoom_factor_begin = starting_zoom_factor;
@@ -611,7 +611,7 @@ void WorldView::InitiateZoom (
     m_signal_alert_zoom_done = signal_alert_zoom_done;
 }
 
-void WorldView::ProcessZoom (Float const frame_dt)
+void WorldView::ProcessZoom (Time::Delta frame_dt)
 {
     ASSERT1(m_zoom_factor_begin > 0.0f);
     ASSERT1(m_zoom_factor_end > 0.0f);
@@ -642,7 +642,7 @@ void WorldView::ProcessZoom (Float const frame_dt)
     }
 }
 
-void WorldView::InitiateSpin (Float const starting_spin_rate, Float const ending_spin_rate, Float const spin_duration)
+void WorldView::InitiateSpin (Float starting_spin_rate, Float ending_spin_rate, Time::Delta spin_duration)
 {
     m_spin_rate_begin = starting_spin_rate;
     m_spin_rate_end = ending_spin_rate;
@@ -650,7 +650,7 @@ void WorldView::InitiateSpin (Float const starting_spin_rate, Float const ending
     m_spin_time_left = spin_duration;
 }
 
-void WorldView::ProcessSpin (Float const frame_dt)
+void WorldView::ProcessSpin (Time::Delta frame_dt)
 {
     if (m_spin_time_left < 0.0f)
         m_spin_time_left = 0.0f;
@@ -665,7 +665,7 @@ void WorldView::ProcessSpin (Float const frame_dt)
     m_spin_time_left -= frame_dt;
 }
 
-void WorldView::InitiateFade (Float const starting_fade_coefficient, Float const ending_fade_coefficient, Float const fade_duration)
+void WorldView::InitiateFade (Float starting_fade_coefficient, Float ending_fade_coefficient, Time::Delta fade_duration)
 {
     m_fade_coefficient_begin = starting_fade_coefficient;
     m_fade_coefficient_end = ending_fade_coefficient;
@@ -673,7 +673,7 @@ void WorldView::InitiateFade (Float const starting_fade_coefficient, Float const
     m_fade_time_left = fade_duration;
 }
 
-void WorldView::ProcessFade (Float const frame_dt)
+void WorldView::ProcessFade (Time::Delta frame_dt)
 {
     if (m_fade_time_left < 0.0f)
         m_fade_time_left = 0.0f;
@@ -840,7 +840,7 @@ bool WorldView::StatePostOutro (StateMachineInput input)
     return false;
 }
 
-void WorldView::ScheduleStateMachineInput (StateMachineInput input, Float const time_delay)
+void WorldView::ScheduleStateMachineInput (StateMachineInput input, Time::Delta time_delay)
 {
     CancelScheduledStateMachineInput();
     EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));

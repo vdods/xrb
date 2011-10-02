@@ -101,7 +101,7 @@ public:
         Entity &entity0,
         Entity &entity1,
         FloatVector2 const &offset_0_to_1,
-        Float frame_dt,
+        Time::Delta frame_dt,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal_0_to_1);
 

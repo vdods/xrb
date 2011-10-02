@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Mortal : public Entity
 {
@@ -60,34 +59,34 @@ public:
         m_full_flash_intensity_health = 0.2f * m_max_health;
         m_damage_dissipation_rate = 0.0f;
         m_dissipated_damage_accumulator = 0.0f;
-        m_time_last_damaged = -1.0f;
+        m_time_last_damaged = Time::ms_negative_infinity;
         m_weakness = D_NONE;
         m_strength = D_NONE;
         m_immunity = D_NONE;
     }
     virtual ~Mortal () { }
 
-    inline Float CurrentHealth () const { return m_current_health; }
-    inline Float MaxHealth () const { return m_max_health; }
-    inline bool IsDead () const { return m_current_health <= 0.0f; }
-    inline bool IsInvincible () const { return m_is_invincible; }
-    inline Float DamageDissipationRate () const { return m_damage_dissipation_rate; }
-    inline DamageType Weakness () const { return m_weakness; }
-    inline DamageType Strength () const { return m_strength; }
-    inline DamageType Immunity () const { return m_immunity; }
-    inline bool IsWeakAgainst (DamageType damage_type) const
+    Float CurrentHealth () const { return m_current_health; }
+    Float MaxHealth () const { return m_max_health; }
+    bool IsDead () const { return m_current_health <= 0.0f; }
+    bool IsInvincible () const { return m_is_invincible; }
+    Float DamageDissipationRate () const { return m_damage_dissipation_rate; }
+    DamageType Weakness () const { return m_weakness; }
+    DamageType Strength () const { return m_strength; }
+    DamageType Immunity () const { return m_immunity; }
+    bool IsWeakAgainst (DamageType damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_weakness) != 0;
     }
-    inline bool IsStrongAgainst (DamageType damage_type) const
+    bool IsStrongAgainst (DamageType damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_strength) != 0;
     }
-    inline bool IsImmuneAgainst (DamageType damage_type) const
+    bool IsImmuneAgainst (DamageType damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
@@ -96,7 +95,7 @@ public:
     virtual bool IsMortal () const { return true; }
     Sint32 TargetPriority () const;
 
-    inline void SetIsInvincible (bool is_invincible) { m_is_invincible = is_invincible; }
+    void SetIsInvincible (bool is_invincible) { m_is_invincible = is_invincible; }
     void SetDamageDissipationRate (Float damage_dissipation_rate);
     void SetWeakness (DamageType weakness);
     void SetStrength (DamageType strength);
@@ -110,7 +109,7 @@ public:
     void RemoveStrength (DamageType strength);
     void RemoveImmunity (DamageType immunity);
 
-    void Revive (Float time, Float frame_dt);
+    void Revive (Time time, Time::Delta frame_dt);
     void Kill (
         Entity *killer,
         Entity *kill_medium,
@@ -118,8 +117,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     // the return value is true iff the Mortal died due to this damage.
     virtual bool Damage (
         Entity *damager,
@@ -130,8 +129,8 @@ public:
         FloatVector2 const &damage_normal,
         Float damage_force,
         DamageType damage_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Heal (
         Entity *healer,
         Entity *heal_medium,
@@ -139,8 +138,8 @@ public:
         FloatVector2 const &heal_location,
         FloatVector2 const &heal_normal,
         Float heal_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -148,18 +147,18 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt)
+        Time time,
+        Time::Delta frame_dt)
     { }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 protected:
 
@@ -203,7 +202,7 @@ private:
     Float m_full_flash_intensity_health;
     Float m_damage_dissipation_rate;
     Float m_dissipated_damage_accumulator;
-    Float m_time_last_damaged;
+    Time m_time_last_damaged;
     DamageType m_weakness;
     DamageType m_strength;
     DamageType m_immunity;

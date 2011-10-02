@@ -133,7 +133,7 @@ void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
         rotated_clip_rect.Height());
 }
 
-void Screen::Draw (Float real_time)
+void Screen::Draw (Time render_time)
 {
     // NOTE: this method encompasses all drawing.
 
@@ -180,7 +180,7 @@ void Screen::Draw (Float real_time)
     // for the blending function composition operation.  the default
     // color mask is opaque white, which is the identity for the color
     // masking operation.
-    RenderContext render_context(screen_rect, ColorBias(), ColorMask(), real_time);
+    RenderContext render_context(screen_rect, ColorBias(), ColorMask(), render_time);
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
     SetViewport(render_context.ClipRect());
@@ -363,14 +363,14 @@ bool Screen::HandleEvent (Event const &e)
             mouse_motion_event.SetDelta(RotatedScreenVector(mouse_motion_event.Delta()));
 
             // generate a mouseover event from the mouse motion event
-            EventMouseover mouseover_event(mouse_motion_event.Position(), mouse_motion_event.Time());
+            EventMouseover mouseover_event(mouse_motion_event.Position(), mouse_motion_event.GetTime());
             ProcessEvent(mouseover_event);
         }
 
         if (e.GetEventType() == Event::MOUSEBUTTONDOWN)
         {
             // create a focus event
-            EventFocus focus_event(dynamic_cast<EventMouseButton const &>(e).Position(), e.Time());
+            EventFocus focus_event(dynamic_cast<EventMouseButton const &>(e).Position(), e.GetTime());
             // send it to the event processor
             ProcessEvent(focus_event);
         }

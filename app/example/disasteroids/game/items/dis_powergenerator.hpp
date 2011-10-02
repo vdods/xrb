@@ -14,6 +14,7 @@
 #include "xrb.hpp"
 
 #include "dis_item.hpp"
+#include "xrb_time.hpp"
 
 using namespace Xrb;
 
@@ -26,7 +27,7 @@ class PowerGenerator : public Item
 {
 public:
 
-    PowerGenerator (Uint8 const upgrade_level)
+    PowerGenerator (Uint8 upgrade_level)
         :
         Item(upgrade_level, IT_POWER_GENERATOR)
     {
@@ -45,10 +46,10 @@ public:
         Uint32 powered_device_count,
         bool attack_boost_is_enabled,
         bool defense_boost_is_enabled,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     // NOTE: this method is not associated with Entity!
-    void Think (Float time, Float frame_dt);
+    void Think (Time time, Time::Delta frame_dt);
 
 private:
 

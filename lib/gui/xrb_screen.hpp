@@ -60,7 +60,7 @@ public:
     // sets the viewport for drawing into a widget
     void SetViewport (ScreenCoordRect const &clip_rect) const;
     // draws the whole fucking thing.  this is only non-const to allow PreDraw and PostDraw to be called.
-    void Draw (Float real_time);
+    void Draw (Time render_time);
 
     /// Returns true iff the specified widget is currently attached as a modal widget.
     bool IsAttachedAsModalChildWidget (Widget const &widget) const;

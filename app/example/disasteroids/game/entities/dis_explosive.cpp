@@ -20,8 +20,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Missile::ms_acceleration[UPGRADE_LEVEL_COUNT] = { 200.0f, 225.0f, 250.0f, 300.0f };
 
@@ -30,12 +29,12 @@ Float const Missile::ms_acceleration[UPGRADE_LEVEL_COUNT] = { 200.0f, 225.0f, 25
 // ///////////////////////////////////////////////////////////////////////////
 
 void Explosive::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     // we don't want to detonate on powerups
     if (collider->IsPowerup())
@@ -63,8 +62,8 @@ void Explosive::Die (
     FloatVector2 const &kill_normal,
     Float kill_force,
     DamageType kill_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     if (!m_has_detonated)
     {
@@ -85,9 +84,7 @@ void Explosive::Die (
     }
 }
 
-void Explosive::Detonate (
-    Float const time,
-    Float const frame_dt)
+void Explosive::Detonate (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!HasDetonated());
     m_has_detonated = true;
@@ -102,13 +99,13 @@ Float const Grenade::ms_default_mass = 4.0f;
 Float const Grenade::ms_merge_power_boost = 1.1f;
 
 Grenade::Grenade (
-    GrenadeLauncher *const owner_grenade_launcher,
-    Float const damage_to_inflict,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Uint32 const weapon_level,
+    GrenadeLauncher *owner_grenade_launcher,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
+    Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float const max_health)
+    Float max_health)
     :
     Explosive(weapon_level, owner, max_health, max_health, ET_GRENADE, Engine2::Circle::CT_SOLID_COLLISION),
     m_owner_grenade_launcher(owner_grenade_launcher),
@@ -126,12 +123,12 @@ Grenade::~Grenade ()
 }
 
 void Grenade::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     // if we hit a grenade of the same owner, don't detonate.  instead, merge together,
     if (collider->GetEntityType() == ET_GRENADE && DStaticCast<Grenade *>(collider)->m_owner == m_owner)
@@ -196,14 +193,14 @@ void Grenade::Collide (
 }
 
 void Grenade::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     if (HasDetonated())
         return;
@@ -228,10 +225,7 @@ void Grenade::Die (
         frame_dt);
 }
 
-bool Grenade::CheckIfItShouldDetonate (
-    Entity *const collider,
-    Float const time,
-    Float const frame_dt)
+bool Grenade::CheckIfItShouldDetonate (Entity *collider, Time time, Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
     ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
@@ -241,7 +235,7 @@ bool Grenade::CheckIfItShouldDetonate (
     return true;
 }
 
-void Grenade::Detonate (Float time, Float frame_dt)
+void Grenade::Detonate (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!HasDetonated());
 
@@ -288,15 +282,15 @@ void Grenade::Detonate (Float time, Float frame_dt)
 
 Missile::Missile (
     MissileLauncher *owner_missile_launcher,
-    Float const time_to_live,
-    Float const time_at_birth,
-    Float const damage_to_inflict,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Uint32 const weapon_level,
+    Time::Delta time_to_live,
+    Time time_at_birth,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
+    Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float const max_health,
-    EntityType const entity_type)
+    Float max_health,
+    EntityType entity_type)
     :
     Explosive(weapon_level, owner, max_health, max_health, entity_type, Engine2::Circle::CT_SOLID_COLLISION),
     m_time_to_live(time_to_live),
@@ -322,9 +316,7 @@ Missile::~Missile ()
     ASSERT1(m_owner_missile_launcher == NULL);
 }
 
-void Missile::Think (
-    Float const time,
-    Float const frame_dt)
+void Missile::Think (Time time, Time::Delta frame_dt)
 {
     // call the superclass' Think
     Explosive::Think(time, frame_dt);
@@ -383,14 +375,14 @@ void Missile::Think (
 }
 
 void Missile::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     if (HasDetonated())
         return;
@@ -415,10 +407,7 @@ void Missile::Die (
         frame_dt);
 }
 
-bool Missile::CheckIfItShouldDetonate (
-    Entity *const collider,
-    Float const time,
-    Float const frame_dt)
+bool Missile::CheckIfItShouldDetonate (Entity *collider, Time time, Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
     ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
@@ -450,7 +439,7 @@ bool Missile::CheckIfItShouldDetonate (
     return true;
 }
 
-void Missile::Detonate (Float time, Float frame_dt)
+void Missile::Detonate (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!HasDetonated());
 
@@ -489,7 +478,7 @@ void Missile::Detonate (Float time, Float frame_dt)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void GuidedMissile::Think (Float const time, Float const frame_dt)
+void GuidedMissile::Think (Time time, Time::Delta frame_dt)
 {
     if (time >= m_next_search_time)
         Search(time, frame_dt);
@@ -520,7 +509,7 @@ EntityReference<Ship> GuidedMissile::FindTarget (Engine2::Circle::LineTraceBindi
     return EntityReference<Ship>();
 }
 
-void GuidedMissile::Search (Float const time, Float const frame_dt)
+void GuidedMissile::Search (Time time, Time::Delta frame_dt)
 {
     // don't search if there is a living target
     if (m_target.IsValid() && !m_target->IsDead())
@@ -550,7 +539,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
     }
 }
 
-void GuidedMissile::Seek (Float const time, Float const frame_dt)
+void GuidedMissile::Seek (Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_target.IsValid());
 
@@ -559,7 +548,6 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
         m_target.Release();
         return;
     }
-
 
     // adjust our course to hit the target -- plot intercept course
     Float interceptor_acceleration = ms_acceleration[WeaponLevel()];

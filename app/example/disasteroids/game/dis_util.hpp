@@ -20,16 +20,15 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
-namespace Engine2
-{
-    class ObjectLayer;
+namespace Xrb {
+namespace Engine2 {
+    
+class ObjectLayer;
+
 } // end of namespace Engine2
 } // end of namespace Xrb
 
-namespace Dis
-{
+namespace Dis {
 
 class Entity;
 class PhysicsHandler;
@@ -44,8 +43,8 @@ void RadiusDamage (
     Float damage_area_radius,
     Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
-    Float time,
-    Float frame_dt);
+    Time time,
+    Time::Delta frame_dt);
 
 void RadiusKnockback (
     Engine2::Circle::PhysicsHandler *physics_handler,
@@ -53,10 +52,10 @@ void RadiusKnockback (
     FloatVector2 const &explosion_area_center,
     Float explosion_area_radius,
     Float power,
-    Float time,
-    Float frame_dt);
+    Time time,
+    Time::Delta frame_dt);
 
-std::string FormattedTimeString (Float time);
+std::string FormattedTimeString (Time time);
 
 } // end of namespace Dis
 

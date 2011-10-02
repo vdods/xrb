@@ -22,8 +22,7 @@ using namespace Xrb;
 
 #define THINK_STATE(x) &Revulsion::x
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Revulsion::ms_max_health[ENEMY_LEVEL_COUNT] = { 15.0f, 60.0f, 240.0f, 960.0f };
 Float const Revulsion::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 14000.0f, 32000.0f, 72000.0f };
@@ -35,12 +34,12 @@ Float const Revulsion::ms_weapon_impact_damage[ENEMY_LEVEL_COUNT] = { 8.0f, 16.0
 Float const Revulsion::ms_target_aim_angle_flee_limit[ENEMY_LEVEL_COUNT] = { 60.0f, 50.0f, 40.0f, 30.0f };
 Float const Revulsion::ms_target_aim_angle_trail_limit[ENEMY_LEVEL_COUNT] = { 110.0f, 120.0f, 130.0f, 140.0f };
 Float const Revulsion::ms_preferred_location_distance_tolerance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f, 150.0f };
-Float const Revulsion::ms_aim_duration[ENEMY_LEVEL_COUNT] = { 0.7f, 0.7f, 0.7f, 0.7f };
+Time::Delta const Revulsion::ms_aim_duration[ENEMY_LEVEL_COUNT] = { 0.7f, 0.7f, 0.7f, 0.7f };
 Float const Revulsion::ms_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
 Float const Revulsion::ms_flee_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 200.0f, 250.0f, 300.0f };
 Float const Revulsion::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
 
-Revulsion::Revulsion (Uint8 const enemy_level)
+Revulsion::Revulsion (Uint8 enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_REVULSION)
 {
@@ -67,7 +66,7 @@ Revulsion::~Revulsion ()
     }
 }
 
-void Revulsion::Think (Float const time, Float const frame_dt)
+void Revulsion::Think (Time time, Time::Delta frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -116,14 +115,14 @@ void Revulsion::Think (Float const time, Float const frame_dt)
 }
 
 void Revulsion::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     EnemyShip::Die(
         killer,
@@ -140,7 +139,7 @@ void Revulsion::Die (
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 }
 
-void Revulsion::SetTarget (Mortal *const target)
+void Revulsion::SetTarget (Mortal *target)
 {
     if (target == NULL)
         m_target.Release();
@@ -151,7 +150,7 @@ void Revulsion::SetTarget (Mortal *const target)
     }
 }
 
-void Revulsion::PickWanderDirection (Float const time, Float const frame_dt)
+void Revulsion::PickWanderDirection (Time time, Time::Delta frame_dt)
 {
     // update the next time to pick a wander direction
     m_next_wander_time = time + 6.0f;
@@ -161,10 +160,10 @@ void Revulsion::PickWanderDirection (Float const time, Float const frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Revulsion::Wander (Float const time, Float const frame_dt)
+void Revulsion::Wander (Time time, Time::Delta frame_dt)
 {
     static Float const s_scan_radius = 200.0f;
-    static Float const s_collision_lookahead_time = 3.0f;
+    static Time::Delta const s_collision_lookahead_dt = 3.0f;
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
@@ -175,7 +174,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
         false,
         area_trace_list);
     // check the area trace list for targets and collisions
-    Float collision_time = -1.0f;
+    Time::Delta collision_dt = -1.0f;
     Entity *collision_entity = NULL;
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
                                                   it_end = area_trace_list.end();
@@ -201,11 +200,11 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
         // while, perform collision avoidance calculations
         else
         {
-            Float potential_collision_time = CollisionTime(entity, s_collision_lookahead_time);
-            if (potential_collision_time >= 0.0f &&
-                (collision_entity == NULL || potential_collision_time < collision_time))
+            Float potential_collision_dt = CollisionTime(entity, s_collision_lookahead_dt);
+            if (potential_collision_dt >= 0.0f &&
+                (collision_entity == NULL || potential_collision_dt < collision_dt))
             {
-                collision_time = potential_collision_time;
+                collision_dt = potential_collision_dt;
                 collision_entity = entity;
             }
         }
@@ -237,7 +236,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     }
 }
 
-void Revulsion::TrailTarget (Float const time, Float const frame_dt)
+void Revulsion::TrailTarget (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_reticle_effect.IsValid() || !m_reticle_effect->IsInWorld());
 
@@ -288,7 +287,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     Polynomial::SolutionSet solution_set;
     poly.Solve(&solution_set, 0.001f);
 
-    Float T = -1.0f;
+    Float collision_dt = -1.0f;
     for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                          it_end = solution_set.end();
          it != it_end;
@@ -296,25 +295,25 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     {
         if (*it >= 0.0f)
         {
-            T = *it;
+            collision_dt = *it;
             break;
         }
     }
 
-    if (T <= 0.0f)
+    if (collision_dt <= 0.0f)
     {
         // if no acceptable solution, just do dumb approach
         SetReticleCoordinates(preferred_location);
     }
     else
     {
-        FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*T + a*T*T) / (interceptor_acceleration*T*T));
+        FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*collision_dt + a*Sqr(collision_dt)) / (interceptor_acceleration*Sqr(collision_dt)));
         SetReticleCoordinates(Translation() + real_approach_direction);
     }
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
 
-void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
+void Revulsion::StartAimAtTarget (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -346,7 +345,7 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
     ContinueAimAtTarget(time, frame_dt);
 }
 
-void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
+void Revulsion::ContinueAimAtTarget (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -384,7 +383,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
         m_think_state = THINK_STATE(FireAtTarget);
 }
 
-void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
+void Revulsion::FireAtTarget (Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
@@ -403,7 +402,7 @@ void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
     SetNextTimeToThink(time + 0.3f);
 }
 
-void Revulsion::FleeTarget (Float const time, Float const frame_dt)
+void Revulsion::FleeTarget (Time time, Time::Delta frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -435,7 +434,7 @@ Float Revulsion::TargetAimAngle () const
     return Math::Arg(target_delta) - Math::CanonicalAngle(m_target->Angle());
 }
 
-void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+void Revulsion::MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =

@@ -17,8 +17,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Item;
 class LightningEffect;
@@ -36,7 +35,7 @@ public:
     static Float ShipRadius (EntityType ship_type, Uint8 enemy_level);
 
     virtual bool IsShip () const { return true; }
-    bool IsDisabled () const { return m_disable_time > 0.0f; }
+    bool IsDisabled () const { return m_disable_duration > 0.0f; }
 
     void SetReticleCoordinates (FloatVector2 const &reticle_coordinates);
     void SetEngineRightLeftInput (Sint8 const engine_right_left_input)
@@ -61,12 +60,12 @@ public:
     void AccumulateDisableTime (Float const disable_time)
     {
         ASSERT1(disable_time > 0.0f);
-        m_disable_time += disable_time;
+        m_disable_duration += disable_time;
     }
 
     virtual void HandleNewOwnerObject ();
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -74,8 +73,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     virtual FloatVector2 MuzzleLocation (Weapon const *weapon) const
     {
@@ -102,7 +101,7 @@ public:
     virtual Float DefenseBoostPowerFactor () const { return 1.0f; }
     virtual Float DefenseBoostShieldFactor () const { return 1.0f; }
 
-    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt) = 0;
+    virtual bool TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt) = 0;
 
 protected:
 
@@ -131,14 +130,14 @@ protected:
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
 
-    void AimShipAtReticleCoordinates (Float frame_dt) { AimShipAtCoordinates(m_reticle_coordinates, frame_dt); }
-    void AimShipAtCoordinates (FloatVector2 const &coordinates, Float frame_dt);
-    void CancelDisableTime () { m_disable_time = 0.0f; }
+    void AimShipAtReticleCoordinates (Time::Delta frame_dt) { AimShipAtCoordinates(m_reticle_coordinates, frame_dt); }
+    void AimShipAtCoordinates (FloatVector2 const &coordinates, Time::Delta frame_dt);
+    void CancelDisableTime () { m_disable_duration = 0.0f; }
     virtual void ResetInputs ();
 
 private:
 
-    Float m_disable_time;
+    Time::Delta m_disable_duration;
 
     FloatVector2 m_reticle_coordinates;
     Sint8 m_engine_right_left_input;

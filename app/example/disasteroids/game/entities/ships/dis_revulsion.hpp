@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class GaussGun;
 class ReticleEffect;
@@ -35,7 +34,7 @@ public:
     static Float const ms_target_aim_angle_flee_limit[ENEMY_LEVEL_COUNT];
     static Float const ms_target_aim_angle_trail_limit[ENEMY_LEVEL_COUNT];
     static Float const ms_preferred_location_distance_tolerance[ENEMY_LEVEL_COUNT];
-    static Float const ms_aim_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_aim_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_aim_error_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_flee_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
@@ -43,7 +42,7 @@ public:
     Revulsion (Uint8 enemy_level);
     virtual ~Revulsion ();
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -51,8 +50,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
@@ -79,28 +78,28 @@ public:
 
 private:
 
-    void PickWanderDirection (Float time, Float frame_dt);
-    void Wander (Float time, Float frame_dt);
-    void TrailTarget (Float time, Float frame_dt);
-    void StartAimAtTarget (Float time, Float frame_dt);
-    void ContinueAimAtTarget (Float time, Float frame_dt);
-    void FireAtTarget (Float time, Float frame_dt);
-    void FleeTarget (Float time, Float frame_dt);
+    void PickWanderDirection (Time time, Time::Delta frame_dt);
+    void Wander (Time time, Time::Delta frame_dt);
+    void TrailTarget (Time time, Time::Delta frame_dt);
+    void StartAimAtTarget (Time time, Time::Delta frame_dt);
+    void ContinueAimAtTarget (Time time, Time::Delta frame_dt);
+    void FireAtTarget (Time time, Time::Delta frame_dt);
+    void FleeTarget (Time time, Time::Delta frame_dt);
 
     Float TargetAimAngle () const;
 
-    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    void MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt);
 
-    typedef void (Revulsion::*ThinkState)(Float time, Float frame_dt);
+    typedef void (Revulsion::*ThinkState)(Time time, Time::Delta frame_dt);
 
     ThinkState m_think_state;
-    Float m_next_wander_time;
+    Time m_next_wander_time;
     Float m_wander_angle;
     Float m_wander_angle_derivative;
     EntityReference<Ship> m_target;
     EntityReference<ReticleEffect> m_reticle_effect;
     FloatVector2 m_aim_delta;
-    Float m_aim_start_time;
+    Time m_aim_start_time;
     GaussGun *m_weapon;
 }; // end of class Revulsion
 

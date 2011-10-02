@@ -19,13 +19,13 @@ namespace Dis {
 
 Float const Powerup::ms_radius = 7.0f;
 
-void Powerup::SetEffectiveCoefficient (Float const effective_coefficient)
+void Powerup::SetEffectiveCoefficient (Float effective_coefficient)
 {
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(effective_coefficient));
     m_effective_coefficient = effective_coefficient;
 }
 
-void Powerup::SetEffectiveValue (Float const effective_value)
+void Powerup::SetEffectiveValue (Float effective_value)
 {
     ASSERT1(OwnerObject() != NULL && "may only use this method on an Entity with an owner Object");
     ASSERT1(Mass() > 0.0f);
@@ -33,7 +33,7 @@ void Powerup::SetEffectiveValue (Float const effective_value)
     m_effective_coefficient = effective_value / Mass();
 }
 
-void Powerup::Think (Float const time, Float const frame_dt)
+void Powerup::Think (Time time, Time::Delta frame_dt)
 {
     if (m_delete_upon_next_think)
         ScheduleForDeletion(0.0f);
@@ -45,12 +45,12 @@ void Powerup::Think (Float const time, Float const frame_dt)
 }
 
 void Powerup::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
 

@@ -19,8 +19,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Ship;
 
@@ -29,7 +28,7 @@ class Item
 {
 public:
 
-    Item (Uint8 const upgrade_level, ItemType const item_type)
+    Item (Uint8 upgrade_level, ItemType item_type)
         :
         m_upgrade_level(upgrade_level),
         m_item_type(item_type)

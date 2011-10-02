@@ -48,12 +48,16 @@ HighScoreNameEntryDialog::HighScoreNameEntryDialog (Uint32 points, Uint32 wave_c
     }
     DialogLayout()->AttachChild(main_layout);
 
-    // set the LineEdit to be in focus
-    m_name_edit->Focus();
-
     SignalHandler::Connect1(
         m_name_edit->SenderTextSetByEnterKey(),
         &m_internal_receiver_name_submitted);
+}
+
+void HighScoreNameEntryDialog::HandleActivate ()
+{
+    Dialog::HandleActivate();
+    // set the LineEdit to be in focus
+    m_name_edit->Focus();
 }
 
 void HighScoreNameEntryDialog::OKButtonActivated ()

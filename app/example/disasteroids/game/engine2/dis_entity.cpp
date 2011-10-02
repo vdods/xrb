@@ -14,8 +14,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Entity::Entity (EntityType entity_type, Engine2::Circle::CollisionType collision_type)
     :

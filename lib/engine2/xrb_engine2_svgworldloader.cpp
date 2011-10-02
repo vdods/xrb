@@ -37,7 +37,7 @@ public:
     // set during construction
     std::string const &m_svg_path;
     World &m_world;
-    Float const m_current_time;
+    Time const m_current_time;
     Uint32 const m_gltexture_flags;
     Uint32 const m_stage;
     std::string const m_additional_stageable_attribute_name_prefix;
@@ -52,7 +52,7 @@ public:
     LoadSvgIntoWorldContext (
         std::string const &svg_path,
         World &world,
-        Float current_time,
+        Time current_time,
         Uint32 gltexture_flags,
         Uint32 stage,
         std::string const &additional_stageable_attribute_name_prefix)
@@ -538,10 +538,10 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(Exception)
         throw Exception("failure opening file");
 
     parser.WarningAndErrorLogStream(&std::cerr);
-    Uint32 start_time = Singleton::Pal().CurrentTime();
+    Time start_time = Singleton::Pal().CurrentTime();
     Parser::ParserReturnCode parser_return_code = parser.Parse(&root);
-    Uint32 end_time = Singleton::Pal().CurrentTime();
-    std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); parse time = " << end_time - start_time << " ms" << std::endl;
+    Time end_time = Singleton::Pal().CurrentTime();
+    std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); parse time = " << end_time - start_time << " s" << std::endl;
     if (parser_return_code != Parser::PRC_SUCCESS)
         throw Exception("general parse error in file");
 
@@ -596,7 +596,7 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(Exception)
         context.m_g = NULL; // done with this g
     }
     end_time = Singleton::Pal().CurrentTime();
-    std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); process time = " << end_time - start_time << " ms" << std::endl;
+    std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); process time = " << end_time - start_time << " s" << std::endl;
 
     Delete(root);
 }
@@ -627,7 +627,7 @@ Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception)
 void LoadSvgIntoWorld (
     std::string const &svg_path,
     World &world,
-    Float current_time,
+    Time current_time,
     Uint32 gltexture_flags,
     Uint32 stage,
     std::string const &additional_stageable_attribute_name_prefix) throw(Exception)

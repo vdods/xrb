@@ -14,8 +14,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 bool PhysicsHandler::CollisionExemption (
     Engine2::Circle::Entity const &entity0,

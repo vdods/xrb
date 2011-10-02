@@ -24,7 +24,7 @@ Entity::Entity (CollisionType collision_type)
     m_collision_type(collision_type)
 {
     ASSERT1(m_collision_type < CT_COUNT);
-    m_next_time_to_think = 0.0f;
+    m_next_time_to_think = Time::ms_beginning_of;
     m_elasticity = 1.0f;
     m_mass = 1.0f;
     m_velocity = FloatVector2::ms_zero;
@@ -224,7 +224,7 @@ void Entity::HandleObjectLayerContainment (bool component_x, bool component_y)
         m_velocity[Dim::Y] = 0.0f;
 }
 
-Float Entity::CollisionTime (Entity const *entity, Float lookahead_time) const
+Time::Delta Entity::CollisionTime (Entity const *entity, Time::Delta lookahead_dt) const
 {
     ASSERT1(entity != NULL);
 
@@ -240,12 +240,11 @@ Float Entity::CollisionTime (Entity const *entity, Float lookahead_time) const
     poly.Solve(&solution_set, 0.0001f);
 
     Float T = -1.0f;
-    for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
-                                           it_end = solution_set.end();
+    for (Polynomial::SolutionSet::iterator it = solution_set.begin(), it_end = solution_set.end();
          it != it_end;
          ++it)
     {
-        if (*it > 0.0f && *it <= lookahead_time)
+        if (*it > 0.0f && *it <= lookahead_dt)
         {
             T = *it;
             break;

@@ -421,14 +421,15 @@ void SDLPal::ReleaseInput ()
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-Xrb::Uint32 SDLPal::CurrentTime ()
+Xrb::Time SDLPal::CurrentTime ()
 {
-    return SDL_GetTicks();
+    return Xrb::Time(0.001 * SDL_GetTicks());
 }
 
-void SDLPal::Sleep (Xrb::Uint32 milliseconds_to_sleep)
+void SDLPal::Sleep (Xrb::Time::Delta seconds_to_sleep)
 {
-    SDL_Delay(milliseconds_to_sleep);
+    ASSERT1(seconds_to_sleep >= 0.0f);
+    SDL_Delay(Uint32(1000.0f * seconds_to_sleep));
 }
 
 void SDLPal::FinishFrame ()
@@ -436,10 +437,10 @@ void SDLPal::FinishFrame ()
     SDL_GL_SwapBuffers();
 }
 
-Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
+Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Time time)
 {
     ASSERT1(screen != NULL);
-    ASSERT1(time >= 0.0);
+    ASSERT1(time >= Xrb::Time::ms_beginning_of);
 
     // loop until we've constructed an Xrb::Event, or until there are
     // no SDL events in the event queue.  this weird loop is necessary

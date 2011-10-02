@@ -421,11 +421,11 @@ int main (int argc, char **argv)
         // Run the game loop until the Screen feels like committing seppuku.
         while (!screen->IsQuitRequested())
         {
-            // Sleep for 33 milliseconds to limit the framerate and avoid
+            // Sleep for 1/30 seconds to limit the framerate and avoid
             // hogging up too much CPU just for this crappy little GUI app.
-            Singleton::Pal().Sleep(33);
+            Singleton::Pal().Sleep(1.0f / 30.0f);
             // Retrieve the current time in seconds as a Float.
-            Float time = 0.001f * Singleton::Pal().CurrentTime();
+            Time time = Singleton::Pal().CurrentTime();
             // Process events until there are no more.
             Event *event = NULL;
             while ((event = Singleton::Pal().PollEvent(screen, time)) != NULL)

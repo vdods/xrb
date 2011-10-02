@@ -37,8 +37,8 @@ class FiniteLifetimeEffect : public Effect
 public:
 
     FiniteLifetimeEffect (
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         EntityType entity_type,
         Engine2::Circle::CollisionType collision_type)
         :
@@ -51,13 +51,12 @@ public:
         m_run_in_reverse(false)
     {
         ASSERT1(m_time_to_live > 0.0f);
-        ASSERT1(m_time_at_birth >= 0.0f);
     }
     virtual ~FiniteLifetimeEffect () { }
 
-    Float TimeToLive () const { return m_time_to_live; }
-    Float TimeAtBirth () const { return m_time_at_birth; }
-    Float LifetimeRatio (Float current_time) const
+    Time::Delta TimeToLive () const { return m_time_to_live; }
+    Time TimeAtBirth () const { return m_time_at_birth; }
+    Float LifetimeRatio (Time current_time) const
     {
         ASSERT1(current_time >= m_time_at_birth);
         ASSERT1(m_time_to_live > 0.0f);
@@ -76,14 +75,14 @@ public:
     bool RunInReverse () const { return m_run_in_reverse; }
     void RunInReverse (bool run_in_reverse) { m_run_in_reverse = run_in_reverse; }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
 
 private:
 
     // indicates how long this effect will last (must be positive)
-    Float m_time_to_live;
+    Time::Delta m_time_to_live;
     // gives a reference time which can be used in calculations in Think()
-    Float m_time_at_birth;
+    Time m_time_at_birth;
     // the initial color mask.  The default is opaque white.
     Color m_initial_color_mask;
     // the final color mask.  The default is transparent white
@@ -105,8 +104,8 @@ public:
     Explosion (
         Float initial_size,
         Float final_size,
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         EntityType entity_type,
         Engine2::Circle::CollisionType collision_type)
         :
@@ -127,7 +126,7 @@ public:
     Float GetScaleInterpolationPower () const { return m_scale_interpolation_power; }
     void SetScaleInterpolationPower (Float scale_interpolation_power) { ASSERT1(scale_interpolation_power > 0.0f && "scale_interpolation_power must be positive"); m_scale_interpolation_power = scale_interpolation_power; }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
 
 private:
 
@@ -149,8 +148,8 @@ public:
         Float damage_radius,
         Float initial_size,
         Float explosion_radius,
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         EntityReference<Entity> const &owner)
         :
         Explosion(initial_size, explosion_radius, time_to_live, time_at_birth, ET_DAMAGE_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
@@ -162,14 +161,14 @@ public:
         m_has_done_impact = false;
     }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 private:
 
@@ -190,8 +189,8 @@ public:
     NoDamageExplosion (
         Float initial_size,
         Float final_size,
-        Float time_to_live,
-        Float time_at_birth)
+        Time::Delta time_to_live,
+        Time time_at_birth)
         :
         Explosion(initial_size, final_size, time_to_live, time_at_birth, ET_NO_DAMAGE_EXPLOSION, Engine2::Circle::CT_NO_COLLISION)
     { }
@@ -209,8 +208,8 @@ public:
         Float disable_time_factor,
         Float initial_size,
         Float final_size,
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         EntityReference<Entity> const &owner)
         :
         Explosion(initial_size, final_size, time_to_live, time_at_birth, ET_EMP_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
@@ -228,8 +227,8 @@ public:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     virtual void HandleNewOwnerObject ();
 
@@ -252,8 +251,8 @@ public:
         Float potential_damage,
         Float initial_size,
         Float final_size,
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         EntityReference<Entity> const &owner)
         :
         Explosion(initial_size, final_size, time_to_live, time_at_birth, ET_FIREBALL, Engine2::Circle::CT_NONSOLID_COLLISION),
@@ -266,14 +265,14 @@ public:
     }
     virtual ~Fireball () { }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 private:
 
@@ -293,7 +292,7 @@ class GaussGunTrail : public FiniteLifetimeEffect
 {
 public:
 
-    GaussGunTrail (Float time_to_live, Float time_at_birth)
+    GaussGunTrail (Time::Delta time_to_live, Time time_at_birth)
         :
         FiniteLifetimeEffect(time_to_live, time_at_birth, ET_GAUSS_GUN_TRAIL, Engine2::Circle::CT_NO_COLLISION)
     { }

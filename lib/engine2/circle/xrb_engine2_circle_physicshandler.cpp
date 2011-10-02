@@ -181,7 +181,7 @@ Float PhysicsHandler::CollisionResponse (
     Entity &entity0,
     Entity &entity1,
     FloatVector2 const &offset_0_to_1,
-    Float frame_dt,
+    Time::Delta frame_dt,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal_0_to_1)
 {
@@ -256,7 +256,7 @@ void PhysicsHandler::HandleFrame ()
 
         ASSERT1(m_entity_set.size() >= entity_set_size &&
                 "You must not remove entities during the Think loop -- "
-                "use ScheduleForRemovalFromWorld(0.0f) instead");
+                "use ScheduleForRemovalFromWorld() instead");
     }
 
     // apply the accumulated forces and torques

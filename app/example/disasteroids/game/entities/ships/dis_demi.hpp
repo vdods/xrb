@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 /*
 notes:
@@ -123,26 +122,26 @@ public:
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_weapon_fov[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_spinning_attack_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_spinning_attack_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT];
-    static Float const ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_missile_launch_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_missile_launch_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_range[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_strength[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_max_force[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_beam_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_target_near_range_distance[ENEMY_LEVEL_COUNT];
     static Float const ms_target_mid_range_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_pause_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_pause_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT];
     static Float const ms_option_powerup_spawn_density_min[ENEMY_LEVEL_COUNT];
     static Float const ms_option_powerup_spawn_density_max[ENEMY_LEVEL_COUNT];
@@ -150,7 +149,7 @@ public:
     Demi (Uint8 enemy_level);
     virtual ~Demi ();
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -158,8 +157,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
@@ -180,7 +179,7 @@ public:
         return ms_baseline_mass[EnemyLevel()];
     }
 
-    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);
+    virtual bool TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // EnemyShip interface methods
@@ -264,56 +263,56 @@ private:
     }
 
     // main think states
-    void PickWanderDirection (Float time, Float frame_dt);
-    void Wander (Float time, Float frame_dt);
-    void Stalk (Float time, Float frame_dt);
-    void PauseStart (Float time, Float frame_dt);
-    void PauseContinue (Float time, Float frame_dt);
-    void ChargeStart (Float time, Float frame_dt);
-    void ChargeAccelerate (Float time, Float frame_dt);
-    void ChargeCoast (Float time, Float frame_dt);
-    void ChargeDecelerate (Float time, Float frame_dt);
-    void GaussGunStartAim (Float time, Float frame_dt);
-    void GaussGunContinueAim (Float time, Float frame_dt);
-    void GaussGunFire (Float time, Float frame_dt);
-    void FlameThrowSweepStart (Float time, Float frame_dt);
-    void FlameThrowSweepContinue (Float time, Float frame_dt);
-    void FlameThrowBlastStart (Float time, Float frame_dt);
-    void FlameThrowBlastContinue (Float time, Float frame_dt);
-    void MissileLaunchStart (Float time, Float frame_dt);
-    void MissileLaunchContinue (Float time, Float frame_dt);
-    void InterloperSpawnBlastStart (Float time, Float frame_dt);
-    void InterloperSpawnBlastContinue (Float time, Float frame_dt);
-    void ShadeSpawnBlastStart (Float time, Float frame_dt);
-    void ShadeSpawnBlastContinue (Float time, Float frame_dt);
-    void RevulsionSpawnBlastStart (Float time, Float frame_dt);
-    void RevulsionSpawnBlastContinue (Float time, Float frame_dt);
-    void SpinningFlameThrow (Float time, Float frame_dt);
-    void SpinningMissileLaunch (Float time, Float frame_dt);
-    void SpinningGuidedMissileLaunch (Float time, Float frame_dt);
-    void SpinningInterloperSpawn (Float time, Float frame_dt);
-    void SpinningShadeSpawn (Float time, Float frame_dt);
-    void SpinningRevulsionSpawn (Float time, Float frame_dt);
-    void SpinningAttackStart (Float time, Float frame_dt);
-    void SpinningAttackAccelerate (Float time, Float frame_dt);
-    void SpinningAttackFire (Float time, Float frame_dt);
-    void SpinningAttackDecelerate (Float time, Float frame_dt);
-    void TractorTargetCloserStart (Float time, Float frame_dt);
-    void TractorTargetCloserContinue (Float time, Float frame_dt);
+    void PickWanderDirection (Time time, Time::Delta frame_dt);
+    void Wander (Time time, Time::Delta frame_dt);
+    void Stalk (Time time, Time::Delta frame_dt);
+    void PauseStart (Time time, Time::Delta frame_dt);
+    void PauseContinue (Time time, Time::Delta frame_dt);
+    void ChargeStart (Time time, Time::Delta frame_dt);
+    void ChargeAccelerate (Time time, Time::Delta frame_dt);
+    void ChargeCoast (Time time, Time::Delta frame_dt);
+    void ChargeDecelerate (Time time, Time::Delta frame_dt);
+    void GaussGunStartAim (Time time, Time::Delta frame_dt);
+    void GaussGunContinueAim (Time time, Time::Delta frame_dt);
+    void GaussGunFire (Time time, Time::Delta frame_dt);
+    void FlameThrowSweepStart (Time time, Time::Delta frame_dt);
+    void FlameThrowSweepContinue (Time time, Time::Delta frame_dt);
+    void FlameThrowBlastStart (Time time, Time::Delta frame_dt);
+    void FlameThrowBlastContinue (Time time, Time::Delta frame_dt);
+    void MissileLaunchStart (Time time, Time::Delta frame_dt);
+    void MissileLaunchContinue (Time time, Time::Delta frame_dt);
+    void InterloperSpawnBlastStart (Time time, Time::Delta frame_dt);
+    void InterloperSpawnBlastContinue (Time time, Time::Delta frame_dt);
+    void ShadeSpawnBlastStart (Time time, Time::Delta frame_dt);
+    void ShadeSpawnBlastContinue (Time time, Time::Delta frame_dt);
+    void RevulsionSpawnBlastStart (Time time, Time::Delta frame_dt);
+    void RevulsionSpawnBlastContinue (Time time, Time::Delta frame_dt);
+    void SpinningFlameThrow (Time time, Time::Delta frame_dt);
+    void SpinningMissileLaunch (Time time, Time::Delta frame_dt);
+    void SpinningGuidedMissileLaunch (Time time, Time::Delta frame_dt);
+    void SpinningInterloperSpawn (Time time, Time::Delta frame_dt);
+    void SpinningShadeSpawn (Time time, Time::Delta frame_dt);
+    void SpinningRevulsionSpawn (Time time, Time::Delta frame_dt);
+    void SpinningAttackStart (Time time, Time::Delta frame_dt);
+    void SpinningAttackAccelerate (Time time, Time::Delta frame_dt);
+    void SpinningAttackFire (Time time, Time::Delta frame_dt);
+    void SpinningAttackDecelerate (Time time, Time::Delta frame_dt);
+    void TractorTargetCloserStart (Time time, Time::Delta frame_dt);
+    void TractorTargetCloserContinue (Time time, Time::Delta frame_dt);
 
     // tractor think states
-    void PortTractorDeflectStuff (Float time, Float frame_dt);
-    void StarboardTractorDeflectStuff (Float time, Float frame_dt);
-    void PortTractorPullTargetCloser (Float time, Float frame_dt);
-    void StarboardTractorPullTargetCloser (Float time, Float frame_dt);
-    void PortTractorSuckUpPowerups (Float time, Float frame_dt);
-    void StarboardTractorSuckUpPowerups (Float time, Float frame_dt);
-    void PortTractorFlingStuffAtTarget (Float time, Float frame_dt);
-    void StarboardTractorFlingStuffAtTarget (Float time, Float frame_dt);
+    void PortTractorDeflectStuff (Time time, Time::Delta frame_dt);
+    void StarboardTractorDeflectStuff (Time time, Time::Delta frame_dt);
+    void PortTractorPullTargetCloser (Time time, Time::Delta frame_dt);
+    void StarboardTractorPullTargetCloser (Time time, Time::Delta frame_dt);
+    void PortTractorSuckUpPowerups (Time time, Time::Delta frame_dt);
+    void StarboardTractorSuckUpPowerups (Time time, Time::Delta frame_dt);
+    void PortTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt);
+    void StarboardTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt);
 
     void PickTractorThinkStates ();
 
-    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt, Float max_thrust = -1.0f);
+    void MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt, Float max_thrust = -1.0f);
 
     enum TractorAction
     {
@@ -330,10 +329,10 @@ private:
         TractorAction tractor_action,
         FloatVector2 const &muzzle_location,
         FloatVector2 const &muzzle_direction,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
-    typedef void (Demi::*ThinkState)(Float time, Float frame_dt);
+    typedef void (Demi::*ThinkState)(Time time, Time::Delta frame_dt);
 
     struct WeightedThinkState
     {
@@ -346,14 +345,14 @@ private:
     ThinkState m_think_state;
     ThinkState m_port_tractor_think_state;
     ThinkState m_starboard_tractor_think_state;
-    Float m_next_wander_time;
+    Time m_next_wander_time;
     Float m_wander_angle;
     EntityReference<Ship> m_target;
-    Float m_start_time;
-    Float m_spin_direction;
+    Time m_start_time;
+    Time::Delta m_spin_direction;
     Float m_spin_accelerate_through_angle;
-    Float m_spin_acceleration_duration;
-    Float m_spin_duration;
+    Time::Delta m_spin_acceleration_duration;
+    Time::Delta m_spin_duration;
     bool m_spinning_attack_uses_secondary_fire;
     FloatVector2 m_charge_velocity;
 

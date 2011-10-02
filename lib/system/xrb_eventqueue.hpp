@@ -22,78 +22,49 @@ namespace Xrb {
 
 class EventHandler;
 
-/** Many EventHandler instances are "owned" by a single EventQueue.  The
-  * EventQueue receives orders to enqueue events for a particular
-  * EventHandler.  All events from all EventHandlers are enqueued
-  * chronologically in a single queue.  The events are then dequeued (also
-  * in chronologicaly order) when the current time (as passed to the
-  * EventQueue) is greater or equal to the event's scheduled processing time.
-  *
-  * When an EventHandler is deleted, all events that are enqueued for it
-  * are taken out of the queue and deleted.
-  *
-  * @brief Controls chronological queueing and processing of asynchronous
-  *        events.
-  */
+/// @brief Controls chronological queueing and processing of asynchronous events.
+/// @details Many EventHandler instances are "owned" by a single EventQueue.  The EventQueue receives orders to
+/// enqueue events for a particular EventHandler.  All events from all EventHandlers are enqueued chronologically
+/// in a single queue.  The events are then dequeued (also in chronologicaly order) when the current time (as
+/// passed to the EventQueue) is greater or equal to the event's scheduled processing time.
+///
+/// When an EventHandler is deleted, all events that are enqueued for it are taken out of the queue and deleted.
 class EventQueue : public FrameHandler
 {
 public:
 
-    /** @brief Constructor.
-      */
     EventQueue ();
-    /** Deletes all remaining enqueued events.
-      * @brief Destructor.
-      */
+    /// Deletes all remaining enqueued events.
     virtual ~EventQueue ();
 
-    /** The time at which it will be processed is given the time
-      * specified during the Event's construction.
-      *
-      * @note You shouldn't have to call this directly.  Use
-      * @ref Xrb::EventHandler::EnqueueEvent instead.
-      *
-      * @brief Enqueues an event for the given EventHandler.
-      */
+    /// @brief Enqueues an event for the given EventHandler.
+    /// @details The time at which it will be processed is given the time specified during the Event's construction.
+    /// @note You shouldn't have to call this directly.  Use @ref Xrb::EventHandler::EnqueueEvent instead.
     void EnqueueEvent (EventHandler &event_handler, Event const *event);
-    /** @note You shouldn't have to call this directly.  It will be called
-      *       automatically by EventHandler's destructor.
-      * @brief Deletes events which belong to the given EventHandler
-      */
+    /// @brief Deletes events which belong to the given EventHandler
+    /// @note You shouldn't have to call this directly.  It will be called automatically by EventHandler's destructor.
     void DeleteEventsBelongingToHandler (EventHandler &event_handler);
-    /** This is used to remove situation-specific sets of events.
-      * @brief Deletes all queued events that return true when passed to the
-      *        given event matching function.
-      * @param EventMatchingFunction A pointer to the matching function to use.
-      */
+    /// @brief Deletes all queued events that return true when passed to the given event matching function.
+    /// @param EventMatchingFunction A pointer to the matching function to use.
+    /// @details This is used to remove situation-specific sets of events.
     void ScheduleMatchingEventsForDeletion (bool (*EventMatchingFunction)(Event const &));
-    /** This is used to remove situation-specific sets of events.
-      *
-      * The template parameter specifies the type of the single extra
-      * parameter of the event matching function (besides the Event itself).
-      *
-      * @brief Deletes all queued events that return true when passed to the
-      *        given event matching function.
-      * @param EventMatchingFunction A pointer to the matching function to use.
-      * @param parameter The parameter to pass to the matching function.
-      */
+    /// @brief Deletes all queued events that return true when passed to the given event matching function.
+    /// @param EventMatchingFunction A pointer to the matching function to use.
+    /// @param parameter The parameter to pass to the matching function.
+    /// @details This is used to remove situation-specific sets of events.
+    ///
+    /// The template parameter specifies the type of the single extra
+    /// parameter of the event matching function (besides the Event itself).
     template <typename ParameterType>
     void ScheduleMatchingEventsForDeletion (
         bool (*EventMatchingFunction)(Event const &, ParameterType),
         ParameterType parameter);
-    /** This is used to remove situation-specific sets of events.
-      *
-      * The template parameter specifies the type of the two extra parameters
-      * of the event matching function (besides the Event itself).
-      *
-      * @brief Deletes all queued events that return true when passed to the
-      *        given event matching function.
-      * @param EventMatchingFunction A pointer to the matching function to use.
-      * @param parameter1 The first parameter (of type Parameter1Type) to pass
-      *                   to the matching function.
-      * @param parameter2 The first parameter (of type Parameter2Type) to pass
-      *                   to the matching function.
-      */
+    /// @brief Deletes all queued events that return true when passed to the given event matching function.
+    /// @param EventMatchingFunction A pointer to the matching function to use.
+    /// @param parameter1 The first parameter (of type Parameter1Type) to pass to the matching function.
+    /// @param parameter2 The first parameter (of type Parameter2Type) to pass to the matching function.
+    /// @details This is used to remove situation-specific sets of events.  The template parameter specifies
+    /// the type of the two extra parameters of the event matching function (besides the Event itself).
     template <typename Parameter1Type, typename Parameter2Type>
     void ScheduleMatchingEventsForDeletion (
         bool (*EventMatchingFunction)(Event const &, Parameter1Type, Parameter2Type),

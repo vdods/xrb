@@ -38,9 +38,9 @@ public:
     static Float const ms_max_stoke;
     static Float const ms_emp_disable_time_factor;
     static Float const ms_emp_blast_radius;
-    static Float const ms_attack_boost_duration;
-    static Float const ms_defense_boost_duration;
-    static Float const ms_time_stretch_duration;
+    static Time::Delta const ms_attack_boost_duration;
+    static Time::Delta const ms_defense_boost_duration;
+    static Time::Delta const ms_time_stretch_duration;
     static Float const ms_max_angular_velocity;
     static Float const ms_ship_radius;
     static Float const ms_baseline_mass;
@@ -128,14 +128,14 @@ public:
     // false if the ship did not take the item (and did NOT take
     // responsibility for deleting the item).
     bool AddItem (Item *item);
-    void EquipItem (ItemType item_type, Uint8 const upgrade_level);
+    void EquipItem (ItemType item_type, Uint8 upgrade_level);
 
     void IncrementOptionInventory ();
-    void ActivateOption (KeyInputAction option, Float current_time);
+    void ActivateOption (KeyInputAction option, Time current_time);
     void SelectNextOption ();
     void SelectPreviousOption ();
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual bool Damage (
         Entity *damager,
         Entity *damage_medium,
@@ -145,8 +145,8 @@ public:
         FloatVector2 const &damage_normal,
         Float damage_force,
         DamageType damage_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -154,8 +154,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     bool BuyItem (ItemType item_type, Uint8 upgrade_level);
 
@@ -174,7 +174,7 @@ public:
     virtual Float DefenseBoostPowerFactor () const { return ms_defense_boost_power_factor; }
     virtual Float DefenseBoostShieldFactor () const { return ms_defense_boost_shield_factor; }
 
-    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);
+    virtual bool TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt);
 
 protected:
 
@@ -237,9 +237,9 @@ private:
     PoweredDevice *m_devices_to_power[DTP_COUNT];
     Float m_power_allocator[DTP_COUNT];
 
-    Float m_attack_boost_time_remaining;
-    Float m_defense_boost_time_remaining;
-    Float m_time_stretch_time_remaining;
+    Time::Delta m_attack_boost_time_remaining;
+    Time::Delta m_defense_boost_time_remaining;
+    Time::Delta m_time_stretch_time_remaining;
 
     Weapon *m_main_weapon;
     Weapon *m_auxiliary_weapon;

@@ -20,8 +20,7 @@ using namespace Xrb;
 
 #define THINK_STATE(x) &Interloper::x
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Interloper::ms_max_health[ENEMY_LEVEL_COUNT] = { 10.0f, 40.0f, 160.0f, 640.0f };
 Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 7300.0f, 18000.0f, 40000.0f, 88000.0f };
@@ -31,7 +30,7 @@ Float const Interloper::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 16
 Float const Interloper::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Interloper::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 
-Interloper::Interloper (Uint8 const enemy_level)
+Interloper::Interloper (Uint8 enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_INTERLOPER)
 {
@@ -48,7 +47,7 @@ Interloper::~Interloper ()
 {
 }
 
-void Interloper::Think (Float const time, Float const frame_dt)
+void Interloper::Think (Time time, Time::Delta frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -56,7 +55,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
 
     // decay the flock leader weight
     {
-        static Float const s_flock_leader_weight_halflife = 1.5f;
+        static Time::Delta const s_flock_leader_weight_halflife = 1.5f;
         m_flock_leader_weight *= Math::Pow(0.5f, frame_dt / s_flock_leader_weight_halflife);
         if (m_flock_leader_weight > 1000.0f)
             m_flock_leader_weight = 1000.0f;
@@ -102,12 +101,12 @@ void Interloper::Think (Float const time, Float const frame_dt)
 }
 
 void Interloper::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
 
@@ -132,7 +131,7 @@ void Interloper::Collide (
         frame_dt);
 }
 
-void Interloper::SetTarget (Mortal *const target)
+void Interloper::SetTarget (Mortal *target)
 {
     if (target == NULL)
         m_target.Release();
@@ -143,7 +142,7 @@ void Interloper::SetTarget (Mortal *const target)
     }
 }
 
-void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
+void Interloper::PickWanderDirection (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_closest_flock_member.IsValid());
 
@@ -155,12 +154,12 @@ void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Interloper::Wander (Float const time, Float const frame_dt)
+void Interloper::Wander (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_closest_flock_member.IsValid());
 
     static Float const s_scan_radius = 200.0f;
-    static Float const s_collision_lookahead_time = 3.0f;
+    static Time::Delta const s_collision_lookahead_dt = 3.0f;
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
@@ -171,7 +170,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         false,
         area_trace_list);
     // check the area trace list for targets and collisions
-    Float collision_time = -1.0f;
+    Time::Delta collision_dt = -1.0f;
     Entity *collision_entity = NULL;
     bool found_flock = false;
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
@@ -204,11 +203,11 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         // while, perform collision avoidance calculations
         else
         {
-            Float potential_collision_time = CollisionTime(entity, s_collision_lookahead_time);
-            if (potential_collision_time >= 0.0f &&
-                (collision_entity == NULL || potential_collision_time < collision_time))
+            Time::Delta potential_collision_dt = CollisionTime(entity, s_collision_lookahead_dt);
+            if (potential_collision_dt >= 0.0f &&
+                (collision_entity == NULL || potential_collision_dt < collision_dt))
             {
-                collision_time = potential_collision_time;
+                collision_dt = potential_collision_dt;
                 collision_entity = entity;
             }
         }
@@ -249,7 +248,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     }
 }
 
-void Interloper::Flock (Float time, Float frame_dt)
+void Interloper::Flock (Time time, Time::Delta frame_dt)
 {
     if (IsFlockLeader())
     {
@@ -363,7 +362,7 @@ void Interloper::Flock (Float time, Float frame_dt)
         SetReticleCoordinates(Translation() + Math::UnitVector(Angle()));
 }
 
-void Interloper::Charge (Float const time, Float const frame_dt)
+void Interloper::Charge (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_closest_flock_member.IsValid());
 
@@ -418,7 +417,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         Polynomial::SolutionSet solution_set;
         poly.Solve(&solution_set, 0.001f);
 
-        Float T = -1.0f;
+        Time::Delta collision_dt = -1.0f;
         for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                              it_end = solution_set.end();
              it != it_end;
@@ -426,30 +425,30 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         {
             if (*it >= 0.0f)
             {
-                T = *it;
+                collision_dt = *it;
                 break;
             }
         }
 
-        if (T <= 0.0f)
+        if (collision_dt <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach
             SetReticleCoordinates(m_target->Translation());
         }
         else
         {
-            FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*T + a*T*T) / (interceptor_acceleration*T*T));
+            FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*collision_dt + a*Sqr(collision_dt)) / (interceptor_acceleration*Sqr(collision_dt)));
             SetReticleCoordinates(Translation() + real_approach_direction);
         }
     }
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
 
-void Interloper::Retreat (Float const time, Float const frame_dt)
+void Interloper::Retreat (Time time, Time::Delta frame_dt)
 {
     ASSERT1(!m_closest_flock_member.IsValid());
 
-    static Float const s_retreat_time = 1.0f;
+    static Time::Delta const s_retreat_duration = 1.0f;
 
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -459,7 +458,7 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     }
 
     // if the retreat time has elapsed, transition back to Charge.
-    if (m_time_at_retreat_start + s_retreat_time <= time)
+    if (m_time_at_retreat_start + s_retreat_duration <= time)
     {
         m_think_state = THINK_STATE(Charge);
         return;
@@ -471,7 +470,7 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
 
-void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+void Interloper::MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt)
 {
     // this is the fake force-accumulating thrust code
 
@@ -489,7 +488,7 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     }
 }
 
-void Interloper::AddFlockLeaderWeight (Float const weight)
+void Interloper::AddFlockLeaderWeight (Float weight)
 {
     Uint32 iteration_count = 0;
     Interloper *current = this;

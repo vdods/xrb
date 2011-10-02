@@ -15,18 +15,17 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 void EnemyShip::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     Ship::Die(
         killer,

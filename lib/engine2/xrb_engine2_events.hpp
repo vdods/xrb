@@ -25,7 +25,7 @@ class EventEntity : public Event
 {
 public:
 
-    EventEntity (Entity *entity, Float time, EventType event_type)
+    EventEntity (Entity *entity, Time time, EventType event_type)
         :
         Event(time, event_type)
     {

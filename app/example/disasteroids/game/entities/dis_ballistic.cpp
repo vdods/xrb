@@ -20,7 +20,7 @@ using namespace Xrb;
 
 namespace Dis {
 
-void Ballistic::Think (Float time, Float frame_dt)
+void Ballistic::Think (Time time, Time::Delta frame_dt)
 {
     if (m_perform_line_trace_for_accuracy)
     {
@@ -70,7 +70,7 @@ void Ballistic::Think (Float time, Float frame_dt)
                     if (it->m_entity == *m_owner)
                         continue;
 
-                    FloatVector2 collision_location(trace_start + it->m_time * trace_vector);
+                    FloatVector2 collision_location(trace_start + it->m_trace_hit_parameter * trace_vector);
                     FloatVector2 collision_normal(GetObjectLayer()->AdjustedDifference(collision_location, it->m_entity->Translation()));
                     if (collision_normal.LengthSquared() < 0.001f)
                         collision_normal = FloatVector2(1.0f, 0.0f); // arbitrary unit vector
@@ -108,8 +108,8 @@ void Ballistic::Collide (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     CollidePrivate(
         collider,
@@ -126,8 +126,8 @@ bool Ballistic::CollidePrivate (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt,
+    Time time,
+    Time::Delta frame_dt,
     bool was_collision_from_line_trace)
 {
     ASSERT1(collider != NULL);

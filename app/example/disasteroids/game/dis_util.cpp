@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 void RadiusDamage (
     Engine2::Circle::PhysicsHandler *physics_handler,
@@ -28,8 +27,8 @@ void RadiusDamage (
     Float damage_area_radius,
     Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(physics_handler != NULL);
     ASSERT1(object_layer != NULL);
@@ -94,8 +93,8 @@ void RadiusKnockback (
     FloatVector2 const &knockback_area_center,
     Float knockback_area_radius,
     Float power,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(knockback_area_radius > 0.0f);
     ASSERT1(power > 0.0f);
@@ -146,12 +145,12 @@ void RadiusKnockback (
     }
 }
 
-std::string FormattedTimeString (Float time)
+std::string FormattedTimeString (Time time)
 {
-    Uint32 game_time_seconds = static_cast<Uint32>(time);
+    Uint32 game_time_seconds = static_cast<Uint32>(time.AsDouble());
     Uint32 minutes = game_time_seconds / 60;
     Uint32 seconds = game_time_seconds % 60;
-    Uint32 centiseconds = static_cast<Uint32>(100.0f * time) % 100;
+    Uint32 centiseconds = static_cast<Uint32>(100.0 * time.AsDouble()) % 100;
     return Util::StringPrintf("%02u:%02u.%02u", minutes, seconds, centiseconds);
 }
 

@@ -48,7 +48,7 @@ EventQueue::~EventQueue ()
 void EventQueue::EnqueueEvent (EventHandler &event_handler, Event const *event)
 {
     ASSERT1(event != NULL);
-    ASSERT1(event_handler.MostRecentEventTime() <= event->Time());
+    ASSERT1(event_handler.MostRecentEventTime() <= event->GetTime());
 
     // this call makes sure that we don't overflow the IDs, which is essential
     // for proper ordering of events inside the queue.
@@ -178,9 +178,9 @@ void EventQueue::CompactEventIDs ()
 
 bool EventQueue::OrderEventBindingsByEventTime::operator () (EventBinding const &left_operand, EventBinding const &right_operand) const
 {
-    if (left_operand.GetEvent()->Time() < right_operand.GetEvent()->Time())
+    if (left_operand.GetEvent()->GetTime() < right_operand.GetEvent()->GetTime())
         return true;
-    else if (left_operand.GetEvent()->Time() == right_operand.GetEvent()->Time())
+    else if (left_operand.GetEvent()->GetTime() == right_operand.GetEvent()->GetTime())
         return left_operand.GetEvent()->ID() < right_operand.GetEvent()->ID();
     else
         return false;

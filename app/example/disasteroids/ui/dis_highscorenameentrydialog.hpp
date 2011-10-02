@@ -33,6 +33,9 @@ public:
 
 protected:
 
+    /// Sets focus on the name LineEdit.
+    virtual void HandleActivate ();
+
     virtual void OKButtonActivated ();
 
 private:

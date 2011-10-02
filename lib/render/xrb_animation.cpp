@@ -57,7 +57,7 @@ void Animation::Sequence::LoadParameters::Print (std::ostream &stream) const
 // Animation::Sequence
 // ///////////////////////////////////////////////////////////////////////////
 
-Animation::Sequence::Sequence (Uint32 length, AnimationType default_type, Float default_duration)
+Animation::Sequence::Sequence (Uint32 length, AnimationType default_type, Time::Delta default_duration)
     :
     m_length(length),
     m_frame(new Resource<GlTexture>[length]),
@@ -132,7 +132,7 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
             THROW_STRING("invalid default_type value \"" << default_type_string << "\" (acceptable values are" << acceptable_values << ")");
         }
 
-        Float default_duration = 1.0f; // the value is 1 if left unspecified
+        Time::Delta default_duration = 1.0f; // the value is 1 if left unspecified
         try { default_duration = root->PathElementFloaty("|default_duration"); } catch (...) { }
         if (default_duration <= 0.0f)
             THROW_STRING("invalid default_duration value " << default_duration << " (must be positive)");
@@ -167,12 +167,12 @@ std::string const Animation::ms_animation_type_string[AT_COUNT] =
     "RANDOM"
 };
 
-Animation::Animation (Resource<Animation::Sequence> const &sequence, Float sequence_start_time)
+Animation::Animation (Resource<Animation::Sequence> const &sequence, Time sequence_start_time)
     :
     m_sequence(sequence),
     m_sequence_start_time(sequence_start_time),
     m_last_random_frame(0),
-    m_last_random_frame_time(0.0f)
+    m_last_random_frame_time(Time::ms_beginning_of)
 {
     if (m_sequence.IsValid())
     {
@@ -196,30 +196,16 @@ Animation::Animation (Animation const &animation)
     m_last_random_frame_time(animation.m_last_random_frame_time)
 { }
 
-GlTexture const &Animation::Frame (Float current_time) const
+GlTexture const &Animation::Frame (Time current_time) const
 {
     ASSERT1(m_sequence.IsValid());
     ASSERT1(m_sequence->Length() > 0);
     ASSERT1(m_duration > 0.0f);
-    ASSERT1(current_time >= m_sequence_start_time && "you probably don't want to go backward in time");
+    ASSERT1(current_time >= m_sequence_start_time && "you probably don't want to go backward in time... or do you?");
 
-    Float cycle_time = current_time - m_sequence_start_time;
+    Time cycle_time(current_time.AsDouble() - m_sequence_start_time.AsDouble()); // keep it in double
     Float cycle_parameter = CalculateCycleParameter(cycle_time, m_duration);
-    bool passed_at_least_one_cycle = cycle_time >= m_duration;
-    // don't let m_sequence_start_time lag too much behind, because eventually
-    // it will have floating point roundoff errors when cycle_time is too big.
-    if (cycle_time >= 4098.0f * m_duration)
-    {
-        // want passed_at_least_one_cycle to be preserved by this action
-        m_sequence_start_time += 4096.0f * m_duration;
-        Float new_cycle_time = current_time - m_sequence_start_time;
-        Float new_cycle_parameter = CalculateCycleParameter(new_cycle_time, m_duration);
-        bool new_passed_at_least_one_cycle = new_cycle_time >= m_duration;
-        // ensure the new values agree with the old (to within an acceptable error)
-        ASSERT1(new_cycle_parameter - cycle_parameter <  0.001f);
-        ASSERT1(new_cycle_parameter - cycle_parameter > -0.001f);
-        ASSERT1(passed_at_least_one_cycle == new_passed_at_least_one_cycle);
-    }
+    bool passed_at_least_one_cycle = cycle_time >= Time(m_duration);
 
     // this is the value which will be passed to Sequence::Frame and must
     // be determined based on the animation type (see the descriptions in
@@ -273,7 +259,6 @@ GlTexture const &Animation::Frame (Float current_time) const
             {
                 m_last_random_frame = Math::RandomUint16(0, m_sequence->Length()-1);
                 m_last_random_frame_time = current_time - cycle_parameter*m_duration;
-                ASSERT1(current_time - m_last_random_frame_time <= m_duration + 0.001f); // plus a small tolerance
             }
             current_frame_index = m_last_random_frame;
             break;
@@ -287,18 +272,18 @@ GlTexture const &Animation::Frame (Float current_time) const
     return m_sequence->Frame(current_frame_index);
 }
 
-Float Animation::CalculateCycleParameter (Float cycle_time, Float cycle_duration)
+Float Animation::CalculateCycleParameter (Time cycle_time, Time::Delta cycle_duration)
 {
-    ASSERT1(cycle_time >= 0.0f);
+    ASSERT1(cycle_time >= Time::ms_beginning_of);
     ASSERT1(cycle_duration > 0.0f);
 
-    Float cycle_parameter = Math::Mod(cycle_time, cycle_duration);
-    if (cycle_parameter < 0.0f)
-        cycle_parameter += cycle_duration;
-    cycle_parameter /= cycle_duration;
+    Float cycle_parameter = Float(fmod(cycle_time.AsDouble(), cycle_duration) / cycle_duration);
+    // this seems impossible, but is necessary because fmod can return (has returned) a full divisor.
+    // this defies the mathematical definition of the modulo operation, but it's what happens.
+    if (cycle_parameter == 1.0f) 
+        cycle_parameter = 0.0f; 
     ASSERT1(cycle_parameter >= 0.0f);
-    ASSERT1(cycle_parameter <  1.0f);
-
+    ASSERT1(cycle_parameter < 1.0f);
     return cycle_parameter;
 }
 

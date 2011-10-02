@@ -18,8 +18,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Entity;
 class PhysicsHandler;
@@ -62,8 +61,8 @@ public:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt)
+        Time time,
+        Time::Delta frame_dt)
     { }
 
     virtual bool IsMortal () const { return false; }
@@ -84,8 +83,8 @@ private:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt)
+        Time time,
+        Time::Delta frame_dt)
     {
         Collide(
             DStaticCast<Entity *>(collider),

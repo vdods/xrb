@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class HealthTrigger;
 class Tractor;
@@ -45,14 +44,14 @@ public:
     Devourment (Uint8 enemy_level);
     virtual ~Devourment ();
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -60,8 +59,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
@@ -80,7 +79,7 @@ public:
         return ms_baseline_mass[EnemyLevel()];
     }
 
-    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);
+    virtual bool TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // EnemyShip interface methods
@@ -90,18 +89,18 @@ public:
 
 private:
 
-    void PickWanderDirection (Float time, Float frame_dt);
-    void Wander (Float time, Float frame_dt);
-    void Pursue (Float time, Float frame_dt);
-    void Consume (Float time, Float frame_dt);
+    void PickWanderDirection (Time time, Time::Delta frame_dt);
+    void Wander (Time time, Time::Delta frame_dt);
+    void Pursue (Time time, Time::Delta frame_dt);
+    void Consume (Time time, Time::Delta frame_dt);
 
-    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    void MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt);
     EntityReference<Entity> ScanAreaForTargets ();
 
-    typedef void (Devourment::*ThinkState)(Float time, Float frame_dt);
+    typedef void (Devourment::*ThinkState)(Time time, Time::Delta frame_dt);
 
     ThinkState m_think_state;
-    Float m_next_whatever_time;
+    Time m_next_whatever_time;
     Float m_wander_angle;
     EntityReference<Entity> m_target;
 

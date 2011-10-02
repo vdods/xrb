@@ -13,87 +13,68 @@
 
 #include "xrb.hpp"
 
-namespace Xrb
-{
+#include "xrb_time.hpp"
 
-/** Time-based computation can be done using a FrameHandler.  The processing
-  * function is guaranteed to be called exactly once per game loop (as opposed
-  * to the non-guaranteed calls to @ref Xrb::Widget::Draw for example).
-  * Various time metrics are provided for use inside the frame processing
-  * function.
-  * @brief Facilitates once-per-game-loop-frame computation.
-  */
+namespace Xrb {
+
+/// @brief Facilitates once-per-game-loop-frame computation.
+/// @details Time-based computation can be done using a FrameHandler.  The processing
+/// function is guaranteed to be called exactly once per game loop (as opposed
+/// to the non-guaranteed calls to @ref Xrb::Widget::Draw for example).
+/// Various time metrics are provided for use inside the frame processing
+/// function.
 class FrameHandler
 {
 public:
 
-    /** The frame count starts at 0.
-      * @brief Constructor.
-      */
+    /// The frame count starts at 0.
     FrameHandler ();
-    /** Does nothing.
-      * @brief Destructor.
-      */
     virtual ~FrameHandler ();
 
-    /** Returns 0 if no frame has been processed yet.
-      * @brief Returns the time of the most recent frame.
-      */
-    inline Float MostRecentFrameTime () const { return Max(m_most_recent_time, 0.0f); }
-    /** The frame count is incremented once per call to ProcessFrame.
-      * @brief Returns the accumulated frame count.
-      */
-    inline Uint32 FrameCount () const { return m_frame_count; }
+    /// Returns the time of the most recent frame.  Returns 0 if no frame has been processed yet.
+    Time MostRecentFrameTime () const { return Max(Time::ms_beginning_of, m_most_recent_frame_time); }
+    /// Returns the accumulated frame count.  The frame count is incremented once per call to ProcessFrame.
+    Uint32 FrameCount () const { return m_frame_count; }
 
-    /** Sets up the frame variables and then calls the overridden
-      * HandleFrame which is what actuall does the processing.
-      * @brief Initiates once-per-game-loop-frame computation.
-      */
-    void ProcessFrame (Float const time);
+    /// @brief Initiates once-per-game-loop-frame computation.
+    /// @details Sets up the frame variables and then calls the overridden HandleFrame which is what actually does the processing.
+    void ProcessFrame (Time frame_time);
 
 protected:
 
-    /** Only valid inside HandleFrame -- use MostRecentFrameTime
-      * otherwise.  If this method is called from outside of
-      * HandleFrame, it will assert.
-      * @brief Returns the current frame time.
-      */
-    inline Float FrameTime () const
+    /// @brief Returns the current frame time.
+    /// @details Only valid inside HandleFrame -- use MostRecentFrameTime otherwise.  If this
+    /// method is called from outside of HandleFrame, it will assert.
+    Time FrameTime () const
     {
         ASSERT1(m_lock > 0);
-        return m_most_recent_time;
+        return m_most_recent_frame_time;
     }
-    /** Only valid inside HandleFrame.  If this method is called
-      * from outside of HandleFrame, it will assert.
-      * @brief Returns the time delta from the most recently processed frame.
-      */
-    inline Float FrameDT () const
+    /// @brief Returns the time delta from the most recently processed frame.  THIS CAN BE ZERO.
+    /// @details Only valid inside HandleFrame.  If this method is called from outside of HandleFrame, it will assert.
+    Time::Delta FrameDT () const
     {
         ASSERT1(m_lock > 0);
         return m_frame_dt;
     }
 
-    /** This is called by ProcessFrame after a bit of preparation.
-      * FrameTime and FrameDT can be used inside this method.
-      * @brief Overridable method for the actual computation required
-      *        by subclasses.
-      */
+    /// @brief Overridable method for the actual computation required by subclasses.
+    /// This is called by ProcessFrame after a bit of preparation.  FrameTime and FrameDT can be used inside this method.
     virtual void HandleFrame () = 0;
 
 private:
 
     // handles setting up all the member variables for starting a frame
-    void StartFrame (Float const time);
-    // handles ending the frame and updating m_most_recent_time
+    void StartFrame (Time frame_time);
+    // handles ending the frame and updating m_most_recent_frame_time
     void EndFrame ();
 
     // mutual exclusion so that calls to superclass Frames work
     Uint32 m_lock;
-    // the most recently processed frame's time (stores the current frame
-    // time during ProcessFrame()
-    Float m_most_recent_time;
+    // the most recently processed frame's time (stores the current frame time during ProcessFrame()
+    Time m_most_recent_frame_time;
     // the delta time value
-    Float m_frame_dt;
+    Time::Delta m_frame_dt;
     // the frame counter
     Uint32 m_frame_count;
 }; // end of class FrameHandler

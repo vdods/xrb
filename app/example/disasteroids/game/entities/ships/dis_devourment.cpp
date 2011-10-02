@@ -26,8 +26,7 @@ using namespace Xrb;
 
 #define THINK_STATE(x) &Devourment::x
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 2500.0f, 6250.0f, 15625.0f };
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.0f, 30000.0f, 35000.0f };
@@ -93,7 +92,7 @@ Devourment::~Devourment ()
     }
 }
 
-void Devourment::Think (Float time, Float frame_dt)
+void Devourment::Think (Time time, Time::Delta frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -190,8 +189,8 @@ void Devourment::Collide (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     Mortal::Collide(
         collider,
@@ -221,8 +220,8 @@ void Devourment::Die (
     FloatVector2 const &kill_normal,
     Float kill_force,
     DamageType kill_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     EnemyShip::Die(
         killer,
@@ -313,7 +312,7 @@ void Devourment::Die (
     }
 }
 
-bool Devourment::TakePowerup (Powerup *powerup, Float time, Float frame_dt)
+bool Devourment::TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt)
 {
     ASSERT1(powerup != NULL);
 
@@ -360,7 +359,7 @@ void Devourment::SetTarget (Mortal *target)
     }
 }
 
-void Devourment::PickWanderDirection (Float time, Float frame_dt)
+void Devourment::PickWanderDirection (Time time, Time::Delta frame_dt)
 {
     // update the next time to pick a wander direction
     m_next_whatever_time = time + 20.0f;
@@ -370,7 +369,7 @@ void Devourment::PickWanderDirection (Float time, Float frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Devourment::Wander (Float time, Float frame_dt)
+void Devourment::Wander (Time time, Time::Delta frame_dt)
 {
     m_target = ScanAreaForTargets();
 
@@ -392,7 +391,7 @@ void Devourment::Wander (Float time, Float frame_dt)
     }
 }
 
-void Devourment::Pursue (Float time, Float frame_dt)
+void Devourment::Pursue (Time time, Time::Delta frame_dt)
 {
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
@@ -480,7 +479,7 @@ void Devourment::Pursue (Float time, Float frame_dt)
     }
 }
 
-void Devourment::Consume (Float time, Float frame_dt)
+void Devourment::Consume (Time time, Time::Delta frame_dt)
 {
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
@@ -517,7 +516,7 @@ void Devourment::Consume (Float time, Float frame_dt)
     }
 }
 
-void Devourment::MatchVelocity (FloatVector2 const &velocity, Float frame_dt)
+void Devourment::MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =

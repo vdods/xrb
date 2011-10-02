@@ -12,8 +12,7 @@
 
 #include "xrb_gl.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 bool RenderContext::MaskAndBiasWouldResultInNoOp () const
 {

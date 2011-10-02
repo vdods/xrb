@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class EnemyShip : public Ship
 {
@@ -27,7 +26,7 @@ public:
         ENEMY_LEVEL_COUNT = 4
     };
 
-    EnemyShip (Uint8 const enemy_level, Float const max_health, EntityType const entity_type)
+    EnemyShip (Uint8 enemy_level, Float max_health, EntityType entity_type)
         :
         Ship(max_health, entity_type),
         m_enemy_level(enemy_level)
@@ -39,7 +38,7 @@ public:
     // Entity interface method
     virtual bool IsEnemyShip () const { return true; }
 
-    inline Uint8 EnemyLevel () const { return m_enemy_level; }
+    Uint8 EnemyLevel () const { return m_enemy_level; }
 
     virtual void Die (
         Entity *killer,
@@ -48,14 +47,14 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt)
+    virtual bool TakePowerup (Powerup *powerup, Time time, Time::Delta frame_dt)
     {
         return false;
     }

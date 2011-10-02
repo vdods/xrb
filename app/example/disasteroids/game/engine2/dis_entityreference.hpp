@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Entity;
 
@@ -26,34 +25,34 @@ class EntityInstance
 {
 private:
 
-    inline EntityInstance (Entity *entity)
+    EntityInstance (Entity *entity)
     {
         ASSERT1(entity != NULL);
         m_entity = entity;
         m_reference_count = 0;
     }
-    inline ~EntityInstance ()
+    ~EntityInstance ()
     {
         ASSERT1(m_reference_count == 0);
     }
 
-    inline Entity const *operator * () const { return m_entity; }
-    inline Entity *operator * () { return m_entity; }
+    Entity const *operator * () const { return m_entity; }
+    Entity *operator * () { return m_entity; }
 
-    inline bool IsValid () const { return m_entity != NULL; }
-    inline Uint32 ReferenceCount () const { return m_reference_count; }
+    bool IsValid () const { return m_entity != NULL; }
+    Uint32 ReferenceCount () const { return m_reference_count; }
 
     // these should be called only by EntityReference
-    inline void NullifyEntity ()
+    void NullifyEntity ()
     {
         ASSERT1(m_entity != NULL);
         m_entity = NULL;
     }
-    inline void IncrementReferenceCount ()
+    void IncrementReferenceCount ()
     {
         ++m_reference_count;
     }
-    inline void DecrementReferenceCount ()
+    void DecrementReferenceCount ()
     {
         ASSERT1(m_reference_count > 0);
         --m_reference_count;
@@ -73,12 +72,12 @@ public:
 
     static EntityReference<EntitySubclass> const ms_null;
 
-    inline EntityReference ()
+    EntityReference ()
     {
         m_entity_instance = NULL;
     }
     template <typename OperandEntitySubclass>
-    inline EntityReference (EntityReference<OperandEntitySubclass> const &entity_reference)
+    EntityReference (EntityReference<OperandEntitySubclass> const &entity_reference)
     {
         // check that either the entity_instance is NULL, the game object
         // is NULL, or the template type cast is valid.
@@ -92,31 +91,31 @@ public:
     }
     // this copy constructor is necessary because the above, templatized
     // constructor does not act as a copy constructor
-    inline EntityReference (EntityReference<EntitySubclass> const &entity_reference)
+    EntityReference (EntityReference<EntitySubclass> const &entity_reference)
     {
         // copy the entity_instance
         m_entity_instance = entity_reference.m_entity_instance;
         if (m_entity_instance != NULL)
             m_entity_instance->IncrementReferenceCount();
     }    
-    inline ~EntityReference ()
+    ~EntityReference ()
     {
         Release();
     }
 
     template <typename OperandEntitySubclass>
-    inline bool operator == (EntityReference<OperandEntitySubclass> const &entity_reference) const
+    bool operator == (EntityReference<OperandEntitySubclass> const &entity_reference) const
     {
         return m_entity_instance == entity_reference.m_entity_instance;
     }
     template <typename OperandEntitySubclass>
-    inline bool operator != (EntityReference<OperandEntitySubclass> const &entity_reference) const
+    bool operator != (EntityReference<OperandEntitySubclass> const &entity_reference) const
     {
         return m_entity_instance != entity_reference.m_entity_instance;
     }
 
     template <typename OperandEntitySubclass>
-    inline void operator = (EntityReference<OperandEntitySubclass> const &entity_reference)
+    void operator = (EntityReference<OperandEntitySubclass> const &entity_reference)
     {
         // check that either the entity_instance is NULL, the game object
         // is NULL, or the template type cast is valid.
@@ -136,7 +135,7 @@ public:
     // this assignment operator overload is necessary because the above,
     // templatized assignment operator overload goes all wacky when used
     // with the same EntitySubClass.
-    inline void operator = (EntityReference<EntitySubclass> const &entity_reference)
+    void operator = (EntityReference<EntitySubclass> const &entity_reference)
     {
         // decrement the old instance's ref count (if it exists)
         if (m_entity_instance != NULL)
@@ -148,39 +147,39 @@ public:
             m_entity_instance->IncrementReferenceCount();
     }
 
-    inline EntitySubclass const *operator * () const
+    EntitySubclass const *operator * () const
     {
         if (m_entity_instance != NULL && m_entity_instance->IsValid())
             return static_cast<EntitySubclass const *>(**m_entity_instance);
         else
             return NULL;
     }
-    inline EntitySubclass *operator * ()
+    EntitySubclass *operator * ()
     {
         if (m_entity_instance != NULL && m_entity_instance->IsValid())
             return static_cast<EntitySubclass *>(**m_entity_instance);
         else
             return NULL;
     }
-    inline EntitySubclass const *operator -> () const
+    EntitySubclass const *operator -> () const
     {
         ASSERT1(m_entity_instance != NULL);
         ASSERT1(m_entity_instance->IsValid());
         return static_cast<EntitySubclass const *>(**m_entity_instance);
     }
-    inline EntitySubclass *operator -> ()
+    EntitySubclass *operator -> ()
     {
         ASSERT1(m_entity_instance != NULL);
         ASSERT1(m_entity_instance->IsValid());
         return static_cast<EntitySubclass *>(**m_entity_instance);
     }
 
-    inline bool IsValid () const
+    bool IsValid () const
     {
         return m_entity_instance != NULL && m_entity_instance->IsValid();
     }
 
-    inline void SetInstance (EntityInstance *entity_instance)
+    void SetInstance (EntityInstance *entity_instance)
     {
         ASSERT1(entity_instance != NULL);
 
@@ -192,7 +191,7 @@ public:
         m_entity_instance = entity_instance;
         m_entity_instance->IncrementReferenceCount();
     }
-    inline void Release ()
+    void Release ()
     {
         if (m_entity_instance != NULL)
         {
@@ -206,7 +205,7 @@ public:
 private:
 
     // this should only be called by ~Entity    
-    inline void NullifyEntity ()
+    void NullifyEntity ()
     {
         ASSERT1(m_entity_instance != NULL);
         m_entity_instance->NullifyEntity();

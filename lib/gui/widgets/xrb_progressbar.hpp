@@ -39,7 +39,7 @@ public:
     Float Progress () const { return m_progress; }
     Color const &GetColor () const { return m_color; }
 
-    void SetProgress (Float const progress) { ASSERT1(progress >= 0.0f && progress <= 1.0f); m_progress = progress; }
+    void SetProgress (Float progress) { ASSERT1(progress >= 0.0f && progress <= 1.0f); m_progress = progress; }
     void SetColor (Color const &color) { m_color = color; }
 
     SignalReceiver1<Float> const *ReceiverSetProgress () { return &m_receiver_set_progress; }

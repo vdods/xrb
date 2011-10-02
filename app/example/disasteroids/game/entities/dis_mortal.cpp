@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Sint32 Mortal::TargetPriority () const
 {
@@ -55,7 +54,7 @@ Sint32 Mortal::TargetPriority () const
     return major * 1000 + minor;
 }
 
-void Mortal::SetDamageDissipationRate (Float const damage_dissipation_rate)
+void Mortal::SetDamageDissipationRate (Float damage_dissipation_rate)
 {
     ASSERT1(damage_dissipation_rate >= 0.0f);
     m_damage_dissipation_rate = damage_dissipation_rate;
@@ -63,42 +62,42 @@ void Mortal::SetDamageDissipationRate (Float const damage_dissipation_rate)
         m_dissipated_damage_accumulator = m_damage_dissipation_rate;
 }
 
-void Mortal::SetWeakness (DamageType const weakness)
+void Mortal::SetWeakness (DamageType weakness)
 {
     ASSERT1((weakness & m_strength) == 0 && "Can't be weak and strong against the same thing");
     ASSERT1((weakness & m_immunity) == 0 && "Can't be weak and immune against the same thing");
     m_weakness = weakness;
 }
 
-void Mortal::SetStrength (DamageType const strength)
+void Mortal::SetStrength (DamageType strength)
 {
     ASSERT1((m_weakness & strength) == 0 && "Can't be weak and strong against the same thing");
     ASSERT1((strength & m_immunity) == 0 && "Can't be strong and immune against the same thing");
     m_strength = strength;
 }
 
-void Mortal::SetImmunity (DamageType const immunity)
+void Mortal::SetImmunity (DamageType immunity)
 {
     ASSERT1((m_weakness & immunity) == 0 && "Can't be weak and immune against the same thing");
     ASSERT1((m_strength & immunity) == 0 && "Can't be strong and immune against the same thing");
     m_immunity = immunity;
 }
 
-void Mortal::AddWeakness (DamageType const weakness)
+void Mortal::AddWeakness (DamageType weakness)
 {
     ASSERT1((weakness & m_strength) == 0 && "Can't be weak and strong against the same thing");
     ASSERT1((weakness & m_immunity) == 0 && "Can't be weak and immune against the same thing");
     m_weakness |= weakness;
 }
 
-void Mortal::AddStrength (DamageType const strength)
+void Mortal::AddStrength (DamageType strength)
 {
     ASSERT1((m_weakness & strength) == 0 && "Can't be weak and strong against the same thing");
     ASSERT1((strength & m_immunity) == 0 && "Can't be strong and immune against the same thing");
     m_strength |= strength;
 }
 
-void Mortal::AddImmunity (DamageType const immunity)
+void Mortal::AddImmunity (DamageType immunity)
 {
     ASSERT1((m_weakness & immunity) == 0 && "Can't be weak and immune against the same thing");
     ASSERT1((m_strength & immunity) == 0 && "Can't be strong and immune against the same thing");
@@ -120,21 +119,21 @@ void Mortal::RemoveImmunity (DamageType immunity)
     m_immunity &= ~immunity;
 }
 
-void Mortal::Revive (Float time, Float frame_dt)
+void Mortal::Revive (Time time, Time::Delta frame_dt)
 {
     ASSERT1(IsDead());
     SetCurrentHealth(m_max_health);
 }
 
 void Mortal::Kill (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     SetCurrentHealth(0.0f);
     Die(killer,
@@ -148,16 +147,16 @@ void Mortal::Kill (
 }
 
 bool Mortal::Damage (
-    Entity *const damager,
-    Entity *const damage_medium,
-    Float const damage_amount,
-    Float *const damage_amount_used,
+    Entity *damager,
+    Entity *damage_medium,
+    Float damage_amount,
+    Float *damage_amount_used,
     FloatVector2 const &damage_location,
     FloatVector2 const &damage_normal,
-    Float const damage_force,
-    DamageType const damage_type,
-    Float const time,
-    Float const frame_dt)
+    Float damage_force,
+    DamageType damage_type,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(damage_amount >= 0.0f);
 
@@ -194,8 +193,8 @@ bool Mortal::Damage (
     ASSERT1(m_dissipated_damage_accumulator >= 0.0f);
     ASSERT1(m_dissipated_damage_accumulator <= m_damage_dissipation_rate + 0.001f);
     ASSERT1(m_time_last_damaged <= time);
-    // if it has been more than 1 second since the last time damaged, then
-    // reset the damage threshold accumulator (because the damage threshold
+    // if it has been more than 1 second since the last time damaged,
+    // then reset the damage threshold accumulator (because the damage threshold
     // measures the amount of damage that can be blocked per second).
     if (m_time_last_damaged + 1.0f <= time)
         m_dissipated_damage_accumulator = 0.0f;
@@ -263,14 +262,14 @@ bool Mortal::Damage (
 }
 
 void Mortal::Heal (
-    Entity *const healer,
-    Entity *const heal_medium,
-    Float const heal_amount,
+    Entity *healer,
+    Entity *heal_medium,
+    Float heal_amount,
     FloatVector2 const &heal_location,
     FloatVector2 const &heal_normal,
-    Float const heal_force,
-    Float const time,
-    Float const frame_dt)
+    Float heal_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(heal_amount >= 0.0f);
 
@@ -279,7 +278,7 @@ void Mortal::Heal (
         SetCurrentHealth(Min(m_current_health + heal_amount, m_max_health));
 }
 
-void Mortal::Think (Float time, Float frame_dt)
+void Mortal::Think (Time time, Time::Delta frame_dt)
 {
     // set the red/green flashing due to recent changes in health
     static Float const s_full_flash_intensity_alpha = 0.5f;
@@ -313,8 +312,8 @@ void Mortal::Collide (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
     ASSERT1(collision_force >= 0.0f);

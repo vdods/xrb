@@ -103,8 +103,8 @@ FloatVector2 ObjectLayer::AdjustedDifference (FloatVector2 p, FloatVector2 const
     p -= q;
     if (IsWrapped())
     {
-        p[Dim::X] = Math::Mod(p[Dim::X], m_side_length);
-        p[Dim::Y] = Math::Mod(p[Dim::Y], m_side_length);
+        p[Dim::X] = Math::Remainder(p[Dim::X], m_side_length);
+        p[Dim::Y] = Math::Remainder(p[Dim::Y], m_side_length);
     }
     return p;
 }

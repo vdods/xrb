@@ -27,8 +27,8 @@ void PowerGenerator::PowerDevices (
     Uint32 powered_device_count,
     bool attack_boost_is_enabled,
     bool defense_boost_is_enabled,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(powered_device != NULL);
     ASSERT1(power_allocator != NULL);
@@ -79,7 +79,7 @@ void PowerGenerator::PowerDevices (
         m_stored_power = 0.0f;
 }
 
-void PowerGenerator::Think (Float time, Float frame_dt)
+void PowerGenerator::Think (Time time, Time::Delta frame_dt)
 {
     m_stored_power += frame_dt * ms_max_power_output_rate[UpgradeLevel()];
     if (m_stored_power > ms_max_power_storage_capacity[UpgradeLevel()])

@@ -34,14 +34,14 @@ public:
     Asteroid (Float mass, Float mineral_content, bool is_a_secondary_asteroid);
     virtual ~Asteroid () { }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,
@@ -49,8 +49,8 @@ public:
         FloatVector2 const &kill_normal,
         Float kill_force,
         DamageType kill_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 private:
 
@@ -62,11 +62,11 @@ private:
 
     Uint8 RandomMineral () const;
     Float ProportionToConvertToMinerals () const;
-    inline Float MineralContent () const
+    Float MineralContent () const
     {
         return static_cast<Float>(m_mineral_content_byte) / 255.0f;
     }
-    inline Uint8 MineralContentByte (Float const mineral_content)
+    Uint8 MineralContentByte (Float mineral_content)
     {
         ASSERT1(mineral_content >= 0.0f && mineral_content <= 1.0f);
         return static_cast<Uint8>(255.0f * mineral_content);
@@ -76,13 +76,13 @@ private:
     static Uint8 const ms_number_of_fragments_to_spawn;
     static Float const ms_minimum_breakup_mass;
     static Float const ms_decay_radius;
-    static Float const ms_decay_delay;
-    static Float const ms_decay_time;
+    static Time::Delta const ms_decay_delay;
+//     static Time::Delta const ms_decay_duration;
     static Float const ms_health_factor;
 
     bool m_is_a_secondary_asteroid;
     bool m_delete_upon_next_think;
-    Float m_time_at_decay_start;
+    Time m_time_at_decay_start;
     Uint8 m_mineral_content_byte;
 }; // end of class Asteroid
 

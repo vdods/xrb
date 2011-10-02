@@ -14,6 +14,7 @@
 #include "xrb.hpp"
 
 #include "xrb_screencoord.hpp"
+#include "xrb_time.hpp"
 
 namespace Xrb {
 
@@ -50,14 +51,13 @@ public:
     virtual void GrabInput () = 0;
     virtual void ReleaseInput () = 0;
 
-    // returns the number of milliseconds since the Pal instance was
-    // initialized.  due to the size of a 32-bit int, this value will
-    // wrap about every 49 days
-    virtual Uint32 CurrentTime () = 0;
+    // returns the number of seconds since the Pal instance was
+    // initialized.
+    virtual Time CurrentTime () = 0;
 
-    // block the the process for at least the specified number of
-    // milliseconds, but possibly longer due to OS process scheduling.
-    virtual void Sleep (Uint32 milliseconds_to_sleep) = 0;
+    // block the the process for at least the specified number of milliseconds, but
+    // possibly longer due to OS process scheduling.  must be a nonnegative value.
+    virtual void Sleep (Time::Delta seconds_to_sleep) = 0;
 
     // called once, immediately after the game loop is done rendering
     // (could be used for video buffer swapping for example).
@@ -66,7 +66,7 @@ public:
     // return the next queued (input) event.  should return NULL if no
     // events are available, otherwise should new-up and return the
     // appropriate Xrb::Event (it will be deleted by XRB).
-    virtual Event *PollEvent (Screen const *screen, Float time) = 0;
+    virtual Event *PollEvent (Screen const *screen, Time time) = 0;
 
     // returns true iff the specified file exists (OS path).
     virtual bool FileExists (char const *file_id) = 0;

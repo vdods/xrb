@@ -34,6 +34,7 @@ DISASTEROIDS:
 - death sequences for player and Demi
 - credits and references screen
 - black outline for fonts
+- make Asteroid fade out instead of pop out when it decays
 art to make:
 
 x   icon for pea shooter
@@ -64,7 +65,13 @@ x   shield
     textured (?) tractor beam effect
 
 ** feature-related **
-- ballistic impact effect is slightly wrong in terms of collision location and normal
+- invisible Shade (super difficult) -- maybe make this one not teleport, but possibly give
+  off some sort of indicator besides bullets.  make it visible when you EMP it.
+- in harder modes, enemies should respond to particular weapons damage by adapting shields
+  to that weapon.  in higher difficulties, the adaptation should happen more quickly.
+- there should be wave sequences for each difficulty -- if you pass the whole wave sequence
+  of one, it ups the difficulty and sends you to the next one.  there should be some sort of
+  celebration sequence when you advance a level
 - make the plasma bullet change length based on its speed
 - move attack and defense boost to Ship, so enemies can have it (for boss enemies or something)
 - maybe take out Solitary, since it really doesn't extend PlayerShip.
@@ -81,6 +88,9 @@ x   shield
   a better sense of when the enemy will fire the gauss gun.  also this gives the player a
   more-present visual cue as to when the gauss gun is charged.  allow partial-charge firing?
 - get rid of weapon status bar in order to make space for option powerup display in HUD.
+  think about getting rid of shield and armor status bar, adding a health indicator to the ship
+  somehow (like flashing yellow/red when low on health, which would actually be useful for all
+  ships)
 - game tips in the inventory screen (finish)
 - make the player ship size depend on mass (so that it gets larger when heaver armor is equipped).
 - make tractor beams grow from a point when activated, and shrink to a point when deactivated.
@@ -195,6 +205,8 @@ x   shield
 - the mining laser does too much damage to enemies, and makes them turn WAY too red
 - destroying all asteroids triggers an assert (dis_world.cpp in RecordDestroyedAsteroid)
   that indicates the asteroid count is wrong
+- there seems to be a bug where Shade (and maybe others?) can come up invisible after
+  being EMP blasted.
 ** references **
 - asteroids -- obvious
 - star control 2 -- hardwired into my DNA as an influence for all games i make
@@ -206,11 +218,11 @@ BUGS:
   texture atlases, efficiency should be 100%)
 - screenshots add an alpha channel -- remove alpha channel and make PNG files without alpha.
   this may require adding support for RGB textures.
-- there's a bug in the cycle truncation of xrb_animation, the 2nd assert near line 223 gets hit (floating point roundoff)
-  fix this by storing game times in milliseconds as Uint32 (or possibly Uint64?) this wraps every 49 days (or something like that),
-  but frame_dt will still be Float.  if Uint64 is not supported, could do it "by hand" using two Uint32s.
 
 TODO:
+- change World to store the world time internally, and use realtime time deltas to increment
+  this counter (adjusted by the timescale).  this will make DT controlling (i.e. no DT larger
+  than 1/20 or whatever) more automatic.
 - add "open" methods to FileSystem which return ostream or istream to hide the annoying OsPath calls.
 - use exceptions in parser/scanner
 - possibly rename Parse::DataFile::Structure to Map
@@ -220,6 +232,7 @@ TODO:
   comments from hpp files to cpp, so hpp are more clean.
 - default GlTexture flags specified in the PAL or something.  make sure to take care of
   GlTexture::LoadParameters::Fallback and other procedurally-texture-generating methods
+- make a way to specify GL configurations (probably based on the PAL)
 - enable load-time level-of-detail mode where the sprite image files that come with the game
   are all large, and will be downsized at load-time if not such a high resolution is necessary.
 - change Vector's | operator into *, because this will allow Sqr(vector).  Change & to % (?)
@@ -228,25 +241,21 @@ TODO:
   doesn't have to be taken care of.  do this in general for stuff (especially in GUI skin stuff).
   use config files for WidgetSkins.
 - change sprite_path and path-based loading into LoadParameter-based loading (e.g. in dis_spawn.cpp)
-- change gltextureatlas sizes to Uint32
-- change all texture sizes to Uint32 (?) and in general, all sizes that can't be negative
+- change gltextureatlas sizes to Uint32 (use a typedef ScreenSize Uint32)
+- change all texture sizes to Uint32 (ScreenSize) (?) and in general, all sizes that can't be negative
 - make automatic validation in Dis::Config -- function for validating stuff,
   message for when it fails.  reset to default value if failed
-- look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object (this
-  probably can't be done because at certain times you can't add/remove entities -- e.g. during the Think
-  loop, since it would screw up the iteration).
-- look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 - see if more culling can happen in DrawObjectCollector::operator ().  specifically
   per-object view-radius checking.  this will require the object coordinates to be
   wrapped/contained before collecting.  this wrapping/containment may already be happening.
-- replace GLTextureAtlas sizes with Uint32Vector2 values
 - need to be able to specify quadtree depths for all quadtrees in all cases.
 - use exponential for zoom factors (i.e. so that all real numbers are valid and there's
   no need to worry about divide by zero).  maybe use base 2?
-- use numeric_limits<float>::infinity() in next think time and such (see <limits>)
 - motion-blurred screenshots (take several screenshots in a row and blend them).  this would
   be particularly easy if/when game physics interpolation is implemented.  this might be harder
   than it seems, since the UI elements could change between frames, which would not be good.
+  this could be resolved by always rendering the world with motion blur (which would actually be
+  pretty sweet looking anyway), and the rest of the UI would be normal.
 - handle failures (especially file loading failures) more gracefully
 - use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent
@@ -262,6 +271,7 @@ TODO:
 - make ~World detach attached WorldViews?  WorldView would then have to
   detect if m_world is NULL or not.
 - in lesson04, make graphical representation of Engine2 design
+- in lesson05 and lesson06, the gravity calculation is too computationally complex (O(n^2) or something)
 - lesson07 - collision detection and resolution via PhysicsHandler
 - lesson08 - user input or further subclassing of Entity
 - bring livid stuff over and use its stuff (e.g. Sequence instead of dumb enums)
@@ -273,14 +283,12 @@ TODO:
   instead of a printf format (so it can be used to make vector ValueLabel/Edits)
 - refactor the layout code to be more efficient (so it can handle really
   complex/huge layouts quickly)
-- should Widget::Draw be protected?
-- add a "mental note" advice-sort of section to the documents
+- should Widget::Draw be protected? (probably yes)
 - add @ref tags to appropriate places in lessons
 - make the position given for text drawing be the left/center/right for
   left-justified, centered, or right-justified respectively, and same for
   vertical justification.  this will make arbitrary text drawing easier
 - make picture labels use alignment properly
-- make AsciiFont properly use UTF8
 - use an 8-bit-console-looking font in XPM form so that there is a built-in
   font which can be used as a fallback or as a default.  this will require
   changing the font system to allow non-pixel-for-pixel rendering.  use the
@@ -309,7 +317,6 @@ TODO:
   work when "using namespace Xrb" is not used.
 - add modal widget frame/content margins (maybe just make it so that
   setting a main widget puts stuff inside the content margins)
-- add type-specific range checking for WidgetSkin properties.
 - remember the C++ typeid/type_info stuff.
 - improve the text-editing control of LineEdit (e.g. ctrl+backspace,
   point-and-click cursor positioning, text selection, etc).

@@ -17,7 +17,7 @@
 namespace Xrb {
 namespace Engine2 {
 
-AnimatedSprite *AnimatedSprite::Create (std::string const &animation_sequence_path, Float current_time, Uint32 gltexture_flags)
+AnimatedSprite *AnimatedSprite::Create (std::string const &animation_sequence_path, Time current_time, Uint32 gltexture_flags)
 {
     Resource<Animation::Sequence> animation_sequence = Animation::Sequence::Load(animation_sequence_path, gltexture_flags);
     return new AnimatedSprite(animation_sequence, current_time);
@@ -25,7 +25,7 @@ AnimatedSprite *AnimatedSprite::Create (std::string const &animation_sequence_pa
 
 AnimatedSprite *AnimatedSprite::Create (Serializer &serializer)
 {
-    AnimatedSprite *retval = new AnimatedSprite(Resource<Animation::Sequence>(), 0.0f);
+    AnimatedSprite *retval = new AnimatedSprite(Resource<Animation::Sequence>(), Time::ms_beginning_of);
 
     // call ReadClassSpecific for this and all superclasses
     retval->Object::ReadClassSpecific(serializer);
@@ -68,7 +68,7 @@ Uint32 AnimatedSprite::GlTextureAtlasHandle () const
     return m_animation.Frame(GetWorld()->MostRecentFrameTime()).Atlas().Handle();
 }
 
-AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Float current_time)
+AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Time current_time)
     :
     Sprite(Resource<GlTexture>()), // invalid texture, since we don't use it
     m_animation(animation_sequence, current_time)

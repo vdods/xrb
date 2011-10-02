@@ -36,8 +36,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 // number of each type/level of enemy to spawn
 // the threshold of remaining non-demi non-devourment enemies to end the wave
@@ -55,7 +54,7 @@ struct Wave
     // (so there better be a max wave duration)
     Float const m_enemy_ship_threshold;
     // valid values are any non-negative number
-    Float const m_wave_intermission_duration;
+    Time::Delta const m_wave_intermission_duration;
     // true iff the world will notify each newly spawned enemy of
     // the player ship as a target.
     bool const m_notify_new_spawns_of_target;
@@ -736,10 +735,7 @@ World *World::Create (DifficultyLevel difficulty_level, Uint32 entity_capacity)
 {
     ASSERT1(difficulty_level < DL_COUNT);
     ASSERT1(entity_capacity > 0);
-    return new World(
-        difficulty_level,
-        new PhysicsHandler(),
-        entity_capacity);
+    return new World(difficulty_level, new PhysicsHandler(), entity_capacity);
 }
 
 Engine2::Circle::PhysicsHandler *World::GetPhysicsHandler ()
@@ -848,7 +844,7 @@ World::World (
     m_internal_sender_begin_death_rattle(this),
     m_internal_sender_begin_game_over(this),
     m_internal_sender_begin_outro(this),
-    m_internal_receiver_begin_wave(&World::BeginWave, this),
+    m_internal_receiver_advance_wave_state(&World::AdvanceWaveState, this),
     m_internal_receiver_end_game(&World::EndGame, this),
     m_internal_receiver_end_intro(&World::EndIntro, this),
     m_internal_receiver_end_outro(&World::EndOutro, this)
@@ -863,11 +859,10 @@ World::World (
 
     m_asteroid_count = 0;
     m_asteroid_mass = 0.0f;
-    m_next_asteroid_spawn_time = 0.0f;
     m_asteroid_mineral_level = 0;
-    m_next_asteroid_mineral_level_time = 1.0f * 60.0f;
+    m_next_asteroid_mineral_level_time = Time(1.0 * 60.0);
     m_asteroid_mineral_content_level = 0;
-    m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
+    m_next_asteroid_mineral_content_level_time = Time(1.0 * 60.0);
     ResetSpawnOptionPowerupFromAsteroid();
 
     m_current_wave_index = 0;
@@ -920,7 +915,7 @@ void World::HandleAttachWorldView (Engine2::WorldView *engine2_world_view)
     // connect the worldview's begin-next-wave signal (cheating for development)
     SignalHandler::Connect0(
         dis_world_view->SenderBeginNextWave(),
-        &m_internal_receiver_begin_wave);
+        &m_internal_receiver_advance_wave_state);
     // connect the worldview's set-is-alert-wave signal
     SignalHandler::Connect1(
         &m_internal_sender_is_alert_wave,
@@ -941,7 +936,7 @@ void World::HandleAttachWorldView (Engine2::WorldView *engine2_world_view)
     // connect the worldview's alert zoom done signal
     SignalHandler::Connect0(
         dis_world_view->SenderAlertZoomDone(),
-        &m_internal_receiver_begin_wave);
+        &m_internal_receiver_advance_wave_state);
     // connect the worldview's end game signal
     SignalHandler::Connect0(
         dis_world_view->SenderEndGame(),
@@ -1086,13 +1081,6 @@ bool World::StateWaveGameplay (StateMachineInput input)
             }
             return true;
 
-        // this is only possible by using the dev cheat command
-        case IN_BEGIN_WAVE:
-            m_current_wave_index = (m_current_wave_index + 1) % gs_wave_count;
-            ++m_current_wave_index_unwrapped;
-            TRANSITION_TO(StateWaveInitialize);
-            return true;
-
         case IN_END_WAVE:
             TRANSITION_TO(StateWaveIntermissionGameplay);
             return true;
@@ -1121,13 +1109,6 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput input)
 
         case IN_PROCESS_FRAME:
             ProcessWaveIntermissionGameplayLogic();
-            return true;
-
-        // this is only possible by using the dev cheat command
-        case IN_BEGIN_WAVE:
-            m_current_wave_index = (m_current_wave_index + 1) % gs_wave_count;
-            ++m_current_wave_index_unwrapped;
-            TRANSITION_TO(StateWaveInitialize);
             return true;
 
         case IN_END_WAVE_INTERMISSION:
@@ -1187,11 +1168,6 @@ bool World::StateDeathRattle (StateMachineInput input)
             // signal the worldview that the death rattle has started
             m_internal_sender_begin_death_rattle.Signal();
             ScheduleStateMachineInput(IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE, 3.0f);
-            return true;
-
-        case IN_BEGIN_WAVE:
-        case IN_END_WAVE:
-        case IN_END_WAVE_INTERMISSION:
             return true;
 
         case IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE:
@@ -1406,13 +1382,14 @@ void World::ProcessCommonGameplayLogic ()
 */
 }
 
-void World::BeginWave ()
+void World::AdvanceWaveState ()
 {
-    ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
-/*  // this was changed to the above when the begin-next-wave dev-cheat command was added, and it might not be necessary
     if (m_state_machine.CurrentState() == &World::StateWaveInitialize)
         ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
-*/
+    else if (m_state_machine.CurrentState() == &World::StateWaveGameplay)
+        ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
+    else if (m_state_machine.CurrentState() == &World::StateWaveIntermissionGameplay)
+        ScheduleStateMachineInput(IN_END_WAVE_INTERMISSION, 0.0f);
 }
 
 void World::EndGame ()
@@ -1484,9 +1461,7 @@ Asteroid *World::SpawnAsteroidOutOfView ()
         false);
 }
 
-EnemyShip *World::SpawnEnemyShipOutOfView (
-    EntityType enemy_ship_type,
-    Uint8 enemy_level)
+EnemyShip *World::SpawnEnemyShipOutOfView (EntityType enemy_ship_type, Uint8 enemy_level)
 {
     ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST);
     ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST);
@@ -1573,9 +1548,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
     return spawned_ship;
 }
 
-bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
-    FloatVector2 const &translation,
-    Float scale_factor)
+bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (FloatVector2 const &translation, Float scale_factor)
 {
     ASSERT1(scale_factor > 0.0f);
 

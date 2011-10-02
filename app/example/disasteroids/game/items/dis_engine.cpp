@@ -23,10 +23,7 @@ Float const Engine::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 66
 Float const Engine::ms_max_auxiliary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 80.0f, 160.0f, 240.0f, 320.0f };
 Float const Engine::ms_max_thrust_force[UPGRADE_LEVEL_COUNT] = { 15000.0f, 40000.0f, 100000.0f, 250000.0f };
 
-void Engine::SetInputs (
-    Float const right_left_input,
-    Float const up_down_input,
-    Float const auxiliary_input)
+void Engine::SetInputs (Float right_left_input, Float up_down_input, Float auxiliary_input)
 {
     ASSERT1(right_left_input >= -1.0f && right_left_input <= 1.0f);
     ASSERT1(up_down_input >= -1.0f && up_down_input <= 1.0f);
@@ -37,7 +34,7 @@ void Engine::SetInputs (
     m_auxiliary_input = auxiliary_input;
 }
 
-Float Engine::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float Engine::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)
@@ -64,7 +61,7 @@ Float Engine::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool def
     return frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()] * input_vector.Length() / input_vector_max_length;
 }
 
-bool Engine::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool Engine::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)

@@ -14,15 +14,14 @@
 #include "xrb_screen.hpp"
 #include "xrb_util.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 EventInput::~EventInput () { }
 
 EventKey::EventKey (
     Key::Code code,
     Key::Modifier modifier,
-    Float time,
+    Time time,
     EventType event_type)
     :
     EventInput(time, event_type)
@@ -83,7 +82,7 @@ EventKey::~EventKey () { }
 EventMouse::EventMouse (
     ScreenCoordVector2 const &position,
     Key::Modifier modifier,
-    Float time,
+    Time time,
     EventType event_type)
     :
     EventInput(time, event_type),
@@ -97,7 +96,7 @@ EventMouseButton::EventMouseButton (
     Key::Code button_code,
     ScreenCoordVector2 const &position,
     Key::Modifier modifier,
-    Float time,
+    Time time,
     EventType event_type)
     :
     EventMouse(position, modifier, time, event_type),
@@ -113,7 +112,7 @@ EventMouseMotion::EventMouseMotion (
     ScreenCoordVector2 const &position,
     ScreenCoordVector2 const &delta,
     Key::Modifier modifier,
-    Float time)
+    Time time)
     :
     EventMouse(position, modifier, time, MOUSEMOTION),
     m_is_left_mouse_button_pressed(is_left_mouse_button_pressed),
@@ -124,14 +123,14 @@ EventMouseMotion::EventMouseMotion (
 
 EventPinch::~EventPinch () { }
 
-EventPinchBegin::EventPinchBegin (Float scale, Float time)
+EventPinchBegin::EventPinchBegin (Float scale, Time time)
     :
     EventPinch(time, PINCHBEGIN), m_scale(scale)
 {
     ASSERT1(m_scale >= 0.0f && "must be nonnegative");
 }
 
-EventPinchMotion::EventPinchMotion (Float scale, Float velocity, Float time)
+EventPinchMotion::EventPinchMotion (Float scale, Float velocity, Time time)
     :
     EventPinch(time, PINCHMOTION),
     m_scale(scale),
@@ -142,7 +141,7 @@ EventPinchMotion::EventPinchMotion (Float scale, Float velocity, Float time)
 
 EventRotate::~EventRotate () { }
 
-EventRotateMotion::EventRotateMotion (Float rotation, Float velocity, Float time)
+EventRotateMotion::EventRotateMotion (Float rotation, Float velocity, Time time)
     :
     EventRotate(time, ROTATEMOTION),
     m_rotation(rotation),

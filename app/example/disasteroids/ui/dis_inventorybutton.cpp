@@ -91,7 +91,7 @@ void InventoryButton::HandleFrame ()
     // if the item is equipped, cause the button to flash
     if (m_is_equipped)
     {
-        Float brightness = 0.8f + 0.2f * Math::Sin(360.0f * FrameTime());
+        Float brightness = 0.75f + 0.25f * Math::Sin(360.0 * FrameTime().AsDouble());
         ColorMask() = Color(brightness, brightness, brightness, 1.0f);
     }
 

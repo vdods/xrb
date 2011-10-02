@@ -31,8 +31,8 @@ public:
 
     Ballistic (
         Float impact_damage,
-        Float time_to_live,
-        Float time_at_birth,
+        Time::Delta time_to_live,
+        Time time_at_birth,
         Uint8 const weapon_level,
         EntityReference<Entity> const &owner,
         bool perform_line_trace_for_accuracy)
@@ -43,7 +43,6 @@ public:
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);
-        ASSERT1(time_at_birth >= 0.0f);
         ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT);
         m_first_think = true;
         m_impact_damage = impact_damage;
@@ -59,14 +58,14 @@ public:
 
     void SetImpactEffect (ImpactEffect impact_effect) { ASSERT1(impact_effect < IE_COUNT); m_impact_effect = impact_effect; }
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
 protected:
 
@@ -75,14 +74,14 @@ protected:
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt,
+        Time time,
+        Time::Delta frame_dt,
         bool was_collision_from_line_trace);
 
     bool m_first_think;
     Float m_impact_damage;
-    Float m_time_to_live;
-    Float m_time_at_birth;
+    Time::Delta m_time_to_live;
+    Time m_time_at_birth;
     Uint8 const m_weapon_level;
     ImpactEffect m_impact_effect;
     EntityReference<Entity> m_owner;

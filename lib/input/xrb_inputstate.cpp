@@ -13,8 +13,7 @@
 #include "xrb_emptystring.hpp"
 #include "xrb_input_events.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 InputState::InputState ()
     :
@@ -30,8 +29,7 @@ InputState::InputState ()
 InputState::~InputState ()
 {
     // shut down the key maps and delete the Key objects
-    for (KeyCodeMap::iterator it = m_keycode_map.begin(),
-                            it_end = m_keycode_map.end();
+    for (KeyCodeMap::iterator it = m_keycode_map.begin(), it_end = m_keycode_map.end();
          it != it_end;
          ++it)
     {
@@ -41,7 +39,7 @@ InputState::~InputState ()
     m_keyname_map.clear();
 }
 
-Key const *InputState::GetKey (Key::Code const code) const
+Key const *InputState::GetKey (Key::Code code) const
 {
     KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
@@ -65,7 +63,7 @@ Key const *InputState::GetKey (std::string const &name) const
     }
 }
 
-bool InputState::IsValidKeyCode (Key::Code const code) const
+bool InputState::IsValidKeyCode (Key::Code code) const
 {
     return m_keycode_map.find(code) != m_keycode_map.end();
 }
@@ -87,7 +85,7 @@ Key::Code InputState::KeyCode (std::string const &name) const
     }
 }
 
-std::string const &InputState::KeyName (Key::Code const code) const
+std::string const &InputState::KeyName (Key::Code code) const
 {
     KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
@@ -99,7 +97,7 @@ std::string const &InputState::KeyName (Key::Code const code) const
     }
 }
 
-bool InputState::IsKeyPressed (Key::Code const code) const
+bool InputState::IsKeyPressed (Key::Code code) const
 {
     Key const *key = GetKey(code);
     if (key != NULL)
@@ -152,8 +150,7 @@ Key::Modifier InputState::Modifier () const
 
 void InputState::ResetPressed ()
 {
-    for (KeyCodeMap::const_iterator it = m_keycode_map.begin(),
-                                    it_end = m_keycode_map.end();
+    for (KeyCodeMap::const_iterator it = m_keycode_map.begin(), it_end = m_keycode_map.end();
          it != it_end;
          ++it)
     {

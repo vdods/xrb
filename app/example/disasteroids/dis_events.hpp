@@ -35,7 +35,7 @@ public:
         QUIT_REQUESTED
     }; // end of EventBase::SubType
 
-    EventBase (CustomType custom_type, Float time)
+    EventBase (CustomType custom_type, Time time)
         :
         EventCustom(custom_type, time)
     { }

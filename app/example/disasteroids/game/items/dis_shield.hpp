@@ -31,12 +31,11 @@ class Shield : public PoweredDevice
 {
 public:
 
-    Shield (Uint8 const upgrade_level)
+    Shield (Uint8 upgrade_level)
         :
         PoweredDevice(upgrade_level, IT_SHIELD)
     {
         m_charged_power = 0.0f;
-        m_time_last_damaged = -1.0f;
     }
     virtual ~Shield () { }
 
@@ -59,10 +58,10 @@ public:
         FloatVector2 const &damage_normal,
         Float damage_force,
         Mortal::DamageType damage_type,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
     // this is used when the shield is hit by an EMP explosion
-    inline void Drain ()
+    void Drain ()
     {
         m_charged_power = 0.0f;
     }
@@ -71,15 +70,15 @@ public:
     // (inputs set separately), and the current time and frame_dt.  this
     // method is to be used for a ship to decide how much power to apply
     // to each device it has equipped, based on how much each would draw.
-    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const;
 
     // activates this device using the power supplied, and returns true iff
     // the device was activated and the power used.
-    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt);
 
 private:
 
-    inline Float AvailableDamageDissipation () const
+    Float AvailableDamageDissipation () const
     {
         return
             ms_max_damage_dissipation[UpgradeLevel()] *
@@ -90,10 +89,9 @@ private:
     static Float const ms_power_consumption_rate[UPGRADE_LEVEL_COUNT];
     static Float const ms_max_charged_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_max_damage_dissipation[UPGRADE_LEVEL_COUNT];
-    static Float const ms_recharge_interval[UPGRADE_LEVEL_COUNT];
+    static Time::Delta const ms_recharge_interval[UPGRADE_LEVEL_COUNT];
 
     Float m_charged_power;
-    Float m_time_last_damaged;
 }; // end of class Shield
 
 } // end of namespace Dis

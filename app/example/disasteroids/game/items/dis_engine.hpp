@@ -17,14 +17,13 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Engine : public PoweredDevice
 {
 public:
 
-    Engine (Uint8 const upgrade_level)
+    Engine (Uint8 upgrade_level)
         :
         PoweredDevice(upgrade_level, IT_ENGINE)
     { }
@@ -38,9 +37,9 @@ public:
     // PoweredDevice virtual method overrides
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const;
 
-    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt);
 
 private:
 

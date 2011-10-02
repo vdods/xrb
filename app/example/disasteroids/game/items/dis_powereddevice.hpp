@@ -14,11 +14,11 @@
 #include "xrb.hpp"
 
 #include "dis_item.hpp"
+#include "xrb_time.hpp"
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Ship;
 
@@ -27,9 +27,7 @@ class PoweredDevice : public Item
 {
 public:
 
-    PoweredDevice (
-        Uint8 const upgrade_level,
-        ItemType const item_type)
+    PoweredDevice (Uint8 upgrade_level, ItemType item_type)
         :
         Item(upgrade_level, item_type)
     {
@@ -68,11 +66,11 @@ public:
     // (inputs set separately), and the current time and frame_dt.  this
     // method is to be used for a ship to decide how much power to apply
     // to each device it has equipped, based on how much each would draw.
-    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const = 0;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const = 0;
 
     // activates this device using the power supplied, and returns true iff
     // the device was activated and the power used.
-    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) = 0;
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) = 0;
 
 private:
 

@@ -30,17 +30,14 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-Ship::Ship (
-    Float const max_health,
-    EntityType const entity_type)
+Ship::Ship (Float max_health, EntityType entity_type)
     :
     Mortal(max_health, max_health, entity_type, Engine2::Circle::CT_SOLID_COLLISION),
     m_reticle_coordinates(FloatVector2::ms_zero)
 {
-    m_disable_time = 0.0f;
+    m_disable_duration = 0.0f;
     Ship::ResetInputs();
 }
 
@@ -50,9 +47,7 @@ Ship::~Ship ()
         delete m_lightning_effect->OwnerObject();
 }
 
-std::string const &Ship::ShipSpritePath (
-    EntityType const ship_type,
-    Uint8 const enemy_level)
+std::string const &Ship::ShipSpritePath (EntityType ship_type, Uint8 enemy_level)
 {
     static std::string const s_ship_sprite_path[ET_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
     {
@@ -100,7 +95,7 @@ std::string const &Ship::ShipSpritePath (
     return s_ship_sprite_path[ship_index][enemy_level];
 }
 
-Float Ship::ShipRadius (EntityType const ship_type, Uint8 const enemy_level)
+Float Ship::ShipRadius (EntityType ship_type, Uint8 enemy_level)
 {
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
     switch (ship_type)
@@ -128,13 +123,13 @@ void Ship::HandleNewOwnerObject ()
     SetMass(ShipBaselineMass());
 }
 
-void Ship::Think (Float time, Float frame_dt)
+void Ship::Think (Time time, Time::Delta frame_dt)
 {
     // call the superclass' Think
     Mortal::Think(time, frame_dt);
 
     // nothing can happen when the ship is disabled.
-    m_disable_time = Max(0.0f, m_disable_time - frame_dt);
+    m_disable_duration = Max(0.0f, m_disable_duration - frame_dt);
 
     // if the ship is not dead and is disabled, apply the lightning bolt effect
     // to indicate that it is disabled.
@@ -163,8 +158,8 @@ void Ship::Die (
     FloatVector2 const &kill_normal,
     Float kill_force,
     DamageType kill_type,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(OwnerObject() != NULL);
     ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
@@ -211,7 +206,7 @@ void Ship::Die (
     ScheduleForDeletion(0.0f);
 }
 
-void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates, Float const frame_dt)
+void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates, Time::Delta frame_dt)
 {
     FloatVector2 aim_direction(GetObjectLayer()->AdjustedDifference(coordinates, Translation()));
     if (!aim_direction.IsZero())

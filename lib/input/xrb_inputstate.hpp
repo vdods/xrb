@@ -20,14 +20,11 @@
 #include "xrb_key.hpp"
 #include "xrb_eventhandler.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
-/** The InputState class will process events, and store the state of the
-  * keyboard and mouse buttons in a map (which indicates if any key is pressed
-  * or not).  Key modifiers are also tracked and stored.
-  * @brief Stores the current state of the keyboard and mouse buttons.
-  */
+/// @brief Stores the current state of the keyboard and mouse buttons.
+/// @details The InputState class will process events, and store the state of the keyboard and mouse buttons
+/// in a map (which indicates if any key is pressed or not).  Key modifiers are also tracked and stored.
 class InputState : public EventHandler
 {
 public:
@@ -46,9 +43,9 @@ public:
     bool IsEitherAltKeyPressed () const;
     bool IsEitherControlKeyPressed () const;
     bool IsEitherShiftKeyPressed () const;
-    inline bool IsCapsLockOn () const { return m_is_caps_lock_on; }
-    inline bool IsNumLockOn () const { return m_is_num_lock_on; }
-    inline bool IsScrollLockOn () const { return m_is_scroll_lock_on; }
+    bool IsCapsLockOn () const { return m_is_caps_lock_on; }
+    bool IsNumLockOn () const { return m_is_num_lock_on; }
+    bool IsScrollLockOn () const { return m_is_scroll_lock_on; }
     Key::Modifier Modifier () const;
 
     // calls ResetPressed on all the keys
@@ -67,23 +64,18 @@ private:
     // mapping std::string names to Key objects, so there is human-readable access
     typedef std::map<std::string, Key *> KeyNameMap;
 
-    /** Stores the command-bind for each, each entry mapped to an Key::Code.
-      * @brief The keycode-to-key map.
-      */
+    /// @brief The keycode-to-key map.
+    /// @details Stores the command-bind for each, each entry mapped to an Key::Code.
     /*mutable */KeyCodeMap m_keycode_map;
-    /** Maps everything from m_keycode_map to a human-readable std::string
-      * which is the name of each key (i.e. "a" or "LALT" or "F11").
-      * @brief the name-to-key map
-      */
+    /// @brief the name-to-key map
+    /// @details Maps everything from m_keycode_map to a human-readable std::string
+    /// which is the name of each key (i.e. "a" or "LALT" or "F11").
     /*mutable */KeyNameMap m_keyname_map;
-    /** @brief Indicates if the caps lock is engaged.
-      */
+    /// Indicates if the caps lock is engaged.
     bool m_is_caps_lock_on;
-    /** @brief Indicates if the num lock is engaged.
-      */
+    /// Indicates if the num lock is engaged.
     bool m_is_num_lock_on;
-    /** @brief Indicates if the scroll lock is engaged.
-      */
+    /// Indicates if the scroll lock is engaged.
     bool m_is_scroll_lock_on;
 }; // end of class InputState
 

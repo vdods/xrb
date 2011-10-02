@@ -20,10 +20,7 @@ namespace Xrb {
 namespace Engine2 {
 namespace Circle {
 
-CollisionQuadTree::CollisionQuadTree (
-    FloatVector2 const &center,
-    Float half_side_length,
-    Uint8 depth)
+CollisionQuadTree::CollisionQuadTree (FloatVector2 const &center, Float half_side_length, Uint8 depth)
     :
     QuadTree(NULL)
 {
@@ -229,10 +226,7 @@ void CollisionQuadTree::AreaTrace (
     }
 }
 
-void CollisionQuadTree::CollideEntity (
-    Entity *const entity,
-    Float frame_dt,
-    CollisionPairList &collision_pair_list) const
+void CollisionQuadTree::CollideEntity (Entity *entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list) const
 {
     ASSERT1(entity != NULL);
     ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);

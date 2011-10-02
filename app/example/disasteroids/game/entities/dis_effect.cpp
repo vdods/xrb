@@ -21,7 +21,7 @@ using namespace Xrb;
 
 namespace Dis {
 
-void FiniteLifetimeEffect::Think (Float time, Float frame_dt)
+void FiniteLifetimeEffect::Think (Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_time_to_live > 0.0f);
     ASSERT1(m_color_mask_interpolation_power > 0.0f);
@@ -38,7 +38,7 @@ void FiniteLifetimeEffect::Think (Float time, Float frame_dt)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void Explosion::Think (Float time, Float frame_dt)
+void Explosion::Think (Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_scale_interpolation_power > 0.0f);
 
@@ -53,7 +53,7 @@ void Explosion::Think (Float time, Float frame_dt)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void DamageExplosion::Think (Float time, Float frame_dt)
+void DamageExplosion::Think (Time time, Time::Delta frame_dt)
 {
     if (!m_has_done_impact)
     {
@@ -91,8 +91,8 @@ void DamageExplosion::Collide (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
 
@@ -140,8 +140,8 @@ void EMPExplosion::Collide (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
     if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
@@ -163,7 +163,7 @@ void EMPExplosion::HandleNewOwnerObject ()
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void Fireball::Think (Float time, Float frame_dt)
+void Fireball::Think (Time time, Time::Delta frame_dt)
 {
     // the power decays as time goes on
     m_current_damage -= m_potential_damage * frame_dt / TimeToLive();
@@ -181,8 +181,8 @@ void Fireball::Collide (
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
-    Float time,
-    Float frame_dt)
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
 

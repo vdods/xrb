@@ -16,6 +16,7 @@
 #include <string>
 
 #include "xrb_resourcelibrary.hpp"
+#include "xrb_time.hpp"
 
 namespace Xrb {
 
@@ -71,7 +72,7 @@ public:
             Uint32 m_gltexture_flags;
         }; // end of class Animation::Sequence::LoadParameters
 
-        Sequence (Uint32 length, AnimationType default_type, Float default_duration);
+        Sequence (Uint32 length, AnimationType default_type, Time::Delta default_duration);
         Sequence (Resource<GlTexture> const &single_frame);
         ~Sequence ();
 
@@ -91,44 +92,43 @@ public:
         Uint32 Length () const { return m_length; }
         GlTexture const &Frame (Uint32 index) const { ASSERT1(index < m_length); return **m_frame[index]; }
         AnimationType DefaultType () const { return m_default_type; }
-        Float DefaultDuration () const { return m_default_duration; }
+        Time::Delta DefaultDuration () const { return m_default_duration; }
 
     private:
 
         Uint32 const m_length;
         Resource<GlTexture> *const m_frame;
         AnimationType const m_default_type;
-        Float const m_default_duration;
+        Time::Delta const m_default_duration;
     }; // end of class Animation::Sequence
 
-    Animation (Resource<Sequence> const &sequence, Float sequence_start_time = 0.0f);
+    Animation (Resource<Sequence> const &sequence, Time sequence_start_time = Time::ms_beginning_of);
     Animation (Animation const &animation);
 
     Resource<Sequence> const &GetSequence () const { return m_sequence; }
     AnimationType Type () const { return m_type; }
-    Float Duration () const { return m_duration; }
-    // this value will update as the sequence cycles
-    Float SequenceStartTime () const { return m_sequence_start_time; }
+    Time::Delta Duration () const { return m_duration; }
+    Time SequenceStartTime () const { return m_sequence_start_time; }
 
     void SetSequence (Resource<Sequence> const &sequence) { ASSERT1(sequence.IsValid()); m_sequence = sequence; m_last_random_frame = 0; }
     void SetType (AnimationType type) { ASSERT1(type >= 0 && type < AT_COUNT); m_type = type; m_last_random_frame = 0; }
-    void SetDuration (Float duration) { ASSERT1(duration > 0.0f); m_duration = duration; m_last_random_frame = 0; m_last_random_frame_time = 0.0f; }
-    void SetSequenceStartTime (Float sequence_start_time) { m_sequence_start_time = sequence_start_time; m_last_random_frame = 0; m_last_random_frame_time = 0.0f; }
+    void SetDuration (Time::Delta duration) { ASSERT1(duration > 0.0f); m_duration = duration; m_last_random_frame = 0; m_last_random_frame_time = Time::ms_beginning_of; }
+    void SetSequenceStartTime (Time sequence_start_time) { m_sequence_start_time = sequence_start_time; m_last_random_frame = 0; m_last_random_frame_time = Time::ms_beginning_of; }
 
-    GlTexture const &Frame (Float current_time) const;
+    GlTexture const &Frame (Time current_time) const;
 
 private:
 
-    static Float CalculateCycleParameter (Float cycle_time, Float cycle_duration);
+    static Float CalculateCycleParameter (Time cycle_time, Time::Delta cycle_duration);
 
     Resource<Sequence> m_sequence;
     AnimationType m_type;
-    Float m_duration;
+    Time::Delta m_duration;
     // indicates the time the animation cycle starts (this is updated as the sequence cycles)
-    mutable Float m_sequence_start_time;
+    Time m_sequence_start_time;
     // for use in the RANDOM type
     mutable Uint32 m_last_random_frame;
-    mutable Float m_last_random_frame_time;
+    mutable Time m_last_random_frame_time;
 };
 
 } // end of namespace Xrb

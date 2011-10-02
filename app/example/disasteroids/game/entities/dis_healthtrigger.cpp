@@ -12,12 +12,11 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 HealthTrigger::HealthTrigger (
-    Float const health_delta_rate,
-    Mortal::DamageType const damage_type,
+    Float health_delta_rate,
+    Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
     EntityReference<Entity> const &owner)
     :
@@ -30,12 +29,12 @@ HealthTrigger::HealthTrigger (
 }
 
 void HealthTrigger::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Time time,
+    Time::Delta frame_dt)
 {
     ASSERT1(collider != NULL);
 

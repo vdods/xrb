@@ -26,8 +26,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 // PeaShooter properties
 Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 4.0f, 20.0f, 50.0f };
@@ -38,7 +37,7 @@ Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f
 Float const PeaShooter::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const PeaShooter::ms_max_secondary_power_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 225.0f, 300.0f };
 Float const PeaShooter::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 10.0f, 10.0f, 10.0f };
-Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Time::Delta  const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Laser properties
 Float const Laser::ms_primary_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 175.0f, 200.0f };
@@ -67,7 +66,7 @@ Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
 Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.5f, 1.35f, 1.15f, 1.0f };
 Float const GaussGun::ms_trail_visible_width[UPGRADE_LEVEL_COUNT] = { 20.0f, 30.0f, 45.0f, 60.0f };
-Float const GaussGun::ms_effect_time_to_live[UPGRADE_LEVEL_COUNT] = { 0.2f, 0.3f, 0.4f, 0.5f };
+Time::Delta const GaussGun::ms_effect_time_to_live[UPGRADE_LEVEL_COUNT] = { 0.2f, 0.3f, 0.4f, 0.5f };
 Float const GaussGun::ms_impact_particle_speed_proportion[UPGRADE_LEVEL_COUNT] = { 4.0f, 3.0f, 2.75f, 2.5f };
 
 // GrenadeLauncher properties
@@ -118,7 +117,7 @@ Float const EnemySpawner::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float PeaShooter::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float PeaShooter::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
@@ -141,7 +140,7 @@ Float PeaShooter::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool
         return 0.0f;
 }
 
-bool PeaShooter::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool PeaShooter::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     ASSERT1(OwnerShip()->GetWorld() != NULL);
     ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
@@ -239,7 +238,7 @@ bool PeaShooter::Activate (Float power, bool attack_boost_is_enabled, bool defen
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float Laser::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float Laser::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     ASSERT1(PrimaryInput() <= 1.0f);
     ASSERT1(SecondaryInput() <= 1.0f);
@@ -250,7 +249,7 @@ Float Laser::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defe
         return 0.0f;
 }
 
-bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     ASSERT1(m_laser_beam != NULL);
     ASSERT1(m_laser_beam->IsInWorld());
@@ -346,7 +345,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
                     NULL, // laser does not have an Entity medium
                     ms_secondary_impact_damage[UpgradeLevel()] * damage_factor,
                     NULL,
-                    fire_location + it->m_time * fire_vector,
+                    fire_location + it->m_trace_hit_parameter * fire_vector,
                     MuzzleDirection(),
                     0.0f,
                     Mortal::D_COMBAT_LASER,
@@ -361,7 +360,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
                     fire_vector,
                     OwnerShip()->Velocity(),
                     ms_beam_visible_width[UpgradeLevel()],
-                    it->m_time * fire_vector.Length(),
+                    it->m_trace_hit_parameter * fire_vector.Length(),
                     1,
                     0.5f,
                     time);
@@ -401,7 +400,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
             Float ratio_of_max_power_output =
                 power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
             laser_beam_hit_location =
-                MuzzleLocation() + it->m_time * ms_primary_range[UpgradeLevel()] * MuzzleDirection();
+                MuzzleLocation() + it->m_trace_hit_parameter * ms_primary_range[UpgradeLevel()] * MuzzleDirection();
             if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
             {
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
@@ -450,7 +449,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float FlameThrower::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float FlameThrower::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
@@ -478,7 +477,7 @@ Float FlameThrower::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bo
         return scaled_power / fire_rate_factor;
 }
 
-bool FlameThrower::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool FlameThrower::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     // secondary fire (super-blast) overrides primary fire
     Float input = PrimaryInput();
@@ -558,7 +557,7 @@ bool FlameThrower::Activate (Float power, bool attack_boost_is_enabled, bool def
 //         m_reticle_effect->RemoveFromWorld();
 // }
 
-Float GaussGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float GaussGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
@@ -571,7 +570,7 @@ Float GaussGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool d
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] / fire_rate_factor : 0.0f;
 }
 
-bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);
@@ -614,7 +613,7 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
     Float damage_left_to_inflict = total_damage_to_inflict;
 
     // damage the next thing if it exists
-    Float furthest_hit_time = 1.0f;
+    Float furthest_hit_parameter = 1.0f;
     Float damage_amount_used;
     bool first_hit_registered = false;
     while ((!first_hit_registered || damage_left_to_inflict > 0.0f) &&
@@ -630,10 +629,10 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
 
         first_hit_registered = true;
 
-        furthest_hit_time = it->m_time;
+        furthest_hit_parameter = it->m_trace_hit_parameter;
         if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
         {
-            FloatVector2 impact_location(MuzzleLocation() + it->m_time * ms_range[UpgradeLevel()] * MuzzleDirection());
+            FloatVector2 impact_location(MuzzleLocation() + it->m_trace_hit_parameter * ms_range[UpgradeLevel()] * MuzzleDirection());
             FloatVector2 impact_normal(OwnerShip()->GetObjectLayer()->AdjustedDifference(impact_location, it->m_entity->Translation()));
             if (impact_normal.LengthSquared() > 0.0001f)
                 impact_normal.Normalize();
@@ -676,22 +675,22 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
             damage_left_to_inflict -= damage_amount_used;
         }
 
-        furthest_hit_time = it->m_time;
+        furthest_hit_parameter = it->m_trace_hit_parameter;
 
         ++it;
     }
 
     if (damage_left_to_inflict > 0.0001f) // to within some tolerance
-        furthest_hit_time = 1.0f;
+        furthest_hit_parameter = 1.0f;
 
     // figure out how long each gauss gun trail segment should be
-    ASSERT1(furthest_hit_time >= 0.0f);
+    ASSERT1(furthest_hit_parameter >= 0.0f);
     Float segment_width = ms_trail_visible_width[UpgradeLevel()];
-    Float continuum_segment_count = Math::Ceiling((furthest_hit_time * ms_range[UpgradeLevel()]) / segment_width);
+    Float continuum_segment_count = Math::Ceiling((furthest_hit_parameter * ms_range[UpgradeLevel()]) / segment_width);
     ASSERT1(continuum_segment_count >= 0.0f);
     Uint32 segment_count = Uint32(continuum_segment_count);
     Float segment_length = segment_count > 0 ?
-                           furthest_hit_time * ms_range[UpgradeLevel()] / segment_count :
+                           furthest_hit_parameter * ms_range[UpgradeLevel()] / segment_count :
                            0.0f;
 
     // spawn an impact effect at the weapon muzzle
@@ -766,7 +765,7 @@ void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *active_grenade)
     active_grenade->SetOwnerGrenadeLauncher(NULL);
 }
 
-Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // can't fire if the maximum number of active grenades has been reached
     if (ActiveGrenadeCount() >= ms_max_active_grenade_count[UpgradeLevel()])
@@ -783,7 +782,7 @@ Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled,
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] / fire_rate_factor : 0.0f;
 }
 
-bool GrenadeLauncher::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool GrenadeLauncher::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);
@@ -879,7 +878,7 @@ void MissileLauncher::ActiveMissileDestroyed (Missile *active_missile)
     active_missile->SetOwnerMissileLauncher(NULL);
 }
 
-Float MissileLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float MissileLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // can't fire if the maximum number of active missiles has been reached
     if (ActiveMissileCount() >= ms_max_active_missile_count[UpgradeLevel()])
@@ -899,7 +898,7 @@ Float MissileLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled,
         return 0.0f;
 }
 
-bool MissileLauncher::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool MissileLauncher::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);
@@ -975,7 +974,7 @@ bool MissileLauncher::Activate (Float power, bool attack_boost_is_enabled, bool 
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float Tractor::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float Tractor::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     if (SecondaryInput() > 0.0f)
         return SecondaryInput() * frame_dt * ms_max_power_output_rate[UpgradeLevel()];
@@ -983,7 +982,7 @@ Float Tractor::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool de
         return PrimaryInput() * frame_dt * ms_max_power_output_rate[UpgradeLevel()];
 }
 
-bool Tractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool Tractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     // the epsilon is because floating point arithmetic isn't exact
     // and the first condition was sometimes failing.
@@ -1078,7 +1077,7 @@ bool Tractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-bool AdvancedTractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool AdvancedTractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     if (PrimaryInput() <= 0.0f || SecondaryInput() <= 0.0f)
         return Tractor::Activate(power, attack_boost_is_enabled, defense_boost_is_enabled, time, frame_dt);
@@ -1181,7 +1180,7 @@ bool AdvancedTractor::Activate (Float power, bool attack_boost_is_enabled, bool 
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float SlowBulletGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float SlowBulletGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
@@ -1194,7 +1193,7 @@ Float SlowBulletGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, b
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] / fire_rate_factor : 0.0f;
 }
 
-bool SlowBulletGun::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool SlowBulletGun::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);
@@ -1234,7 +1233,7 @@ bool SlowBulletGun::Activate (Float power, bool attack_boost_is_enabled, bool de
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float EnemySpawner::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
+Float EnemySpawner::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
 {
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
     Float const fire_rate =
@@ -1251,7 +1250,7 @@ Float EnemySpawner::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bo
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] / fire_rate_factor : 0.0f;
 }
 
-bool EnemySpawner::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
+bool EnemySpawner::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);

@@ -19,9 +19,9 @@ EventHandler::EventHandler (EventQueue *owner_event_queue)
 {
     m_owner_event_queue = owner_event_queue;
     m_is_blocking_events = false;
-    m_most_recent_event_time = -1.0;
-    m_current_event_time = -1.0;
-    m_event_dt = -1.0;
+    m_most_recent_event_time = Time::ms_negative_infinity;
+    m_current_event_time = Time::ms_negative_infinity;
+    m_allow_event_time_access = false;
 }
 
 EventHandler::~EventHandler ()
@@ -41,7 +41,7 @@ bool EventHandler::ProcessEvent (Event const &e)
 
     // make sure that events show up "in order", even if their times
     // aren't actually completely correct.
-    Float event_time = e.Time();
+    Time event_time = e.GetTime();
     if (event_time < m_most_recent_event_time)
         event_time = m_most_recent_event_time;
 
@@ -51,11 +51,8 @@ bool EventHandler::ProcessEvent (Event const &e)
 
     // set the current event time
     m_current_event_time = event_time;
-    // if this is the first event, initialize the most recent event time
-    if (m_most_recent_event_time < 0.0)
-        m_most_recent_event_time = m_current_event_time;
-    // set the event time delta
-    m_event_dt = m_current_event_time - m_most_recent_event_time;
+    // allow the EventTime accessor to be used
+    m_allow_event_time_access = true;
 
     if (HandleEvent(e))
     {
@@ -65,9 +62,8 @@ bool EventHandler::ProcessEvent (Event const &e)
         return true;
     }
 
-    // reset the event time delta so you can't reference the
-    // event DT outside of ProcessEvent
-    m_event_dt = -1.0;
+    // disallow the EventTime accessor to be used (no use outside of HandleEvent())
+    m_allow_event_time_access = false;
 
     // return that the event was unused
     return false;

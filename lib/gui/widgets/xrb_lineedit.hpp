@@ -15,6 +15,7 @@
 
 #include "xrb_characterfilter.hpp"
 #include "xrb_textwidget.hpp"
+#include "xrb_time.hpp"
 
 namespace Xrb {
 
@@ -95,9 +96,9 @@ private:
     // indicates if the cursor is visible right now
     bool m_is_cursor_visible;
     // the speed at which the cursor blinks (a full cycle)
-    Float m_cursor_blink_period;
+    Time::Delta m_cursor_blink_period;
     // the next time the cursor's visibility should be toggled
-    Float m_next_cursor_blink_time;
+    Time m_next_cursor_blink_time;
     // the last string which was signaled using m_sender_text_updated
     std::string m_last_text_update;
     // the character filter for this LineEdit

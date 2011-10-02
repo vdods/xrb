@@ -15,8 +15,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Interloper : public EnemyShip
 {
@@ -33,14 +32,14 @@ public:
     Interloper (Uint8 enemy_level);
     virtual ~Interloper ();
 
-    virtual void Think (Float time, Float frame_dt);
+    virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
-        Float time,
-        Float frame_dt);
+        Time time,
+        Time::Delta frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
@@ -67,25 +66,25 @@ public:
 
 private:
 
-    inline bool IsFlockLeader () const { return m_flock_leader_weight > 0.25f; }
+    bool IsFlockLeader () const { return m_flock_leader_weight > 0.25f; }
 
-    void PickWanderDirection (Float time, Float frame_dt);
-    void Wander (Float time, Float frame_dt);
-    void Flock (Float time, Float frame_dt);
-    void Charge (Float time, Float frame_dt);
-    void Retreat (Float time, Float frame_dt);
+    void PickWanderDirection (Time time, Time::Delta frame_dt);
+    void Wander (Time time, Time::Delta frame_dt);
+    void Flock (Time time, Time::Delta frame_dt);
+    void Charge (Time time, Time::Delta frame_dt);
+    void Retreat (Time time, Time::Delta frame_dt);
 
-    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    void MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt);
     void AddFlockLeaderWeight (Float weight);
 
-    typedef void (Interloper::*ThinkState)(Float time, Float frame_dt);
+    typedef void (Interloper::*ThinkState)(Time time, Time::Delta frame_dt);
 
     ThinkState m_think_state;
-    Float m_next_wander_time;
+    Time m_next_wander_time;
     Float m_wander_angle;
     Float m_wander_angle_derivative;
     EntityReference<Ship> m_target;
-    Float m_time_at_retreat_start;
+    Time m_time_at_retreat_start;
     Float m_flock_leader_weight;
     EntityReference<Interloper> m_closest_flock_member;
 }; // end of class Interloper
