@@ -201,7 +201,7 @@ void World::AddObjectLayer (ObjectLayer *object_layer)
 
     m_object_layer_list.push_back(object_layer);
     if (m_physics_handler != NULL)
-        m_physics_handler->AddObjectLayer(object_layer);
+        m_physics_handler->AddObjectLayer(*object_layer);
 }
 
 void World::SetMainObjectLayer (ObjectLayer *main_object_layer)
@@ -210,7 +210,7 @@ void World::SetMainObjectLayer (ObjectLayer *main_object_layer)
     ASSERT1(main_object_layer->OwnerWorld() == this);
     m_main_object_layer = main_object_layer;
     if (m_physics_handler != NULL)
-        m_physics_handler->SetMainObjectLayer(m_main_object_layer);
+        m_physics_handler->SetMainObjectLayer(*m_main_object_layer);
 }
 
 void World::AddStaticObject (Object *static_object, ObjectLayer *object_layer)
@@ -253,7 +253,7 @@ void World::AddDynamicObject (Object *dynamic_object, ObjectLayer *object_layer)
     // add the entity to the physics handler (must be done after adding
     // it to the object layer)
     if (m_physics_handler != NULL)
-        m_physics_handler->AddEntity(entity);
+        m_physics_handler->AddEntity(*entity);
 }
 
 void World::RemoveDynamicObject (Object *dynamic_object)
@@ -286,7 +286,7 @@ void World::RemoveDynamicObject (Object *dynamic_object)
 
     // remove the entity from the physics handler
     if (m_physics_handler != NULL)
-        m_physics_handler->RemoveEntity(entity);
+        m_physics_handler->RemoveEntity(*entity);
 }
 
 Entity *World::DemoteDynamicObjectToStaticObject (Object &object)
@@ -343,11 +343,11 @@ Uint32 World::MainObjectLayerIndex () const
     return UINT32_UPPER_BOUND;
 }
 
-void World::SetMainObjectLayerIndex (Uint32 const index)
+void World::SetMainObjectLayerIndex (Uint32 index)
 {
     Uint32 i = 0;
     for (ObjectLayerList::iterator it = m_object_layer_list.begin(),
-                                 it_end = m_object_layer_list.end();
+                                   it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
     {
@@ -356,7 +356,7 @@ void World::SetMainObjectLayerIndex (Uint32 const index)
         if (i == index) {
             m_main_object_layer = object_layer;
             if (m_physics_handler != NULL)
-                m_physics_handler->SetMainObjectLayer(m_main_object_layer);
+                m_physics_handler->SetMainObjectLayer(*m_main_object_layer);
             return;
         }
     }

@@ -45,24 +45,22 @@ void Powerup::Think (Time time, Time::Delta frame_dt)
 }
 
 void Powerup::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-
     // early-out if already taken
     if (m_has_been_picked_up)
         return;
 
     // early-out if the collider is not a ship
-    if (!collider->IsShip())
+    if (!collider.IsShip())
         return;
 
-    if (DStaticCast<Ship *>(collider)->TakePowerup(this, time, frame_dt))
+    if (DStaticCast<Ship *>(&collider)->TakePowerup(this, time, frame_dt))
     {
         // make sure the ship took the powerup item and cleared it
         ASSERT1(m_item == NULL);

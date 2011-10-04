@@ -34,8 +34,8 @@ class Entity;
 class PhysicsHandler;
 
 void RadiusDamage (
-    Engine2::Circle::PhysicsHandler *physics_handler,
-    Engine2::ObjectLayer *object_layer,
+    Engine2::Circle::PhysicsHandler &physics_handler,
+    Engine2::ObjectLayer &object_layer,
     Entity *damager,
     Entity *damage_medium,
     Float damage_amount,
@@ -47,8 +47,8 @@ void RadiusDamage (
     Time::Delta frame_dt);
 
 void RadiusKnockback (
-    Engine2::Circle::PhysicsHandler *physics_handler,
-    Engine2::ObjectLayer *object_layer,
+    Engine2::Circle::PhysicsHandler &physics_handler,
+    Engine2::ObjectLayer &object_layer,
     FloatVector2 const &explosion_area_center,
     Float explosion_area_radius,
     Float power,

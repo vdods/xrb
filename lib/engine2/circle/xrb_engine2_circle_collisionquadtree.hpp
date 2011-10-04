@@ -45,6 +45,7 @@ public:
         LineTraceBindingSet &line_trace_binding_set,
         ObjectLayer const &object_layer) const;
 
+    // will never add a NULL entity to an AreaTraceList
     void AreaTrace (
         FloatVector2 const &trace_area_center,
         Float trace_area_radius,
@@ -52,7 +53,7 @@ public:
         AreaTraceList &area_trace_list,
         ObjectLayer const &object_layer) const;
 
-    void CollideEntity (Entity *entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list) const;
+    void CollideEntity (Entity &entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list) const;
 
 protected:
 
@@ -70,29 +71,28 @@ private:
     {
     public:
 
-        CollideEntityLoopFunctor (Entity *entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list)
+        CollideEntityLoopFunctor (Entity &entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list)
             :
             m_entity(entity),
             m_frame_dt(frame_dt),
             m_collision_pair_list(collision_pair_list),
-            m_object_layer(*entity->GetObjectLayer())
+            m_object_layer(*entity.GetObjectLayer())
         {
-            ASSERT1(m_entity != NULL);
-            ASSERT1(m_entity->OwnerObject() != NULL);
-            ASSERT1(m_entity->GetObjectLayer() != NULL);
-            ASSERT1(m_entity->GetCollisionType() != CT_NO_COLLISION);
+            ASSERT1(m_entity.OwnerObject() != NULL);
+            ASSERT1(m_entity.GetObjectLayer() != NULL);
+            ASSERT1(m_entity.GetCollisionType() != CT_NO_COLLISION);
         }
 
         // this is the business end of the functor, and is what actually
         // does the collision detection.
         void operator () (Object *object);
 
-        Entity *GetEntity () const { return m_entity; }
+        Entity &GetEntity () const { return m_entity; }
         ObjectLayer const &GetObjectLayer () const { return m_object_layer; }
 
     private:
 
-        Entity *m_entity;
+        Entity &m_entity;
         Time::Delta m_frame_dt;
         CollisionPairList &m_collision_pair_list;
         ObjectLayer const &m_object_layer;

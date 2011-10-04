@@ -29,7 +29,7 @@ Float const Missile::ms_acceleration[UPGRADE_LEVEL_COUNT] = { 200.0f, 225.0f, 25
 // ///////////////////////////////////////////////////////////////////////////
 
 void Explosive::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -37,11 +37,11 @@ void Explosive::Collide (
     Time::Delta frame_dt)
 {
     // we don't want to detonate on powerups
-    if (collider->IsPowerup())
+    if (collider.IsPowerup())
         return;
 
     // if it's a solid collision object, potentially detonate
-    if (collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && !IsDead())
+    if (collider.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && !IsDead())
         if (!HasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
             Detonate(time, frame_dt);
 
@@ -123,7 +123,7 @@ Grenade::~Grenade ()
 }
 
 void Grenade::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -131,51 +131,48 @@ void Grenade::Collide (
     Time::Delta frame_dt)
 {
     // if we hit a grenade of the same owner, don't detonate.  instead, merge together,
-    if (collider->GetEntityType() == ET_GRENADE && DStaticCast<Grenade *>(collider)->m_owner == m_owner)
+    if (collider.GetEntityType() == ET_GRENADE && DStaticCast<Grenade *>(&collider)->m_owner == m_owner)
     {
-        Grenade *other_grenade = static_cast<Grenade *>(collider);
+        Grenade &other_grenade = *DStaticCast<Grenade *>(&collider);
         // because Collide will be called on both grenades, we need a way to ensure the
         // grenade merging only happens once, and that only one grenade goes away.  thus
         // we'll merge the smaller grenade into the larger one, or if they're the same
         // size, we'll use the lower pointer value grenade.
-        ASSERT1(this != other_grenade); // a grenade should never collide with itself
-        if (Mass() < other_grenade->Mass()
-            ||
-            (Mass() == other_grenade->Mass() &&
-             this > other_grenade))
+        ASSERT1(this != &other_grenade); // a grenade should never collide with itself
+        if (Mass() < other_grenade.Mass() || (Mass() == other_grenade.Mass() && this > &other_grenade))
         {
             return;
         }
 
         // figure out the new damage radius, explosion radius and damage to inflict.
-        Float scale_factor = Math::Sqrt(1.0f + other_grenade->Mass() / Mass());
+        Float scale_factor = Math::Sqrt(1.0f + other_grenade.Mass() / Mass());
         ASSERT1(scale_factor >= 1.0f);
         // attenuate the scale a bit, linear was too much.
         scale_factor = Math::Pow(scale_factor, 0.75f);
         OwnerObject()->Scale(scale_factor);
         m_damage_radius *= scale_factor;
         m_explosion_radius *= scale_factor;
-        m_damage_to_inflict += other_grenade->m_damage_to_inflict;
+        m_damage_to_inflict += other_grenade.m_damage_to_inflict;
 
         // set the new max health for the new grenade is the sum of the source grenades'
         // max healths.  the current health for the new grenade is also the sum.
-        SetMaxHealth(MaxHealth() + other_grenade->MaxHealth());
-        SetCurrentHealth(CurrentHealth() + other_grenade->CurrentHealth());
+        SetMaxHealth(MaxHealth() + other_grenade.MaxHealth());
+        SetCurrentHealth(CurrentHealth() + other_grenade.CurrentHealth());
         ResetRecentChangeInHealth();
 
         // figure out the new mass, velocity, and radius.
-        FloatVector2 new_momentum = Momentum() + other_grenade->Momentum();
-        SetMass(Mass() + other_grenade->Mass());
+        FloatVector2 new_momentum = Momentum() + other_grenade.Momentum();
+        SetMass(Mass() + other_grenade.Mass());
         SetMomentum(new_momentum); // have to set this after setting the first moment
 
         // let the other grenade's owner's grenade launcher know that it's going bye-bye
-        if (other_grenade->m_owner_grenade_launcher != NULL)
-            other_grenade->m_owner_grenade_launcher->ActiveGrenadeDestroyed(other_grenade);
+        if (other_grenade.m_owner_grenade_launcher != NULL)
+            other_grenade.m_owner_grenade_launcher->ActiveGrenadeDestroyed(other_grenade);
         // make it go bye-bye
-        other_grenade->ScheduleForDeletion(0.0f);
+        other_grenade.ScheduleForDeletion(0.0f);
     }
     // otherwise, if we did not hit the owner of this grenade, do normal explosive collision handling
-    else if (collider != *m_owner)
+    else if (&collider != *m_owner)
     {
         // TODO only call the superclass collide if the collision registers as above
         // the threshold for detonation -- i.e. a large merged grenade won't detonate
@@ -209,7 +206,7 @@ void Grenade::Die (
     // grenade has been destroyed
     if (m_owner_grenade_launcher != NULL)
     {
-        m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
+        m_owner_grenade_launcher->ActiveGrenadeDestroyed(*this);
         // ActiveGrenadeDestroyed should have nullified the owner
         ASSERT1(m_owner_grenade_launcher == NULL);
     }
@@ -225,10 +222,9 @@ void Grenade::Die (
         frame_dt);
 }
 
-bool Grenade::CheckIfItShouldDetonate (Entity *collider, Time time, Time::Delta frame_dt)
+bool Grenade::CheckIfItShouldDetonate (Entity &collider, Time time, Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-    ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
+    ASSERT1(collider.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
     ASSERT1(!IsDead());
 
     // this grenade is dumb, just detonate
@@ -268,7 +264,7 @@ void Grenade::Detonate (Time time, Time::Delta frame_dt)
     // grenade has been destroyed
     if (m_owner_grenade_launcher != NULL)
     {
-        m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
+        m_owner_grenade_launcher->ActiveGrenadeDestroyed(*this);
         // ActiveGrenadeDestroyed should have nullified the owner
         ASSERT1(m_owner_grenade_launcher == NULL);
     }
@@ -350,8 +346,9 @@ void Missile::Think (Time time, Time::Delta frame_dt)
         FloatVector2 trace_vector(frame_dt * Velocity());
         FloatVector2 trace_start(Translation() - 0.5f * trace_vector);
         Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
+        ASSERT1(GetObjectLayer() != NULL);
         GetPhysicsHandler()->LineTrace(
-            GetObjectLayer(),
+            *GetObjectLayer(),
             trace_start,
             trace_vector,
             PhysicalRadius(),
@@ -365,7 +362,7 @@ void Missile::Think (Time time, Time::Delta frame_dt)
              it != it_end;
              ++it)
         {
-            if (CheckIfItShouldDetonate(DStaticCast<Entity *>(it->m_entity), time, frame_dt))
+            if (CheckIfItShouldDetonate(*DStaticCast<Entity *>(&it->m_entity), time, frame_dt))
             {
                 Detonate(time, frame_dt);
                 break;
@@ -407,32 +404,31 @@ void Missile::Die (
         frame_dt);
 }
 
-bool Missile::CheckIfItShouldDetonate (Entity *collider, Time time, Time::Delta frame_dt)
+bool Missile::CheckIfItShouldDetonate (Entity &collider, Time time, Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-    ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
+    ASSERT1(collider.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
     ASSERT1(!HasDetonated());
     ASSERT1(!IsDead());
 
     // don't detonate on ourselves
-    if (collider == this)
+    if (&collider == this)
         return false;
 
     // don't detonate on powerups
-    if (collider->IsPowerup())
+    if (collider.IsPowerup())
         return false;
 
     // don't detonate on ballistics (because then it would make it
     // pointless to try to shoot missiles down with ballistic weapons)
-    if (collider->IsBallistic())
+    if (collider.IsBallistic())
         return false;
 
     // don't detonate on the missiles owned by the same owner
-    if (collider->GetEntityType() == ET_MISSILE && DStaticCast<Missile *>(collider)->m_owner == m_owner)
+    if (collider.GetEntityType() == ET_MISSILE && DStaticCast<Missile *>(&collider)->m_owner == m_owner)
         return false;
 
     // don't detonate on the entity that fired this missile
-    if (collider == *m_owner)
+    if (&collider == *m_owner)
         return false;
 
     // otherwise, detonate
@@ -501,9 +497,9 @@ EntityReference<Ship> GuidedMissile::FindTarget (Engine2::Circle::LineTraceBindi
          it != it_end;
          ++it)
     {
-        Entity *entity = DStaticCast<Entity *>(it->m_entity);
-        if (entity->IsShip() && entity != *m_owner)
-            return entity->GetReference();
+        Entity &entity = *DStaticCast<Entity *>(&it->m_entity);
+        if (entity.IsShip() && &entity != *m_owner)
+            return entity.GetReference();
     }
     // if no target found, return an invalid reference
     return EntityReference<Ship>();
@@ -527,8 +523,9 @@ void GuidedMissile::Search (Time time, Time::Delta frame_dt)
         static Float const s_search_radius = 70.0f;
 
         Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
+        ASSERT1(GetObjectLayer() != NULL);
         GetPhysicsHandler()->LineTrace(
-            GetObjectLayer(),
+            *GetObjectLayer(),
             Translation(),
             s_search_distance * Math::UnitVector(Angle()),
             s_search_radius,
@@ -609,9 +606,9 @@ EntityReference<Ship> GuidedEnemyMissile::FindTarget (Engine2::Circle::LineTrace
          it != it_end;
          ++it)
     {
-        Entity *entity = DStaticCast<Entity *>(it->m_entity);
-        if (entity->GetEntityType() == ET_SOLITARY)
-            return entity->GetReference();
+        Entity &entity = *DStaticCast<Entity *>(&it->m_entity);
+        if (entity.GetEntityType() == ET_SOLITARY)
+            return entity.GetReference();
     }
     // if no target found, return an invalid reference
     return EntityReference<Ship>();

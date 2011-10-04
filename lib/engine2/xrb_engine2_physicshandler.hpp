@@ -49,11 +49,11 @@ public:
         m_owner_world = owner_world;
     }
 
-    virtual void AddObjectLayer (ObjectLayer *object_layer) = 0;
-    virtual void SetMainObjectLayer (ObjectLayer *object_layer) = 0;
+    virtual void AddObjectLayer (ObjectLayer &object_layer) = 0;
+    virtual void SetMainObjectLayer (ObjectLayer &object_layer) = 0;
 
-    virtual void AddEntity (Entity *entity) = 0;
-    virtual void RemoveEntity (Entity *entity) = 0;
+    virtual void AddEntity (Entity &entity) = 0;
+    virtual void RemoveEntity (Entity &entity) = 0;
 
 protected:
 

@@ -76,32 +76,29 @@ enum CollisionType
 struct LineTraceBinding
 {
     // the proportion along the traced line which the trace hit -- clipped to be no less than 0.
-    Float m_trace_hit_parameter;
+    Float m_clamped_trace_hit_parameter;
     // same as m_trace_dt, except not clipped (can be less than 0).  this can be used as the parameter
     // for a linear interpolation to figure out the location of the hit.
     Float m_unclamped_trace_hit_parameter;
     // the Entity which was hit.
-    Entity *m_entity;
+    Entity &m_entity;
 
-    LineTraceBinding (Float trace_parameter, Float actual_trace_parameter, Entity *entity)
+    LineTraceBinding (Float trace_hit_parameter, Entity &entity)
         :
-        m_trace_hit_parameter(trace_parameter),
-        m_unclamped_trace_hit_parameter(actual_trace_parameter),
+        m_clamped_trace_hit_parameter(Max(0.0f, trace_hit_parameter)),
+        m_unclamped_trace_hit_parameter(trace_hit_parameter),
         m_entity(entity)
-    {
-        ASSERT1(m_trace_hit_parameter >= 0.0f);
-        ASSERT1(m_entity != NULL);
-    }
+    { }
 }; // end of struct LineTraceBinding
 
 struct OrderLineTraceBindingsByTime
 {
     bool operator () (LineTraceBinding const &binding0, LineTraceBinding const &binding1)
     {
-        ASSERT1(binding0.m_entity != binding1.m_entity);
-        return binding0.m_trace_hit_parameter < binding1.m_trace_hit_parameter
+        return binding0.m_unclamped_trace_hit_parameter < binding1.m_unclamped_trace_hit_parameter
                ||
-               (binding0.m_trace_hit_parameter == binding1.m_trace_hit_parameter && binding0.m_unclamped_trace_hit_parameter < binding1.m_unclamped_trace_hit_parameter);
+               (binding0.m_unclamped_trace_hit_parameter == binding1.m_unclamped_trace_hit_parameter &&
+                &binding0.m_entity < &binding1.m_entity); // yes, this is pointer comparison.
     }
 }; // end of struct OrderEntitiesByTraceTime
 

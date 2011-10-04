@@ -154,8 +154,9 @@ void Shade::Wander (Time time, Time::Delta frame_dt)
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation(),
         s_scan_radius,
         false,
@@ -364,10 +365,11 @@ void Shade::Teleport (Time time, Time::Delta frame_dt)
             if (m_target.IsValid())
                 teleport_range_center = m_target->Translation();
             teleport_destination = ms_stalk_maximum_distance[EnemyLevel()] * Math::UnitVector(Math::RandomAngle()) + teleport_range_center;
+            ASSERT1(GetObjectLayer() != NULL);
             overlap =
                 GetPhysicsHandler()->
                     DoesAreaOverlapAnyEntityInObjectLayer(
-                        GetObjectLayer(),
+                        *GetObjectLayer(),
                         teleport_destination,
                         1.5f * VisibleRadius(),
                         false);

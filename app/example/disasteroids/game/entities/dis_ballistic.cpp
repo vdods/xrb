@@ -48,8 +48,9 @@ void Ballistic::Think (Time time, Time::Delta frame_dt)
                 FloatVector2 trace_vector(frame_dt * Velocity());
                 FloatVector2 trace_start(Translation() - 0.5f * trace_vector);
                 Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
+                ASSERT1(GetObjectLayer() != NULL);
                 GetPhysicsHandler()->LineTrace(
-                    GetObjectLayer(),
+                    *GetObjectLayer(),
                     trace_start,
                     trace_vector,
                     PhysicalRadius(),
@@ -63,22 +64,22 @@ void Ballistic::Think (Time time, Time::Delta frame_dt)
                      ++it)
                 {
                     // don't hit ourselves
-                    if (it->m_entity == this)
+                    if (&it->m_entity == this)
                         continue;
 
                     // don't hit the entity that fired us
-                    if (it->m_entity == *m_owner)
+                    if (&it->m_entity == *m_owner)
                         continue;
 
-                    FloatVector2 collision_location(trace_start + it->m_trace_hit_parameter * trace_vector);
-                    FloatVector2 collision_normal(GetObjectLayer()->AdjustedDifference(collision_location, it->m_entity->Translation()));
+                    FloatVector2 collision_location(trace_start + it->m_clamped_trace_hit_parameter * trace_vector);
+                    FloatVector2 collision_normal(GetObjectLayer()->AdjustedDifference(collision_location, it->m_entity.Translation()));
                     if (collision_normal.LengthSquared() < 0.001f)
                         collision_normal = FloatVector2(1.0f, 0.0f); // arbitrary unit vector
                     else
                         collision_normal.Normalize();
                     bool there_was_a_collision =
                         CollidePrivate(
-                            DStaticCast<Entity *>(it->m_entity),
+                            *DStaticCast<Entity *>(&it->m_entity),
                             collision_location,
                             collision_normal,
                             0.0f,
@@ -104,7 +105,7 @@ void Ballistic::Think (Time time, Time::Delta frame_dt)
 }
 
 void Ballistic::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -122,7 +123,7 @@ void Ballistic::Collide (
 }
 
 bool Ballistic::CollidePrivate (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -130,26 +131,24 @@ bool Ballistic::CollidePrivate (
     Time::Delta frame_dt,
     bool was_collision_from_line_trace)
 {
-    ASSERT1(collider != NULL);
-
     // we only care about hitting solid things
-    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
+    if (collider.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return false;
 
     // also, don't hit powerups
-    if (collider->IsPowerup())
+    if (collider.IsPowerup())
         return false;
 
     // if this is a smart ballistic (m_perform_line_trace_for_accuracy
     // is true), then don't hurt the owner
-    if (m_perform_line_trace_for_accuracy && *m_owner == collider)
+    if (m_perform_line_trace_for_accuracy && *m_owner == &collider)
         return false;
 
     // if this call to CollidePrivate was the result of a LineTrace,
     // then we should call Collide on the other entity
     if (was_collision_from_line_trace)
-        collider->Collide(
-            this,
+        collider.Collide(
+            *this,
             collision_location,
             -collision_normal,
             collision_force,
@@ -157,10 +156,10 @@ bool Ballistic::CollidePrivate (
             frame_dt);
 
     // if we hit a mortal, damage it.
-    if (collider->IsMortal())
+    if (collider.IsMortal())
     {
-        Mortal *mortal = DStaticCast<Mortal *>(collider);
-        mortal->Damage(
+        Mortal &mortal = *DStaticCast<Mortal *>(&collider);
+        mortal.Damage(
             *m_owner,
             this,
             m_impact_damage,
@@ -187,7 +186,7 @@ bool Ballistic::CollidePrivate (
                 time,
                 collision_location,
                 collision_normal,
-                collider->Velocity(),
+                collider.Velocity(),
                 Math::RandomFloat(-20.0f, 20.0f),   // seed angle
                 PhysicalRadius(),
                 4,                                  // particle count

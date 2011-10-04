@@ -50,7 +50,7 @@ public:
     virtual bool IsExplosive () const { return true; }
 
     virtual void Collide (
-        Entity *collider,
+        Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -67,7 +67,7 @@ public:
         Time::Delta frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
-        Entity *collider,
+        Entity &collider,
         Time time,
         Time::Delta frame_dt) = 0;
     virtual void Detonate (
@@ -113,7 +113,7 @@ public:
     }
 
     virtual void Collide (
-        Entity *collider,
+        Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -130,7 +130,7 @@ public:
         Time::Delta frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
-        Entity *collider,
+        Entity &collider,
         Time time,
         Time::Delta frame_dt);
     virtual void Detonate (
@@ -185,7 +185,7 @@ public:
         Time::Delta frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
-        Entity *collider,
+        Entity &collider,
         Time time,
         Time::Delta frame_dt);
     virtual void Detonate (

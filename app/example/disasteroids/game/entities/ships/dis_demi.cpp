@@ -585,8 +585,9 @@ void Demi::Wander (Time time, Time::Delta frame_dt)
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation(),
         s_scan_radius,
         false,
@@ -1533,8 +1534,9 @@ Entity *Demi::FindTractorTarget (
 
     Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + PhysicalRadius());
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         muzzle_location + scan_radius * muzzle_direction.Normalization(),
         scan_radius,
         false,

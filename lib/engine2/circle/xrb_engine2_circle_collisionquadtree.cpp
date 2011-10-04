@@ -53,20 +53,19 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
          it != it_end;
          ++it)
     {
-        Object const *object = *it;
-        ASSERT1(object != NULL);
-        ASSERT1(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
+        ASSERT1(*it != NULL);
+        Object const &object = **it;
+        ASSERT1(object.OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
-        if (object_layer.AdjustedDistance(object->Translation(), area_center)
+        if (object_layer.AdjustedDistance(object.Translation(), area_center)
             <
-            (object->Radius(GetQuadTreeType()) + area_radius))
+            (object.Radius(GetQuadTreeType()) + area_radius))
         {
-            Entity const *entity = DStaticCast<Entity const *>(object->GetEntity());
-            ASSERT1(entity != NULL);
-            if (entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION)
+            ASSERT1(object.GetEntity() != NULL);
+            Entity const &entity = *DStaticCast<Entity const *>(object.GetEntity());
+            if (entity.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION)
                 return true;
-            else if (check_nonsolid_collision_entities &&
-                     entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
+            else if (check_nonsolid_collision_entities && entity.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
                 return true;
         }
     }
@@ -123,22 +122,21 @@ void CollisionQuadTree::LineTrace (
          it != it_end;
          ++it)
     {
-        Object *object = *it;
-        ASSERT1(object != NULL);
-        ASSERT2(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
+        ASSERT1(*it != NULL);
+        Object &object = **it;
+        ASSERT2(object.OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
-        Entity *entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(entity != NULL);
+        ASSERT1(object.GetEntity() != NULL);
+        Entity &entity = *DStaticCast<Entity *>(object.GetEntity());
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
-        if (entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION &&
-            !check_nonsolid_collision_entities)
+        ASSERT1(entity.GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
+        if (entity.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION && !check_nonsolid_collision_entities)
             continue;
 
-        FloatVector2 p_minus_c = object_layer.AdjustedDifference(trace_start, entity->Translation());
-        Float R = entity->Radius(GetQuadTreeType()) + trace_radius;
+        FloatVector2 p_minus_c = object_layer.AdjustedDifference(trace_start, entity.Translation());
+        Float R = entity.Radius(GetQuadTreeType()) + trace_radius;
         // a is calculated above
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
@@ -156,7 +154,7 @@ void CollisionQuadTree::LineTrace (
         if (t1 < 0.0f)
             continue;
 
-        line_trace_binding_set.insert(LineTraceBinding(Max(0.0f, t0), t0, entity));
+        line_trace_binding_set.insert(LineTraceBinding(t0, entity));
     }
 
     // call this function on the child nodes, if they exist
@@ -204,32 +202,30 @@ void CollisionQuadTree::AreaTrace (
          it != it_end;
          ++it)
     {
-        Object *object = *it;
-        ASSERT1(object != NULL);
-        ASSERT2(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
+        ASSERT1(*it != NULL);
+        Object &object = **it;
+        ASSERT2(object.OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
-        Entity *entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(entity != NULL);
+        ASSERT1(object.GetEntity() != NULL);
+        Entity &entity = *DStaticCast<Entity *>(object.GetEntity());
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
-        if (entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION &&
-            !check_nonsolid_collision_entities)
+        ASSERT1(entity.GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
+        if (entity.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION && !check_nonsolid_collision_entities)
             continue;
 
-        FloatVector2 center_to_center(object_layer.AdjustedDifference(entity->Translation(), trace_area_center));
-        if (center_to_center.Length() >= entity->Radius(GetQuadTreeType()) + trace_area_radius)
+        FloatVector2 center_to_center(object_layer.AdjustedDifference(entity.Translation(), trace_area_center));
+        if (center_to_center.Length() >= entity.Radius(GetQuadTreeType()) + trace_area_radius)
             continue;
 
-        area_trace_list.push_back(entity);
+        area_trace_list.push_back(&entity);
     }
 }
 
-void CollisionQuadTree::CollideEntity (Entity *entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list) const
+void CollisionQuadTree::CollideEntity (Entity &entity, Time::Delta frame_dt, CollisionPairList &collision_pair_list) const
 {
-    ASSERT1(entity != NULL);
-    ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
+    ASSERT1(entity.GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
 
     CollideEntityLoopFunctor functor(entity, frame_dt, collision_pair_list);
     CollideEntity(functor);
@@ -242,7 +238,7 @@ void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunct
         return;
 
     // return if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(functor.GetEntity()->Translation(), functor.GetEntity()->Radius(GetQuadTreeType()), functor.GetObjectLayer(), false))
+    if (!DoesAreaOverlapQuadBounds(functor.GetEntity().Translation(), functor.GetEntity().Radius(GetQuadTreeType()), functor.GetObjectLayer(), false))
         return;
 
     // here is the actual entity loop
@@ -256,7 +252,7 @@ void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunct
         // this level in the quad tree, CollideEntity does not traverse
         // any further).  this is so a lot of redundant collision checks are
         // avoided.
-        if (IsAllowableSizedObject(*functor.GetEntity()->OwnerObject()))
+        if (IsAllowableSizedObject(*functor.GetEntity().OwnerObject()))
             return;
 
         for (Uint8 i = 0; i < 4; ++i)
@@ -266,6 +262,8 @@ void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunct
 
 void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 {
+    ASSERT3(object != NULL);
+    
     // because it is possible to have CollideEntity call this functor twice on the
     // same UN-ordered pair (i.e. call it on (x,y) and also (y,x)), we must avoid
     // calculating the collision twice.  the heuristic will be size and then pointer
@@ -273,17 +271,17 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     // the pointer value comparison will prevent colliding an entity with itself.
     // the size comparison must necessarily be the following, due to the nature of
     // CollideEntity.
-    if (m_entity->Radius(QTT_PHYSICS_HANDLER) > object->Radius(QTT_PHYSICS_HANDLER)
+    if (m_entity.Radius(QTT_PHYSICS_HANDLER) > object->Radius(QTT_PHYSICS_HANDLER)
         ||
-        (m_entity->Radius(QTT_PHYSICS_HANDLER) == object->Radius(QTT_PHYSICS_HANDLER)
-         && m_entity->OwnerObject() >= object)) // yes, this is a pointer comparison.
+        (m_entity.Radius(QTT_PHYSICS_HANDLER) == object->Radius(QTT_PHYSICS_HANDLER)
+         && m_entity.OwnerObject() >= object)) // yes, this is a pointer comparison.
     {
         return;
     }
 
-    FloatVector2 ce0_translation(m_entity->Translation());
+    FloatVector2 ce0_translation(m_entity.Translation());
     FloatVector2 ce1_translation(object->Translation());
-    Float r = m_entity->Radius(QTT_PHYSICS_HANDLER) + object->Radius(QTT_PHYSICS_HANDLER);
+    Float r = m_entity.Radius(QTT_PHYSICS_HANDLER) + object->Radius(QTT_PHYSICS_HANDLER);
     FloatVector2 offset_0_to_1(m_object_layer.AdjustedDifference(ce1_translation, ce0_translation));
 
     if (offset_0_to_1.LengthSquared() >= Sqr(r))
@@ -291,19 +289,19 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 
     // at this point, a collision has happened (the entities are overlapping).
 
-    Entity *other_entity = DStaticCast<Entity *>(object->GetEntity());
-    ASSERT1(other_entity != NULL);
-    ASSERT1(m_entity->GetPhysicsHandler() != NULL);
-    ASSERT1(m_entity->GetPhysicsHandler() == other_entity->GetPhysicsHandler());
-    PhysicsHandler &physics_handler = *m_entity->GetPhysicsHandler();
+    ASSERT1(object->GetEntity() != NULL);
+    Entity &other_entity = *DStaticCast<Entity *>(object->GetEntity());
+    ASSERT1(m_entity.GetPhysicsHandler() != NULL);
+    ASSERT1(m_entity.GetPhysicsHandler() == other_entity.GetPhysicsHandler());
+    PhysicsHandler &physics_handler = *m_entity.GetPhysicsHandler();
 
     // NOTE: we're not worrying about elliptical shapes here, just pretend each Entity's
     // physical shape is a circle.
 
     FloatVector2 collision_location(
-        (other_entity->PhysicalRadius() * ce0_translation + m_entity->PhysicalRadius() * ce1_translation)
+        (other_entity.PhysicalRadius() * ce0_translation + m_entity.PhysicalRadius() * ce1_translation)
         /
-        (m_entity->PhysicalRadius() + other_entity->PhysicalRadius()));
+        (m_entity.PhysicalRadius() + other_entity.PhysicalRadius()));
     FloatVector2 collision_normal_0_to_1;
     if (offset_0_to_1.IsZero())
         collision_normal_0_to_1 = FloatVector2(1.0f, 0.0f);
@@ -312,18 +310,18 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     Float collision_force = 0.0f; // to be determined by PhysicsHandler::CollisionResponse
 
     // check if we should proceed with physical collision response
-    if (m_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && // if they're both solid
-        other_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION &&
-        !physics_handler.CollisionExemption(*m_entity, *other_entity)) // and if this isn't an exception
+    if (m_entity.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && // if they're both solid
+        other_entity.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION &&
+        !physics_handler.CollisionExemption(m_entity, other_entity)) // and if this isn't an exception
     {
-        collision_force = physics_handler.CollisionResponse(*m_entity, *other_entity, offset_0_to_1, m_frame_dt, collision_location, collision_normal_0_to_1);
+        collision_force = physics_handler.CollisionResponse(m_entity, other_entity, offset_0_to_1, m_frame_dt, collision_location, collision_normal_0_to_1);
     }
 
     // record the collision in the collision pair list.
     m_collision_pair_list.push_back(
         CollisionPair(
-            m_entity,
-            other_entity,
+            &m_entity,
+            &other_entity,
             collision_location,
             collision_normal_0_to_1,
             collision_force));

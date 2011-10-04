@@ -266,8 +266,8 @@ public:
     In this lesson, we assume that all entities will be in the foreground
     ObjectLayer, so we will not track ObjectLayers.
     @code */
-    virtual void AddObjectLayer (Engine2::ObjectLayer *object_layer) { }
-    virtual void SetMainObjectLayer (Engine2::ObjectLayer *object_layer) { }
+    virtual void AddObjectLayer (Engine2::ObjectLayer &object_layer) { }
+    virtual void SetMainObjectLayer (Engine2::ObjectLayer &object_layer) { }
 
     /* @endcode
     This method is called by the World object when a dynamic object is added.
@@ -278,23 +278,21 @@ public:
     std::set template class was chosen because adding/removing elements is
     O(log(n)).
     @code */
-    virtual void AddEntity (Engine2::Entity *entity)
+    virtual void AddEntity (Engine2::Entity &entity)
     {
-        ASSERT1(entity != NULL);
-        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL);
-        m_entity_set.insert(static_cast<AwesomeEntity *>(entity));
+        ASSERT1(dynamic_cast<AwesomeEntity *>(&entity) != NULL);
+        m_entity_set.insert(static_cast<AwesomeEntity *>(&entity));
     }
     /* @endcode
     The removal analog to AddEntity.  This method is provided so the
     PhysicsHandler can clean up its own entity-tracking when a dynamic
     object is removed from the World.
     @code */
-    virtual void RemoveEntity (Engine2::Entity *entity)
+    virtual void RemoveEntity (Engine2::Entity &entity)
     {
-        ASSERT1(entity != NULL);
-        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL);
-        ASSERT1(m_entity_set.find(static_cast<AwesomeEntity *>(entity)) != m_entity_set.end());
-        m_entity_set.erase(static_cast<AwesomeEntity *>(entity));
+        ASSERT1(dynamic_cast<AwesomeEntity *>(&entity) != NULL);
+        ASSERT1(m_entity_set.find(static_cast<AwesomeEntity *>(&entity)) != m_entity_set.end());
+        m_entity_set.erase(static_cast<AwesomeEntity *>(&entity));
     }
 
 protected:

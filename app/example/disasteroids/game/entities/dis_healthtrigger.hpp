@@ -30,7 +30,7 @@ public:
         EntityReference<Entity> const &owner);
 
     virtual void Collide (
-        Entity *collider,
+        Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,

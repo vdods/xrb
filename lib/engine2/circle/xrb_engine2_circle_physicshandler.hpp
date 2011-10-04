@@ -35,14 +35,14 @@ public:
 
     // this does wrapped object layer checking
     bool DoesAreaOverlapAnyEntityInObjectLayer (
-        ObjectLayer const *object_layer,
+        ObjectLayer const &object_layer,
         FloatVector2 const &area_center,
         Float area_radius,
         bool check_nonsolid_collision_entities) const;
 
     // does a line trace in the quadtree
     void LineTrace (
-        ObjectLayer const *object_layer,
+        ObjectLayer const &object_layer,
         FloatVector2 const &trace_start,
         FloatVector2 const &trace_vector,
         Float trace_radius,
@@ -51,7 +51,7 @@ public:
 
     // does an area trace in the quadtree
     void AreaTrace (
-        ObjectLayer const *object_layer,
+        ObjectLayer const &object_layer,
         FloatVector2 trace_area_center,
         Float trace_area_radius,
         bool check_nonsolid_collision_entities,
@@ -59,7 +59,7 @@ public:
 
     // gives the local momentum (and mass) in a given radius
     void CalculateAmbientMomentum (
-        ObjectLayer const *object_layer,
+        ObjectLayer const &object_layer,
         FloatVector2 const &scan_area_center,
         Float scan_area_radius,
         Entity const *ignore_me,
@@ -70,11 +70,11 @@ public:
     // Engine2::PhysicsHandler public method overrides
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual void AddObjectLayer (ObjectLayer *object_layer);
-    virtual void SetMainObjectLayer (ObjectLayer *object_layer);
+    virtual void AddObjectLayer (ObjectLayer &object_layer);
+    virtual void SetMainObjectLayer (ObjectLayer &object_layer);
 
-    virtual void AddEntity (Engine2::Entity *entity);
-    virtual void RemoveEntity (Engine2::Entity *entity);
+    virtual void AddEntity (Engine2::Entity &entity);
+    virtual void RemoveEntity (Engine2::Entity &entity);
 
     // return true iff there should be no physical collision response between the given entities.
     // Collide is still called on the entities even if they're exempt.

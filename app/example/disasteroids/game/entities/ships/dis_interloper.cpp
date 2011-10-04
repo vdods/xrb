@@ -101,18 +101,16 @@ void Interloper::Think (Time time, Time::Delta frame_dt)
 }
 
 void Interloper::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-
     // TODO: add the extra damage "weapon" for the front of the ship
 
-    if (m_target.IsValid() && collider->GetEntityType() == ET_SOLITARY)
+    if (m_target.IsValid() && collider.GetEntityType() == ET_SOLITARY)
     {
         // if the enemy level is ___, do extra damage and spawn effects
 
@@ -163,8 +161,9 @@ void Interloper::Wander (Time time, Time::Delta frame_dt)
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation(),
         s_scan_radius,
         false,
@@ -268,8 +267,9 @@ void Interloper::Flock (Time time, Time::Delta frame_dt)
 
     // scan the area in front of us
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation() + s_lookahead_scan_distance * Math::UnitVector(Angle()),
         s_scan_radius,
         false,

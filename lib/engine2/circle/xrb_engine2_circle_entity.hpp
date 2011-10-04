@@ -186,7 +186,7 @@ public:
     // collision_force * collision_normal gives the collision force on this
     // Entity.
     virtual void Collide_ (
-        Engine2::Circle::Entity *collider,
+        Engine2::Circle::Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,

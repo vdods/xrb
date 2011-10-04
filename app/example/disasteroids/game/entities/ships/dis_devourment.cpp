@@ -185,7 +185,7 @@ void Devourment::Think (Time time, Time::Delta frame_dt)
 }
 
 void Devourment::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -200,13 +200,12 @@ void Devourment::Collide (
         time,
         frame_dt);
 
-    ASSERT1(collider != NULL);
-    if (collider->IsMortal() &&
-        collider->GetEntityType() != ET_DEVOURMENT &&
-        collider->GetEntityType() != ET_DEMI &&
+    if (collider.IsMortal() &&
+        collider.GetEntityType() != ET_DEVOURMENT &&
+        collider.GetEntityType() != ET_DEMI &&
         m_think_state == THINK_STATE(PickWanderDirection))
     {
-        m_target = collider->GetReference();
+        m_target = collider.GetReference();
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
         SetReticleCoordinates(m_target->Translation());
@@ -543,8 +542,9 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation(),
         scan_radius,
         false,

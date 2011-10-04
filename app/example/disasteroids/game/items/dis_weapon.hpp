@@ -387,7 +387,7 @@ public:
 
     Uint32 ActiveGrenadeCount () const { return m_active_grenade_set.size(); }
 
-    void ActiveGrenadeDestroyed (Grenade *active_grenade);
+    void ActiveGrenadeDestroyed (Grenade &active_grenade);
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods

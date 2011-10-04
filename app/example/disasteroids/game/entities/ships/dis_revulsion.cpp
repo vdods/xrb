@@ -167,8 +167,9 @@ void Revulsion::Wander (Time time, Time::Delta frame_dt)
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->AreaTrace(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation(),
         s_scan_radius,
         false,

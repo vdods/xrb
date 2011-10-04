@@ -47,8 +47,9 @@ FloatVector2 Entity::AmbientVelocity (Float scan_area_radius) const
     FloatVector2 ambient_momentum;
     Float ambient_mass;
 
+    ASSERT1(GetObjectLayer() != NULL);
     GetPhysicsHandler()->CalculateAmbientMomentum(
-        GetObjectLayer(),
+        *GetObjectLayer(),
         Translation(),
         scan_area_radius,
         this, // ignore_me

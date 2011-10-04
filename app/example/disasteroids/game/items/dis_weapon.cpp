@@ -266,8 +266,9 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
         time >= m_time_last_fired + 1.0f / secondary_fire_rate)
     {
         Engine2::Circle::AreaTraceList area_trace_list;
+        ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
         OwnerShip()->GetPhysicsHandler()->AreaTrace(
-            OwnerShip()->GetObjectLayer(),
+            *OwnerShip()->GetObjectLayer(),
             OwnerShip()->Translation(),
             ms_secondary_range[UpgradeLevel()] + OwnerShip()->PhysicalRadius(),
             false,
@@ -318,8 +319,9 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
 
             // do a line trace
             Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
+            ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
             OwnerShip()->GetPhysicsHandler()->LineTrace(
-                OwnerShip()->GetObjectLayer(),
+                *OwnerShip()->GetObjectLayer(),
                 fire_location,
                 fire_vector,
                 0.0f,
@@ -330,22 +332,22 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
             Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
             // don't damage the owner of this weapon or powerups
             while (it != it_end &&
-                   (DStaticCast<Entity *>(it->m_entity)->IsPowerup() ||
-                    DStaticCast<Entity *>(it->m_entity)->IsBallistic() ||
-                    DStaticCast<Entity *>(it->m_entity) == OwnerShip()))
+                   (DStaticCast<Entity *>(&it->m_entity)->IsPowerup() ||
+                    DStaticCast<Entity *>(&it->m_entity)->IsBallistic() ||
+                    DStaticCast<Entity *>(&it->m_entity) == OwnerShip()))
             {
                 ++it;
             }
 
             // only fire at ships and explosives
-            if (it != it_end && (DStaticCast<Entity *>(it->m_entity)->IsShip() || DStaticCast<Entity *>(it->m_entity)->IsExplosive()))
+            if (it != it_end && (DStaticCast<Entity *>(&it->m_entity)->IsShip() || DStaticCast<Entity *>(&it->m_entity)->IsExplosive()))
             {
-                DStaticCast<Mortal *>(it->m_entity)->Damage(
+                DStaticCast<Mortal *>(&it->m_entity)->Damage(
                     OwnerShip(),
                     NULL, // laser does not have an Entity medium
                     ms_secondary_impact_damage[UpgradeLevel()] * damage_factor,
                     NULL,
-                    fire_location + it->m_trace_hit_parameter * fire_vector,
+                    fire_location + it->m_clamped_trace_hit_parameter * fire_vector,
                     MuzzleDirection(),
                     0.0f,
                     Mortal::D_COMBAT_LASER,
@@ -360,7 +362,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
                     fire_vector,
                     OwnerShip()->Velocity(),
                     ms_beam_visible_width[UpgradeLevel()],
-                    it->m_trace_hit_parameter * fire_vector.Length(),
+                    it->m_clamped_trace_hit_parameter * fire_vector.Length(),
                     1,
                     0.5f,
                     time);
@@ -376,8 +378,9 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
         ASSERT1(power <= PrimaryInput() * frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
 
         Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
+        ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
         OwnerShip()->GetPhysicsHandler()->LineTrace(
-            OwnerShip()->GetObjectLayer(),
+            *OwnerShip()->GetObjectLayer(),
             MuzzleLocation(),
             ms_primary_range[UpgradeLevel()] * MuzzleDirection(),
             ms_beam_radius[UpgradeLevel()],
@@ -388,7 +391,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
         Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
 
         // we don't want to hit the owner of the weapon or non-mortals, so just skip them.
-        while (it != it_end && (it->m_entity == OwnerShip() || !DStaticCast<Entity *>(it->m_entity)->IsMortal()))
+        while (it != it_end && (&it->m_entity == OwnerShip() || !DStaticCast<Entity *>(&it->m_entity)->IsMortal()))
             ++it;
 
         FloatVector2 laser_beam_hit_location(
@@ -396,14 +399,13 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
         // damage the next thing if it exists
         if (it != it_end)
         {
-            ASSERT1(it->m_entity != NULL);
             Float ratio_of_max_power_output =
                 power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
             laser_beam_hit_location =
-                MuzzleLocation() + it->m_trace_hit_parameter * ms_primary_range[UpgradeLevel()] * MuzzleDirection();
-            if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
+                MuzzleLocation() + it->m_clamped_trace_hit_parameter * ms_primary_range[UpgradeLevel()] * MuzzleDirection();
+            if (DStaticCast<Entity *>(&it->m_entity)->IsMortal())
             {
-                DStaticCast<Mortal *>(it->m_entity)->Damage(
+                DStaticCast<Mortal *>(&it->m_entity)->Damage(
                     OwnerShip(),
                     NULL, // laser does not have a Entity medium
                     ms_damage_rate[UpgradeLevel()] * damage_factor * ratio_of_max_power_output * frame_dt,
@@ -587,8 +589,9 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
 
     // do a line trace
     Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
+    ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
     OwnerShip()->GetPhysicsHandler()->LineTrace(
-        OwnerShip()->GetObjectLayer(),
+        *OwnerShip()->GetObjectLayer(),
         MuzzleLocation(),
         ms_range[UpgradeLevel()] * MuzzleDirection(),
         0.0f,
@@ -616,12 +619,11 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
     Float furthest_hit_parameter = 1.0f;
     Float damage_amount_used;
     bool first_hit_registered = false;
-    while ((!first_hit_registered || damage_left_to_inflict > 0.0f) &&
-           it != it_end)
+    while ((!first_hit_registered || damage_left_to_inflict > 0.0f) && it != it_end)
     {
         // we don't want to hit the owner of this weapon or powerups
         // (continue without updating the furthest hit time)
-        if (it->m_entity == OwnerShip() || DStaticCast<Entity *>(it->m_entity)->IsPowerup())
+        if (&it->m_entity == OwnerShip() || DStaticCast<Entity *>(&it->m_entity)->IsPowerup())
         {
             ++it;
             continue;
@@ -629,11 +631,11 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
 
         first_hit_registered = true;
 
-        furthest_hit_parameter = it->m_trace_hit_parameter;
-        if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
+        furthest_hit_parameter = it->m_clamped_trace_hit_parameter;
+        if (DStaticCast<Entity *>(&it->m_entity)->IsMortal())
         {
-            FloatVector2 impact_location(MuzzleLocation() + it->m_trace_hit_parameter * ms_range[UpgradeLevel()] * MuzzleDirection());
-            FloatVector2 impact_normal(OwnerShip()->GetObjectLayer()->AdjustedDifference(impact_location, it->m_entity->Translation()));
+            FloatVector2 impact_location(MuzzleLocation() + it->m_clamped_trace_hit_parameter * ms_range[UpgradeLevel()] * MuzzleDirection());
+            FloatVector2 impact_normal(OwnerShip()->GetObjectLayer()->AdjustedDifference(impact_location, it->m_entity.Translation()));
             if (impact_normal.LengthSquared() > 0.0001f)
                 impact_normal.Normalize();
             else
@@ -642,9 +644,9 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
             // add knockback momentum to the target (BEFORE damaging it)
             // TODO: possibly add a cap on the added speed (hitting a small asteroid
             // with the best gauss gun is hilarious otherwise)
-            it->m_entity->AccumulateMomentum(-damage_factor * ms_knockback_momentum[UpgradeLevel()] * impact_normal);
+            it->m_entity.AccumulateMomentum(-damage_factor * ms_knockback_momentum[UpgradeLevel()] * impact_normal);
 
-            DStaticCast<Mortal *>(it->m_entity)->Damage(
+            DStaticCast<Mortal *>(&it->m_entity)->Damage(
                 OwnerShip(),
                 NULL, // gauss gun does not have a Entity medium
                 damage_left_to_inflict,
@@ -663,7 +665,7 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
                 time,
                 impact_location,
                 impact_normal,
-                it->m_entity->Velocity(),
+                it->m_entity.Velocity(),
                 Math::RandomFloat(-10.0f, 10.0f),           // seed angle
                 damage_amount_used / total_damage_to_inflict * seed_radius,
                 s_impact_particle_count,
@@ -675,7 +677,7 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
             damage_left_to_inflict -= damage_amount_used;
         }
 
-        furthest_hit_parameter = it->m_trace_hit_parameter;
+        furthest_hit_parameter = it->m_clamped_trace_hit_parameter;
 
         ++it;
     }
@@ -750,19 +752,18 @@ GrenadeLauncher::~GrenadeLauncher ()
     m_active_grenade_set.clear();
 }
 
-void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *active_grenade)
+void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade &active_grenade)
 {
-    ASSERT1(active_grenade != NULL);
-    ASSERT1(active_grenade->OwnerGrenadeLauncher() == this);
+    ASSERT1(active_grenade.OwnerGrenadeLauncher() == this);
     ASSERT1(ActiveGrenadeCount() > 0);
 
     // delete the active grenade from the active grenade set
-    ActiveGrenadeSet::iterator it = m_active_grenade_set.find(active_grenade);
+    ActiveGrenadeSet::iterator it = m_active_grenade_set.find(&active_grenade);
     ActiveGrenadeSet::iterator it_end = m_active_grenade_set.end();
     ASSERT1(it != it_end);
     m_active_grenade_set.erase(it);
 
-    active_grenade->SetOwnerGrenadeLauncher(NULL);
+    active_grenade.SetOwnerGrenadeLauncher(NULL);
 }
 
 Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt) const
@@ -1033,8 +1034,9 @@ bool Tractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_
     }
 
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
     OwnerShip()->GetPhysicsHandler()->AreaTrace(
-        OwnerShip()->GetObjectLayer(),
+        *OwnerShip()->GetObjectLayer(),
         reticle_coordinates,
         beam_radius,
         false,
@@ -1128,8 +1130,9 @@ bool AdvancedTractor::Activate (Float power, bool attack_boost_is_enabled, bool 
     }
 
     Engine2::Circle::AreaTraceList area_trace_list;
+    ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
     OwnerShip()->GetPhysicsHandler()->AreaTrace(
-        OwnerShip()->GetObjectLayer(),
+        *OwnerShip()->GetObjectLayer(),
         reticle_coordinates,
         beam_radius,
         false,

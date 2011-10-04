@@ -153,7 +153,7 @@ public:
 
     virtual void Think (Time time, Time::Delta frame_dt);
     virtual void Collide (
-        Entity *collider,
+        Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,

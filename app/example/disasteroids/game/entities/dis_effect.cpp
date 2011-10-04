@@ -59,9 +59,12 @@ void DamageExplosion::Think (Time time, Time::Delta frame_dt)
     {
         m_has_done_impact = true;
 
+        ASSERT1(GetPhysicsHandler() != NULL);
+        ASSERT1(GetObjectLayer() != NULL);
+        
         RadiusKnockback(
-            GetPhysicsHandler(),
-            GetObjectLayer(),
+            *GetPhysicsHandler(),
+            *GetObjectLayer(),
             Translation(),
             FinalSize(),
             Math::Pow(m_damage_amount, 0.82f), // explosion area radius - linear was too much
@@ -70,8 +73,8 @@ void DamageExplosion::Think (Time time, Time::Delta frame_dt)
 
         if (m_damage_radius > 0.0f)
             RadiusDamage(
-                GetPhysicsHandler(),
-                GetObjectLayer(),
+                *GetPhysicsHandler(),
+                *GetObjectLayer(),
                 *m_owner,
                 this,
                 m_damage_amount,
@@ -87,17 +90,15 @@ void DamageExplosion::Think (Time time, Time::Delta frame_dt)
 }
 
 void DamageExplosion::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-
     // can't damage nonsolid objects
-    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
+    if (collider.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return;
 
     // return if nothing would actually be done
@@ -106,8 +107,8 @@ void DamageExplosion::Collide (
         return;
 
     // center_to_center points towards the collider
-    FloatVector2 center_to_center = collider->Translation() - Translation();
-    Float distance = center_to_center.Length() - collider->PhysicalRadius();
+    FloatVector2 center_to_center = collider.Translation() - Translation();
+    Float distance = center_to_center.Length() - collider.PhysicalRadius();
     if (distance < 0.0f)
         distance = 0.0f;
     Float distance_factor;
@@ -117,8 +118,8 @@ void DamageExplosion::Collide (
         distance_factor = 1.0f / Math::Sqrt(distance);
 
     // if it's a Mortal, damage it (unless it's the owner)
-    if (collider->IsMortal() && collider != *m_owner)
-        DStaticCast<Mortal *>(collider)->Damage(
+    if (collider.IsMortal() && &collider != *m_owner)
+        DStaticCast<Mortal *>(&collider)->Damage(
             *m_owner,
             this,
             m_damage_amount * reverse_lifetime_ratio * frame_dt * distance_factor,
@@ -136,21 +137,19 @@ void DamageExplosion::Collide (
 // ///////////////////////////////////////////////////////////////////////////
 
 void EMPExplosion::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
+    if (collider.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return;
 
     // only affect ships that aren't the owner
-    if (collider->IsShip() && collider != *m_owner)
-        DStaticCast<Ship *>(collider)->AccumulateDisableTime(
-            m_disable_time_factor * Min(frame_dt, 1.0f / 20.0f));
+    if (collider.IsShip() && &collider != *m_owner)
+        DStaticCast<Ship *>(&collider)->AccumulateDisableTime(m_disable_time_factor * Min(frame_dt, 1.0f / 20.0f));
 }
 
 void EMPExplosion::HandleNewOwnerObject ()
@@ -177,40 +176,36 @@ void Fireball::Think (Time time, Time::Delta frame_dt)
 }
 
 void Fireball::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-
     // if there is no power left, return (this can happen when a fireball
     // gets used up on one object before all its collisions are computed)
     if (m_current_damage <= 0.0f)
         return;
 
     // don't damage the owner
-    if (collider == *m_owner)
+    if (&collider == *m_owner)
         return;
 
     // TODO: when napalm is done, check if it hit napalm
 
     // we only care about hitting solid things
-    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
+    if (collider.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return;
 
     static Float const s_damage_dissipation_rate = 2.0f;
 
-    if (collider->IsMortal())
+    if (collider.IsMortal())
     {
-        Mortal *mortal = DStaticCast<Mortal *>(collider);
-        Float damage_to_inflict =
-            Min(m_current_damage,
-                s_damage_dissipation_rate * m_potential_damage * frame_dt);
+        Mortal &mortal = *DStaticCast<Mortal *>(&collider);
+        Float damage_to_inflict = Min(m_current_damage, s_damage_dissipation_rate * m_potential_damage * frame_dt);
         m_current_damage -= damage_to_inflict;
-        mortal->Damage(
+        mortal.Damage(
             *m_owner,
             this,
             damage_to_inflict,

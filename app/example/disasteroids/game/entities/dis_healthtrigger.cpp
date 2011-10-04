@@ -29,20 +29,18 @@ HealthTrigger::HealthTrigger (
 }
 
 void HealthTrigger::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
-
-    if (collider->IsMortal() && collider != *m_ignore_this_mortal)
+    if (collider.IsMortal() && &collider != *m_ignore_this_mortal)
     {
         if (m_health_delta_rate > 0.0f)
         {
-            static_cast<Mortal *>(collider)->Heal(
+            DStaticCast<Mortal *>(&collider)->Heal(
                 *m_owner,
                 this,
                 m_health_delta_rate * frame_dt,
@@ -54,7 +52,7 @@ void HealthTrigger::Collide (
         }
         else if (m_health_delta_rate < 0.0f)
         {
-            static_cast<Mortal *>(collider)->Damage(
+            DStaticCast<Mortal *>(&collider)->Damage(
                 *m_owner,
                 this,
                 -m_health_delta_rate * frame_dt,

@@ -308,28 +308,27 @@ void Mortal::Think (Time time, Time::Delta frame_dt)
 }
 
 void Mortal::Collide (
-    Entity *collider,
+    Entity &collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
     Time time,
     Time::Delta frame_dt)
 {
-    ASSERT1(collider != NULL);
     ASSERT1(collision_force >= 0.0f);
 
     static Float const s_collision_damage_coefficient = 0.0005f;
 
     // ships should not take damage from powerups
-    if (IsShip() && collider->IsPowerup())
+    if (IsShip() && collider.IsPowerup())
         return;
 
     if (collision_force > 0.0f)
     {
-        ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
+        ASSERT1(collider.GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
         Damage(
-            collider,
-            collider,
+            &collider,
+            &collider,
             s_collision_damage_coefficient * collision_force / Mass(),
             NULL,
             collision_location,

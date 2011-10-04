@@ -1567,11 +1567,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (FloatVector2 const &tr
     }
 
     // fail if the area overlaps any entity
-    if (GetPhysicsHandler()->DoesAreaOverlapAnyEntityInObjectLayer(
-            MainObjectLayer(),
-            translation,
-            scale_factor,
-            false))
+    if (GetPhysicsHandler()->DoesAreaOverlapAnyEntityInObjectLayer(*MainObjectLayer(), translation, scale_factor, false))
         return false;
 
     // if it reached this far, the area is in an acceptable place

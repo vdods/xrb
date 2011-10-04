@@ -57,7 +57,7 @@ public:
     // define our own interface for Collide, since we don't want to have to
     // manually cast to Dis::Entity each time.
     virtual void Collide (
-        Entity *collider,
+        Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -79,7 +79,7 @@ private:
     // this is an Engine2::Circle::Entity interface method, which we're
     // overriding in order to perform the cast to Dis::Entity.
     virtual void Collide_ (
-        Engine2::Circle::Entity *collider,
+        Engine2::Circle::Entity &collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -87,7 +87,7 @@ private:
         Time::Delta frame_dt)
     {
         Collide(
-            DStaticCast<Entity *>(collider),
+            *DStaticCast<Entity *>(&collider),
             collision_location,
             collision_normal,
             collision_force,
