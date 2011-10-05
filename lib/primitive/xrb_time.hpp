@@ -65,7 +65,7 @@ public:
 
     /// @brief Returns true if this Time value is valid (i.e. not equal to the Time value stored in ms_invalid).
     /// @details Infinite values are considered valid.
-    bool IsValid () const { return m_seconds == ms_invalid.m_seconds; }
+    bool IsValid () const { return m_seconds != ms_invalid.m_seconds; }
     /// @brief Returns true if this Time value is finite (i.e. not equal to either of the infinities).
     bool IsFinite () const { return m_seconds != ms_negative_infinity.m_seconds && m_seconds != ms_positive_infinity.m_seconds; }
     /// Accessor for the double-valued number of seconds since time began.
