@@ -18,13 +18,13 @@ namespace Xrb {
 Button::Button (std::string const &text, WidgetContext &context, std::string const &name)
     :
     Label(text, context, name),
-//     m_id(0xDEADBEEF), // sentinel uninitialized value
+    m_button_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
-    m_sender_released(this)
-//     m_sender_pressed_state_changed_with_id(this),
-//     m_sender_pressed_with_id(this),
-//     m_sender_released_with_id(this)
+    m_sender_released(this),
+    m_sender_pressed_state_changed_with_button_id(this),
+    m_sender_pressed_with_button_id(this),
+    m_sender_released_with_button_id(this)
 {
     SetAlignment(Alignment2(CENTER, CENTER));
     Initialize();
@@ -33,13 +33,13 @@ Button::Button (std::string const &text, WidgetContext &context, std::string con
 Button::Button (Resource<GlTexture> const &picture, WidgetContext &context, std::string const &name)
     :
     Label(picture, context, name),
-//     m_id(0xDEADBEEF), // sentinel uninitialized value
+    m_button_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
-    m_sender_released(this)
-//     m_sender_pressed_state_changed_with_id(this),
-//     m_sender_pressed_with_id(this),
-//     m_sender_released_with_id(this)
+    m_sender_released(this),
+    m_sender_pressed_state_changed_with_button_id(this),
+    m_sender_pressed_with_button_id(this),
+    m_sender_released_with_button_id(this)
 {
     Initialize();
 }
@@ -118,8 +118,8 @@ void Button::HandlePressed ()
     m_sender_pressed_state_changed.Signal(m_is_pressed);
     m_sender_pressed.Signal();
 
-//     m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
-//     m_sender_pressed_with_id.Signal(m_id);
+    m_sender_pressed_state_changed_with_button_id.Signal(m_is_pressed, m_button_id);
+    m_sender_pressed_with_button_id.Signal(m_button_id);
 }
 
 void Button::HandleReleased ()
@@ -127,8 +127,8 @@ void Button::HandleReleased ()
     m_sender_pressed_state_changed.Signal(m_is_pressed);
     m_sender_released.Signal();
 
-//     m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
-//     m_sender_released_with_id.Signal(m_id);
+    m_sender_pressed_state_changed_with_button_id.Signal(m_is_pressed, m_button_id);
+    m_sender_released_with_button_id.Signal(m_button_id);
 }
 
 void Button::UpdateRenderBackground ()

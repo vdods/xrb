@@ -127,14 +127,16 @@ Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception);
 // loads the given svg file into the specified world.  if stage is 0, then no stage processing is
 // done (i.e. backslash-delimited values will not be parsed and will be taken as literal strings).
 // if stage is a positive value, that stage number will be loaded, and backslash-delimited values
-// will be parsed as described above.
+// will be parsed as described above.  resource_path_prefix will be prepended to all resource
+// (e.g. sprite) paths before said paths are used to load anything -- e.g. "fs://".
 void LoadSvgIntoWorld (
     std::string const &svg_path,
     World &world,
     Time current_time,
     Uint32 gltexture_flags,
     Uint32 stage = 0,
-    std::string const &additional_stageable_attribute_name_prefix = g_empty_string) throw(Exception);
+    std::string const &additional_stageable_attribute_name_prefix = g_empty_string,
+    std::string const &resource_path_prefix = "fs://") throw(Exception);
 
 } // end of namespace Engine2
 } // end of namespace Xrb

@@ -23,8 +23,7 @@ using namespace std;
 using namespace Xrb;
 using namespace Parse;
 
-namespace Dis
-{
+namespace Dis {
 
 std::string const Config::ms_input_action_label[KEY_INPUT_ACTION_COUNT] =
 {
@@ -150,8 +149,10 @@ void Config::ResetToDefaults ()
     }
 }
 
-void Config::Read (string const &config_file_path, bool const reset_to_defaults_before_reading)
+void Config::Read (string const &config_file_path, bool reset_to_defaults_before_reading)
 {
+    std::cerr << "Config::Read(" << config_file_path << ");" << std::endl;
+    
     if (reset_to_defaults_before_reading)
         ResetToDefaults();
 
@@ -171,8 +172,10 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
             try { SetInputAction(static_cast<KeyInputAction>(i), root->PathElementString(ms_input_action_key[i].m_data_file_path)); } catch (...) { }
 
         // validate config values
-        if (Uint32(GAME__DIFFICULTY_LEVEL) <= 0)
-            SetUint32(GAME__DIFFICULTY_LEVEL, ms_uint32_key[GAME__DIFFICULTY_LEVEL].m_default_value);
+        if (GetUint32(GAME__DIFFICULTY_LEVEL) <= DL_LOWEST)
+            SetUint32(GAME__DIFFICULTY_LEVEL, DL_LOWEST);
+        if (GetUint32(GAME__DIFFICULTY_LEVEL) >= DL_HIGHEST)
+            SetUint32(GAME__DIFFICULTY_LEVEL, DL_HIGHEST);
         if (GetUint32(VIDEO__RESOLUTION_X) == 0)
             SetUint32(VIDEO__RESOLUTION_X, ms_uint32_key[VIDEO__RESOLUTION_X].m_default_value);
         if (GetUint32(VIDEO__RESOLUTION_Y) == 0)
@@ -186,6 +189,8 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
 
 void Config::Write (string const &config_file_path) const
 {
+    std::cerr << "Config::Write(" << config_file_path << ");" << std::endl;
+    
     std::string config_file_os_path;
     try {
         config_file_os_path = Singleton::FileSystem().OsPath(config_file_path, FileSystem::WRITABLE);

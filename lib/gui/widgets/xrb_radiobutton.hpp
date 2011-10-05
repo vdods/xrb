@@ -29,13 +29,13 @@ class RadioButton : public Button
 {
 public:
 
-    RadioButton (T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
+    RadioButton (T radio_button_id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
     // this constructor is for making toolbar-type buttons
-    RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
+    RadioButton (Resource<GlTexture> const &picture, T radio_button_id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name = "RadioButton");
     virtual ~RadioButton ();
 
     bool IsChecked () const { return m_is_checked; }
-    T ID () const { return m_id; }
+    T RadioButtonId () const { return m_radio_button_id; }
     std::string const &CheckedBackgroundStyle () const { return m_checked_background_style; }
 
     void SetCheckedBackgroundStyle (std::string const &style);
@@ -72,12 +72,12 @@ private:
     // called only by the owning RadioButtonGroup
     void DetachFromGroup (RadioButtonGroup<T, sentinel> *group);
 
-    void Initialize (T id, RadioButtonGroup<T, sentinel> *group);
+    void Initialize (T radio_button_id, RadioButtonGroup<T, sentinel> *group);
 
     // indicates if this radio button is checked
     bool m_is_checked;
     // this radio button's identifier
-    T m_id;
+    T m_radio_button_id;
     // the radio button group this radio button belongs to
     RadioButtonGroup<T, sentinel> *m_group;
 
@@ -112,21 +112,21 @@ public:
     // returns a pointer to the currently checked button
     RadioButton<T, sentinel> *CheckedButton () const { return m_checked_button; }
     // returns the ID of the currently checked button
-    T ID () const { return m_id; }
+    T CheckedRadioButtonId () const { return m_radio_button_id; }
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors
-    SignalSender1<T> const *SenderIDChanged () { return &m_sender_id_changed; }
+    SignalSender1<T> const *SenderCheckedRadioButtonIdChanged () { return &m_sender_checked_radio_button_id_changed; }
     // end SignalSender accessors
     //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // SignalReceiver accessors
-    SignalReceiver1<T> const *ReceiverSetID () { return &m_receiver_set_id; }
+    SignalReceiver1<T> const *ReceiverSetCheckedRadioButtonId () { return &m_receiver_set_checked_radio_button_id; }
     // end SignalReceiver accessors
     //////////////////////////////////////////////////////////////////////////
 
-    void SetID (T id);
+    void SetCheckedRadioButtonId (T radio_button_id);
 
     void AddButton (RadioButton<T, sentinel> *button);
     void RemoveButton (RadioButton<T, sentinel> *button);
@@ -142,17 +142,17 @@ private:
     // current checked ID for this group (not derived from the checked
     // button, because there needs to be a value for when there are no
     // buttons added to the group)
-    T m_id;
+    T m_radio_button_id;
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSenders
-    SignalSender1<T> m_sender_id_changed;
+    SignalSender1<T> m_sender_checked_radio_button_id_changed;
     // end SignalSenders
     //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // SignalReceivers
-    SignalReceiver1<T> m_receiver_set_id;
+    SignalReceiver1<T> m_receiver_set_checked_radio_button_id;
     // end SignalReceivers
     //////////////////////////////////////////////////////////////////////////
 }; // end of class RadioButtonGroup
@@ -162,7 +162,7 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename T, T sentinel>
-RadioButton<T, sentinel>::RadioButton (T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name)
+RadioButton<T, sentinel>::RadioButton (T radio_button_id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name)
     :
     Button(Resource<GlTexture>(), context, name),
     m_sender_checked_state_changed(this),
@@ -170,11 +170,11 @@ RadioButton<T, sentinel>::RadioButton (T id, RadioButtonGroup<T, sentinel> *grou
     m_sender_unchecked(this),
     m_receiver_check(&RadioButton<T, sentinel>::Check, this)
 {
-    Initialize(id, group);
+    Initialize(radio_button_id, group);
 }
 
 template <typename T, T sentinel>
-RadioButton<T, sentinel>::RadioButton (Resource<GlTexture> const &picture, T id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name)
+RadioButton<T, sentinel>::RadioButton (Resource<GlTexture> const &picture, T radio_button_id, RadioButtonGroup<T, sentinel> *group, WidgetContext &context, std::string const &name)
     :
     Button(picture, context, name),
     m_sender_checked_state_changed(this),
@@ -182,7 +182,7 @@ RadioButton<T, sentinel>::RadioButton (Resource<GlTexture> const &picture, T id,
     m_sender_unchecked(this),
     m_receiver_check(&RadioButton<T, sentinel>::Check, this)
 {
-    Initialize(id, group);
+    Initialize(radio_button_id, group);
 }
 
 template <typename T, T sentinel>
@@ -213,7 +213,7 @@ void RadioButton<T, sentinel>::Check ()
         // if this button is part of a radio button group, inform the group
         // that this radio button has been checked
         if (m_group != NULL)
-            m_group->SetID(ID());
+            m_group->SetCheckedRadioButtonId(RadioButtonId());
         m_sender_checked_state_changed.Signal(m_is_checked);
         m_sender_checked.Signal();
 
@@ -279,12 +279,12 @@ void RadioButton<T, sentinel>::DetachFromGroup (RadioButtonGroup<T, sentinel> *g
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::Initialize (T id, RadioButtonGroup<T, sentinel> *group)
+void RadioButton<T, sentinel>::Initialize (T radio_button_id, RadioButtonGroup<T, sentinel> *group)
 {
     ASSERT1(group != NULL);
 
     m_is_checked = false;
-    m_id = id;
+    m_radio_button_id = radio_button_id;
     m_group = group;
     m_group->AddButton(this);
 
@@ -308,10 +308,10 @@ template <typename T, T sentinel>
 RadioButtonGroup<T, sentinel>::RadioButtonGroup ()
     :
     SignalHandler(),
-    m_sender_id_changed(this),
-    m_receiver_set_id(&RadioButtonGroup<T, sentinel>::SetID, this)
+    m_sender_checked_radio_button_id_changed(this),
+    m_receiver_set_checked_radio_button_id(&RadioButtonGroup<T, sentinel>::SetCheckedRadioButtonId, this)
 {
-    m_id = sentinel;
+    m_radio_button_id = sentinel;
     m_checked_button = NULL;
 }
 
@@ -334,23 +334,23 @@ RadioButtonGroup<T, sentinel>::~RadioButtonGroup ()
 }
 
 template <typename T, T sentinel>
-void RadioButtonGroup<T, sentinel>::SetID (T id)
+void RadioButtonGroup<T, sentinel>::SetCheckedRadioButtonId (T radio_button_id)
 {
     // early out if the ID is the same
-    if (m_id == id)
+    if (m_radio_button_id == radio_button_id)
         return;
 
     RadioButton<T, sentinel> *new_checked_button;
 
     // special code for sentinel value (no buttons checked)
-    if (id == sentinel)
+    if (radio_button_id == sentinel)
     {
         new_checked_button = NULL;
     }
     else
     {
         // make sure the ID is valid, early out if not
-        typename RadioButtonMap::iterator it = m_button_map.find(id);
+        typename RadioButtonMap::iterator it = m_button_map.find(radio_button_id);
         if (it == m_button_map.end())
             return;
 
@@ -362,14 +362,14 @@ void RadioButtonGroup<T, sentinel>::SetID (T id)
     if (m_checked_button != NULL)
         m_checked_button->Uncheck();
 
-    m_id = id;
+    m_radio_button_id = radio_button_id;
     m_checked_button = new_checked_button;
 
     // check the new current checked button (if applicable)
     if (m_checked_button != NULL)
         m_checked_button->Check();
 
-    m_sender_id_changed.Signal(m_id);
+    m_sender_checked_radio_button_id_changed.Signal(m_radio_button_id);
 }
 
 template <typename T, T sentinel>
@@ -381,13 +381,13 @@ void RadioButtonGroup<T, sentinel>::AddButton (RadioButton<T, sentinel> *button)
 
     bool no_buttons_in_group = m_button_map.size() == 0;
     // make sure there's no button with the same ID already in there
-    typename RadioButtonMap::iterator it = m_button_map.find(button->ID());
+    typename RadioButtonMap::iterator it = m_button_map.find(button->RadioButtonId());
     // only if there was no match will we add the button
     ASSERT1(it == m_button_map.end() && "You tried to add two RadioButtons with the same ID");
-    m_button_map[button->ID()] = button;
+    m_button_map[button->RadioButtonId()] = button;
     // if there were no buttons in this group, set the new one checked
     if (no_buttons_in_group)
-        SetID(button->ID());
+        SetCheckedRadioButtonId(button->RadioButtonId());
 }
 
 template <typename T, T sentinel>
@@ -396,7 +396,7 @@ void RadioButtonGroup<T, sentinel>::RemoveButton (RadioButton<T, sentinel> *butt
     ASSERT1(button != NULL);
 
     // make sure there's no button with the same ID already in there
-    typename RadioButtonMap::iterator it = m_button_map.find(button->ID());
+    typename RadioButtonMap::iterator it = m_button_map.find(button->RadioButtonId());
     // only if there was a match will we remove the button
     if (it != m_button_map.end())
     {
@@ -408,7 +408,7 @@ void RadioButtonGroup<T, sentinel>::RemoveButton (RadioButton<T, sentinel> *butt
     // if a button is removed, then it will go back to the sentinel (no
     // button checked) value, because checking some arbitrary button would
     // probably be bad.
-    SetID(sentinel);
+    SetCheckedRadioButtonId(sentinel);
 }
 
 } // end of namespace Xrb

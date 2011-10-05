@@ -220,6 +220,8 @@ BUGS:
   this may require adding support for RGB textures.
 
 TODO:
+- Lvd::Xml parser/scanner really needs to use FileSystem to check paths.
+- static const variables should be in all caps (think about if there should be M_ or not)
 - change World to store the world time internally, and use realtime time deltas to increment
   this counter (adjusted by the timescale).  this will make DT controlling (i.e. no DT larger
   than 1/20 or whatever) more automatic.

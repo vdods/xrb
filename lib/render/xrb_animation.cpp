@@ -129,13 +129,13 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
             std::string acceptable_values;
             for (Uint32 i = 0; i < AT_COUNT; ++i)
                 acceptable_values += " \"" + ms_animation_type_string[i] + "\"";
-            THROW_STRING("invalid default_type value \"" << default_type_string << "\" (acceptable values are" << acceptable_values << ")");
+            throw Exception(FORMAT("invalid default_type value \"" << default_type_string << "\" (acceptable values are" << acceptable_values << ")"));
         }
 
         Time::Delta default_duration = 1.0f; // the value is 1 if left unspecified
         try { default_duration = root->PathElementFloaty("|default_duration"); } catch (...) { }
         if (default_duration <= 0.0f)
-            THROW_STRING("invalid default_duration value " << default_duration << " (must be positive)");
+            throw Exception(FORMAT("invalid default_duration value " << default_duration << " (must be positive)"));
 
         std::cerr << "Animation::Sequence::Create(\"" << load_parameters.Path() << "\"); default_type = " << ms_animation_type_string[default_type] << ", default_duration = " << default_duration << std::endl;
 

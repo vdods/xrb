@@ -179,7 +179,7 @@ public:
     virtual void Think (Time time, Time::Delta frame_dt)
     {
         // if this Think method is not overridden, then don't Think often.
-        SetNextTimeToThink(time + 10000.0f);
+        SetNextTimeToThink(Time::ms_positive_infinity);
     }
     // the collision normal value points towards the entity.  you should
     // make your own Collide method which casts to your own Entity type.

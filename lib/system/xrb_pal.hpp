@@ -92,6 +92,10 @@ public:
     virtual ScreenCoordVector2 GlTextureAtlasSize () const = 0;
     // sets the size for each new GlTextureAtlas
     virtual void GlTextureAtlasSize (ScreenCoordVector2 const &size) = 0;
+
+    // TEMP interfaces for sound until a real design is decided on.
+    virtual void PlaySound (char const *sound_path) = 0;
+    virtual void PlayBackgroundMusic (char const *music_path) = 0;
 }; // end of class Pal
 
 } // end of namespace Xrb

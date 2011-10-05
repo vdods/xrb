@@ -21,8 +21,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 // this is designed to be able to read multiple config files -- perhaps a
 // "default" config file first to initialize default values, and then the

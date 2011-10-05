@@ -49,7 +49,7 @@ public:
     void SetInputActionKeyCode (KeyInputAction input_action, Key::Code key_code);
 
     void ReadValuesFromConfig (Config const &config);
-    void WriteValuesToConfig (Config *config);
+    void WriteValuesToConfig (Config &config);
 
 private:
 

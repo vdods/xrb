@@ -492,7 +492,7 @@ void InventoryPanel::ControlsDialogReturned (Dialog::ButtonID button_id)
 
     // only save the ControlsPanel values back into the Config if OK button was hit
     if (button_id == Dialog::ID_OK)
-        m_controls_panel->WriteValuesToConfig(&g_config);
+        m_controls_panel->WriteValuesToConfig(g_config);
 
     m_controls_panel = NULL;
 }

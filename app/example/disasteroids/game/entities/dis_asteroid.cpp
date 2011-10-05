@@ -85,7 +85,7 @@ void Asteroid::Think (Time time, Time::Delta frame_dt)
     // if this asteroid shouldn't decay, then defer the think for a long time
     if (!m_is_a_secondary_asteroid || VisibleRadius() > ms_decay_radius)
     {
-        SetNextTimeToThink(time + 10000.0f);
+        SetNextTimeToThink(Time::ms_positive_infinity);
         return;
     }
     else

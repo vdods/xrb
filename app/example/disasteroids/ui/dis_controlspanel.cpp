@@ -202,9 +202,9 @@ bool ControlsPanel::Fullscreen () const
 
 DifficultyLevel ControlsPanel::GetDifficultyLevel () const
 {
-    ASSERT1(m_difficulty_level.ID() >= DL_LOWEST);
-    ASSERT1(m_difficulty_level.ID() <= DL_HIGHEST);
-    return m_difficulty_level.ID();
+    ASSERT1(m_difficulty_level.CheckedRadioButtonId() >= DL_LOWEST);
+    ASSERT1(m_difficulty_level.CheckedRadioButtonId() <= DL_HIGHEST);
+    return m_difficulty_level.CheckedRadioButtonId();
 }
 
 Key::Code ControlsPanel::InputActionKeyCode (KeyInputAction input_action) const
@@ -236,7 +236,7 @@ void ControlsPanel::SetDifficultyLevel (DifficultyLevel difficulty_level)
 {
     ASSERT1(difficulty_level >= DL_LOWEST);
     ASSERT1(difficulty_level <= DL_HIGHEST);
-    m_difficulty_level.SetID(difficulty_level);
+    m_difficulty_level.SetCheckedRadioButtonId(difficulty_level);
 }
 
 void ControlsPanel::SetInputActionKeyCode (KeyInputAction input_action, Key::Code key_code)
@@ -248,6 +248,8 @@ void ControlsPanel::SetInputActionKeyCode (KeyInputAction input_action, Key::Cod
 
 void ControlsPanel::ReadValuesFromConfig (Config const &config)
 {
+    std::cerr << "ControlsPanel::ReadValuesFromConfig();" << std::endl;
+    
     SetResolutionX(config.ResolutionX());
     SetResolutionY(config.ResolutionY());
     SetFullscreen(config.Boolean(VIDEO__FULLSCREEN));
@@ -259,17 +261,17 @@ void ControlsPanel::ReadValuesFromConfig (Config const &config)
             config.InputAction(static_cast<KeyInputAction>(i)));
 }
 
-void ControlsPanel::WriteValuesToConfig (Config *config)
+void ControlsPanel::WriteValuesToConfig (Config &config)
 {
-    ASSERT1(config != NULL);
+    std::cerr << "ControlsPanel::WriteValuesToConfig();" << std::endl;
 
-    config->SetResolutionX(Resolution()[Dim::X]);
-    config->SetResolutionY(Resolution()[Dim::Y]);
-    config->SetBoolean(VIDEO__FULLSCREEN, Fullscreen());
-    config->SetDifficultyLevel(GetDifficultyLevel());
+    config.SetResolutionX(Resolution()[Dim::X]);
+    config.SetResolutionY(Resolution()[Dim::Y]);
+    config.SetBoolean(VIDEO__FULLSCREEN, Fullscreen());
+    config.SetDifficultyLevel(GetDifficultyLevel());
 
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
-        config->SetInputAction(
+        config.SetInputAction(
             static_cast<KeyInputAction>(i),
             InputActionKeyCode(static_cast<KeyInputAction>(i)));
 }

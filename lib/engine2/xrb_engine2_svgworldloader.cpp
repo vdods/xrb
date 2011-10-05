@@ -41,6 +41,7 @@ public:
     Uint32 const m_gltexture_flags;
     Uint32 const m_stage;
     std::string const m_additional_stageable_attribute_name_prefix;
+    std::string const m_resource_path_prefix;
     // set later on
     Document *m_document;
     Element *m_svg;
@@ -55,7 +56,8 @@ public:
         Time current_time,
         Uint32 gltexture_flags,
         Uint32 stage,
-        std::string const &additional_stageable_attribute_name_prefix)
+        std::string const &additional_stageable_attribute_name_prefix,
+        std::string const &resource_path_prefix)
         :
         m_svg_path(svg_path),
         m_world(world),
@@ -63,6 +65,7 @@ public:
         m_gltexture_flags(gltexture_flags),
         m_stage(stage),
         m_additional_stageable_attribute_name_prefix(additional_stageable_attribute_name_prefix),
+        m_resource_path_prefix(resource_path_prefix),
         m_document(NULL),
         m_svg(NULL),
         m_g(NULL),
@@ -353,16 +356,22 @@ void ProcessImage (
         Object *object = NULL;
         if (!animation_path.empty())
         {
-            object = AnimatedSprite::Create(animation_path, context.m_current_time, context.m_gltexture_flags);
+            std::string prefixed_animation_path(context.m_resource_path_prefix);
+            prefixed_animation_path += animation_path;
+            object = AnimatedSprite::Create(prefixed_animation_path, context.m_current_time, context.m_gltexture_flags);
             if (object == NULL)
-                std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); failed to load animation \"" << animation_path << '"' << std::endl;
+                std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); failed to load animation \"" << prefixed_animation_path << '"' << std::endl;
         }
         // if nothing was loaded so far, attempt to load the image as a sprite
-        if (object == NULL)
-            object = Sprite::Create(image_path, context.m_gltexture_flags);
-        if (object == NULL)
-            throw Exception(FORMAT("failed to load image \"" << image_path << "\""));
-        ASSERT1(object->GetEntity() == NULL && "no Entity allowed at this point");
+        {
+            std::string prefixed_image_path(context.m_resource_path_prefix);
+            prefixed_image_path += image_path;
+            if (object == NULL)
+                object = Sprite::Create(prefixed_image_path, context.m_gltexture_flags);
+            if (object == NULL)
+                throw Exception(FORMAT("failed to load image \"" << prefixed_image_path << "\""));
+            ASSERT1(object->GetEntity() == NULL && "no Entity allowed at this point");
+        }
 
         // set the transform
         static_cast<FloatTransform2 &>(*object) = transform;
@@ -405,11 +414,11 @@ void ProcessImage (
                     // associated with this image, and a static sprite should be used instead.
                     context.m_world.AddStaticObject(object, context.m_object_layer);
                 }
-            } catch (std::string const &exception) {
+            } catch (Exception const &e) {
                 // if an exception was thrown, add it as a static object (no Entity attached)
                 context.m_world.AddStaticObject(object, context.m_object_layer);
                 // then rethrow the exception because we still want the exception printed.
-                throw exception;
+                throw e;
             }
         }
         // if it wasn't an Entity, then add it to the World as a static object.
@@ -418,8 +427,8 @@ void ProcessImage (
             context.m_world.AddStaticObject(object, context.m_object_layer);
         }
 
-    } catch (std::string const &exception) {
-        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in <image id='" << image_id << "'>, layer '" << context.m_object_layer->Name() << "' (line " << image.m_filoc.LineNumber() << " in svg file): " << exception << std::endl;
+    } catch (Exception const &e) {
+        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in <image id='" << image_id << "'>, layer '" << context.m_object_layer->Name() << "' (line " << image.m_filoc.LineNumber() << " in svg file): " << e.what() << std::endl;
     }
 }
 
@@ -523,8 +532,8 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
 
         context.m_object_layer = NULL; // done with this layer
 
-    } catch (std::string const &exception) {
-        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in layer '" << layer_id << "': " << exception << std::endl;
+    } catch (Exception const &e) {
+        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in layer '" << layer_id << "': " << e.what() << std::endl;
     }
 }
 
@@ -576,8 +585,8 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(Exception)
     // exceptions thrown in this block produce non-critical errors, hence the try/catch
     try {
         StageProcessAttributes(context, *context.m_svg);
-    } catch (std::string const &exception) {
-        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in <svg> element: " << exception << std::endl;
+    } catch (Exception const &e) {
+        std::cerr << "LoadSvgIntoWorld(\"" << context.m_svg_path << "\"); in <svg> element: " << e.what() << std::endl;
     }
 
     // give the world a chance to process the svg element
@@ -630,9 +639,10 @@ void LoadSvgIntoWorld (
     Time current_time,
     Uint32 gltexture_flags,
     Uint32 stage,
-    std::string const &additional_stageable_attribute_name_prefix) throw(Exception)
+    std::string const &additional_stageable_attribute_name_prefix,
+    std::string const &resource_path_prefix) throw(Exception)
 {
-    LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags, stage, additional_stageable_attribute_name_prefix);
+    LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags, stage, additional_stageable_attribute_name_prefix, resource_path_prefix);
     LoadSvgIntoWorld(context);
 }
 

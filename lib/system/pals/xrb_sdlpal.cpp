@@ -1151,4 +1151,14 @@ void SDLPal::GlTextureAtlasSize (Xrb::ScreenCoordVector2 const &size)
         m_gltexture_atlas_size[Xrb::Dim::Y] = 0;
 }
 
+void SDLPal::PlaySound (char const *sound_path)
+{
+    // do nothing for now
+}
+
+void SDLPal::PlayBackgroundMusic (char const *music_path)
+{
+    // do nothing for now
+}
+
 #endif // XRB_PLATFORM == XRB_PLATFORM_SDL

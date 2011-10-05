@@ -64,6 +64,10 @@ public:
     virtual Xrb::ScreenCoordVector2 GlTextureAtlasSize () const;
     virtual void GlTextureAtlasSize (Xrb::ScreenCoordVector2 const &size);
 
+    // TEMP interfaces for sound until a real design is decided on.
+    virtual void PlaySound (char const *sound_path);
+    virtual void PlayBackgroundMusic (char const *music_path);
+    
 private:
 
     // the constructor is private so you must use SDLPal::Create.
