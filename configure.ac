@@ -346,6 +346,26 @@ AC_CHECK_LIB(GL, glBegin)
 # check for SDL library
 AC_CHECK_LIB(SDL, SDL_Init)
 
+# lifted from http://lists.apple.com/archives/unix-porting/2009/Jan/msg00026.html
+# (thanks to Peter O'Gorman on this one for diving into the shit-ocean that is the A4 macro language)
+m4_defun([MY_CHECK_FRAMEWORK],
+    [AC_CACHE_CHECK([if -framework ]$1[ works],[my_cv_framework_]$1,
+        [save_LIBS="$LIBS"
+         LIBS="$LIBS -framework ]$1["
+         AC_LINK_IFELSE([AC_LANG_PROGRAM([],[])],
+         [my_cv_framework_]$1[=yes],
+         [my_cv_framework_]$1[=no]) ])
+     LIBS="$save_LIBS"
+     if test "$my_cv_framework_]$1["="yes"; then
+         AC_DEFINE(AS_TR_CPP([HAVE_FRAMEWORK_]$1),1,[Define if you have the ] $1 [ framework])
+         AS_TR_CPP([FRAMEWORK_]$1)="-framework ]$1["
+         AC_SUBST([FRAMEWORK_]AS_TR_CPP($1))
+     fi])
+
+# this is necessary (only) on mac os X because OpenGL is supplied via a "framework" instead of
+# an ld-style library.
+MY_CHECK_FRAMEWORK(OpenGL)
+
 # check for SDL
 AC_PATH_PROG(SDL_CONFIG, sdl-config)
 AC_SUBST(SDL_CONFIG)

@@ -656,7 +656,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 //         std::cerr << "error reading PNG file" << std::endl;
         return NULL;
     }
@@ -667,7 +667,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
-    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, int_p_NULL, int_p_NULL);
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
 
     // create the Texture
     Xrb::Texture *texture = Xrb::Texture::Create(Xrb::ScreenCoordVector2(width, height), Xrb::Texture::UNINITIALIZED);
@@ -694,7 +694,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     // close the file
     fclose(fp);
     // now we're done with the png stuff
-    png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     delete[] row_pointers;
 
 //     std::cerr << "success" << std::endl;
@@ -743,7 +743,7 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     {
 //         std::cerr << "error in PNG creation" << std::endl;
         fclose(fp);
-        png_destroy_write_struct(&png_ptr,  png_infopp_NULL);
+        png_destroy_write_struct(&png_ptr,  NULL);
         return FAILURE;
     }
 

@@ -15,8 +15,8 @@ case ${ARGUMENT} in
 	aclocal
 	# generate config.h.in
 	autoheader
-	# generate ltmain.sh and others
-	libtoolize
+    # generate ltmain.sh and others (mac os X's binary is called glibtoolize)
+	glibtoolize || libtoolize
 	# recursively generate Makefile.in from all Makefile.am
 	automake --add-missing
 	# generate configure

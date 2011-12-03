@@ -144,7 +144,8 @@ endif
 AM_LDFLAGS = \
     $(SDL_CONFIG_LDFLAGS) \
     $(FREETYPE_CONFIG_LDFLAGS) \
-    $(LIBPNG_CONFIG_LDFLAGS)
+    $(LIBPNG_CONFIG_LDFLAGS) \
+    $(FRAMEWORK_OPENGL)
 
 LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 
