@@ -108,6 +108,7 @@ class GaussGun;
 class MissileLauncher;
 class ReticleEffect;
 class TractorBeam;
+class SlowBulletGun;
 
 class Demi : public EnemyShip
 {
@@ -123,6 +124,9 @@ public:
     static Float const ms_weapon_fov[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT];
     static Time::Delta const ms_spinning_attack_duration[ENEMY_LEVEL_COUNT];
+    static Time::Delta const ms_slow_bullet_gun_spam_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_slow_bullet_gun_range[ENEMY_LEVEL_COUNT];
+    static Float const ms_slow_bullet_gun_fire_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT];
@@ -290,6 +294,8 @@ private:
     void SpinningFlameThrow (Time time, Time::Delta frame_dt);
     void SpinningMissileLaunch (Time time, Time::Delta frame_dt);
     void SpinningGuidedMissileLaunch (Time time, Time::Delta frame_dt);
+    void SpinningSlowBulletSpam (Time time, Time::Delta frame_dt);
+    void SpinningSlowBulletSpamFinish (Time time, Time::Delta frame_dt);
     void SpinningInterloperSpawn (Time time, Time::Delta frame_dt);
     void SpinningShadeSpawn (Time time, Time::Delta frame_dt);
     void SpinningRevulsionSpawn (Time time, Time::Delta frame_dt);
@@ -310,18 +316,20 @@ private:
     void PortTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt);
     void StarboardTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt);
 
-    void PickTractorThinkStates ();
-
-    void MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt, Float max_thrust = -1.0f);
-
     enum TractorAction
     {
         TA_DEFLECT = 0,
         TA_SUCK_UP_POWERUPS,
         TA_FLING,
 
-        TA_COUNT
+        TA_COUNT,
+
+        TA_RANDOM
     }; // end of enum Demi::TractorAction
+
+    void PickTractorThinkStates (TractorAction tractor_action = TA_RANDOM);
+
+    void MatchVelocity (FloatVector2 const &velocity, Time::Delta frame_dt, Float max_thrust = -1.0f);
 
     // if deflect is true, search for things that will hurt us.  if false,
     // search for things to fling at the target.
@@ -354,6 +362,7 @@ private:
     Time::Delta m_spin_acceleration_duration;
     Time::Delta m_spin_duration;
     bool m_spinning_attack_uses_secondary_fire;
+    ThinkState m_spinning_attack_finish_state;
     FloatVector2 m_charge_velocity;
 
     FloatVector2 m_port_reticle_coordinates;
@@ -372,6 +381,7 @@ private:
     EntityReference<ReticleEffect> m_reticle_effect;
     FlameThrower *m_flame_thrower;
     MissileLauncher *m_missile_launcher;
+    SlowBulletGun *m_slow_bullet_gun;
 
     // currently equipped port-side weapon
     Weapon *m_port_weapon;
@@ -380,6 +390,7 @@ private:
     EntityReference<TractorBeam> m_port_tractor_beam;
     FlameThrower *m_port_flame_thrower;
     MissileLauncher *m_port_missile_launcher;
+    SlowBulletGun *m_port_slow_bullet_gun;
 
     // currently equipped starboard-side weapon
     Weapon *m_starboard_weapon;
@@ -388,6 +399,7 @@ private:
     EntityReference<TractorBeam> m_starboard_tractor_beam;
     FlameThrower *m_starboard_flame_thrower;
     MissileLauncher *m_starboard_missile_launcher;
+    SlowBulletGun *m_starboard_slow_bullet_gun;
 
     // currently equipped aft-port weapon
     Weapon *m_aft_weapon;
@@ -395,6 +407,7 @@ private:
     EnemySpawner *m_aft_enemy_spawner;
     FlameThrower *m_aft_flame_thrower;
     MissileLauncher *m_aft_missile_launcher;
+    SlowBulletGun *m_aft_slow_bullet_gun;
 }; // end of class Demi
 
 } // end of namespace Dis

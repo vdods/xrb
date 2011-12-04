@@ -73,6 +73,8 @@ x   shield
   of one, it ups the difficulty and sends you to the next one.  there should be some sort of
   celebration sequence when you advance a level
 - make the plasma bullet change length based on its speed
+- start Devourment small and have it grow as it eats asteroids.  also have its tractor beam
+  strength be based on its size.
 - move attack and defense boost to Ship, so enemies can have it (for boss enemies or something)
 - maybe take out Solitary, since it really doesn't extend PlayerShip.
 - make yellow tractor beam send powerups away from player instead of toward (otherwise the
@@ -81,8 +83,18 @@ x   shield
 - make Demi prioritize option powerups highest in terms of green tractor beam targets.
 - Demi defense mode: predict attacks (from projectile weapons) and defend by throwing asteroids
   in the way to block.
+- if the world is too cluttered, sometimes Demi doesn't spawn in.  make Demi teleport in right
+  after some singularity forms, either sucking up or pushing away nearby objects.  make sure this
+  doesn't happen immediately next to the player.  maybe make all mini-bosses do this, when they
+  are implemented.
+- if the world is too cluttered up with minerals, powerups and small asteroids, make the Devourments
+  go into a feeding frenzy where they just suck up minerals, powerups and small asteroids (maybe
+  don't bother targeting small asteroids because they will be destroyed in the process)
 - change pea shooter secondary fire to spread shot, and change gauss gun into charge-up weapon
-  which works as the current pea shooter secondary does.
+  which works as the current pea shooter secondary does.  make gauss gun take longer to charge
+  up, but maybe make it more powerful with a larger kickback.  if/when demi blocking is implemented,
+  maybe make it detect being aimed at with a gauss gun so it can put something in the way to block
+  the incoming gauss gun projectile.
 - change gauss gun reticle effect (and add for player) -- have 4 reticle effects home in on the
   target, and when they meet, and the player releases the fire button, it fires.  this is to give
   a better sense of when the enemy will fire the gauss gun.  also this gives the player a
@@ -93,7 +105,8 @@ x   shield
   ships)
 - game tips in the inventory screen (finish)
 - make the player ship size depend on mass (so that it gets larger when heaver armor is equipped).
-- make tractor beams grow from a point when activated, and shrink to a point when deactivated.
+- make tractor beams grow from a point when activated, and shrink to a point when deactivated
+  (maybe keep the physics radius the same, and only modify the visual radius)
 - make the wave sequences programmable via config file, and specifiable via commandline.
   maybe make a hardcoded wave sequence that will be used for the game, and when no config file
   is provided.
@@ -101,16 +114,16 @@ x   shield
   a few seconds)
 - additional mode for Interloper (maybe spawn them in different, fixed modes) -
   where their flocking behavior is higher priority.  another mode should be
-  where they flock in the form of a snake.  the head will decide where to go, and
-  the body will provide extra mass to the collisions.
+  where they flock in the form of a snake (these could form if a flock is allowed to exist for
+  too long).  the head will decide where to go, and the body will provide extra mass to the collisions.
   the snake should be really hard to kill, and forming a snake could be the result of Interlopers
   living for too long.  this will be a reason for players to want to kill them quickly.
 - enemies could spawn with shields giving particular strengths, so if a player overuses a weapon,
-  the enemies start spawning with strength against that weapon.
+  the enemies start spawning with strength against that weapon.  demi should be able to adapt though.
 - additional mode for Interloper -- speed charge when charging at target -- Interloper isn't
   nearly mean/tough enough
-- additional mode for Shade - maybe hide behind asteroids
-  and make bullets curve around stuff toward the player.
+- additional mode for Shade - maybe hide behind asteroids and make bullets curve around stuff
+  toward the player.
 - mode for Shade: detect incoming projectiles and teleport away to dodge (this would be a good
   way to avoid the gauss gun becoming a do-all weapon).
 - additional mode for Revulsion - synchronize firing (?) once the player has
@@ -219,7 +232,22 @@ BUGS:
 - screenshots add an alpha channel -- remove alpha channel and make PNG files without alpha.
   this may require adding support for RGB textures.
 
+TEMP TODO:
+- convert Object::GetObjectLayer to assert non-NULL and return a reference
+- convert Entity::GetPhysicsHandler to assert non-NULL and return a reference
+
+- want to get rid of Entity storing in World -- though it could be useful having Entities in the world without being in an object layer (they're in limbo but can think)
+- if not get rid of Entity vector in World, change it to a linked list or something
+- possibly combine World::AddStaticObject and World::AddDynamicObject (also Remove*Object)
+
+
 TODO:
+- MUSIC: when implementing music, do it through spec files which reference times in OGG/MP3 files
+  so that people can make spec files which reference copyrighted music without actually infringing copyright.
+- change quadtree nodes to store lists of objects.  the objects will store iterators to their
+  positions in the quadtrees, so removal can be done in constant time
+- maybe store visibility quadtree node objects in draw order (even though this depends on the
+  distance fading, a compatible order might be possible which doesn't account for distance fading)
 - Lvd::Xml parser/scanner really needs to use FileSystem to check paths.
 - static const variables should be in all caps (think about if there should be M_ or not)
 - change World to store the world time internally, and use realtime time deltas to increment

@@ -1187,7 +1187,7 @@ Float SlowBulletGun::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, b
 {
     // can't fire faster that the weapon's cycle time
     Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
-    Float fire_rate = ms_fire_rate[UpgradeLevel()] * fire_rate_factor;
+    Float fire_rate = FireRate() * fire_rate_factor;
     ASSERT1(fire_rate > 0.0f);
     if (time < m_time_last_fired + 1.0f / fire_rate)
         return 0.0f;
@@ -1209,6 +1209,8 @@ bool SlowBulletGun::Activate (Float power, bool attack_boost_is_enabled, bool de
 
     Float damage_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostDamageFactor() : 1.0f;
 
+    Float range = IsRangeOverridden() ? m_range_override : ms_range[UpgradeLevel()];
+    
     // fire the weapon -- create a Pea and set its position and velocity
     ASSERT1(OwnerShip()->GetWorld() != NULL);
     ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
@@ -1221,7 +1223,7 @@ bool SlowBulletGun::Activate (Float power, bool attack_boost_is_enabled, bool de
         3.0f,
         ms_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
         ms_impact_damage[UpgradeLevel()] * damage_factor,
-        ms_range[UpgradeLevel()] / ms_muzzle_speed[UpgradeLevel()],
+        range / ms_muzzle_speed[UpgradeLevel()],
         time,
         UpgradeLevel(),
         OwnerShip()->GetReference());

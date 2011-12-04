@@ -135,6 +135,10 @@ bool Ballistic::CollidePrivate (
     if (collider.GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return false;
 
+    // don't collide with other ballistics
+    if (collider.GetEntityType() == ET_BALLISTIC)
+        return false;
+    
     // also, don't hit powerups
     if (collider.IsPowerup())
         return false;

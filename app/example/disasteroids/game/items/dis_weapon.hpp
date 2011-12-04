@@ -656,9 +656,33 @@ public:
     {
         ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
         m_time_last_fired = Time::ms_negative_infinity;
+        m_range_override = -1.0f;
+        m_fire_rate_override = -1.0f;
     }
     virtual ~SlowBulletGun () { }
 
+    Float FireRate () const { return IsFireRateOverridden() ? FireRateOverride() : ms_fire_rate[UpgradeLevel()]; }
+
+    bool IsRangeOverridden () const { return m_range_override >= 0.0f; }
+    Float RangeOverride () const { return m_range_override; }
+    
+    bool IsFireRateOverridden () const { return m_fire_rate_override >= 0.0f; }
+    Float FireRateOverride () const { return m_fire_rate_override; }
+
+    void SetRangeOverride (Float range_override)
+    {
+        ASSERT1(range_override >= 0.0f);
+        m_range_override = range_override;
+    }
+    void SetFireRateOverride (Float fire_rate_override)
+    {
+        ASSERT1(fire_rate_override >= 0.0f);
+        m_fire_rate_override = fire_rate_override;
+    }
+    
+    void ClearRangeOverride () { m_range_override = -1.0f; }
+    void ClearFireRateOverride () { m_fire_rate_override = -1.0f; }
+    
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
@@ -666,7 +690,7 @@ public:
     virtual Float ReadinessStatus (bool attack_boost_is_enabled, Time time) const
     {
         Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
-        Time::Delta cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Time::Delta cycle_time = 1.0f / (FireRate() * fire_rate_factor);
         Time::Delta time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -687,6 +711,8 @@ public:
 private:
 
     Time m_time_last_fired;
+    Float m_range_override;
+    Float m_fire_rate_override;
 }; // end of class SlowBulletGun
 
 class EnemySpawner : public Weapon

@@ -36,6 +36,9 @@ Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60
 Float const Demi::ms_weapon_fov[ENEMY_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
 Time::Delta const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 0.75f, 0.75f, 0.75f, 0.75f };
 Time::Delta const Demi::ms_spinning_attack_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Time::Delta const Demi::ms_slow_bullet_gun_spam_duration[ENEMY_LEVEL_COUNT] = { 6.0f, 6.0f, 6.0f, 6.0f };
+Float const Demi::ms_slow_bullet_gun_range[ENEMY_LEVEL_COUNT] = { 1000.0f, 1000.0f, 1000.0f, 1000.0f };
+Float const Demi::ms_slow_bullet_gun_fire_rate[ENEMY_LEVEL_COUNT] = { 12.0f, 16.0f, 20.0f, 24.0f };
 Float const Demi::ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
 Float const Demi::ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const Demi::ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
@@ -77,6 +80,7 @@ Demi::Demi (Uint8 const enemy_level)
     m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
 
     m_spinning_attack_uses_secondary_fire = false;
+    m_spinning_attack_finish_state = NULL;
 
     m_main_weapon = NULL;
     m_port_weapon = NULL;
@@ -100,6 +104,11 @@ Demi::Demi (Uint8 const enemy_level)
         m_missile_launcher = new MissileLauncher(0);
         m_missile_launcher->SetSpawnEnemyMissiles(true);
         m_missile_launcher->Equip(this);
+
+        m_slow_bullet_gun = new SlowBulletGun(EnemyLevel());
+        m_slow_bullet_gun->SetRangeOverride(ms_slow_bullet_gun_range[EnemyLevel()]);
+        m_slow_bullet_gun->SetFireRateOverride(ms_slow_bullet_gun_fire_rate[EnemyLevel()]);
+        m_slow_bullet_gun->Equip(this);
     }
 
     // port-side weapon setup
@@ -119,6 +128,11 @@ Demi::Demi (Uint8 const enemy_level)
         m_port_missile_launcher = new MissileLauncher(0);
         m_port_missile_launcher->SetSpawnEnemyMissiles(true);
         m_port_missile_launcher->Equip(this);
+
+        m_port_slow_bullet_gun = new SlowBulletGun(EnemyLevel());
+        m_port_slow_bullet_gun->SetRangeOverride(ms_slow_bullet_gun_range[EnemyLevel()]);
+        m_port_slow_bullet_gun->SetFireRateOverride(ms_slow_bullet_gun_fire_rate[EnemyLevel()]);
+        m_port_slow_bullet_gun->Equip(this);
     }
 
     // starboard-side weapon setup
@@ -138,6 +152,11 @@ Demi::Demi (Uint8 const enemy_level)
         m_starboard_missile_launcher = new MissileLauncher(0);
         m_starboard_missile_launcher->SetSpawnEnemyMissiles(true);
         m_starboard_missile_launcher->Equip(this);
+
+        m_starboard_slow_bullet_gun = new SlowBulletGun(EnemyLevel());
+        m_starboard_slow_bullet_gun->SetRangeOverride(ms_slow_bullet_gun_range[EnemyLevel()]);
+        m_starboard_slow_bullet_gun->SetFireRateOverride(ms_slow_bullet_gun_fire_rate[EnemyLevel()]);
+        m_starboard_slow_bullet_gun->Equip(this);
     }
 
     // aft-port weapon setup
@@ -153,6 +172,11 @@ Demi::Demi (Uint8 const enemy_level)
         m_aft_missile_launcher = new MissileLauncher(0);
         m_aft_missile_launcher->SetSpawnEnemyMissiles(true);
         m_aft_missile_launcher->Equip(this);
+
+        m_aft_slow_bullet_gun = new SlowBulletGun(EnemyLevel());
+        m_aft_slow_bullet_gun->SetRangeOverride(ms_slow_bullet_gun_range[EnemyLevel()]);
+        m_aft_slow_bullet_gun->SetFireRateOverride(ms_slow_bullet_gun_fire_rate[EnemyLevel()]);
+        m_aft_slow_bullet_gun->Equip(this);
     }
 
     SetStrength(D_MINING_LASER);
@@ -166,11 +190,13 @@ Demi::~Demi ()
 {
     // delete the main weapons
     ASSERT1(m_gauss_gun != NULL);
-    Delete(m_gauss_gun);
+    DeleteAndNullify(m_gauss_gun);
     ASSERT1(m_flame_thrower != NULL);
-    Delete(m_flame_thrower);
+    DeleteAndNullify(m_flame_thrower);
     ASSERT1(m_missile_launcher != NULL);
-    Delete(m_missile_launcher);
+    DeleteAndNullify(m_missile_launcher);
+    ASSERT1(m_slow_bullet_gun != NULL);
+    DeleteAndNullify(m_slow_bullet_gun);
     if (m_reticle_effect.IsValid())
     {
         if (m_reticle_effect->IsInWorld())
@@ -180,11 +206,13 @@ Demi::~Demi ()
 
     // delete the port weapons
     ASSERT1(m_port_tractor != NULL);
-    Delete(m_port_tractor);
+    DeleteAndNullify(m_port_tractor);
     ASSERT1(m_port_flame_thrower != NULL);
-    Delete(m_port_flame_thrower);
+    DeleteAndNullify(m_port_flame_thrower);
     ASSERT1(m_port_missile_launcher != NULL);
-    Delete(m_port_missile_launcher);
+    DeleteAndNullify(m_port_missile_launcher);
+    ASSERT1(m_port_slow_bullet_gun != NULL);
+    DeleteAndNullify(m_port_slow_bullet_gun);
     if (m_port_tractor_beam.IsValid())
     {
         if (m_port_tractor_beam->IsInWorld())
@@ -194,11 +222,13 @@ Demi::~Demi ()
 
     // delete the starboard weapons
     ASSERT1(m_starboard_tractor != NULL);
-    Delete(m_starboard_tractor);
+    DeleteAndNullify(m_starboard_tractor);
     ASSERT1(m_starboard_flame_thrower != NULL);
-    Delete(m_starboard_flame_thrower);
+    DeleteAndNullify(m_starboard_flame_thrower);
     ASSERT1(m_starboard_missile_launcher != NULL);
-    Delete(m_starboard_missile_launcher);
+    DeleteAndNullify(m_starboard_missile_launcher);
+    ASSERT1(m_starboard_slow_bullet_gun != NULL);
+    DeleteAndNullify(m_starboard_slow_bullet_gun);
     if (m_starboard_tractor_beam.IsValid())
     {
         if (m_starboard_tractor_beam->IsInWorld())
@@ -208,11 +238,13 @@ Demi::~Demi ()
 
     // delete the aft weapons
     ASSERT1(m_aft_enemy_spawner != NULL);
-    Delete(m_aft_enemy_spawner);
+    DeleteAndNullify(m_aft_enemy_spawner);
     ASSERT1(m_aft_flame_thrower != NULL);
-    Delete(m_aft_flame_thrower);
+    DeleteAndNullify(m_aft_flame_thrower);
     ASSERT1(m_aft_missile_launcher != NULL);
-    Delete(m_aft_missile_launcher);
+    DeleteAndNullify(m_aft_missile_launcher);
+    ASSERT1(m_aft_slow_bullet_gun != NULL);
+    DeleteAndNullify(m_aft_slow_bullet_gun);
 }
 
 void Demi::Think (Time time, Time::Delta frame_dt)
@@ -451,19 +483,19 @@ void Demi::Die (
 FloatVector2 Demi::MuzzleLocation (Weapon const *weapon) const
 {
     ASSERT1(weapon != NULL);
-    if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher)
+    if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher || weapon == m_slow_bullet_gun)
     {
         return EnemyShip::MuzzleLocation(weapon);
     }
-    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
+    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher || weapon == m_port_slow_bullet_gun)
     {
         return Translation() + VisibleRadius() * Math::UnitVector(Angle() + ms_side_port_angle);
     }
-    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
+    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher || weapon == m_starboard_slow_bullet_gun)
     {
         return Translation() + VisibleRadius() * Math::UnitVector(Angle() - ms_side_port_angle);
     }
-    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
+    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher || weapon == m_aft_slow_bullet_gun)
     {
         return Translation() - VisibleRadius() * Math::UnitVector(Angle());
     }
@@ -476,7 +508,7 @@ FloatVector2 Demi::MuzzleLocation (Weapon const *weapon) const
 
 FloatVector2 Demi::MuzzleDirection (Weapon const *weapon) const
 {
-    if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher)
+    if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher || weapon == m_slow_bullet_gun)
     {
         FloatVector2 reticle_offset(GetObjectLayer()->AdjustedDifference(ReticleCoordinates(), MuzzleLocation(weapon)));
         if (reticle_offset.Length() < 0.01f)
@@ -491,15 +523,15 @@ FloatVector2 Demi::MuzzleDirection (Weapon const *weapon) const
 
         return Math::UnitVector(reticle_angle);
     }
-    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
+    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher || weapon == m_port_slow_bullet_gun)
     {
         return Math::UnitVector(Angle() + ms_side_port_angle);
     }
-    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
+    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher || weapon == m_starboard_slow_bullet_gun)
     {
         return Math::UnitVector(Angle() - ms_side_port_angle);
     }
-    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
+    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher || weapon == m_aft_slow_bullet_gun)
     {
         return Math::UnitVector(Angle() + 180.0f);
     }
@@ -630,25 +662,24 @@ void Demi::Stalk (Time time, Time::Delta frame_dt)
 
     Float target_distance = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
 
-//     m_think_state = THINK_STATE(FlameThrowSweepStart);
-//     return;
-
     static WeightedThinkState const s_transition_near[] =
     {
         {    THINK_STATE(FlameThrowSweepStart), 8 },
+        {  THINK_STATE(SpinningSlowBulletSpam), 6 },
         { THINK_STATE(SpinningInterloperSpawn), 5 }, // level 0
         {      THINK_STATE(SpinningShadeSpawn), 3 }, // level 1
         {      THINK_STATE(MissileLaunchStart), 3 }, // level 2
         {  THINK_STATE(SpinningRevulsionSpawn), 2 }  // level 3
     };
-    static Uint32 const s_transition_near_count[ENEMY_LEVEL_COUNT] = { 2, 3, 4, 5 };
-    static Uint32 const s_transition_near_total_weight[ENEMY_LEVEL_COUNT] = { 13, 16, 19, 21 };
+    static Uint32 const s_transition_near_count[ENEMY_LEVEL_COUNT] = { 3, 4, 5, 6 };
+    static Uint32 s_transition_near_total_weight[ENEMY_LEVEL_COUNT] = { 0, 0, 0, 0 };
 
     static WeightedThinkState const s_transition_mid[] =
     {
         {    THINK_STATE(TractorTargetCloserStart),  3 },
         {            THINK_STATE(GaussGunStartAim), 10 },
         {        THINK_STATE(FlameThrowBlastStart), 20 },
+        {      THINK_STATE(SpinningSlowBulletSpam), 15 },
         {     THINK_STATE(SpinningInterloperSpawn),  2 },
         {   THINK_STATE(InterloperSpawnBlastStart),  2 },
         {        THINK_STATE(ShadeSpawnBlastStart),  1 },
@@ -660,20 +691,63 @@ void Demi::Stalk (Time time, Time::Delta frame_dt)
         {      THINK_STATE(SpinningRevulsionSpawn),  3 },
         { THINK_STATE(SpinningGuidedMissileLaunch),  2 }  // level 3
     };
-    static Uint32 const s_transition_mid_count[ENEMY_LEVEL_COUNT] = { 7, 8, 10, 13 };
-    static Uint32 const s_transition_mid_total_weight[ENEMY_LEVEL_COUNT] = { 48, 58, 64, 73 };
+    static Uint32 const s_transition_mid_count[ENEMY_LEVEL_COUNT] = { 8, 9, 11, 14 };
+    static Uint32 s_transition_mid_total_weight[ENEMY_LEVEL_COUNT] = { 0, 0, 0, 0 };
 
     static WeightedThinkState const s_transition_far[] =
     {
         {               THINK_STATE(ChargeStart), 20 },
-        {  THINK_STATE(TractorTargetCloserStart), 10 }, // level 0
+        {  THINK_STATE(TractorTargetCloserStart), 10 },
+        {    THINK_STATE(SpinningSlowBulletSpam),  5 }, // level 0
         { THINK_STATE(InterloperSpawnBlastStart),  5 }, // level 1
         {      THINK_STATE(ShadeSpawnBlastStart),  4 }, // level 2
         {  THINK_STATE(RevulsionSpawnBlastStart),  3 }  // level 3
     };
-    static Uint32 const s_transition_far_count[ENEMY_LEVEL_COUNT] = { 2, 3, 4, 5 };
-    static Uint32 const s_transition_far_total_weight[ENEMY_LEVEL_COUNT] = { 30, 35, 39, 42 };
+    static Uint32 const s_transition_far_count[ENEMY_LEVEL_COUNT] = { 3, 4, 5, 6 };
+    static Uint32 s_transition_far_total_weight[ENEMY_LEVEL_COUNT] = { 0, 0, 0, 0 };
 
+    // initialize the weights if need be.
+    if (s_transition_near_total_weight[0] == 0)
+    {
+        Uint32 weight;
+        for (Uint32 enemy_level = 0; enemy_level < ENEMY_LEVEL_COUNT; ++enemy_level)
+        {
+            weight = 0;
+            ASSERT1(s_transition_near_count[enemy_level] <= LENGTHOF(s_transition_near));
+            for (Uint32 j = 0; j < s_transition_near_count[enemy_level]; ++j)
+                weight += s_transition_near[j].m_weight;
+            s_transition_near_total_weight[enemy_level] = weight;
+
+            weight = 0;
+            ASSERT1(s_transition_mid_count[enemy_level] <= LENGTHOF(s_transition_mid));
+            for (Uint32 j = 0; j < s_transition_mid_count[enemy_level]; ++j)
+                weight += s_transition_mid[j].m_weight;
+            s_transition_mid_total_weight[enemy_level] = weight;
+
+            weight = 0;
+            ASSERT1(s_transition_far_count[enemy_level] <= LENGTHOF(s_transition_far));
+            for (Uint32 j = 0; j < s_transition_far_count[enemy_level]; ++j)
+                weight += s_transition_far[j].m_weight;
+            s_transition_far_total_weight[enemy_level] = weight;
+        }
+        ASSERT1(s_transition_near_total_weight[0] != 0);
+
+//         std::cerr << "s_transition_near_total_weight = { ";
+//         for (Uint32 enemy_level = 0; enemy_level < ENEMY_LEVEL_COUNT; ++enemy_level)
+//             std::cerr << s_transition_near_total_weight[enemy_level] << ", ";
+//         std::cerr << "};" << std::endl;
+//         
+//         std::cerr << "s_transition_mid_total_weight = { ";
+//         for (Uint32 enemy_level = 0; enemy_level < ENEMY_LEVEL_COUNT; ++enemy_level)
+//             std::cerr << s_transition_mid_total_weight[enemy_level] << ", ";
+//         std::cerr << "};" << std::endl;
+//         
+//         std::cerr << "s_transition_far_total_weight = { ";
+//         for (Uint32 enemy_level = 0; enemy_level < ENEMY_LEVEL_COUNT; ++enemy_level)
+//             std::cerr << s_transition_far_total_weight[enemy_level] << ", ";
+//         std::cerr << "};" << std::endl;
+    }
+    
     WeightedThinkState const *transition = NULL;
     Uint32 transition_count = 0;
     Uint32 transition_total_weight = 0;
@@ -1091,6 +1165,7 @@ void Demi::SpinningFlameThrow (Time time, Time::Delta frame_dt)
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(PauseStart);
     SpinningAttackStart(time, frame_dt);
 }
 
@@ -1107,6 +1182,7 @@ void Demi::SpinningMissileLaunch (Time time, Time::Delta frame_dt)
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(PauseStart);
     SpinningAttackStart(time, frame_dt);
 }
 
@@ -1123,7 +1199,35 @@ void Demi::SpinningGuidedMissileLaunch (Time time, Time::Delta frame_dt)
     m_spinning_attack_uses_secondary_fire = true;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(PauseStart);
     SpinningAttackStart(time, frame_dt);
+}
+
+void Demi::SpinningSlowBulletSpam (Time time, Time::Delta frame_dt)
+{
+    // set the appropriate weapons
+    m_main_weapon = m_slow_bullet_gun;
+    m_port_weapon = m_port_slow_bullet_gun;
+    m_starboard_weapon = m_starboard_slow_bullet_gun;
+    m_aft_weapon = m_aft_slow_bullet_gun;
+    m_spin_accelerate_through_angle = 360.0f;
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
+    m_spin_duration = ms_slow_bullet_gun_spam_duration[EnemyLevel()];
+    m_spinning_attack_uses_secondary_fire = false;
+    // transition to and call SpinningAttackStart
+    m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(SpinningSlowBulletSpamFinish);
+    SpinningAttackStart(time, frame_dt);
+}
+
+void Demi::SpinningSlowBulletSpamFinish (Time time, Time::Delta frame_dt)
+{
+    // this does exactly the same thing as PauseStart, except that it specifies TA_SUCK_UP_POWERUPS
+    
+    m_start_time = time;
+    m_think_state = THINK_STATE(PauseContinue);
+
+    PickTractorThinkStates(TA_SUCK_UP_POWERUPS);
 }
 
 void Demi::SpinningInterloperSpawn (Time time, Time::Delta frame_dt)
@@ -1143,6 +1247,7 @@ void Demi::SpinningInterloperSpawn (Time time, Time::Delta frame_dt)
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(PauseStart);
     SpinningAttackStart(time, frame_dt);
 }
 
@@ -1163,6 +1268,7 @@ void Demi::SpinningShadeSpawn (Time time, Time::Delta frame_dt)
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(PauseStart);
     SpinningAttackStart(time, frame_dt);
 }
 
@@ -1183,6 +1289,7 @@ void Demi::SpinningRevulsionSpawn (Time time, Time::Delta frame_dt)
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
+    m_spinning_attack_finish_state = THINK_STATE(PauseStart);
     SpinningAttackStart(time, frame_dt);
 }
 
@@ -1259,7 +1366,9 @@ void Demi::SpinningAttackDecelerate (Time time, Time::Delta frame_dt)
     if (time >= m_start_time + m_spin_acceleration_duration)
     {
         SetAngularVelocity(0.0f);
-        m_think_state = THINK_STATE(PauseStart);
+        ASSERT1(m_spinning_attack_finish_state != NULL);
+        m_think_state = m_spinning_attack_finish_state;
+        m_spinning_attack_finish_state = NULL;
         return;
     }
 
@@ -1466,21 +1575,27 @@ void Demi::StarboardTractorFlingStuffAtTarget (Time time, Time::Delta frame_dt)
     }
 }
 
-void Demi::PickTractorThinkStates ()
+void Demi::PickTractorThinkStates (TractorAction tractor_action)
 {
+    ASSERT1(tractor_action < TA_COUNT || tractor_action == TA_RANDOM);
+    
     // reset these -- technically unnecessary, but why not.
     m_port_tractor->Target(NULL);
     m_starboard_tractor->Target(NULL);
-    // choose which tractor action to do.  if there is a target,
-    // then TA_DEFLECT, TA_SUCK_UP_POWERUPS and TA_FLING are all possibilities.
-    Uint16 behavior = 0;
-    if (m_target.IsValid())
-        behavior = Math::RandomUint16(0, 2);
-    // otherwise only TA_DEFLECT and TA_SUCK_UP_POWERUPS work.
-    else
-        behavior = Math::RandomUint16(0, 1);
+    // if the tractor action is TA_RANDOM, pick a random action.
+    if (tractor_action == TA_RANDOM)
+    {
+        // choose which tractor action to do.  if there is a target,
+        // then TA_DEFLECT, TA_SUCK_UP_POWERUPS and TA_FLING are all possibilities.
+        Uint16 behavior = 0;
+        if (m_target.IsValid())
+            behavior = Math::RandomUint16(0, 2);
+        // otherwise only TA_DEFLECT and TA_SUCK_UP_POWERUPS work.
+        else
+            behavior = Math::RandomUint16(0, 1);
+        tractor_action = static_cast<TractorAction>(behavior);
+    }
 
-    TractorAction tractor_action = static_cast<TractorAction>(behavior);
     switch (tractor_action)
     {
         case TA_DEFLECT:
