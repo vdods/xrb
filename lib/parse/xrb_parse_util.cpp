@@ -66,17 +66,6 @@ bool IsHexDigit (Uint8 c)
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
 }
 
-Uint8 HexDigit (Uint8 c)
-{
-    assert(IsHexDigit(c));
-    if (c >= '0' && c <= '9')
-        return c - '0';
-    else if (c >= 'A' && c <= 'F')
-        return c - 'A' + 0xA;
-    else
-        return c - 'a' + 0xA;
-}
-
 Uint8 HexChar (Uint8 hex_digit)
 {
     assert(hex_digit < 0x10);

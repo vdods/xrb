@@ -87,7 +87,7 @@ void Document::NextElement (
     bool specify_attribute_value,
     string const &attribute_value) const
 {
-    if (it != m_element.end());
+    if (it != m_element.end())
         ++it;
     RetrieveElement(it, element, element_name, attribute_name, specify_attribute_value, attribute_value);
 }
@@ -100,7 +100,7 @@ void Document::NextElement (
     bool specify_attribute_value,
     string const &attribute_value)
 {
-    if (it != m_element.end());
+    if (it != m_element.end())
         ++it;
     RetrieveElement(it, element, element_name, attribute_name, specify_attribute_value, attribute_value);
 }

@@ -759,8 +759,7 @@ void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade &active_grenade)
 
     // delete the active grenade from the active grenade set
     ActiveGrenadeSet::iterator it = m_active_grenade_set.find(&active_grenade);
-    ActiveGrenadeSet::iterator it_end = m_active_grenade_set.end();
-    ASSERT1(it != it_end);
+    ASSERT1(it != m_active_grenade_set.end());
     m_active_grenade_set.erase(it);
 
     active_grenade.SetOwnerGrenadeLauncher(NULL);
@@ -872,8 +871,7 @@ void MissileLauncher::ActiveMissileDestroyed (Missile *active_missile)
 
     // delete the active missile from the active missile set
     ActiveMissileSet::iterator it = m_active_missile_set.find(active_missile);
-    ActiveMissileSet::iterator it_end = m_active_missile_set.end();
-    ASSERT1(it != it_end);
+    ASSERT1(it != m_active_missile_set.end());
     m_active_missile_set.erase(it);
 
     active_missile->SetOwnerMissileLauncher(NULL);
@@ -901,7 +899,7 @@ Float MissileLauncher::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled,
 
 bool MissileLauncher::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Time time, Time::Delta frame_dt)
 {
-    Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+    DEBUG1_CODE(Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f);
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);
 
     // it's possible to fire primary and secondary simultaneously

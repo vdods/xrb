@@ -528,8 +528,7 @@ void ContainerWidget::MoveChildDown (Widget *child)
 {
     // check that its actually a child
     WidgetVector::iterator it = FindChildWidget(child);
-    WidgetVector::iterator it_end = m_child_vector.end();
-    ASSERT1((*it)->Parent() == this && it != it_end && "not a child of this widget");
+    ASSERT1((*it)->Parent() == this && it != m_child_vector.end() && "not a child of this widget");
     if (it != m_child_vector.begin())
     {
         // get the widget below this one
@@ -571,8 +570,7 @@ void ContainerWidget::MoveChildToBottom (Widget *child)
     // check that its actually a child
     WidgetVector::iterator it_begin = m_child_vector.begin();
     WidgetVector::iterator it = FindChildWidget(child);
-    WidgetVector::iterator it_end = m_child_vector.end();
-    ASSERT1((*it)->Parent() == this && it != it_end && "not a child of this widget");
+    ASSERT1((*it)->Parent() == this && it != m_child_vector.end() && "not a child of this widget");
     // find the appropriate place to move the child to (within the section
     // of the child vector of the same stack priority)
     WidgetVector::iterator dest_it = it;

@@ -198,8 +198,8 @@ public:
     Rect<U> StaticCast () const
     {
         Rect<U> retval;
-        retval.SetBottomLeft(m_bottom_left.StaticCast<U>());
-        retval.SetTopRight(m_top_right.StaticCast<U>());
+        retval.SetBottomLeft(m_bottom_left.template StaticCast<U>());
+        retval.SetTopRight(m_top_right.template StaticCast<U>());
         return retval;
     }
 
@@ -227,8 +227,8 @@ public:
     template <typename U>
     void StaticCastAssign (Rect<U> const &source)
     {
-        m_bottom_left = source.BottomLeft().StaticCast<T>();
-        m_top_right = source.TopRight().StaticCast<T>();
+        m_bottom_left = source.BottomLeft().template StaticCast<T>();
+        m_top_right = source.TopRight().template StaticCast<T>();
     }
 
     // ///////////////////////////////////////////////////////////////////////

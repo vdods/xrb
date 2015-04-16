@@ -288,9 +288,7 @@ ScreenCoord LineEdit::CursorOffset (Uint32 cursor_position) const
 
     FontCoordVector2 pen_position_26_6(FontCoordVector2::ms_zero);
 
-    if (cursor_position < 0)
-        cursor_position = 0;
-    else if (cursor_position > m_text.length())
+    if (cursor_position > m_text.length())
         cursor_position = m_text.length();
 
     char const *current_glyph = m_text.c_str();
@@ -311,9 +309,7 @@ ScreenCoord LineEdit::CursorOffset (Uint32 cursor_position) const
 
 ScreenCoord LineEdit::CursorWidth (Uint32 cursor_position) const
 {
-    if (cursor_position < 0)
-        cursor_position = 0;
-    else if (cursor_position > m_text.length())
+    if (cursor_position > m_text.length())
         cursor_position = m_text.length();
 
     if (!m_does_cursor_overwrite)
@@ -326,9 +322,7 @@ ScreenCoord LineEdit::CursorWidth (Uint32 cursor_position) const
 
 void LineEdit::SetCursorPosition (Uint32 cursor_position)
 {
-    if (cursor_position < 0)
-        cursor_position = 0;
-    else if (cursor_position > m_text.length())
+    if (cursor_position > m_text.length())
         cursor_position = m_text.length();
 
     ScreenCoordRect contents_rect(ContentsRect());

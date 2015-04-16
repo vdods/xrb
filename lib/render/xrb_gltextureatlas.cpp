@@ -272,8 +272,7 @@ GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32
 void GlTextureAtlas::UnplaceTexture (GlTexture const &gltexture)
 {
     ASSERT1(&gltexture.Atlas() == this);
-    PlacedGlTextureSet::iterator it = m_placed_gltexture_set.find(&gltexture);
-    ASSERT1(it != m_placed_gltexture_set.end());
+    ASSERT1(m_placed_gltexture_set.find(&gltexture) != m_placed_gltexture_set.end());
     m_placed_gltexture_set.erase(&gltexture);
     // update the used texture byte count
     ASSERT1(m_used_texture_byte_count >= CountTextureBytes(gltexture.Size()));

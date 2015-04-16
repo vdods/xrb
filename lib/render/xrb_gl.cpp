@@ -21,21 +21,21 @@
 
 namespace Xrb {
 
-namespace {
+// namespace {
 
-void CheckForExtension (char const *extension_name)
-{
-    std::cerr << '\t' << extension_name << ": ";
-    if (strstr(reinterpret_cast<char const *>(glGetString(GL_EXTENSIONS)), extension_name) == NULL)
-    {
-        std::cerr << "NOT SUPPORTED -- aborting." << std::endl;
-        ASSERT0(false);
-    }
-    else
-        std::cerr << "supported." << std::endl;
-}
+// void CheckForExtension (char const *extension_name)
+// {
+//     std::cerr << '\t' << extension_name << ": ";
+//     if (strstr(reinterpret_cast<char const *>(glGetString(GL_EXTENSIONS)), extension_name) == NULL)
+//     {
+//         std::cerr << "NOT SUPPORTED -- aborting." << std::endl;
+//         ASSERT0(false);
+//     }
+//     else
+//         std::cerr << "supported." << std::endl;
+// }
 
-} // end of anonymous namespace
+// } // end of anonymous namespace
 
 Gl::Gl ()
     :
@@ -602,7 +602,7 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
     {
         if (!Math::IsAPowerOf2(texture.Width()) ||
             !Math::IsAPowerOf2(texture.Height()) ||
-            !texture.Width() == texture.Height())
+            !(texture.Width() == texture.Height()))
         {
             std::cerr << "Gl::CreateGlTexture(); ERROR: non-square, non-power-of-2-sized textures must use GlTexture::USES_SEPARATE_ATLAS" << std::endl;
             return NULL;

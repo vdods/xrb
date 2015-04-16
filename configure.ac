@@ -325,7 +325,7 @@ fi
 # add some good stuff to the compiler flags
 ##############################################################################
 
-CXXFLAGS="${CXXFLAGS} -Wall"
+CXXFLAGS="${CXXFLAGS} -Wall -Wno-overloaded-virtual -Wno-unused-private-field"
 
 ##############################################################################
 # set up the include directory properly

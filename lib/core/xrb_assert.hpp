@@ -37,7 +37,7 @@ struct ThisCompileErrorIsActuallyAFailedCompileTimeAssert<true>
 // (e.g. "sizeof(char) == 1").  each call to this macro must supply an assert
 // name that is unique to that source file (e.g. CHAR_SIZE_CHECK).
 #define GLOBAL_SCOPE_COMPILE_TIME_ASSERT(assert_name, x) \
-namespace { inline int assert_name () { return ThisCompileErrorIsActuallyAFailedCompileTimeAssert<static_cast<bool>(x)>::BLAH; } }
+int assert_name (int an_error_here_indicates_a_compile_time_assert[(x) ? 1 : -1]);
 
 // this assert is intended to be used within the body of a function/method
 // and will produce a compile error on conditions that are decidable during

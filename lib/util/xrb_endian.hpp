@@ -38,7 +38,7 @@ struct WordOfSize
 {
     /// @brief Switches the byte-order of a single word.
     /// @param word Must point to a piece of memory containing at least word_size bytes.
-    void SwitchByteOrder (Uint8 *word)
+    static void SwitchByteOrder (Uint8 *word)
     {
         ASSERT1(word != NULL);
         ASSERT0(word_size % 2 == 0); // TODO: compile-time assert
@@ -57,7 +57,7 @@ struct WordOfSize
     /// @brief Switches the byte-order of the first @c word_count elements in the given array.
     /// @param array Must point to a piece of memory containing at least word_size*word_count bytes.
     /// @param word_count The number of words to byte-order switch.
-    void SwitchByteOrder (Uint8 *array, Uint32 word_count)
+    static void SwitchByteOrder (Uint8 *array, Uint32 word_count)
     {
         ASSERT1(array != NULL);
         for (Uint32 i = 0; i < word_count; ++i)
@@ -69,8 +69,8 @@ struct WordOfSize
 template <>
 struct WordOfSize<1>
 {
-    void SwitchByteOrder (Uint8 *word) { }
-    void SwitchByteOrder (Uint8 *array, Uint32 word_count) { }
+    static void SwitchByteOrder (Uint8 *word) { }
+    static void SwitchByteOrder (Uint8 *array, Uint32 word_count) { }
 }; // end of struct WordOfSize<1>
 
 /// Type-safe template functions for byte-order switching.
@@ -78,13 +78,13 @@ template <typename T>
 struct Word
 {
     /// Switches the byte-order of a single word.
-    void SwitchByteOrder (T &word)
+    static void SwitchByteOrder (T &word)
     {
         WordOfSize<sizeof(T)>::SwitchByteOrder(reinterpret_cast<Uint8 *>(&word));
     }
     /// @brief Switches the byte-order of the first @c word_count elements in the given array.
     /// @param array Must point to an array having at least @c word_count elements.
-    void SwitchByteOrder (T *array, Uint32 word_count)
+    static void SwitchByteOrder (T *array, Uint32 word_count)
     {
         WordOfSize<sizeof(T)>::SwitchByteOrder(reinterpret_cast<Uint8 *>(array), word_count);
     }

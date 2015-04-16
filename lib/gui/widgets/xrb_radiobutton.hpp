@@ -381,9 +381,8 @@ void RadioButtonGroup<T, sentinel>::AddButton (RadioButton<T, sentinel> *button)
 
     bool no_buttons_in_group = m_button_map.size() == 0;
     // make sure there's no button with the same ID already in there
-    typename RadioButtonMap::iterator it = m_button_map.find(button->RadioButtonId());
+    ASSERT1(m_button_map.find(button->RadioButtonId()) == m_button_map.end() && "You tried to add two RadioButtons with the same ID");
     // only if there was no match will we add the button
-    ASSERT1(it == m_button_map.end() && "You tried to add two RadioButtons with the same ID");
     m_button_map[button->RadioButtonId()] = button;
     // if there were no buttons in this group, set the new one checked
     if (no_buttons_in_group)

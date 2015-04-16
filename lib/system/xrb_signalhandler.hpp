@@ -220,12 +220,7 @@ private:
         ReceiverAnalog const *real_receiver =
             static_cast<ReceiverAnalog const *>(receiver);
         // make sure that this receiver is not already in the attachment list.
-        typename AttachmentList::iterator it =
-            std::find(
-                m_attachment_list.begin(),
-                m_attachment_list.end(),
-                real_receiver);
-        ASSERT1(it == m_attachment_list.end() && "receiver is already attached");
+        ASSERT1(std::find(m_attachment_list.begin(), m_attachment_list.end(), real_receiver) == m_attachment_list.end() && "receiver is already attached");
         // add it to the attachment list (this const_cast ugliness
         // is limited to this line only).
         m_attachment_list.push_back(
@@ -591,12 +586,7 @@ private:
         SenderAnalog const *real_sender =
             static_cast<SenderAnalog const *>(sender);
         // make sure that this sender is not already in the attachment list
-        typename AttachmentList::iterator it =
-            std::find(
-                m_attachment_list.begin(),
-                m_attachment_list.end(),
-                real_sender);
-        ASSERT1(it == m_attachment_list.end() && "sender is already attached");
+        ASSERT1(std::find(m_attachment_list.begin(), m_attachment_list.end(), real_sender) == m_attachment_list.end() && "sender is already attached");
         // add it to the attachment list
         m_attachment_list.push_back(real_sender);
     }

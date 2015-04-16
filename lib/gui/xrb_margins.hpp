@@ -54,8 +54,8 @@ struct Margins
     inline Margins<U> StaticCast () const
     {
         Margins<U> retval;
-        retval.m_bottom_left = m_bottom_left.StaticCast<U>();
-        retval.m_top_right = m_top_right.StaticCast<U>();
+        retval.m_bottom_left = m_bottom_left.template StaticCast<U>();
+        retval.m_top_right = m_top_right.template StaticCast<U>();
         return retval;
     }
 }; // end of template <typename T> class Margins<T>

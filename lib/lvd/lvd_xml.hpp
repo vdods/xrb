@@ -29,7 +29,7 @@ namespace Xml {
 void PrintStringLiteral (std::ostream &stream, std::string const &s);
 std::string StringLiteral (std::string const &s);
 
-class DomNode;
+struct DomNode;
 
 typedef std::map<std::string, std::string> AttributeMap;
 typedef std::vector<DomNode *> DomNodeVector;
