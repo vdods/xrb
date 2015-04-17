@@ -25,6 +25,8 @@ typedef Vector<ScreenCoord, 2> ScreenCoordVector2;
 typedef Rect<ScreenCoord> ScreenCoordRect;
 typedef SimpleTransform2<ScreenCoord> ScreenCoordSimpleTransform2;
 
+GLOBAL_SCOPE_COMPILE_TIME_ASSERT(SIZEOF_SCREENCOORD_CHECK, sizeof(ScreenCoord) == 4)
+
 } // end of namespace Xrb
 
 // lower/upper bound on ScreenCoord values
