@@ -12,6 +12,7 @@
 
 #include "xrb_endian.hpp"
 #include "xrb_filesystem.hpp"
+#include "xrb_singleton.hpp"
 
 namespace Xrb {
 

@@ -30,6 +30,7 @@
 #include "xrb_color.hpp"
 #include "xrb_resourcelibrary.hpp"
 #include "xrb_screencoord.hpp"
+#include "xrb_singleton.hpp"
 
 namespace Xrb
 {

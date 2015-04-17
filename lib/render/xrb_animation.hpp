@@ -16,6 +16,7 @@
 #include <string>
 
 #include "xrb_resourcelibrary.hpp"
+#include "xrb_singleton.hpp"
 #include "xrb_time.hpp"
 
 namespace Xrb {

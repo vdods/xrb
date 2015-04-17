@@ -12,6 +12,7 @@
 
 #include "xrb_parse_datafile_parser.hpp"
 #include "xrb_parse_datafile_value.hpp"
+#include "xrb_singleton.hpp"
 
 namespace Xrb {
 namespace Parse {

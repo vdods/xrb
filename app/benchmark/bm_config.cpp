@@ -15,6 +15,7 @@
 #include "xrb_inputstate.hpp"
 #include "xrb_parse_datafile_parser.hpp"
 #include "xrb_parse_datafile_value.hpp"
+#include "xrb_singleton.hpp"
 #include "xrb_util.hpp"
 
 using namespace std;

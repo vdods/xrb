@@ -15,6 +15,7 @@
 #include "xrb_filesystem.hpp"
 #include "xrb_math.hpp"
 #include "xrb_pal.hpp"
+#include "xrb_singleton.hpp"
 
 namespace Xrb
 {

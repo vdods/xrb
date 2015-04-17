@@ -21,6 +21,7 @@
 #include "xrb_resourcelibrary.hpp"
 #include "xrb_resourceloadparameters.hpp"
 #include "xrb_screencoord.hpp"
+#include "xrb_singleton.hpp"
 
 namespace Xrb {
 

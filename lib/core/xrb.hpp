@@ -79,7 +79,6 @@
 #include "xrb_assert.hpp"
 #include "xrb_debug.hpp"
 #include "xrb_delete.hpp"
-#include "xrb_singleton.hpp"
 #include "xrb_types.hpp"
 
 #if defined(WIN32)
