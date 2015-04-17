@@ -7,18 +7,14 @@ set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
 
-if(NOT LEAP_CMAKE_MODULES)
-    set(LEAP_CMAKE_MODULES "LEAP_CMAKE_MODULES-NOTFOUND" CACHE STRING "Path to clone of git repository github.com/leapmotion/cmake-modules")
-    message(FATAL_ERROR "You must set a valid path for LEAP_CMAKE_MODULES, which should be the path to clone of git repository github.com/leapmotion/cmake-modules")
-endif()
-
 if(NOT XRB_RESOURCES_DIR)
     set(XRB_RESOURCES_DIR "XRB_RESOURCES_DIR-NOTFOUND" CACHE STRING "Path to XRB `resources` directory, the zipped contents of which can be found at http://thedods.com/victor/resources.zip")
     message(FATAL_ERROR "You must set a valid path for XRB_RESOURCES_DIR, which should be the path to XRB `resources` directory, the zipped contents of which can be found at http://thedods.com/victor/resources.zip")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${LEAP_CMAKE_MODULES})
-include(TargetImportedLibraries)
+if(NOT XRB_DEBUG_LEVEL)
+    set(XRB_DEBUG_LEVEL "0" CACHE STRING "Debug level for xrb code -- can be 0 (no asserts), 1, 2, or 3 (all asserts)." FORCE)
+endif()
 
 # Options to correctly link the standard C++ lib on Mac.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
@@ -28,49 +24,24 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Ma
     endif()
 endif()
 
+###################################################################################################
 # External packages
+###################################################################################################
 
-# list(APPEND CMAKE_PREFIX_PATH "/usr")
-# list(APPEND CMAKE_PREFIX_PATH "/usr/local")
-
-find_package(SDL 1.2)
-find_package(FreeType 2)
-find_package(PNG 1.5)
-find_package(OpenGL 1.2)
-
-# Helper target(s)
-
-add_library(Strict INTERFACE)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    target_compile_options(Strict INTERFACE -Werror -Wall)
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
-    # TODO
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu")
 endif()
 
-add_library(C++11 INTERFACE)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    target_compile_options(C++11 INTERFACE -std=c++11)
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
-    # TODO
-endif()
+find_package(SDL 1.2 REQUIRED)
+find_package(Freetype 2 REQUIRED)
+find_package(PNG 1.2 REQUIRED)
+find_package(OpenGL 1.2 REQUIRED)
 
-add_library(SaveTemps INTERFACE)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    target_compile_options(SaveTemps INTERFACE -save-temps)
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
-    # TODO
-endif()
+mark_as_advanced(SDL_LIBRARY SDL_INCLUDE_DIR SDLMAIN_LIBRARY)
 
-add_library(NoOptimize INTERFACE)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    target_compile_options(NoOptimize INTERFACE -O0)
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
-    # TODO
-endif()
-
-###############################################################################
+###################################################################################################
 # xrb target
-###############################################################################
+###################################################################################################
 
 set(xrb_HEADERS
     lib/core/xrb.hpp
@@ -313,122 +284,50 @@ foreach(_include_dir ${xrb_INCLUDE_DIRECTORIES})
         $<INSTALL_INTERFACE:include/${_include_dir}>
     )
 endforeach()
-target_compile_options(xrb PUBLIC -DXRB_DEBUG_LEVEL=3) # TODO make cmake option for this
 
-target_include_directories(xrb PUBLIC
-    ${FREETYPE_INCLUDE_DIR_freetype2}   # This shouldn't be necessary
-    ${FREETYPE_INCLUDE_DIR_ftbuild}     # This shouldn't be necessary
-    ${PNG_PNG_INCLUDE_DIR}              # This shouldn't be necessary
-    ${SDL_INCLUDE_DIR}                  # This shouldn't be necessary
-)
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
-    target_link_libraries(xrb PUBLIC FreeType "-framework OpenGL" PNG SDL SDLmain "-framework Cocoa")
-else() # Linux, Windows
-    target_link_libraries(xrb PUBLIC FreeType OpenGL PNG SDL SDLmain)
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU") # "GNU" is GCC
+    target_compile_options(
+        xrb PRIVATE
+        -Wall -Werror -Wno-reorder -Wno-unused-variable -Wno-overloaded-virtual -Wno-unused-private-field
+    )
+    target_compile_options(
+        xrb PUBLIC
+        -DXRB_DEBUG_LEVEL=${XRB_DEBUG_LEVEL}
+    )
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
+    target_compile_options(
+        xrb PRIVATE
+        /Wall /WX # /WX is to treat warnings as errors.
+    )
+    target_compile_options(
+        xrb PUBLIC
+        /DXRB_DEBUG_LEVEL=${XRB_DEBUG_LEVEL}
+    )
 endif()
 
-# ###############################################################################
-# # disasteroids target
-# ###############################################################################
+target_include_directories(
+    xrb PUBLIC
+    ${FREETYPE_INCLUDE_DIR_freetype2}
+    ${FREETYPE_INCLUDE_DIR_ftbuild}
+    ${PNG_PNG_INCLUDE_DIR}
+    ${SDL_INCLUDE_DIR}
+)
 
-# add_executable(disasteroids
-#     app/example/disasteroids/dis_commandlineoptions.cpp
-#     app/example/disasteroids/dis_commandlineoptions.hpp
-#     app/example/disasteroids/dis_config.cpp
-#     app/example/disasteroids/dis_config.hpp
-#     app/example/disasteroids/dis_enums.cpp
-#     app/example/disasteroids/dis_enums.hpp
-#     app/example/disasteroids/dis_events.hpp
-#     app/example/disasteroids/dis_main.cpp
-#     app/example/disasteroids/dis_master.cpp
-#     app/example/disasteroids/dis_master.hpp
-#     app/example/disasteroids/dis_resourcecache.cpp
-#     app/example/disasteroids/dis_resourcecache.hpp
-#     app/example/disasteroids/game/dis_highscores.cpp
-#     app/example/disasteroids/game/dis_highscores.hpp
-#     app/example/disasteroids/game/dis_item.cpp
-#     app/example/disasteroids/game/dis_item.hpp
-#     app/example/disasteroids/game/dis_spawn.cpp
-#     app/example/disasteroids/game/dis_spawn.hpp
-#     app/example/disasteroids/game/dis_util.cpp
-#     app/example/disasteroids/game/dis_util.hpp
-#     app/example/disasteroids/game/engine2/dis_entity.cpp
-#     app/example/disasteroids/game/engine2/dis_entity.hpp
-#     app/example/disasteroids/game/engine2/dis_entityreference.hpp
-#     app/example/disasteroids/game/engine2/dis_physicshandler.cpp
-#     app/example/disasteroids/game/engine2/dis_physicshandler.hpp
-#     app/example/disasteroids/game/engine2/dis_world.cpp
-#     app/example/disasteroids/game/engine2/dis_world.hpp
-#     app/example/disasteroids/game/entities/dis_asteroid.cpp
-#     app/example/disasteroids/game/entities/dis_asteroid.hpp
-#     app/example/disasteroids/game/entities/dis_ballistic.cpp
-#     app/example/disasteroids/game/entities/dis_ballistic.hpp
-#     app/example/disasteroids/game/entities/dis_effect.cpp
-#     app/example/disasteroids/game/entities/dis_effect.hpp
-#     app/example/disasteroids/game/entities/dis_explosive.cpp
-#     app/example/disasteroids/game/entities/dis_explosive.hpp
-#     app/example/disasteroids/game/entities/dis_healthtrigger.cpp
-#     app/example/disasteroids/game/entities/dis_healthtrigger.hpp
-#     app/example/disasteroids/game/entities/dis_mortal.cpp
-#     app/example/disasteroids/game/entities/dis_mortal.hpp
-#     app/example/disasteroids/game/entities/dis_powerup.cpp
-#     app/example/disasteroids/game/entities/dis_powerup.hpp
-#     app/example/disasteroids/game/entities/dis_ship.cpp
-#     app/example/disasteroids/game/entities/dis_ship.hpp
-#     app/example/disasteroids/game/entities/ships/dis_demi.cpp
-#     app/example/disasteroids/game/entities/ships/dis_demi.hpp
-#     app/example/disasteroids/game/entities/ships/dis_devourment.cpp
-#     app/example/disasteroids/game/entities/ships/dis_devourment.hpp
-#     app/example/disasteroids/game/entities/ships/dis_enemyship.cpp
-#     app/example/disasteroids/game/entities/ships/dis_enemyship.hpp
-#     app/example/disasteroids/game/entities/ships/dis_interloper.cpp
-#     app/example/disasteroids/game/entities/ships/dis_interloper.hpp
-#     app/example/disasteroids/game/entities/ships/dis_playership.cpp
-#     app/example/disasteroids/game/entities/ships/dis_playership.hpp
-#     app/example/disasteroids/game/entities/ships/dis_revulsion.cpp
-#     app/example/disasteroids/game/entities/ships/dis_revulsion.hpp
-#     app/example/disasteroids/game/entities/ships/dis_shade.cpp
-#     app/example/disasteroids/game/entities/ships/dis_shade.hpp
-#     app/example/disasteroids/game/entities/ships/dis_solitary.cpp
-#     app/example/disasteroids/game/entities/ships/dis_solitary.hpp
-#     app/example/disasteroids/game/items/dis_armor.cpp
-#     app/example/disasteroids/game/items/dis_armor.hpp
-#     app/example/disasteroids/game/items/dis_engine.cpp
-#     app/example/disasteroids/game/items/dis_engine.hpp
-#     app/example/disasteroids/game/items/dis_powereddevice.hpp
-#     app/example/disasteroids/game/items/dis_powergenerator.cpp
-#     app/example/disasteroids/game/items/dis_powergenerator.hpp
-#     app/example/disasteroids/game/items/dis_shield.cpp
-#     app/example/disasteroids/game/items/dis_shield.hpp
-#     app/example/disasteroids/game/items/dis_weapon.cpp
-#     app/example/disasteroids/game/items/dis_weapon.hpp
-#     app/example/disasteroids/ui/dis_controlspanel.cpp
-#     app/example/disasteroids/ui/dis_controlspanel.hpp
-#     app/example/disasteroids/ui/dis_gamewidget.cpp
-#     app/example/disasteroids/ui/dis_gamewidget.hpp
-#     app/example/disasteroids/ui/dis_highscorenameentrydialog.cpp
-#     app/example/disasteroids/ui/dis_highscorenameentrydialog.hpp
-#     app/example/disasteroids/ui/dis_highscoreswidget.cpp
-#     app/example/disasteroids/ui/dis_highscoreswidget.hpp
-#     app/example/disasteroids/ui/dis_inventorybutton.cpp
-#     app/example/disasteroids/ui/dis_inventorybutton.hpp
-#     app/example/disasteroids/ui/dis_inventorypanel.cpp
-#     app/example/disasteroids/ui/dis_inventorypanel.hpp
-#     app/example/disasteroids/ui/dis_titlescreenwidget.cpp
-#     app/example/disasteroids/ui/dis_titlescreenwidget.hpp
-#     app/example/disasteroids/ui/dis_worldview.cpp
-#     app/example/disasteroids/ui/dis_worldview.hpp
-# )
-# target_include_directories(disasteroids PUBLIC
-#     app/example/disasteroids
-#     app/example/disasteroids/game
-#     app/example/disasteroids/game/engine2
-#     app/example/disasteroids/game/entities
-#     app/example/disasteroids/game/entities/ships
-#     app/example/disasteroids/game/items
-#     app/example/disasteroids/ui
-# )
-# target_link_libraries(disasteroids PUBLIC xrb)
+# if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
+#     target_link_libraries(xrb PUBLIC Freetype "-framework OpenGL" PNG SDL SDLmain "-framework Cocoa")
+target_link_libraries(
+    xrb PUBLIC
+    ${FREETYPE_LIBRARY}
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    ${PNG_LIBRARY_RELEASE}
+    ${SDL_LIBRARY}
+)
+# elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#     target_link_libraries(xrb PUBLIC freetype GL png16 SDL SDLmain)
+# else() # Other systems, e.g. Windows
+#     message(FATAL_ERROR "TODO: Figure out target_link_libraries for this platform.")
+# endif()
 
 ###################################################################################################
 # Global compiler options (and related) go here.
@@ -437,12 +336,6 @@ endif()
 # TODO: look into using target_compile_definitions and target_compile_options,
 # though these seem sufficiently global to warrant the extreme measure of
 # setting CMAKE_CXX_FLAGS.
-
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU") # "GNU" is GCC
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wno-reorder -Wno-unused-variable -Wno-overloaded-virtual -Wno-unused-private-field")
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall /WX") # /WX is to treat warnings as errors.
-endif()
 
 ###################################################################################################
 # Install and export rules
@@ -474,7 +367,7 @@ foreach(_include_dir ${xrb_INCLUDE_DIRECTORIES})
     )
 endforeach()
 install(
-    DIRECTORY ${XRB_RESOURCES_DIR}
+    DIRECTORY ${PROJECT_BINARY_DIR}/${XRB_RESOURCES_DIR}
     DESTINATION .
 )
 # This causes automatically-generated export targets to be defined during the install step in
@@ -507,9 +400,9 @@ install(
 )
 # Generate the version configuration file.  This is the preferred method for indicating the presence
 # of a library and conveying version information to the find_package cmake command.
-configure_file(${CMAKE_SOURCE_DIR}/cmake/GenericConfigVersion.cmake.in ${PROJECT_BINARY_DIR}/xrbConfigVersion.cmake @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/GenericConfigVersion.cmake.in ${PROJECT_BINARY_DIR}/xrb-config-version.cmake @ONLY)
 # Install rule for the version configuration file.  It should go in the root dir of the install.
 install(
-    FILES ${PROJECT_BINARY_DIR}/xrbConfigVersion.cmake
+    FILES ${PROJECT_BINARY_DIR}/xrb-config-version.cmake
     DESTINATION .
 )

@@ -4,17 +4,17 @@ project(disasteroids VERSION 0.5)
 set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE)
 
 if(NOT xrb_DIR)
-    set(xrb_DIR "xrb_DIR-NOTFOUND" CACHE STRING "Path to build directory of xrb")
-    message(FATAL_ERROR "You must set a valid path for xrb_DIR, which should be the path to build directory of xrb")
+    set(xrb_DIR "xrb_DIR-NOTFOUND" CACHE STRING "Path to xrb library.")
+    message(FATAL_ERROR "You must set a valid path for xrb_DIR, which should be the path xrb library.")
 endif()
 
-if(NOT LEAP_CMAKE_MODULES)
-    set(LEAP_CMAKE_MODULES "LEAP_CMAKE_MODULES-NOTFOUND" CACHE STRING "Path to clone of git repository github.com/leapmotion/cmake-modules")
-    message(FATAL_ERROR "You must set a valid path for LEAP_CMAKE_MODULES, which should be the path to clone of git repository github.com/leapmotion/cmake-modules")
-endif()
+# if(NOT LEAP_CMAKE_MODULES)
+#     set(LEAP_CMAKE_MODULES "LEAP_CMAKE_MODULES-NOTFOUND" CACHE STRING "Path to clone of git repository github.com/leapmotion/cmake-modules")
+#     message(FATAL_ERROR "You must set a valid path for LEAP_CMAKE_MODULES, which should be the path to clone of git repository github.com/leapmotion/cmake-modules")
+# endif()
 
-list(APPEND CMAKE_MODULE_PATH ${LEAP_CMAKE_MODULES})
-include(TargetImportedLibraries)
+# list(APPEND CMAKE_MODULE_PATH ${LEAP_CMAKE_MODULES})
+# include(TargetImportedLibraries)
 
 # Options to correctly link the standard C++ lib on Mac.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
@@ -26,6 +26,8 @@ endif()
 
 # External packages
 
+list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu")
+
 # list(APPEND CMAKE_PREFIX_PATH "/usr")
 # list(APPEND CMAKE_PREFIX_PATH "/usr/local")
 
@@ -33,6 +35,8 @@ endif()
 # find_package(FreeType 2)
 # find_package(PNG 1.5)
 # find_package(OpenGL 1.2)
+
+find_package(xrb 0.5)
 
 # Helper target(s)
 
@@ -63,8 +67,6 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES 
 elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
     # TODO
 endif()
-
-find_package(xrb)
 
 ###############################################################################
 # disasteroids target
@@ -180,8 +182,7 @@ add_custom_command(
 )
 
 ###################################################################################################
-# Global compiler options (and related) go here.  NOTE: ANY SUBLIBRARY-SPECIFIC COMPILER OPTIONS
-# SHOULD BE MADE IN THE CORRESPONDING SUBLIBRARY DEFINITION!
+# Global compiler options (and related) go here.
 ###################################################################################################
 
 # TODO: look into using target_compile_definitions and target_compile_options,
