@@ -102,19 +102,19 @@ void StageProcessAttributes (
         std::string const &attribute_name = it->first;
         std::string &attribute_value = it->second;
 
-        bool accepted = false;
-        // if the attribute name has one of the allowable attribute name prefixes, accept
-        for (std::set<std::string>::const_iterator prefix_it = stageable_attribute_name_prefixes.begin(),
-                                                   prefix_it_end = stageable_attribute_name_prefixes.end();
-             prefix_it != prefix_it_end;
-             ++prefix_it)
-        {
-            if (attribute_name.find_first_of(*prefix_it) == 0)
-            {
-                accepted = true;
-                break;
-            }
-        }
+//         bool accepted = false;
+//         // if the attribute name has one of the allowable attribute name prefixes, accept
+//         for (std::set<std::string>::const_iterator prefix_it = stageable_attribute_name_prefixes.begin(),
+//                                                    prefix_it_end = stageable_attribute_name_prefixes.end();
+//              prefix_it != prefix_it_end;
+//              ++prefix_it)
+//         {
+//             if (attribute_name.find_first_of(*prefix_it) == 0)
+//             {
+//                 accepted = true;
+//                 break;
+//             }
+//         }
 
         // if the attribute value is a backslash-delimited list of values (i.e. if the
         // first char is backslash), replace it with the one corresponding to stage.

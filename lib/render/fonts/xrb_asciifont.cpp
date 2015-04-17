@@ -414,19 +414,21 @@ void AsciiFont::DrawGlyph (
             PixelHeight());
 
     {
+        Rect<Sint16> glyph_texture_coordinates_Sint16(glyph_texture_coordinates.StaticCast<Sint16>());
         Sint16 glyph_texture_coordinate_array[8] =
         {
-            glyph_texture_coordinates.BottomLeft()[Dim::X], glyph_texture_coordinates.BottomLeft()[Dim::Y],
-            glyph_texture_coordinates.BottomRight()[Dim::X], glyph_texture_coordinates.BottomRight()[Dim::Y],
-            glyph_texture_coordinates.TopLeft()[Dim::X], glyph_texture_coordinates.TopLeft()[Dim::Y],
-            glyph_texture_coordinates.TopRight()[Dim::X], glyph_texture_coordinates.TopRight()[Dim::Y]
+            glyph_texture_coordinates_Sint16.BottomLeft()[Dim::X], glyph_texture_coordinates_Sint16.BottomLeft()[Dim::Y],
+            glyph_texture_coordinates_Sint16.BottomRight()[Dim::X], glyph_texture_coordinates_Sint16.BottomRight()[Dim::Y],
+            glyph_texture_coordinates_Sint16.TopLeft()[Dim::X], glyph_texture_coordinates_Sint16.TopLeft()[Dim::Y],
+            glyph_texture_coordinates_Sint16.TopRight()[Dim::X], glyph_texture_coordinates_Sint16.TopRight()[Dim::Y]
         };
+        Rect<Sint16> glyph_vertex_coordinates_Sint16(glyph_vertex_coordinates.StaticCast<Sint16>());
         Sint16 glyph_vertex_coordinate_array[8] =
         {
-            glyph_vertex_coordinates.BottomLeft()[Dim::X], glyph_vertex_coordinates.BottomLeft()[Dim::Y],
-            glyph_vertex_coordinates.BottomRight()[Dim::X], glyph_vertex_coordinates.BottomRight()[Dim::Y],
-            glyph_vertex_coordinates.TopLeft()[Dim::X], glyph_vertex_coordinates.TopLeft()[Dim::Y],
-            glyph_vertex_coordinates.TopRight()[Dim::X], glyph_vertex_coordinates.TopRight()[Dim::Y]
+            glyph_vertex_coordinates_Sint16.BottomLeft()[Dim::X], glyph_vertex_coordinates_Sint16.BottomLeft()[Dim::Y],
+            glyph_vertex_coordinates_Sint16.BottomRight()[Dim::X], glyph_vertex_coordinates_Sint16.BottomRight()[Dim::Y],
+            glyph_vertex_coordinates_Sint16.TopLeft()[Dim::X], glyph_vertex_coordinates_Sint16.TopLeft()[Dim::Y],
+            glyph_vertex_coordinates_Sint16.TopRight()[Dim::X], glyph_vertex_coordinates_Sint16.TopRight()[Dim::Y]
         };
 
         glVertexPointer(2, GL_SHORT, 0, glyph_vertex_coordinate_array);

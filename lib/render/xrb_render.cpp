@@ -313,12 +313,13 @@ void Render::DrawScreenRect (
     Gl::DisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     {
+        Rect<Sint16> screen_rect_Sint16(screen_rect.StaticCast<Sint16>());
         Sint16 vertex_coordinate_array[8] =
         {
-            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y],
-            screen_rect.BottomRight()[Dim::X], screen_rect.BottomRight()[Dim::Y],
-            screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
-            screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
+            screen_rect_Sint16.BottomLeft()[Dim::X], screen_rect_Sint16.BottomLeft()[Dim::Y],
+            screen_rect_Sint16.BottomRight()[Dim::X], screen_rect_Sint16.BottomRight()[Dim::Y],
+            screen_rect_Sint16.TopLeft()[Dim::X], screen_rect_Sint16.TopLeft()[Dim::Y],
+            screen_rect_Sint16.TopRight()[Dim::X], screen_rect_Sint16.TopRight()[Dim::Y]
         };
 /*
         ScreenCoordVector2 vertex_coordinate_array[4] =
@@ -375,12 +376,13 @@ void Render::DrawScreenRectTexture (
             texture_coordinate_array[i*2 + 1] = Sint16(temp[i][Dim::Y]) + gltexture.TextureCoordinateBottomLeft()[Dim::Y];
         }
 
+        Rect<Sint16> screen_rect_Sint16(screen_rect.StaticCast<Sint16>());
         Sint16 vertex_coordinate_array[8] =
         {
-            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y],
-            screen_rect.BottomRight()[Dim::X], screen_rect.BottomRight()[Dim::Y],
-            screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
-            screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
+            screen_rect_Sint16.BottomLeft()[Dim::X], screen_rect_Sint16.BottomLeft()[Dim::Y],
+            screen_rect_Sint16.BottomRight()[Dim::X], screen_rect_Sint16.BottomRight()[Dim::Y],
+            screen_rect_Sint16.TopLeft()[Dim::X], screen_rect_Sint16.TopLeft()[Dim::Y],
+            screen_rect_Sint16.TopRight()[Dim::X], screen_rect_Sint16.TopRight()[Dim::Y]
         };
 
         Gl::EnableClientState(GL_VERTEX_ARRAY);
