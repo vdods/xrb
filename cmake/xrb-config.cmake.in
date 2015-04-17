@@ -1,0 +1,8 @@
+# This file was generated from the hand-written file cmake/libxrb-config.cmake.in
+# and is intended to end up in the libxrb build directory or in the libxrb install directory,
+# and there will load the automatically-generated export file <install-or-build-dir>/cmake/libxrb-export.cmake,
+# which has all the target definitions for libxrb.
+
+get_filename_component(_current_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+list(APPEND CMAKE_MODULE_PATH "${_current_dir}/cmake")
+include(xrb-export)
