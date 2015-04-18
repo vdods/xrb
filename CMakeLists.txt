@@ -37,6 +37,7 @@ find_package(Freetype 2 REQUIRED)
 find_package(PNG 1.2 REQUIRED)
 find_package(OpenGL 1.2 REQUIRED)
 
+# FindSDL.cmake is sloppy -- This hides these variables from the non-advanced cmake gui display.
 mark_as_advanced(SDL_LIBRARY SDL_INCLUDE_DIR SDLMAIN_LIBRARY)
 
 ###################################################################################################
@@ -254,7 +255,8 @@ set(xrb_SOURCES
     lib/util/xrb_utf8.cpp
     lib/util/xrb_util.cpp
 )
-add_library(xrb STATIC
+add_library(
+    xrb STATIC
     ${xrb_HEADERS}
     ${xrb_SOURCES}
 )
@@ -313,8 +315,6 @@ target_include_directories(
     ${SDL_INCLUDE_DIR}
 )
 
-# if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
-#     target_link_libraries(xrb PUBLIC Freetype "-framework OpenGL" PNG SDL SDLmain "-framework Cocoa")
 target_link_libraries(
     xrb PUBLIC
     ${FREETYPE_LIBRARY}
@@ -323,19 +323,6 @@ target_link_libraries(
     ${PNG_LIBRARY_RELEASE}
     ${SDL_LIBRARY}
 )
-# elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-#     target_link_libraries(xrb PUBLIC freetype GL png16 SDL SDLmain)
-# else() # Other systems, e.g. Windows
-#     message(FATAL_ERROR "TODO: Figure out target_link_libraries for this platform.")
-# endif()
-
-###################################################################################################
-# Global compiler options (and related) go here.
-###################################################################################################
-
-# TODO: look into using target_compile_definitions and target_compile_options,
-# though these seem sufficiently global to warrant the extreme measure of
-# setting CMAKE_CXX_FLAGS.
 
 ###################################################################################################
 # Install and export rules
