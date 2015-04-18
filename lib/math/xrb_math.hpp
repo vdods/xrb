@@ -17,7 +17,7 @@
     // this is for _finite()
     #include <float.h>
 #endif // defined(WIN32)
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 
 #include "xrb_vector.hpp"
@@ -219,7 +219,7 @@ namespace Math
     #if defined(WIN32)
         return _finite(static_cast<double>(x)) != 0;
     #else // !defined(WIN32)
-        return isfinite(x);
+        return std::isfinite(x);
     #endif
     }
     /** If @c x is zero, then zero will be returned (even though there are
