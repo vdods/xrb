@@ -247,11 +247,10 @@ public:
       * @brief In-place multiplication operator.
       * @param operand The scalar value to multiply this vector by.
       */
-    template <typename U>
-    void operator *= (U const operand)
+    void operator *= (T const &operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
-            m[i] *= static_cast<T>(operand);
+            m[i] *= operand;
     }
     /** Performs scalar division of the components of this vector
       * by each respective component of @c operand, storing the
@@ -272,11 +271,10 @@ public:
       * @param operand The scalar value to divide this vector by.
       * @note There is no protection here against dividing by zero.
       */
-    template <typename U>
-    void operator /= (U const operand)
+    void operator /= (T const &operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
-            m[i] /= static_cast<T>(operand);
+            m[i] /= operand;
     }
     /** @brief Unary negation operator.
       * @return The arithmatic negative of this vector.
