@@ -126,6 +126,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     ObjectType GetObjectType () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectType(); }
+    Float ZDepth () const { ASSERT3(m_owner_object != NULL); return m_owner_object->ZDepth(); }
     Float Radius (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->Radius(quad_tree_type); }
     Float VisibleRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->VisibleRadius(); }
     Float PhysicalRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->PhysicalRadius(); }
@@ -144,6 +145,7 @@ public:
     FloatMatrix2 const &Transformation () const { ASSERT3(m_owner_object != NULL); return m_owner_object->Transformation(); }
     FloatMatrix2 TransformationInverse () const { ASSERT3(m_owner_object != NULL); return m_owner_object->TransformationInverse(); }
     Float Determinant () const { ASSERT3(m_owner_object != NULL); return m_owner_object->Determinant(); }
+    void SetZDepth (Float z_depth) { ASSERT3(m_owner_object != NULL); m_owner_object->SetZDepth(z_depth); }
     void SetTranslation (FloatVector2 const &translation) { ASSERT3(m_owner_object != NULL); m_owner_object->SetTranslation(translation); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     void SetScaleFactors (FloatVector2 const &scale_factors) { ASSERT3(m_owner_object != NULL); m_owner_object->SetScaleFactors(scale_factors); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     void SetScaleFactor (Float scale_factor) { ASSERT3(m_owner_object != NULL); m_owner_object->SetScaleFactor(scale_factor); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
