@@ -1,6 +1,13 @@
-cmake_minimum_required(VERSION 3.0) # I had problems if I only specified "VERSION 3".
+cmake_minimum_required(VERSION 3.10)
+project(xrb)
+# The VERSION argument of cmake's project function is not semver compliant.
+# See https://gitlab.kitware.com/cmake/cmake/issues/16716
+set(PROJECT_VERSION "0.5")
 
-project(xrb VERSION 0.5)
+# Set and require the C++11 standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE)
@@ -16,21 +23,21 @@ if(NOT XRB_DEBUG_LEVEL)
     set(XRB_DEBUG_LEVEL "0" CACHE STRING "Debug level for xrb code -- can be 0 (no asserts), 1, 2, or 3 (all asserts)." FORCE)
 endif()
 
-# Options to correctly link the standard C++ lib on Mac.
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
-    set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang") # GCC ("GNU") probably would require a different option
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-    endif()
-endif()
+# # Options to correctly link the standard C++ lib on Mac.
+# if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
+#     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+#     if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang") # GCC ("GNU") probably would require a different option
+#         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+#     endif()
+# endif()
 
 ###################################################################################################
 # External packages
 ###################################################################################################
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu")
-endif()
+# if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#     list(APPEND CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu")
+# endif()
 
 find_package(SDL 1.2 REQUIRED)
 find_package(Freetype 2 REQUIRED)
@@ -283,14 +290,14 @@ foreach(_include_dir ${xrb_INCLUDE_DIRECTORIES})
     target_include_directories(
         xrb PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${_include_dir}>
-        $<INSTALL_INTERFACE:include/${_include_dir}>
+        $<INSTALL_INTERFACE:xrb/include/${_include_dir}>
     )
 endforeach()
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU") # "GNU" is GCC
     target_compile_options(
         xrb PRIVATE
-        -Wall -Werror -Wno-reorder -Wno-unused-variable -Wno-overloaded-virtual -Wno-unused-private-field
+        -Wall -Werror -Wno-reorder -Wno-unused-variable -Wno-overloaded-virtual -Wno-unused-but-set-variable
     )
     target_compile_options(
         xrb PUBLIC
@@ -310,7 +317,7 @@ endif()
 target_include_directories(
     xrb PUBLIC
     ${FREETYPE_INCLUDE_DIR_freetype2}
-    ${FREETYPE_INCLUDE_DIR_ftbuild}
+    ${FREETYPE_INCLUDE_DIR_ft2build}
     ${PNG_PNG_INCLUDE_DIR}
     ${SDL_INCLUDE_DIR}
 )
@@ -333,29 +340,29 @@ install(
     EXPORT xrbRelease
     CONFIGURATIONS Release # This line has to come before the others, or else CMake will ignore it!
     # (See http://www.cmake.org/pipermail/cmake/2013-October/056190.html)
-    LIBRARY DESTINATION lib/Release
-    ARCHIVE DESTINATION lib/Release
-    INCLUDES DESTINATION "include"
+    LIBRARY DESTINATION xrb/lib/Release
+    ARCHIVE DESTINATION xrb/lib/Release
+    INCLUDES DESTINATION xrb/include
 )
 install(
     TARGETS xrb
     EXPORT xrbDebug
     CONFIGURATIONS Debug # This line has to come before the others, or else CMake will ignore it!
     # (See http://www.cmake.org/pipermail/cmake/2013-October/056190.html)
-    LIBRARY DESTINATION lib/Debug
-    ARCHIVE DESTINATION lib/Debug
-    INCLUDES DESTINATION "include"
+    LIBRARY DESTINATION xrb/lib/Debug
+    ARCHIVE DESTINATION xrb/lib/Debug
+    INCLUDES DESTINATION xrb/include
 )
 foreach(_include_dir ${xrb_INCLUDE_DIRECTORIES})
     install(
         DIRECTORY ${_include_dir}
-        DESTINATION include/lib
+        DESTINATION xrb/include/lib
         FILES_MATCHING PATTERN "*.hpp"
     )
 endforeach()
 install(
     DIRECTORY ${PROJECT_BINARY_DIR}/${XRB_RESOURCES_DIR}
-    DESTINATION .
+    DESTINATION xrb
 )
 # This causes automatically-generated export targets to be defined during the install step in
 #   ${CMAKE_INSTALL_PREFIX}/cmake/xrb-export.cmake
@@ -365,14 +372,14 @@ install(
     EXPORT xrbRelease
     CONFIGURATIONS Release
     NAMESPACE xrb::
-    DESTINATION cmake
+    DESTINATION xrb/cmake
     FILE xrb-export.cmake
 )
 install(
     EXPORT xrbDebug
     CONFIGURATIONS Debug
     NAMESPACE xrb::
-    DESTINATION cmake
+    DESTINATION xrb/cmake
     FILE xrb-export.cmake
 )
 # Generate the file xrb-config.cmake that will be installed with the `make install` steps.
@@ -383,7 +390,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/xrb-config.cmake.in ${PROJECT_BINARY_DI
 # of the installation, and is the file that cmake looks for and uses in find_package.
 install(
     FILES ${PROJECT_BINARY_DIR}/cmake/for_install_dir/xrb-config.cmake
-    DESTINATION .
+    DESTINATION xrb
 )
 # Generate the version configuration file.  This is the preferred method for indicating the presence
 # of a library and conveying version information to the find_package cmake command.
@@ -391,5 +398,5 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/GenericConfigVersion.cmake.in ${PROJECT
 # Install rule for the version configuration file.  It should go in the root dir of the install.
 install(
     FILES ${PROJECT_BINARY_DIR}/xrb-config-version.cmake
-    DESTINATION .
+    DESTINATION xrb
 )

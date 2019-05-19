@@ -242,6 +242,9 @@ TEMP TODO:
 
 
 TODO:
+- Create an off-screen Pal implementation so that off-screen rendering and screenshots are easy.
+  This would probably need to use the same (only) GL context (and probably filesystem), so not
+  sure how that would interact with the on-screen renderer.
 - MUSIC: when implementing music, do it through spec files which reference times in OGG/MP3 files
   so that people can make spec files which reference copyrighted music without actually infringing copyright.
 - change quadtree nodes to store lists of objects.  the objects will store iterators to their

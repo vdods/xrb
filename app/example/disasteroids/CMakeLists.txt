@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.0) # I had problems if I only specified "VERSIO
 project(disasteroids VERSION 0.5)
 set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE STRING "" FORCE)
 
-if(NOT xrb_DIR)
-    set(xrb_DIR "xrb_DIR-NOTFOUND" CACHE STRING "Path to xrb library.")
-    message(FATAL_ERROR "You must set a valid path for xrb_DIR, which should be the path xrb library.")
-endif()
+# if(NOT xrb_DIR)
+#     set(xrb_DIR "xrb_DIR-NOTFOUND" CACHE STRING "Path to xrb library.")
+#     message(FATAL_ERROR "You must set a valid path for xrb_DIR, which should be the path xrb library.")
+# endif()
 
 # Options to correctly link the standard C++ lib on Mac.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # This is the correct way to detect Mac OS X operating system -- see http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
@@ -118,7 +118,7 @@ add_executable(disasteroids
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU") # "GNU" is GCC
     target_compile_options(
         disasteroids PUBLIC
-        -Wall -Werror -Wno-reorder -Wno-unused-variable -Wno-overloaded-virtual -Wno-unused-private-field
+        -Wall -Werror -Wno-reorder -Wno-unused-variable -Wno-overloaded-virtual -Wno-unused-private-field -Wno-unused-but-set-variable
     )
 elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
     target_compile_options(
