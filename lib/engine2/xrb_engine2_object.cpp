@@ -54,6 +54,11 @@ Float Object::CalculateDistanceFade (Float object_radius)
     return distance_fade;
 }
 
+Object *Object::Create ()
+{
+    return new Object(OT_OBJECT);
+}
+
 Object *Object::Create (
     Serializer &serializer,
     CreateEntityFunction CreateEntity)

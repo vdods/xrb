@@ -56,6 +56,10 @@ public:
     // public serialization functions
     // ///////////////////////////////////////////////////////////////////
 
+    // creates a new Object (not a Sprite or other subclass).  Would be
+    // used if you wanted an object that shouldn't be drawn, such as in
+    // a headless program.
+    static Object *Create ();
     // creates a new Object from the serializer.  this is the main
     // multiplexing function which creates whatever type of object
     // subclass is actually stored in the serializer.
