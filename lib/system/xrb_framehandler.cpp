@@ -35,16 +35,20 @@ void FrameHandler::ProcessFrame (Time frame_time)
     EndFrame();
 }
 
+void FrameHandler::ResetMostRecentFrameTime (Time frame_time)
+{
+    m_most_recent_frame_time = frame_time;
+}
+
 void FrameHandler::StartFrame (Time frame_time)
 {
     ASSERT1(frame_time >= Time::ms_beginning_of);
-    ASSERT1(frame_time >= m_most_recent_frame_time && "time should be nondecreasing");
 
     // only start the frame if the lock is unused
     if (m_lock == 0)
     {
-        // if this is the first frame, init the previous frame time.
-        if (m_most_recent_frame_time == Time::ms_beginning_of)
+        // if this is the first frame, or if time moved backwards, init the previous frame time.
+        if (m_most_recent_frame_time == Time::ms_beginning_of || frame_time < m_most_recent_frame_time)
             m_most_recent_frame_time = frame_time;
 
         // calculate dt -- dt can be zero.

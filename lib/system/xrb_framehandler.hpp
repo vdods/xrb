@@ -39,6 +39,8 @@ public:
     /// @brief Initiates once-per-game-loop-frame computation.
     /// @details Sets up the frame variables and then calls the overridden HandleFrame which is what actually does the processing.
     void ProcessFrame (Time frame_time);
+    /// @brief Resets the most recent frame time.  Must be used if time is to go backwards.
+    void ResetMostRecentFrameTime (Time frame_time = Time::ms_beginning_of);
 
 protected:
 
