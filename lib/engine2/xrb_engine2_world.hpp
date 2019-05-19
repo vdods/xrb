@@ -84,7 +84,7 @@ public:
     // these are only used in LoadSvgIntoWorld.
 
     // give the world a chance to look at the <svg> (root) element
-    virtual void ProcessSvgRootElement (Lvd::Xml::Element const &svg) throw(std::string);
+    virtual void ProcessSvgRootElement (Lvd::Xml::Element const &svg);
     // must create and return a pointer to an ObjectLayer with the specified
     // properties, but gives the world a chance to process the corresponding
     // <g> element.  do not add the created ObjectLayer to the world, this will
@@ -94,7 +94,7 @@ public:
         Uint32 quadtree_depth,
         Float z_depth,
         std::string const &name,
-        Lvd::Xml::Element const &g) throw(std::string);
+        Lvd::Xml::Element const &g);
     // must create and return a pointer to (a subclass of) Entity.  entity_type
     // and entity_name are the attribute values of xrb_entity_type and
     // xrb_entity_name respectively.  future_owner_object is the already-created
@@ -110,7 +110,7 @@ public:
         std::string const &entity_name,
         Object &future_owner_object,
         ObjectLayer &object_layer,
-        Lvd::Xml::Element const &image) throw(std::string);
+        Lvd::Xml::Element const &image);
 
     // end of LoadSvgIntoWorld helper methods
     // ///////////////////////////////////////////////////////////////////////

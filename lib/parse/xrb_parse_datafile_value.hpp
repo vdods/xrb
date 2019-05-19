@@ -275,14 +275,14 @@ public:
     Value const *PathElement (std::string const &path) const { return SubpathElement(path, 0); }
 
     // these methods will throw a string describing the path or type mismatch error
-    bool PathElementBoolean (std::string const &path) const throw (std::string);
-    Sint32 PathElementSignedInteger (std::string const &path) const throw (std::string);
-    Uint32 PathElementUnsignedInteger (std::string const &path) const throw (std::string);
-    Float PathElementFloaty (std::string const &path) const throw (std::string);
-    char PathElementCharacter (std::string const &path) const throw (std::string);
-    std::string const &PathElementString (std::string const &path) const throw (std::string);
-    Array const *PathElementArray (std::string const &path) const throw (std::string);
-    Structure const *PathElementStructure (std::string const &path) const throw (std::string);
+    bool PathElementBoolean (std::string const &path) const;
+    Sint32 PathElementSignedInteger (std::string const &path) const;
+    Uint32 PathElementUnsignedInteger (std::string const &path) const;
+    Float PathElementFloaty (std::string const &path) const;
+    char PathElementCharacter (std::string const &path) const;
+    std::string const &PathElementString (std::string const &path) const;
+    Array const *PathElementArray (std::string const &path) const;
+    Structure const *PathElementStructure (std::string const &path) const;
 
     virtual void Print (IndentFormatter &formatter) const = 0;
     virtual void PrintAST (IndentFormatter &formatter) const = 0;
@@ -495,12 +495,12 @@ public:
         Value()
     { }
 
-    void SetPathElementBoolean (std::string const &path, bool value) throw(std::string);
-    void SetPathElementSignedInteger (std::string const &path, Sint32 value) throw(std::string);
-    void SetPathElementUnsignedInteger (std::string const &path, Uint32 value) throw(std::string);
-    void SetPathElementFloaty (std::string const &path, Float value) throw(std::string);
-    void SetPathElementCharacter (std::string const &path, char value) throw(std::string);
-    void SetPathElementString (std::string const &path, std::string const &value) throw(std::string);
+    void SetPathElementBoolean (std::string const &path, bool value);
+    void SetPathElementSignedInteger (std::string const &path, Sint32 value);
+    void SetPathElementUnsignedInteger (std::string const &path, Uint32 value);
+    void SetPathElementFloaty (std::string const &path, Float value);
+    void SetPathElementCharacter (std::string const &path, char value);
+    void SetPathElementString (std::string const &path, std::string const &value);
 
 protected:
 
@@ -511,9 +511,9 @@ protected:
         NT_STRUCTURE
     }; // end of enum Container::NodeType
 
-    static NodeType ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string);
+    static NodeType ParentElementNodeType (std::string const &path, Uint32 start);
 
-    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string) = 0;
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) = 0;
 
     friend class KeyPair;
     friend class Array;
@@ -553,7 +553,7 @@ protected:
 
     virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 
-    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string);
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value);
 
 private:
 
@@ -581,14 +581,14 @@ public:
     Uint32 DimensionCount () const;
     Uint32 ElementCount () const { return m_element_vector.size(); }
     Value *Element (Uint32 index) const { return index < m_element_vector.size() ? m_element_vector[index] : NULL; }
-    bool BooleanElement (Uint32 index) const throw (std::string);
-    Sint32 SignedIntegerElement (Uint32 index) const throw (std::string);
-    Uint32 UnsignedIntegerElement (Uint32 index) const throw (std::string);
-    Float FloatyElement (Uint32 index) const throw (std::string);
-    char CharacterElement (Uint32 index) const throw (std::string);
-    std::string const &StringElement (Uint32 index) const throw (std::string);
-    Array const *ArrayElement (Uint32 index) const throw (std::string);
-    Structure const *StructureElement (Uint32 index) const throw (std::string);
+    bool BooleanElement (Uint32 index) const;
+    Sint32 SignedIntegerElement (Uint32 index) const;
+    Uint32 UnsignedIntegerElement (Uint32 index) const;
+    Float FloatyElement (Uint32 index) const;
+    char CharacterElement (Uint32 index) const;
+    std::string const &StringElement (Uint32 index) const;
+    Array const *ArrayElement (Uint32 index) const;
+    Structure const *StructureElement (Uint32 index) const;
 
     void AppendValue (Value *value);
 
@@ -601,7 +601,7 @@ protected:
 
     virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 
-    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string);
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value);
 
 private:
 
@@ -642,7 +642,7 @@ protected:
 
     virtual Value const *SubpathElement (std::string const &path, Uint32 start) const;
 
-    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string);
+    virtual void SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value);
 
 private:
 

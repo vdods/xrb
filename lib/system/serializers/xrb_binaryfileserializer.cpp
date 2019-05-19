@@ -16,7 +16,7 @@
 
 namespace Xrb {
 
-BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection io_direction) throw(Exception)
+BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection io_direction)
     :
     Serializer(),
     m_path(path),
@@ -73,7 +73,7 @@ BinaryFileSerializer::~BinaryFileSerializer () throw()
     delete &m_stream; // this BinaryFileSerializer is about to go out of scope, so m_stream is also.
 }
 
-bool BinaryFileSerializer::IsAtEnd () const throw(Exception)
+bool BinaryFileSerializer::IsAtEnd () const
 {
     if (m_is_writable)
         return false;
@@ -82,7 +82,7 @@ bool BinaryFileSerializer::IsAtEnd () const throw(Exception)
     return m_stream.eof();
 }
 
-void BinaryFileSerializer::ReaderSeek (Sint32 offset, SeekRelativeTo relative_to) throw(Exception)
+void BinaryFileSerializer::ReaderSeek (Sint32 offset, SeekRelativeTo relative_to)
 {
     try {
         std::ios_base::seekdir dir;
@@ -99,7 +99,7 @@ void BinaryFileSerializer::ReaderSeek (Sint32 offset, SeekRelativeTo relative_to
     }
 }
 
-void BinaryFileSerializer::WriterSeek (Sint32 offset, SeekRelativeTo relative_to) throw(Exception)
+void BinaryFileSerializer::WriterSeek (Sint32 offset, SeekRelativeTo relative_to)
 {
     try {
         std::ios_base::seekdir dir;
@@ -118,7 +118,7 @@ void BinaryFileSerializer::WriterSeek (Sint32 offset, SeekRelativeTo relative_to
 
 bool IsAPowerOfTwo (Uint32 value) { return value != 0 && (value & (value - 1)) == 0; }
 
-void BinaryFileSerializer::ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count) throw(Exception)
+void BinaryFileSerializer::ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count)
 {
     ASSERT1(word_size > 0 && "you silly human!");
     ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");
@@ -136,7 +136,7 @@ void BinaryFileSerializer::ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 w
         SwitchByteOrder(dest, word_size, word_count);
 }
 
-void BinaryFileSerializer::WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count) throw(Exception)
+void BinaryFileSerializer::WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count)
 {
     ASSERT1(word_size > 0 && "you silly human!");
     ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");

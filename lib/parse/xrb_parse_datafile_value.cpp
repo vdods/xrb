@@ -43,7 +43,7 @@ std::string const &ElementTypeString (ElementType element_type)
 // Value
 // ///////////////////////////////////////////////////////////////////////////
 
-bool Value::PathElementBoolean (std::string const &path) const throw (std::string)
+bool Value::PathElementBoolean (std::string const &path) const
 {
     Boolean const *value = dynamic_cast<Boolean const *>(PathElement(path));
     if (value == NULL)
@@ -51,7 +51,7 @@ bool Value::PathElementBoolean (std::string const &path) const throw (std::strin
     return value->Get();
 }
 
-Sint32 Value::PathElementSignedInteger (std::string const &path) const throw (std::string)
+Sint32 Value::PathElementSignedInteger (std::string const &path) const
 {
     SignedInteger const *value = dynamic_cast<SignedInteger const *>(PathElement(path));
     if (value == NULL)
@@ -59,7 +59,7 @@ Sint32 Value::PathElementSignedInteger (std::string const &path) const throw (st
     return value->Get();
 }
 
-Uint32 Value::PathElementUnsignedInteger (std::string const &path) const throw (std::string)
+Uint32 Value::PathElementUnsignedInteger (std::string const &path) const
 {
     UnsignedInteger const *value = dynamic_cast<UnsignedInteger const *>(PathElement(path));
     if (value == NULL)
@@ -67,7 +67,7 @@ Uint32 Value::PathElementUnsignedInteger (std::string const &path) const throw (
     return value->Get();
 }
 
-Float Value::PathElementFloaty (std::string const &path) const throw (std::string)
+Float Value::PathElementFloaty (std::string const &path) const
 {
     Floaty const *value = dynamic_cast<Floaty const *>(PathElement(path));
     if (value == NULL)
@@ -75,7 +75,7 @@ Float Value::PathElementFloaty (std::string const &path) const throw (std::strin
     return value->Get();
 }
 
-char Value::PathElementCharacter (std::string const &path) const throw (std::string)
+char Value::PathElementCharacter (std::string const &path) const
 {
     Character const *value = dynamic_cast<Character const *>(PathElement(path));
     if (value == NULL)
@@ -83,7 +83,7 @@ char Value::PathElementCharacter (std::string const &path) const throw (std::str
     return value->Get();
 }
 
-std::string const &Value::PathElementString (std::string const &path) const throw (std::string)
+std::string const &Value::PathElementString (std::string const &path) const
 {
     String const *value = dynamic_cast<String const *>(PathElement(path));
     if (value == NULL)
@@ -91,7 +91,7 @@ std::string const &Value::PathElementString (std::string const &path) const thro
     return value->Get();
 }
 
-Array const *Value::PathElementArray (std::string const &path) const throw (std::string)
+Array const *Value::PathElementArray (std::string const &path) const
 {
     Array const *value = dynamic_cast<Array const *>(PathElement(path));
     if (value == NULL)
@@ -99,7 +99,7 @@ Array const *Value::PathElementArray (std::string const &path) const throw (std:
     return value;
 }
 
-Structure const *Value::PathElementStructure (std::string const &path) const throw (std::string)
+Structure const *Value::PathElementStructure (std::string const &path) const
 {
     Structure const *value = dynamic_cast<Structure const *>(PathElement(path));
     if (value == NULL)
@@ -217,37 +217,37 @@ void String::PrintAST (IndentFormatter &formatter) const
 // Container
 // ///////////////////////////////////////////////////////////////////////////
 
-void Container::SetPathElementBoolean (std::string const &path, bool const value) throw(std::string)
+void Container::SetPathElementBoolean (std::string const &path, bool const value)
 {
     SetSubpathElement(path, 0, new Boolean(value));
 }
 
-void Container::SetPathElementSignedInteger (std::string const &path, Sint32 const value) throw(std::string)
+void Container::SetPathElementSignedInteger (std::string const &path, Sint32 const value)
 {
     SetSubpathElement(path, 0, new SignedInteger(value));
 }
 
-void Container::SetPathElementUnsignedInteger (std::string const &path, Uint32 const value) throw(std::string)
+void Container::SetPathElementUnsignedInteger (std::string const &path, Uint32 const value)
 {
     SetSubpathElement(path, 0, new UnsignedInteger(value));
 }
 
-void Container::SetPathElementFloaty (std::string const &path, Float const value) throw(std::string)
+void Container::SetPathElementFloaty (std::string const &path, Float const value)
 {
     SetSubpathElement(path, 0, new Floaty(value));
 }
 
-void Container::SetPathElementCharacter (std::string const &path, char const value) throw(std::string)
+void Container::SetPathElementCharacter (std::string const &path, char const value)
 {
     SetSubpathElement(path, 0, new Character(value));
 }
 
-void Container::SetPathElementString (std::string const &path, std::string const &value) throw(std::string)
+void Container::SetPathElementString (std::string const &path, std::string const &value)
 {
     SetSubpathElement(path, 0, new String(value));
 }
 
-Container::NodeType Container::ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
+Container::NodeType Container::ParentElementNodeType (std::string const &path, Uint32 start)
 {
     ASSERT1(start <= path.length());
 
@@ -331,7 +331,7 @@ Value const *KeyPair::SubpathElement (std::string const &path, Uint32 start) con
     return GetValue()->SubpathElement(path, start);
 }
 
-void KeyPair::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string)
+void KeyPair::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -447,7 +447,7 @@ Uint32 Array::DimensionCount () const
         return 1;
 }
 
-bool Array::BooleanElement (Uint32 index) const throw (std::string)
+bool Array::BooleanElement (Uint32 index) const
 {
     Boolean const *value = dynamic_cast<Boolean const *>(Element(index));
     if (value == NULL)
@@ -455,7 +455,7 @@ bool Array::BooleanElement (Uint32 index) const throw (std::string)
     return value->Get();
 }
 
-Sint32 Array::SignedIntegerElement (Uint32 index) const throw (std::string)
+Sint32 Array::SignedIntegerElement (Uint32 index) const
 {
     SignedInteger const *value = dynamic_cast<SignedInteger const *>(Element(index));
     if (value == NULL)
@@ -463,7 +463,7 @@ Sint32 Array::SignedIntegerElement (Uint32 index) const throw (std::string)
     return value->Get();
 }
 
-Uint32 Array::UnsignedIntegerElement (Uint32 index) const throw (std::string)
+Uint32 Array::UnsignedIntegerElement (Uint32 index) const
 {
     UnsignedInteger const *value = dynamic_cast<UnsignedInteger const *>(Element(index));
     if (value == NULL)
@@ -471,7 +471,7 @@ Uint32 Array::UnsignedIntegerElement (Uint32 index) const throw (std::string)
     return value->Get();
 }
 
-Float Array::FloatyElement (Uint32 index) const throw (std::string)
+Float Array::FloatyElement (Uint32 index) const
 {
     Floaty const *value = dynamic_cast<Floaty const *>(Element(index));
     if (value == NULL)
@@ -479,7 +479,7 @@ Float Array::FloatyElement (Uint32 index) const throw (std::string)
     return value->Get();
 }
 
-char Array::CharacterElement (Uint32 index) const throw (std::string)
+char Array::CharacterElement (Uint32 index) const
 {
     Character const *value = dynamic_cast<Character const *>(Element(index));
     if (value == NULL)
@@ -487,7 +487,7 @@ char Array::CharacterElement (Uint32 index) const throw (std::string)
     return value->Get();
 }
 
-std::string const &Array::StringElement (Uint32 index) const throw (std::string)
+std::string const &Array::StringElement (Uint32 index) const
 {
     String const *value = dynamic_cast<String const *>(Element(index));
     if (value == NULL)
@@ -495,7 +495,7 @@ std::string const &Array::StringElement (Uint32 index) const throw (std::string)
     return value->Get();
 }
 
-Array const *Array::ArrayElement (Uint32 index) const throw (std::string)
+Array const *Array::ArrayElement (Uint32 index) const
 {
     Array const *value = dynamic_cast<Array const *>(Element(index));
     if (value == NULL)
@@ -503,7 +503,7 @@ Array const *Array::ArrayElement (Uint32 index) const throw (std::string)
     return value;
 }
 
-Structure const *Array::StructureElement (Uint32 index) const throw (std::string)
+Structure const *Array::StructureElement (Uint32 index) const
 {
     Structure const *value = dynamic_cast<Structure const *>(Element(index));
     if (value == NULL)
@@ -643,7 +643,7 @@ Value const *Array::SubpathElement (std::string const &path, Uint32 start) const
     return m_element_vector[array_index]->SubpathElement(path, key_delim);
 }
 
-void Array::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string)
+void Array::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -953,7 +953,7 @@ Value const *Structure::SubpathElement (std::string const &path, Uint32 start) c
     }
 }
 
-void Structure::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value) throw(std::string)
+void Structure::SetSubpathElement (std::string const &path, Uint32 start, LeafValue *value)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);

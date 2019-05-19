@@ -596,11 +596,11 @@ std::ostream &operator << (std::ostream &stream, NTuple<T, size> const &t)
 template <typename T, Uint32 size>
 struct Aggregate<NTuple<T,size> >
 {
-    static void Read (Serializer &serializer, NTuple<T,size> &dest) throw(Exception)
+    static void Read (Serializer &serializer, NTuple<T,size> &dest)
     {
         serializer.ReadArray<T>(dest.m, LENGTHOF(dest.m));
     }
-    static void Write (Serializer &serializer, NTuple<T,size> const &source) throw(Exception)
+    static void Write (Serializer &serializer, NTuple<T,size> const &source)
     {
         serializer.WriteArray<T>(source.m, LENGTHOF(source.m));
     }

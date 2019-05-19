@@ -16,7 +16,7 @@
 
 namespace Xrb {
 
-std::string FileSystem::OsPath (std::string const &path, bool writable) const throw(FileSystemException)
+std::string FileSystem::OsPath (std::string const &path, bool writable) const
 {
     if (path.find("fs://") != 0)
         return path; // no search path lookup.
@@ -64,7 +64,7 @@ std::string FileSystem::OsPath (std::string const &path, bool writable) const th
     return std::string();
 }
 
-void FileSystem::AddDirectory (std::string os_path, bool is_writable, std::string const &set_by) throw(FileSystemException)
+void FileSystem::AddDirectory (std::string os_path, bool is_writable, std::string const &set_by)
 {
     if (os_path.empty())
         throw FileSystemException(os_path, "invalid argument -- directory path is empty");

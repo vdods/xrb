@@ -22,7 +22,7 @@
 namespace Xrb {
 namespace Singleton {
 
-Xrb::FileSystem const *g_file_system = NULL;
+Xrb::FileSystem *g_file_system = NULL;
 Xrb::InputState *g_input_state = NULL;
 Xrb::KeyMap const *g_key_map = NULL;
 Xrb::Pal *g_pal = NULL;

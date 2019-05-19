@@ -61,7 +61,7 @@ struct WordOfSize
     {
         ASSERT1(array != NULL);
         for (Uint32 i = 0; i < word_count; ++i)
-            SwitchByteOrder<word_size>(array[i*word_size]);
+            SwitchByteOrder(&array[i*word_size]);
     }
 }; // end of struct WordOfSize<T>
 

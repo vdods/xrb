@@ -68,7 +68,7 @@ public:
     /// The default value of the @c max_allowable_length parameter to @c ReadSizeAndAllocatedArray and @c WriteSizeAndArray.
     static Uint32 const ms_default_max_allowable_length = 0x10000;
     
-    Serializer () throw(Exception) { }
+    Serializer () { }
     virtual ~Serializer () throw() { }
 
     /// Should return true iff this Serializer can have read operations performed on it.
@@ -82,26 +82,26 @@ public:
     /// Should return true iff this Serializer supports the WriterSeek operation.
     virtual bool IsWriterSeekable () const throw() = 0;
     /// Should return true iff the stream is at the end (e.g. end of file, end of buffer).
-    virtual bool IsAtEnd () const throw(Exception) = 0;
+    virtual bool IsAtEnd () const = 0;
 
     /// @brief Sets the position of this Serializer for the purposes of reading if @c IsReaderSeekable returns true.
     /// @details If @c IsReaderSeekable returns false, then an exception will be thrown.
     /// @param relative_to Specifies where the seeking should be done from.  @see SeekRelativeTo.
     /// @param offset The offset to seek to relative to the position specified by @c realative_to.
     /// @note A particular implementation of Serializer does not need to support all combinations of parameters.
-    virtual void ReaderSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) throw(Exception) = 0;
+    virtual void ReaderSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) = 0;
     /// @brief Sets the position of this Serializer for the purposes of writing if @c IsWriterSeekable returns true.
     /// @details If @c IsWriterSeekable returns false, then an exception will be thrown.
     /// @param relative_to Specifies where the seeking should be done from.  @see SeekRelativeTo.
     /// @param offset The offset to seek to relative to the position specified by @c realative_to.
     /// @note A particular implementation of Serializer does not need to support all combinations of parameters.
-    virtual void WriterSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) throw(Exception) = 0;
+    virtual void WriterSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) = 0;
 
     /// @brief Reads the template-specified POD type, returning it by value.  E.g. @code bool initialized = Read<bool>(); @endcode
     /// @details This method is really just a frontend for @code void Read (T &dest); @endcode
     /// @note A POD (Plain Ol' Data) type is a built-in type such as bool, char, wchar_t, Sint##, Uint##, float, and double.
     template <typename T>
-    T Read () throw(Exception)
+    T Read ()
     {
         T retval;
         Read<T>(retval);
@@ -110,11 +110,11 @@ public:
     /// @brief Reads the template-specified POD type, storing it in the reference provided.  E.g. @code Uint32 n; Read<Uint32>(n); @endcode
     /// @note A POD (Plain Ol' Data) type is a built-in type such as bool, char, wchar_t, Sint##, Uint##, float, and double.
     template <typename T>
-    void Read (T &dest) throw(Exception);
+    void Read (T &dest);
     /// @brief Writes the template-specified POD type value provided.  E.g. @code float x = 1.0f; Write<float>(x); @endcode
     /// @note A POD (Plain Ol' Data) type is a built-in type such as bool, char, wchar_t, Sint##, Uint##, float, and double.
     template <typename T>
-    void Write (T source) throw(Exception);
+    void Write (T source);
 
     /// @brief Reads the template-specified aggregate type, returning it by value.
     /// @details This method is really just a frontend for @code void ReadAggregate (T &dest); @endcode  A partial template
@@ -122,7 +122,7 @@ public:
     /// @code ReadAggregate<std::string>(); @endcode without additional work.
     /// @note An aggregate in a non-POD type for which a partial template specialization for @ref Aggregate has been defined.
     template <typename T>
-    T ReadAggregate () throw(Exception)
+    T ReadAggregate ()
     {
         T retval;
         ReadAggregate<T>(retval);
@@ -131,11 +131,11 @@ public:
     /// @brief Reads the template-specified aggregate type, storing it in the reference provided.
     /// @note An aggregate in a non-POD type for which a partial template specialization for @ref Aggregate has been defined.
     template <typename T>
-    void ReadAggregate (T &dest) throw(Exception);
+    void ReadAggregate (T &dest);
     /// @brief Writes the template-specified aggregate type value provided.
     /// @note An aggregate in a non-POD type for which a partial template specialization for @ref Aggregate has been defined.
     template <typename T>
-    void WriteAggregate (T const &source) throw(Exception);
+    void WriteAggregate (T const &source);
 
     /// @brief Reads an array of words from the Serializer, preceded by the number of elements, allocating an array to store the data.
     /// @details Reads a Uint32 (into the @c length parameter) which signifies the number of elements in the array to follow,
@@ -149,7 +149,7 @@ public:
     template <typename WordType> void ReadSizeAndAllocatedArray (
         WordType *&dest,
         Uint32 &length,
-        Uint32 max_allowable_length = ms_default_max_allowable_length) throw(Exception);
+        Uint32 max_allowable_length = ms_default_max_allowable_length);
     // source must point to a buffer holding at least sizeof(WordType)*length bytes.
     /// @brief Writes an array of words to the Serializer, preceded by the number of elements.
     /// @details Writes the @c length parameter which signifies the number of elements in the array, then writes that number
@@ -161,19 +161,19 @@ public:
     template <typename WordType> void WriteSizeAndArray (
         WordType const *source,
         Uint32 length,
-        Uint32 max_allowable_length = ms_default_max_allowable_length) throw(Exception);
+        Uint32 max_allowable_length = ms_default_max_allowable_length);
 
     /// @brief Reads an array of the specified length from the Serializer.
     /// @details The length of the array is known to the program and is not read from the Serializer -- compare with @c ReadSizeAndAllocateArray.
     /// @param dest Must point to an array holding at least @c length elements.
     /// @param length Specifies the number of words to read into the array pointed to by @c dest.
-    template <typename WordType> void ReadArray (WordType *dest, Uint32 length) throw(Exception);
+    template <typename WordType> void ReadArray (WordType *dest, Uint32 length);
     // source must point to an array holding at least sizeof(WordType)*length bytes.
     /// @brief Writes an array of the specified length to the Serializer.
     /// @details The length of the array is known to the program and is not written to the Serializer -- compare with @c WriteSizeAndArray.
     /// @param source Must point to an array holding at least @c length elements.
     /// @param length Specifies the number of words to write from the array pointed to by @c source.
-    template <typename WordType> void WriteArray (WordType const *source, Uint32 length) throw(Exception);
+    template <typename WordType> void WriteArray (WordType const *source, Uint32 length);
 
 protected:
 
@@ -184,7 +184,7 @@ protected:
     /// @details This is the only read operation that must be implemented by a Serializer subclass.  Subclasses may perform
     /// byte-order switching on each word during this operation, the specifics of which are left to the implementation.
     /// This method should not be called by anything outside of Serializer.
-    virtual void ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count) throw(Exception) = 0;
+    virtual void ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count) = 0;
     /// @brief Writes a specified number of words from memory.
     /// @param source Should point to a piece of memory at least word_size*word_count bytes in length, from which the data will be written.
     /// @param word_size Specifies the size of each word to written (e.g. sizeof(Sint16) if writing an array of Sint16).
@@ -192,12 +192,12 @@ protected:
     /// @details This is the only write operation that must be implemented by a Serializer subclass.  Subclasses may perform
     /// byte-order switching on each word during this operation, the specifics of which are left to the implementation.
     /// This method should not be called by anything outside of Serializer.
-    virtual void WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count) throw(Exception) = 0;
+    virtual void WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count) = 0;
     
 private:
 
-    template <typename ScalarType> void ReadScalar (ScalarType &dest) throw(Exception);
-    template <typename ScalarType> void WriteScalar (ScalarType source) throw(Exception);
+    template <typename ScalarType> void ReadScalar (ScalarType &dest);
+    template <typename ScalarType> void WriteScalar (ScalarType source);
 
     template <typename T> friend struct Aggregate;
 }; // end of class Serializer
@@ -206,8 +206,8 @@ private:
 template <typename T>
 struct Aggregate
 {
-    static void Read (Serializer &serializer, T &dest) throw(Exception);
-    static void Write (Serializer &serializer, T const &source) throw(Exception);
+    static void Read (Serializer &serializer, T &dest);
+    static void Write (Serializer &serializer, T const &source);
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -218,18 +218,18 @@ struct Aggregate
 // type-specific overloads (see below).
 
 template <typename T>
-void Serializer::ReadAggregate (T &dest) throw(Exception)
+void Serializer::ReadAggregate (T &dest)
 {
     Aggregate<T>::Read(*this, dest);
 }
 template <typename T>
-void Serializer::WriteAggregate (T const &source) throw(Exception)
+void Serializer::WriteAggregate (T const &source)
 {
     Aggregate<T>::Write(*this, source);
 }
 
 template <typename WordType>
-void Serializer::ReadSizeAndAllocatedArray (WordType *&dest, Uint32 &length, Uint32 max_allowable_length) throw(Exception)
+void Serializer::ReadSizeAndAllocatedArray (WordType *&dest, Uint32 &length, Uint32 max_allowable_length)
 {
     ASSERT1(dest == NULL);
     Read<Uint32>(length);
@@ -239,7 +239,7 @@ void Serializer::ReadSizeAndAllocatedArray (WordType *&dest, Uint32 &length, Uin
     ReadArray<WordType>(dest, length);
 }
 template <typename WordType>
-void Serializer::WriteSizeAndArray (WordType const *source, Uint32 length, Uint32 max_allowable_length) throw(Exception)
+void Serializer::WriteSizeAndArray (WordType const *source, Uint32 length, Uint32 max_allowable_length)
 {
     ASSERT1(source != NULL);
     if (length > max_allowable_length)
@@ -249,25 +249,25 @@ void Serializer::WriteSizeAndArray (WordType const *source, Uint32 length, Uint3
 }
 
 template <typename WordType>
-void Serializer::ReadArray (WordType *dest, Uint32 length) throw(Exception)
+void Serializer::ReadArray (WordType *dest, Uint32 length)
 {
     ASSERT1(dest != NULL);
     ReadRawWords(reinterpret_cast<Uint8 *>(dest), sizeof(WordType), length);
 }
 template <typename WordType>
-void Serializer::WriteArray (WordType const *source, Uint32 length) throw(Exception)
+void Serializer::WriteArray (WordType const *source, Uint32 length)
 {
     ASSERT1(source != NULL);
     WriteRawWords(reinterpret_cast<Uint8 const *>(source), sizeof(WordType), length);
 }
 
 template <typename ScalarType>
-void Serializer::ReadScalar (ScalarType &dest) throw(Exception)
+void Serializer::ReadScalar (ScalarType &dest)
 {
     ReadRawWords(reinterpret_cast<Uint8 *>(&dest), sizeof(ScalarType), 1);
 }
 template <typename ScalarType>
-void Serializer::WriteScalar (ScalarType source) throw(Exception)
+void Serializer::WriteScalar (ScalarType source)
 {
     WriteRawWords(reinterpret_cast<Uint8 const *>(&source), sizeof(ScalarType), 1);
 }
@@ -278,12 +278,12 @@ void Serializer::WriteScalar (ScalarType source) throw(Exception)
 
 #define DEFINE_READ_AND_WRITE_FOR(Type) \
     template <> \
-    inline void Serializer::Read<Type> (Type &dest) throw(Exception) \
+    inline void Serializer::Read<Type> (Type &dest) \
     { \
         ReadScalar<Type>(dest); \
     } \
     template <> \
-    inline void Serializer::Write<Type> (Type source) throw(Exception) \
+    inline void Serializer::Write<Type> (Type source) \
     { \
         WriteScalar<Type>(source); \
     }
@@ -307,12 +307,12 @@ DEFINE_READ_AND_WRITE_FOR(double)
 // specializations for bool, since sizeof(bool) may vary by machine.
 // these make bool take up exactly one byte in the io stream.
 template <>
-inline void Serializer::Read<bool> (bool &dest) throw(Exception)
+inline void Serializer::Read<bool> (bool &dest)
 {
     dest = Read<Uint8>() != 0;
 }
 template <>
-inline void Serializer::Write<bool> (bool source) throw(Exception)
+inline void Serializer::Write<bool> (bool source)
 {
     Write<Uint8>(Uint8(source ? 0xFF : 0x00));
 }
@@ -329,7 +329,7 @@ struct Aggregate<std::basic_string<Char,Traits,Alloc> >
 {
     typedef std::basic_string<Char,Traits,Alloc> StringType; // for convenience
 
-    static void Read (Serializer &serializer, StringType &dest) throw(Exception)
+    static void Read (Serializer &serializer, StringType &dest)
     {
         // we essentially do the work of Serializer::ReadSizeAndAllocatedArray here,
         // but take care of the allocation ourselves.
@@ -346,7 +346,7 @@ struct Aggregate<std::basic_string<Char,Traits,Alloc> >
             const_cast<typename StringType::value_type *>(dest.data()),
             length);
     }
-    static void Write (Serializer &serializer, StringType const &source) throw(Exception)
+    static void Write (Serializer &serializer, StringType const &source)
     {
         serializer.WriteSizeAndArray<typename StringType::value_type>(source.data(), source.length());
     }

@@ -122,7 +122,6 @@ void PhysicsHandler::CalculateAmbientMomentum (
 
 void PhysicsHandler::AddObjectLayer (ObjectLayer &object_layer)
 {
-    ASSERT1(&object_layer != NULL);
 }
 
 void PhysicsHandler::SetMainObjectLayer (ObjectLayer &object_layer)

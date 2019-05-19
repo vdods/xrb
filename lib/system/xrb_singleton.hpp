@@ -37,7 +37,7 @@ namespace Singleton {
 
     /// FileSystem singleton -- controls the search path for platform-abstracted
     /// file/directory organization and provides means to "mod" resources.
-    extern Xrb::FileSystem const *g_file_system;
+    extern Xrb::FileSystem *g_file_system;
     /// KeyBind singleton -- this handles keyboard input (and mouse buttons too).
     /// @note Not for use anywhere outside of the Singleton namespace.
     extern Xrb::InputState *g_input_state;
@@ -56,7 +56,7 @@ namespace Singleton {
     extern Xrb::Gl *g_gl;
 
     /// Returns the FileSystem singleton.
-    inline Xrb::FileSystem const &FileSystem ()
+    inline Xrb::FileSystem &FileSystem ()
     {
         ASSERT1(g_file_system != NULL && "FileSystem singleton not initialized");
         return *g_file_system;

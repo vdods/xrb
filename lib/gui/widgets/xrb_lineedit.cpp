@@ -293,7 +293,7 @@ ScreenCoord LineEdit::CursorOffset (Uint32 cursor_position) const
 
     char const *current_glyph = m_text.c_str();
     char const *next_glyph;
-    for (Uint32 i = 0; i < cursor_position && current_glyph != '\0'; ++i)
+    for (Uint32 i = 0; i < cursor_position && *current_glyph != '\0'; ++i)
     {
         next_glyph = UTF8::NextCharacter(current_glyph);
         RenderFont()->MoveThroughGlyph(

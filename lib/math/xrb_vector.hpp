@@ -674,11 +674,11 @@ std::ostream &operator << (std::ostream &stream, Vector<T, dimension> const &v)
 template <typename T, Uint32 dimension>
 struct Aggregate<Vector<T,dimension> >
 {
-    static void Read (Serializer &serializer, Vector<T,dimension> &dest) throw(Exception)
+    static void Read (Serializer &serializer, Vector<T,dimension> &dest)
     {
         serializer.ReadArray<T>(dest.m, LENGTHOF(dest.m));
     }
-    static void Write (Serializer &serializer, Vector<T,dimension> const &source) throw(Exception)
+    static void Write (Serializer &serializer, Vector<T,dimension> const &source)
     {
         serializer.WriteArray<T>(source.m, LENGTHOF(source.m));
     }

@@ -357,7 +357,7 @@ std::ostream &operator << (std::ostream &stream, Transform2<T> const &t)
 template <typename T>
 struct Aggregate<Transform2<T> >
 {
-    static void Read (Serializer &serializer, Transform2<T> &dest) throw(Exception)
+    static void Read (Serializer &serializer, Transform2<T> &dest)
     {
         {
             FloatVector2 translation;
@@ -380,7 +380,7 @@ struct Aggregate<Transform2<T> >
             dest.SetPostTranslate(post_translate);
         }
     }
-    static void Write (Serializer &serializer, Transform2<T> const &source) throw(Exception)
+    static void Write (Serializer &serializer, Transform2<T> const &source)
     {
         serializer.WriteAggregate<FloatVector2>(source.Translation());
         serializer.WriteAggregate<FloatVector2>(source.ScaleFactors());

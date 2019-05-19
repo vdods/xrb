@@ -38,12 +38,12 @@ public:
     /// if the path search gave no results, or there was an error.  If the writable flag is set, then the search path
     /// will be restricted to directories that were set is_writable in AddDirectory.  If the path argument does not
     /// begin with "fs://" then the supplied path is returned unchanged.
-    std::string OsPath (std::string const &path, bool writable) const throw(FileSystemException);
+    std::string OsPath (std::string const &path, bool writable) const;
 
     /// Add a directory (OS path) to the top of the path stack (i.e. at the highest priority), throwing an exception
     /// in the case of error.  This method doesn't check if the directory is actually writable from an OS standpoint,
     /// the is_writable flag indicates if the directory allows files within to be written.
-    void AddDirectory (std::string os_path, bool is_writable, std::string const &set_by) throw(FileSystemException);
+    void AddDirectory (std::string os_path, bool is_writable, std::string const &set_by);
 
     /// Returns a string containing the search path directories, from highest search priority to lowest,
     /// each delimited by the given delimiter.  No delimiter follows the last entry.

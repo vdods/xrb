@@ -39,7 +39,7 @@ class BinaryFileSerializer : public Serializer
 public:
 
     /// Attempts to open the given file (as an OS path) using the given IODirection.
-    BinaryFileSerializer (std::string const &path, IODirection io_direction) throw(Exception);
+    BinaryFileSerializer (std::string const &path, IODirection io_direction);
     virtual ~BinaryFileSerializer () throw();
 
     std::string const &Path () const { return m_path; }
@@ -49,15 +49,15 @@ public:
     virtual bool IsWritable () const throw() { return m_is_writable; }
     virtual bool IsReaderSeekable () const throw() { return m_is_readable; }
     virtual bool IsWriterSeekable () const throw() { return m_is_writable; }
-    virtual bool IsAtEnd () const throw(Exception);
-    virtual void ReaderSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) throw(Exception);
-    virtual void WriterSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING) throw(Exception);
+    virtual bool IsAtEnd () const;
+    virtual void ReaderSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING);
+    virtual void WriterSeek (Sint32 offset, SeekRelativeTo relative_to = FROM_BEGINNING);
 
 protected:
 
     // Serializer interface methods
-    virtual void ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count) throw(Exception);
-    virtual void WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count) throw(Exception);
+    virtual void ReadRawWords (Uint8 *dest, Uint32 word_size, Uint32 word_count);
+    virtual void WriteRawWords (Uint8 const *source, Uint32 word_size, Uint32 word_count);
 
 private:
 

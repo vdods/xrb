@@ -143,7 +143,7 @@ void StageProcessAttributes (
     }
 }
 
-void StageProcessAttributes (LoadSvgIntoWorldContext &context, Element &element) throw(Exception)
+void StageProcessAttributes (LoadSvgIntoWorldContext &context, Element &element)
 {
     StageProcessAttributes(element, context.m_stage, context.m_stage_count, context.m_additional_stageable_attribute_name_prefix);
 }
@@ -537,7 +537,7 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
     }
 }
 
-void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(Exception)
+void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context)
 {
     DomNode *root = NULL;
 
@@ -610,7 +610,7 @@ void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(Exception)
     Delete(root);
 }
 
-Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception)
+Uint32 ParseSvgStageCount (std::string const &svg_path)
 {
     Parser parser;
 //     parser.DebugSpew(true);
@@ -640,7 +640,7 @@ void LoadSvgIntoWorld (
     Uint32 gltexture_flags,
     Uint32 stage,
     std::string const &additional_stageable_attribute_name_prefix,
-    std::string const &resource_path_prefix) throw(Exception)
+    std::string const &resource_path_prefix)
 {
     LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags, stage, additional_stageable_attribute_name_prefix, resource_path_prefix);
     LoadSvgIntoWorld(context);

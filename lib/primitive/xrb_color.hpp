@@ -117,11 +117,11 @@ public:
 template <>
 struct Aggregate<Color>
 {
-    static void Read (Serializer &serializer, Color &dest) throw(Exception)
+    static void Read (Serializer &serializer, Color &dest)
     {
         serializer.ReadArray<ColorCoord>(dest.m, LENGTHOF(dest.m));
     }
-    static void Write (Serializer &serializer, Color const &source) throw(Exception)
+    static void Write (Serializer &serializer, Color const &source)
     {
         serializer.WriteArray<ColorCoord>(source.m, LENGTHOF(source.m));
     }

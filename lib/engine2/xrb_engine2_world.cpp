@@ -93,7 +93,7 @@ void World::Write (Serializer &serializer) const
     WriteObjectLayers(serializer);
 }
 
-void World::ProcessSvgRootElement (Lvd::Xml::Element const &svg) throw(std::string)
+void World::ProcessSvgRootElement (Lvd::Xml::Element const &svg)
 {
 }
 
@@ -102,7 +102,7 @@ ObjectLayer *World::CreateObjectLayer (
     Uint32 quadtree_depth,
     Float z_depth,
     std::string const &name,
-    Lvd::Xml::Element const &g) throw(std::string)
+    Lvd::Xml::Element const &g)
 {
     return ObjectLayer::Create(
         this,                       // owner world
@@ -118,7 +118,7 @@ Entity *World::CreateEntity (
     std::string const &entity_name,
     Object &future_owner_object,
     ObjectLayer &object_layer,
-    Lvd::Xml::Element const &image) throw(std::string)
+    Lvd::Xml::Element const &image)
 {
     return NULL;
 }

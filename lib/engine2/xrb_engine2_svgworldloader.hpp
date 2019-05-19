@@ -123,7 +123,7 @@ void StageProcessAttributes (
     std::string const &additional_stageable_attribute_name_prefix = g_empty_string);
 // returns the xrb_stage_count attribute value of the root <svg> element (a positive number), or
 // 0 if this value is invalid or if the attribute is not present.
-Uint32 ParseSvgStageCount (std::string const &svg_path) throw(Exception);
+Uint32 ParseSvgStageCount (std::string const &svg_path);
 // loads the given svg file into the specified world.  if stage is 0, then no stage processing is
 // done (i.e. backslash-delimited values will not be parsed and will be taken as literal strings).
 // if stage is a positive value, that stage number will be loaded, and backslash-delimited values
@@ -136,7 +136,7 @@ void LoadSvgIntoWorld (
     Uint32 gltexture_flags,
     Uint32 stage = 0,
     std::string const &additional_stageable_attribute_name_prefix = g_empty_string,
-    std::string const &resource_path_prefix = "fs://") throw(Exception);
+    std::string const &resource_path_prefix = "fs://");
 
 } // end of namespace Engine2
 } // end of namespace Xrb
