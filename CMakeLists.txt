@@ -280,7 +280,6 @@ set(xrb_INCLUDE_DIRECTORIES
     lib/primitive
     lib/render
     lib/render/fonts
-    lib/sound
     lib/system
     lib/system/pals
     lib/system/serializers
